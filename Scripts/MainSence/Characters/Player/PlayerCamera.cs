@@ -5,14 +5,14 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField]  public float mouseSensitivity = 100f;//マウス感度
     private float xRotation = 0f;//カメラのX軸回転角度
 
-    void Start()
+    private void Start()
     {
         // マウスカーソルを非表示にし、位置を固定
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    void Update()
+    private void Update()
     {
         //マウスの移動
         float mouseX = 

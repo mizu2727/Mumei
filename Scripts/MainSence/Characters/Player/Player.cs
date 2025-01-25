@@ -16,11 +16,12 @@ public class Player : MonoBehaviour
     [SerializeField] int HP = 1;//HP
     public bool isDead = false;//死亡判定
     public bool isMove = true;//移動判定
+    [SerializeField] public bool isHoldKey = false;
 
     Vector3 moveDirection = Vector3.zero;//移動方向
     Vector3 startPosition;//プレイヤーの初期位置
 
-    void Start()
+    private void Start()
     {
         //コンポーネントの取得
         characterConttroller = GetComponent<CharacterController>();
@@ -31,10 +32,10 @@ public class Player : MonoBehaviour
     }
 
 
-    void Update()
+    private void Update()
     {
         
-        if (isDead) return;
+      if (isDead) return;
 
 
         // 移動速度を取得。左Shiftキーを入力している間はダッシュ
@@ -63,6 +64,8 @@ public class Player : MonoBehaviour
         characterConttroller.Move(moveDirection  * Time.deltaTime);
 
         // 移動のアニメーション
-        animator.SetFloat("MoveSpeed", move.magnitude);
+        //animator.SetFloat("MoveSpeed", move.magnitude);
+
+        
     }
 }
