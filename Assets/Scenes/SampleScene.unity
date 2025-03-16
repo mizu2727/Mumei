@@ -246,9 +246,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4300004, guid: d557ab4a381fb044aa9e3ccc9981b24e, type: 3}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: roadPrefab
+      value: 
+      objectReference: {fileID: 100000, guid: eb558d9aa8c9bd04fbf6d5e26c414953, type: 3}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: wallPrefab
+      value: 
+      objectReference: {fileID: 100000, guid: eb558d9aa8c9bd04fbf6d5e26c414953, type: 3}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: mapMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 2a45119b6529db041a79e08b385c40de, type: 2}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: groundPrefab
+      value: 
+      objectReference: {fileID: 100000, guid: eb558d9aa8c9bd04fbf6d5e26c414953, type: 3}
     m_RemovedComponents:
     - {fileID: 2300000, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
     - {fileID: 3300000, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}

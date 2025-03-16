@@ -12,9 +12,8 @@ GameObject:
   - component: {fileID: 3300000}
   - component: {fileID: 2300000}
   - component: {fileID: 6497596}
-  - component: {fileID: 3884643055735143297}
   m_Layer: 0
-  m_Name: TestMap02
+  m_Name: TestMap02 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,37 +109,3 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300004, guid: d557ab4a381fb044aa9e3ccc9981b24e, type: 3}
---- !u!114 &3884643055735143297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4329815038dbf6748ab2e12df5ba75e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  meshFilter: {fileID: 3300000, guid: d557ab4a381fb044aa9e3ccc9981b24e, type: 3}
-  mesh: {fileID: 4300004, guid: d557ab4a381fb044aa9e3ccc9981b24e, type: 3}
-  width: 1
-  height: 1
-  meshRenderer: {fileID: 2300000, guid: d557ab4a381fb044aa9e3ccc9981b24e, type: 3}
-  mapMaterial: {fileID: 0}
-  WallSetting:
-    color: {r: 0, g: 0, b: 0, a: 0}
-    size: {x: 50, y: 10, z: 50}
-  GroundSetting:
-    color: {r: 0, g: 0, b: 0, a: 0}
-    size: {x: 50, y: 1, z: 50}
-  RoadSetting:
-    color: {r: 0, g: 0, b: 0, a: 0}
-    size: {x: 50, y: 1, z: 50}
-  groundPrefab: {fileID: 0}
-  wallPrefab: {fileID: 0}
-  roadPrefab: {fileID: 0}
-  defaultPosition: {x: 0, y: 0, z: 0}
-  mapSizeW: 100
-  mapSizeH: 100
-  roomNum: 20

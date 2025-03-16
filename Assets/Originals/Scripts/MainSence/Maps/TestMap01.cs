@@ -20,6 +20,12 @@ public class TestMap01 : MonoBehaviour
     [SerializeField] ObjectState GroundSetting;//地面の色とサイズを指定
     [SerializeField] ObjectState RoadSetting;//道の色とサイズを指定
 
+
+    [SerializeField] GameObject groundPrefab;//地面のプレハブ
+    [SerializeField] GameObject wallPrefab;//地面のプレハブ
+    [SerializeField] GameObject roadPrefab;//廊下のプレハブ
+
+
     [SerializeField] Vector3 defaultPosition;//マップを生成する初期位置を指定
 
     [Serializable]
@@ -84,70 +90,29 @@ public class TestMap01 : MonoBehaviour
         objectParents = new GameObject[] { groundParent, wallParent, roadParent };
 
 
-        //
-        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshRenderer.sharedMaterial = 
-            new Material(Shader.Find("Universal Render Pipeline/Lit"));
-
-        meshRenderer.material = mapMaterial;
-
-        MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-
-        Mesh mesh = new Mesh();
-
-        Vector3[] vertices = new Vector3[4]
-        {
-            new Vector3(0, 0, 0),
-            new Vector3(width, 0, 0),
-            new Vector3(0, height, 0),
-            new Vector3(width, height, 0)
-        };
-        mesh.vertices = vertices;
-
-        int[] tris = new int[6]
-        {
-            // 左下の三角形
-            0, 2, 1,
-            // 右上の三角形
-            2, 3, 1
-        };
-        mesh.triangles = tris;
-
-        Vector3[] normals = new Vector3[4]
-        {
-            -Vector3.forward,
-            -Vector3.forward,
-            -Vector3.forward,
-            -Vector3.forward
-        };
-        mesh.normals = normals;
-
-        Vector2[] uv = new Vector2[4]
-        {
-            new Vector2(0, 0),
-            new Vector2(1, 0),
-            new Vector2(0, 1),
-            new Vector2(1, 1)
-        };
-        mesh.uv = uv;
-
-        meshFilter.mesh = mesh;
-
-
         // 迷路オブジェクトの初期化
-        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+        //地面の生成
+        GameObject ground = Instantiate(groundPrefab);  
         ground.transform.localScale = GroundSetting.size;
         ground.GetComponent<Renderer>().material.color = GroundSetting.color;
         ground.name = "ground";
         ground.transform.SetParent(objectParents[(int)objectType.ground].transform);
 
-        GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+        //壁の生成
+        //GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+        GameObject wall = Instantiate(wallPrefab);
         wall.transform.localScale = WallSetting.size;
         wall.GetComponent<Renderer>().material.color = WallSetting.color;
         wall.name = "wall";
         wall.transform.SetParent(objectParents[(int)objectType.wall].transform);
 
-        GameObject road = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        //廊下の生成
+        //GameObject road = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+        GameObject road = Instantiate(roadPrefab);
         road.transform.localScale = RoadSetting.size;
         road.GetComponent<Renderer>().material.color = RoadSetting.color;
         road.name = "road";
