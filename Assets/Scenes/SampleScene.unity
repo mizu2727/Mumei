@@ -246,13 +246,25 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4300004, guid: d557ab4a381fb044aa9e3ccc9981b24e, type: 3}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: roomNum
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: mapSizeH
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: mapSizeW
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: roadPrefab
       value: 
-      objectReference: {fileID: 100000, guid: eb558d9aa8c9bd04fbf6d5e26c414953, type: 3}
+      objectReference: {fileID: 4268783740673020025, guid: 3008567e1b4e3f44c9ebbe240cde3a63, type: 3}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: wallPrefab
       value: 
-      objectReference: {fileID: 100000, guid: eb558d9aa8c9bd04fbf6d5e26c414953, type: 3}
+      objectReference: {fileID: 4268783740673020025, guid: 77d40430f9e0f7a4d8f0162a0a51fcf8, type: 3}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: mapMaterial
       value: 
@@ -260,7 +272,55 @@ PrefabInstance:
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: groundPrefab
       value: 
-      objectReference: {fileID: 100000, guid: eb558d9aa8c9bd04fbf6d5e26c414953, type: 3}
+      objectReference: {fileID: 4268783740673020025, guid: cc22cf12bfab46c4bb30ff5fd323cf7f, type: 3}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: RoadSetting.size.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: RoadSetting.size.z
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: WallSetting.size.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: WallSetting.size.y
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: RoadSetting.color.b
+      value: 0.690566
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: RoadSetting.color.g
+      value: 0.3349931
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: RoadSetting.color.r
+      value: 0.19674617
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: WallSetting.color.b
+      value: 0.096226394
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: WallSetting.color.g
+      value: 0.096226394
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: WallSetting.color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: GroundSetting.size.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: GroundSetting.size.z
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2300000, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
     - {fileID: 3300000, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
