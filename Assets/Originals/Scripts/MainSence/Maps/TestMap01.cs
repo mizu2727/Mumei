@@ -9,24 +9,35 @@ public class TestMap01 : MonoBehaviour
     [SerializeField] MeshFilter meshFilter;
     [SerializeField] Mesh mesh;
 
+    
     [SerializeField] float width = 1;
     [SerializeField] float height = 1;
     [SerializeField] MeshRenderer meshRenderer;
 
+    
     [SerializeField] Material mapMaterial;
 
 
+    //ステージの見た目の色とサイズを指定する
     [SerializeField] ObjectState WallSetting;//壁の色とサイズを指定
     [SerializeField] ObjectState GroundSetting;//地面の色とサイズを指定
     [SerializeField] ObjectState RoadSetting;//道の色とサイズを指定
 
-
+    //ステージのプレハブを指定する
     [SerializeField] GameObject groundPrefab;//地面のプレハブ
     [SerializeField] GameObject wallPrefab;//地面のプレハブ
     [SerializeField] GameObject roadPrefab;//廊下のプレハブ
 
-
+    //マップ生成の初期位置を指定する
     [SerializeField] Vector3 defaultPosition;//マップを生成する初期位置を指定
+
+
+    //アイテムの生成位置を指定
+    [SerializeField] public GameObject itemPrefab;//アイテムプレハブ
+    [SerializeField] public Vector3 roomCenter;//部屋の中心の位置
+    [SerializeField] public Vector3 roomSize;//部屋のサイズ 
+
+
 
     [Serializable]
     class ObjectState
@@ -101,8 +112,6 @@ public class TestMap01 : MonoBehaviour
 
 
         //壁の生成
-        //GameObject wall = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
         GameObject wall = Instantiate(wallPrefab);
         wall.transform.localScale = WallSetting.size;
         wall.GetComponent<Renderer>().material.color = WallSetting.color;
@@ -110,8 +119,6 @@ public class TestMap01 : MonoBehaviour
         wall.transform.SetParent(objectParents[(int)objectType.wall].transform);
 
         //廊下の生成
-        //GameObject road = GameObject.CreatePrimitive(PrimitiveType.Cube);
-
         GameObject road = Instantiate(roadPrefab);
         road.transform.localScale = RoadSetting.size;
         road.GetComponent<Renderer>().material.color = RoadSetting.color;
@@ -425,6 +432,9 @@ public class TestMap01 : MonoBehaviour
                             defaultPosition.y,
                             defaultPosition.z + nowH * mapObjects[map[nowW, nowH]].transform.localScale.z),
                         Quaternion.identity, objectParents[map[nowW, nowH]].transform);
+
+                    //アイテムの生成
+                    PlaceItemInRoom();
                 }
 
                 // 通路の生成
@@ -459,5 +469,22 @@ public class TestMap01 : MonoBehaviour
             return false;
         }
     }
+
+    //アイテムの生成
+    void PlaceItemInRoom()
+    {
+        Debug.Log("アイテム生成");
+
+        // Random position inside the room's bounds
+        float x = Random.Range(roomCenter.x - roomSize.x / 2, roomCenter.x + roomSize.x / 2);
+        float y = roomCenter.y;  // You may want to fix the Y position or use a range if needed
+        float z = Random.Range(roomCenter.z - roomSize.z / 2, roomCenter.z + roomSize.z / 2);
+
+        Vector3 itemPosition = new Vector3(x, y, z);
+
+        // Instantiate the item at the chosen position
+        Instantiate(itemPrefab, itemPosition, Quaternion.identity);
+    }
+
 
 }

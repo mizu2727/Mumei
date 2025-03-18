@@ -258,9 +258,25 @@ PrefabInstance:
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: itemPrefab
+      value: 
+      objectReference: {fileID: 2907964356453082231, guid: 9ce9b7e5f22f5434c8404f8239c9d0f1, type: 3}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: roadPrefab
       value: 
       objectReference: {fileID: 4268783740673020025, guid: 3008567e1b4e3f44c9ebbe240cde3a63, type: 3}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: roomSize.x
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: roomSize.y
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: roomSize.z
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: wallPrefab
       value: 
