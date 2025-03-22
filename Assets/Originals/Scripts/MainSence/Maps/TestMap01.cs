@@ -36,6 +36,8 @@ public class TestMap01 : MonoBehaviour
     [SerializeField] public GameObject itemPrefab;//アイテムプレハブ
     [SerializeField] public Vector3 roomCenter;//部屋の中心の位置
     [SerializeField] public Vector3 roomSize;//部屋のサイズ 
+    [SerializeField] public int itemGenerateNum = 5;//アイテム生成数
+
 
 
 
@@ -432,9 +434,6 @@ public class TestMap01 : MonoBehaviour
                             defaultPosition.y,
                             defaultPosition.z + nowH * mapObjects[map[nowW, nowH]].transform.localScale.z),
                         Quaternion.identity, objectParents[map[nowW, nowH]].transform);
-
-                    //アイテムの生成
-                    PlaceItemInRoom();
                 }
 
                 // 通路の生成
@@ -452,6 +451,25 @@ public class TestMap01 : MonoBehaviour
             }
         }
 
+
+        // 部屋内にアイテム生成
+        //アイテムプレハブにColliderがついている必要がある
+        for (int i = 0; i < itemGenerateNum; i++)
+        {
+            Vector3 center = new Vector3(
+                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, i] + roomStatus[(int)RoomStatus.rw, i] / 2.0f) * GroundSetting.size.x,
+                defaultPosition.y,
+                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, i] + roomStatus[(int)RoomStatus.rh, i] / 2.0f) * GroundSetting.size.z
+            );
+
+            Vector3 size = new Vector3(
+                roomStatus[(int)RoomStatus.rw, i] * GroundSetting.size.x,
+                GroundSetting.size.y,
+                roomStatus[(int)RoomStatus.rh, i] * GroundSetting.size.z
+            );
+
+            PlaceItemInRoom(center, size);
+        }
     }
 
     // 分割点のセット(int x, int y)、大きい方を分割する
@@ -471,19 +489,42 @@ public class TestMap01 : MonoBehaviour
     }
 
     //アイテムの生成
-    void PlaceItemInRoom()
+    void PlaceItemInRoom(Vector3 roomCenter, Vector3 roomSize)
     {
+
         Debug.Log("アイテム生成");
 
-        // Random position inside the room's bounds
-        float x = Random.Range(roomCenter.x - roomSize.x / 2, roomCenter.x + roomSize.x / 2);
-        float y = roomCenter.y;  // You may want to fix the Y position or use a range if needed
-        float z = Random.Range(roomCenter.z - roomSize.z / 2, roomCenter.z + roomSize.z / 2);
 
-        Vector3 itemPosition = new Vector3(x, y, z);
+        // 壁から1m離す
+        float margin = 1.0f;
 
-        // Instantiate the item at the chosen position
-        Instantiate(itemPrefab, itemPosition, Quaternion.identity);
+        // 部屋の中のランダムな位置を取得
+        float x = 
+            Random.Range(roomCenter.x - roomSize.x / 2 + margin, 
+            roomCenter.x + roomSize.x / 2 - margin);
+
+        float z = 
+            Random.Range(roomCenter.z - roomSize.z / 2 + margin, 
+            roomCenter.z + roomSize.z / 2 - margin);
+
+        // 空中からRaycastを飛ばすため地面から少し浮かせる
+        float y = roomCenter.y + 5.0f;
+
+
+        Vector3 spawnPosinon = new Vector3(x, y, z);
+
+        // レイキャストで地面の高さを検出
+        if (Physics.Raycast(spawnPosinon, Vector3.down, out RaycastHit hit, 10f))
+        {
+            Vector3 finalPos = 
+                hit.point + Vector3.up * (itemPrefab.transform.localScale.y * 0.5f + 0.05f);
+
+            Instantiate(itemPrefab, finalPos, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning("地面が見つからなかったためアイテムは生成されませんでした");
+        }
     }
 
 

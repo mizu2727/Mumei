@@ -1,0 +1,37 @@
+using UnityEngine;
+
+interface CharacterInterface
+{
+    //アニメーション再生
+    Animator PlayAnimator { get; set; }
+
+    //名前
+    string CharacterName { get; set; }
+
+    //通常の移動速度
+    float NormalSpeed { get; set; }
+
+    //ダッシュ時の移動速度
+    float SprintSpeed { get; set; }
+
+    //重力
+    float Gravity { get; set; }
+
+    //HP
+    int HP { get; set; }
+
+    //死亡判定
+    bool IsDead { get; set; }
+
+    //死亡
+    void Dead();
+
+    //移動判定
+    bool IsMove { get; set; }
+
+    //攻撃
+    void Attack();
+
+    //キャラクターの初期位置
+    Vector3 StartPosition { get; set; }
+}

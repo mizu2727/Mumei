@@ -3,43 +3,116 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, CharacterInterface
 {
+
     CharacterController characterConttroller;
-    Animator animator　= null;
 
-    [SerializeField] string playerName;//名前
+    private Animator animator;
+    public Animator PlayAnimator
+    {
+        get => animator;
+        set => animator = value;
+    }
+
+    [SerializeField] private string playerName;
+
+    [SerializeField]
+    public string CharacterName
+    {
+        get => playerName;
+        set => playerName = value;
+    }
+
+    [SerializeField] private float Speed  = 3f;
+    [SerializeField]
+    public float NormalSpeed
+    {
+        get => Speed;
+        set => Speed = value;
+    }
+
+    [SerializeField] private float dashSpeed = 5f;
+    [SerializeField]
+    public float SprintSpeed
+    {
+        get => dashSpeed;
+        set => dashSpeed = value;
+    }
+
+    [SerializeField] private float playerGravity = 10f;
+    [SerializeField]
+    public float Gravity
+    {
+        get => playerGravity;
+        set => playerGravity = value;
+    }
+
+    [SerializeField] private int playerHP = 1;
+    [SerializeField]
+    public int HP
+    {
+        get => playerHP;
+        set => playerHP = value;
+    }
+
+    [SerializeField] private bool playerIsDead = false;
+    [SerializeField]
+    public bool IsDead
+    {
+        get => playerIsDead;
+        set => playerIsDead = value;
+    }
+
+    [SerializeField] private bool playerIsMove = true;
+    [SerializeField]
+    public bool IsMove
+    {
+        get => playerIsMove;
+        set => playerIsMove = value;
+    }
+
+    public void Dead()
+    {
+        Destroy(gameObject);
+    }
+
+    public void Attack()
+    {
+        Debug.Log("Player Attack!");
+    }
+
+    [SerializeField] private Vector3 playerStartPosition;
+    [SerializeField]
+    public Vector3 StartPosition
+    {
+        get => playerStartPosition;
+        set => playerStartPosition = value;
+    }
+
     [SerializeField] string aliasName = "イフ";//仮の名前
-    [SerializeField] float normalSpeed = 3f; // 通常時の移動速度
-    [SerializeField] float sprintSpeed = 5f; // ダッシュ時の移動速度
-    [SerializeField] float gravity = 10f;    // 重力の大きさ
-    [SerializeField] int HP = 1;//HP
-    public bool isDead = false;//死亡判定
-    public bool isMove = true;//移動判定
     [SerializeField] public bool isHoldKey = false;
-
     Vector3 moveDirection = Vector3.zero;//移動方向
-    Vector3 startPosition;//プレイヤーの初期位置
 
     private void Start()
     {
         //コンポーネントの取得
         characterConttroller = GetComponent<CharacterController>();
-        animator = GetComponent<Animator>();
+        PlayAnimator = GetComponent<Animator>();
 
         //プレイヤーの初期位置
-        startPosition = transform.position;
+        playerStartPosition = transform.position;
     }
 
 
     private void Update()
     {
         
-      if (isDead) return;
+      if (playerIsDead) return;
 
 
         // 移動速度を取得。左Shiftキーを入力している間はダッシュ
-        float speed = Input.GetKey(KeyCode.LeftShift) ? sprintSpeed : normalSpeed;
+        float speed = Input.GetKey(KeyCode.LeftShift) ? SprintSpeed : NormalSpeed;
 
         // 前後左右の入力から、移動のためのベクトルを計算
         float moveX = Input.GetAxis("Horizontal");
@@ -57,7 +130,7 @@ public class Player : MonoBehaviour
         {
             // 重力を効かせる
             moveDirection = move + new Vector3(0, moveDirection.y, 0);
-            moveDirection.y -= gravity * Time.deltaTime;
+            moveDirection.y -= Gravity * Time.deltaTime;
         }
 
         // Move は指定したベクトルだけ移動させる命令
