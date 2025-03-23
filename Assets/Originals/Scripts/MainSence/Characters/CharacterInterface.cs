@@ -14,6 +14,9 @@ interface CharacterInterface
     //ダッシュ時の移動速度
     float SprintSpeed { get; set; }
 
+    //キャラクター検出範囲
+    float DetectionRange { get; set; }
+
     //重力
     float Gravity { get; set; }
 

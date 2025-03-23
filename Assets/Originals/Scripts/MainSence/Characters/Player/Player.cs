@@ -40,6 +40,14 @@ public class Player : MonoBehaviour, CharacterInterface
         set => dashSpeed = value;
     }
 
+    [SerializeField] private float playerDetectionRange = 10f;
+    [SerializeField]
+    public float DetectionRange
+    {
+        get => playerDetectionRange;
+        set => playerDetectionRange = value;
+    }
+
     [SerializeField] private float playerGravity = 10f;
     [SerializeField]
     public float Gravity
