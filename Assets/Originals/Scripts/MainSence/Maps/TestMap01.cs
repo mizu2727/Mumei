@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
+using UnityEngine.AI;
+using Unity.AI.Navigation;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class TestMap01 : MonoBehaviour
 {
@@ -39,6 +45,13 @@ public class TestMap01 : MonoBehaviour
     [SerializeField] public int itemGenerateNum = 5;//アイテム生成数
 
 
+    //敵の生成位置を指定
+    [SerializeField] public GameObject enemyPrefab;//アイテムプレハブ
+    [SerializeField] public int enemyGenerateNum = 2;//アイテム生成数
+
+
+    private NavMeshSurface groundSurface;
+    private NavMeshSurface roadSurface;
 
 
     [Serializable]
@@ -99,7 +112,26 @@ public class TestMap01 : MonoBehaviour
         GameObject wallParent = new GameObject("Wall");
         GameObject roadParent = new GameObject("Road");
 
-        // 配列にプレハブを入れる
+
+        // GroundにNavMeshSurface追加
+        groundSurface = groundParent.AddComponent<NavMeshSurface>();
+        groundSurface.collectObjects = CollectObjects.Children;
+
+        #if UNITY_EDITOR
+        GameObjectUtility.SetStaticEditorFlags(groundParent, 
+            StaticEditorFlags.NavigationStatic);
+        #endif
+
+        // RoadにNavMeshSurface追加
+        roadSurface = roadParent.AddComponent<NavMeshSurface>();
+        roadSurface.collectObjects = CollectObjects.Children;
+        #if UNITY_EDITOR
+        GameObjectUtility.SetStaticEditorFlags(roadParent, 
+            StaticEditorFlags.NavigationStatic);
+        #endif
+
+
+        // 配列に親オブジェクトを入れる
         objectParents = new GameObject[] { groundParent, wallParent, roadParent };
 
 
@@ -110,7 +142,8 @@ public class TestMap01 : MonoBehaviour
         ground.transform.localScale = GroundSetting.size;
         ground.GetComponent<Renderer>().material.color = GroundSetting.color;
         ground.name = "ground";
-        ground.transform.SetParent(objectParents[(int)objectType.ground].transform);
+        //ground.transform.SetParent(objectParents[(int)objectType.ground].transform);
+        ground.transform.SetParent(groundParent.transform);
 
 
         //壁の生成
@@ -118,14 +151,23 @@ public class TestMap01 : MonoBehaviour
         wall.transform.localScale = WallSetting.size;
         wall.GetComponent<Renderer>().material.color = WallSetting.color;
         wall.name = "wall";
-        wall.transform.SetParent(objectParents[(int)objectType.wall].transform);
+        //wall.transform.SetParent(objectParents[(int)objectType.wall].transform);
+        wall.transform.SetParent(wallParent.transform);
+
 
         //廊下の生成
         GameObject road = Instantiate(roadPrefab);
         road.transform.localScale = RoadSetting.size;
         road.GetComponent<Renderer>().material.color = RoadSetting.color;
         road.name = "road";
-        road.transform.SetParent(objectParents[(int)objectType.road].transform);
+        //road.transform.SetParent(objectParents[(int)objectType.road].transform);
+        road.transform.SetParent(roadParent.transform);
+
+
+        // WallオブジェクトにNavMeshObstacle追加＆Carve有効化
+        var navObstacle = wall.AddComponent<NavMeshObstacle>();
+        navObstacle.carving = true;
+
 
         // 配列にプレハブを入れる
         mapObjects = new GameObject[] { ground, wall, road };
@@ -470,6 +512,11 @@ public class TestMap01 : MonoBehaviour
 
             PlaceItemInRoom(center, size);
         }
+
+
+        // NavMeshのBakeを実行
+        groundSurface.BuildNavMesh();
+        roadSurface.BuildNavMesh();
     }
 
     // 分割点のセット(int x, int y)、大きい方を分割する

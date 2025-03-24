@@ -1282,13 +1282,13 @@
       <Project>{4B82D8C6-615F-7A79-3EDB-0A01129C58DC}</Project>
       <Name>Unity.Rider.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="Unity.Animation.Rigging.Editor.csproj">
-      <Project>{A9FF8562-57A1-C9A3-47B3-D1CBE6F47B62}</Project>
-      <Name>Unity.Animation.Rigging.Editor</Name>
-    </ProjectReference>
     <ProjectReference Include="Unity.AI.Navigation.csproj">
       <Project>{E36DA6C3-ED4A-5E67-11C6-A32E94537D52}</Project>
       <Name>Unity.AI.Navigation</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.Animation.Rigging.Editor.csproj">
+      <Project>{A9FF8562-57A1-C9A3-47B3-D1CBE6F47B62}</Project>
+      <Name>Unity.Animation.Rigging.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.Timeline.Editor.csproj">
       <Project>{331EB096-B3CD-F3D1-7014-83C4B73E30EE}</Project>
@@ -1354,17 +1354,17 @@
       <Project>{43E37980-7758-71B7-2E84-C18296DAA93D}</Project>
       <Name>Unity.VisualScripting.State.Editor</Name>
     </ProjectReference>
-    <ProjectReference Include="Unity.Mathematics.csproj">
-      <Project>{26F4C751-5543-9B58-C240-064DAE239867}</Project>
-      <Name>Unity.Mathematics</Name>
+    <ProjectReference Include="Unity.AI.Navigation.Editor.csproj">
+      <Project>{3B2A5C68-5848-3C45-6383-FFFB10F00FD9}</Project>
+      <Name>Unity.AI.Navigation.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Cinemachine.csproj">
       <Project>{905F7AA7-89B7-F9FE-760B-2E2D3378CA60}</Project>
       <Name>Cinemachine</Name>
     </ProjectReference>
-    <ProjectReference Include="Unity.AI.Navigation.Editor.csproj">
-      <Project>{3B2A5C68-5848-3C45-6383-FFFB10F00FD9}</Project>
-      <Name>Unity.AI.Navigation.Editor</Name>
+    <ProjectReference Include="Unity.Mathematics.csproj">
+      <Project>{26F4C751-5543-9B58-C240-064DAE239867}</Project>
+      <Name>Unity.Mathematics</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.State.csproj">
       <Project>{2B3589DB-4875-60E9-9150-7BB0A9F07FDD}</Project>

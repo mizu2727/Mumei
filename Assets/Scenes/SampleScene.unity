@@ -247,7 +247,7 @@ PrefabInstance:
       objectReference: {fileID: 4300004, guid: d557ab4a381fb044aa9e3ccc9981b24e, type: 3}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: roomNum
-      value: 10
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: mapSizeH
