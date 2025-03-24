@@ -141,8 +141,7 @@ public class TestMap01 : MonoBehaviour
         GameObject ground = Instantiate(groundPrefab);  
         ground.transform.localScale = GroundSetting.size;
         ground.GetComponent<Renderer>().material.color = GroundSetting.color;
-        ground.name = "ground";
-        //ground.transform.SetParent(objectParents[(int)objectType.ground].transform);
+        ground.name = "ground";        
         ground.transform.SetParent(groundParent.transform);
 
 
@@ -151,7 +150,6 @@ public class TestMap01 : MonoBehaviour
         wall.transform.localScale = WallSetting.size;
         wall.GetComponent<Renderer>().material.color = WallSetting.color;
         wall.name = "wall";
-        //wall.transform.SetParent(objectParents[(int)objectType.wall].transform);
         wall.transform.SetParent(wallParent.transform);
 
 
@@ -160,7 +158,6 @@ public class TestMap01 : MonoBehaviour
         road.transform.localScale = RoadSetting.size;
         road.GetComponent<Renderer>().material.color = RoadSetting.color;
         road.name = "road";
-        //road.transform.SetParent(objectParents[(int)objectType.road].transform);
         road.transform.SetParent(roadParent.transform);
 
 
@@ -493,10 +490,13 @@ public class TestMap01 : MonoBehaviour
             }
         }
 
+        int saveRoomNumber = roomNum;
+
+        roomNum = itemGenerateNum;　
 
         // 部屋内にアイテム生成
         //アイテムプレハブにColliderがついている必要がある
-        for (int i = 0; i < itemGenerateNum; i++)
+        for (int i = 0; i < roomNum; i++)
         {
             Vector3 center = new Vector3(
                 defaultPosition.x + (roomStatus[(int)RoomStatus.rx, i] + roomStatus[(int)RoomStatus.rw, i] / 2.0f) * GroundSetting.size.x,
