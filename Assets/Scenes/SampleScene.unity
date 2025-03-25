@@ -282,6 +282,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4268783740673020025, guid: 77d40430f9e0f7a4d8f0162a0a51fcf8, type: 3}
     - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
+      propertyPath: enemyPrefab
+      value: 
+      objectReference: {fileID: 5348626555388503888, guid: 681dab3fc26f6d04699cee4467c301d7, type: 3}
+    - target: {fileID: 3884643055735143297, guid: e3fd54f98e0e0d54e90eeb8f73c71b26, type: 3}
       propertyPath: mapMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 2a45119b6529db041a79e08b385c40de, type: 2}
@@ -1039,7 +1043,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4457891807626682032, guid: 681dab3fc26f6d04699cee4467c301d7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.1855078
+      value: 1.22
       objectReference: {fileID: 0}
     - target: {fileID: 4457891807626682032, guid: 681dab3fc26f6d04699cee4467c301d7, type: 3}
       propertyPath: m_LocalPosition.z

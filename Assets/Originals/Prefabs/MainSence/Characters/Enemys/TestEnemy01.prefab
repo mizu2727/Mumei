@@ -124,6 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: -3777981246576777323, guid: ca6b4068ed0259f4eac400d4e3d4a3e3, type: 3}
   tagetPoint: {fileID: 7422066177149152, guid: ca6b4068ed0259f4eac400d4e3d4a3e3, type: 3}
+  patrolPoint: []
   enemyName: 
   Speed: 4
   dashSpeed: 5

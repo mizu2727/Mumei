@@ -492,7 +492,7 @@ public class TestMap01 : MonoBehaviour
 
         int saveRoomNumber = roomNum;
 
-        roomNum = itemGenerateNum;　
+        roomNum = itemGenerateNum;
 
         // 部屋内にアイテム生成
         //アイテムプレハブにColliderがついている必要がある
@@ -511,6 +511,28 @@ public class TestMap01 : MonoBehaviour
             );
 
             PlaceItemInRoom(center, size);
+        }
+
+
+        roomNum = enemyGenerateNum;
+
+        // 部屋内に敵生成
+        //敵プレハブにColliderがついている必要がある
+        for (int i = 0; i < roomNum; i++)
+        {
+            Vector3 center = new Vector3(
+                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, i] + roomStatus[(int)RoomStatus.rw, i] / 2.0f) * GroundSetting.size.x,
+                defaultPosition.y,
+                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, i] + roomStatus[(int)RoomStatus.rh, i] / 2.0f) * GroundSetting.size.z
+            );
+
+            Vector3 size = new Vector3(
+                roomStatus[(int)RoomStatus.rw, i] * GroundSetting.size.x,
+                GroundSetting.size.y,
+                roomStatus[(int)RoomStatus.rh, i] * GroundSetting.size.z
+            );
+
+            PlaceEnemyInRoom(center, size);
         }
 
 
@@ -574,5 +596,45 @@ public class TestMap01 : MonoBehaviour
         }
     }
 
+
+
+    //敵の生成
+    void PlaceEnemyInRoom(Vector3 roomCenter, Vector3 roomSize)
+    {
+
+        Debug.Log("敵生成");
+
+
+        // 壁から1m離す
+        float margin = 1.0f;
+
+        // 部屋の中のランダムな位置を取得
+        float x =
+            Random.Range(roomCenter.x - roomSize.x / 2 + margin,
+            roomCenter.x + roomSize.x / 2 - margin);
+
+        float z =
+            Random.Range(roomCenter.z - roomSize.z / 2 + margin,
+            roomCenter.z + roomSize.z / 2 - margin);
+
+        // 空中からRaycastを飛ばすため地面から少し浮かせる
+        float y = roomCenter.y + 5.0f;
+
+
+        Vector3 spawnPosinon = new Vector3(x, y, z);
+
+        // レイキャストで地面の高さを検出
+        if (Physics.Raycast(spawnPosinon, Vector3.down, out RaycastHit hit, 10f))
+        {
+            Vector3 finalPos =
+                hit.point + Vector3.up * (enemyPrefab.transform.localScale.y * 0.5f + 0.05f);
+
+            Instantiate(enemyPrefab, finalPos, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning("地面が見つからなかったため敵は生成されませんでした");
+        }
+    }
 
 }
