@@ -39,15 +39,21 @@ public class TestMap01 : MonoBehaviour
 
 
     //アイテムの生成位置を指定
-    [SerializeField] public GameObject itemPrefab;//アイテムプレハブ
+    [Header("アイテムの設定")]
+    [SerializeField] private List<GameObject> itemPrefabs; // 複数のアイテムプレハブ
+    [SerializeField] private List<int> itemGenerateNums;   // 各アイテムの生成数
     [SerializeField] public Vector3 roomCenter;//部屋の中心の位置
     [SerializeField] public Vector3 roomSize;//部屋のサイズ 
-    [SerializeField] public int itemGenerateNum = 5;//アイテム生成数
+
+
+    //徘徊地点の生成位置を指定
+    [SerializeField] public Transform[] patrolPoint;
+    public bool isGeneratePatrolPoint = false;
 
 
     //敵の生成位置を指定
-    [SerializeField] public GameObject enemyPrefab;//アイテムプレハブ
-    [SerializeField] public int enemyGenerateNum = 2;//アイテム生成数
+    [SerializeField] private List<GameObject> enemyPrefabs; // 複数の敵プレハブ
+    [SerializeField] private List<int> enemyGenerateNums;   // 各敵の生成数
 
 
     private NavMeshSurface groundSurface;
@@ -99,9 +105,15 @@ public class TestMap01 : MonoBehaviour
     private const int offsetWall = 2;   // 壁から離す距離
     private const int offset = 1;       // 調整用
 
-    void Start()
+
+    BaseEnemy baseEnemy;
+
+    void Awake()
     {
         MapGenerate();
+        Debug.Log("マップ生成");
+        baseEnemy.Patrol();
+        //isGeneratePatrolPoint = true;
     }
 
     // 生成用のオブジェクトを用意
@@ -490,50 +502,29 @@ public class TestMap01 : MonoBehaviour
             }
         }
 
-        int saveRoomNumber = roomNum;
-
-        roomNum = itemGenerateNum;
-
-        // 部屋内にアイテム生成
-        //アイテムプレハブにColliderがついている必要がある
+        //俳諧地点を生成
         for (int i = 0; i < roomNum; i++)
         {
-            Vector3 center = new Vector3(
-                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, i] + roomStatus[(int)RoomStatus.rw, i] / 2.0f) * GroundSetting.size.x,
-                defaultPosition.y,
-                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, i] + roomStatus[(int)RoomStatus.rh, i] / 2.0f) * GroundSetting.size.z
-            );
-
-            Vector3 size = new Vector3(
-                roomStatus[(int)RoomStatus.rw, i] * GroundSetting.size.x,
-                GroundSetting.size.y,
-                roomStatus[(int)RoomStatus.rh, i] * GroundSetting.size.z
-            );
-
-            PlaceItemInRoom(center, size);
+            GeneratePatrolPointInRooms(patrolPoint[i], roomNum);
         }
 
 
-        roomNum = enemyGenerateNum;
 
-        // 部屋内に敵生成
+        //敵を生成
         //敵プレハブにColliderがついている必要がある
-        for (int i = 0; i < roomNum; i++)
+        for (int i = 0; i < enemyPrefabs.Count; i++)
         {
-            Vector3 center = new Vector3(
-                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, i] + roomStatus[(int)RoomStatus.rw, i] / 2.0f) * GroundSetting.size.x,
-                defaultPosition.y,
-                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, i] + roomStatus[(int)RoomStatus.rh, i] / 2.0f) * GroundSetting.size.z
-            );
-
-            Vector3 size = new Vector3(
-                roomStatus[(int)RoomStatus.rw, i] * GroundSetting.size.x,
-                GroundSetting.size.y,
-                roomStatus[(int)RoomStatus.rh, i] * GroundSetting.size.z
-            );
-
-            PlaceEnemyInRoom(center, size);
+            GenerateObjectsInRooms(enemyPrefabs[i], enemyGenerateNums[i]);
         }
+
+
+        //アイテムを生成
+        //アイテムプレハブにColliderがついている必要がある
+        for (int i = 0; i < itemPrefabs.Count; i++)
+        {
+            GenerateObjectsInRooms(itemPrefabs[i], itemGenerateNums[i]);
+        }
+
 
 
         // NavMeshのBakeを実行
@@ -557,52 +548,57 @@ public class TestMap01 : MonoBehaviour
         }
     }
 
-    //アイテムの生成
-    void PlaceItemInRoom(Vector3 roomCenter, Vector3 roomSize)
+    //
+    private void GeneratePatrolPointInRooms(Transform patrolPoint, int generateNum)
     {
-
-        Debug.Log("アイテム生成");
-
-
-        // 壁から1m離す
-        float margin = 1.0f;
-
-        // 部屋の中のランダムな位置を取得
-        float x = 
-            Random.Range(roomCenter.x - roomSize.x / 2 + margin, 
-            roomCenter.x + roomSize.x / 2 - margin);
-
-        float z = 
-            Random.Range(roomCenter.z - roomSize.z / 2 + margin, 
-            roomCenter.z + roomSize.z / 2 - margin);
-
-        // 空中からRaycastを飛ばすため地面から少し浮かせる
-        float y = roomCenter.y + 5.0f;
-
-
-        Vector3 spawnPosinon = new Vector3(x, y, z);
-
-        // レイキャストで地面の高さを検出
-        if (Physics.Raycast(spawnPosinon, Vector3.down, out RaycastHit hit, 10f))
+        for (int i = 0; i < generateNum; i++)
         {
-            Vector3 finalPos = 
-                hit.point + Vector3.up * (itemPrefab.transform.localScale.y * 0.5f + 0.05f);
+            // ランダムな部屋を選択
+            int roomIndex = Random.Range(0, roomStatus.GetLength(1));
+            Vector3 center = new Vector3(
+                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, roomIndex] + roomStatus[(int)RoomStatus.rw, roomIndex] / 2.0f) * GroundSetting.size.x,
+                defaultPosition.y,
+                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, roomIndex] + roomStatus[(int)RoomStatus.rh, roomIndex] / 2.0f) * GroundSetting.size.z
+            );
 
-            Instantiate(itemPrefab, finalPos, Quaternion.identity);
-        }
-        else
-        {
-            Debug.LogWarning("地面が見つからなかったためアイテムは生成されませんでした");
+            Vector3 size = new Vector3(
+                roomStatus[(int)RoomStatus.rw, roomIndex] * GroundSetting.size.x,
+                GroundSetting.size.y,
+                roomStatus[(int)RoomStatus.rh, roomIndex] * GroundSetting.size.z
+            );
+
+            PlacePatrolPointInRoom(patrolPoint, center, size);
         }
     }
 
+    //
+    private void GenerateObjectsInRooms(GameObject prefab, int generateNum)
+    {
+        for (int i = 0; i < generateNum; i++)
+        {
+            // ランダムな部屋を選択
+            int roomIndex = Random.Range(0, roomStatus.GetLength(1)); 
+            Vector3 center = new Vector3(
+                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, roomIndex] + roomStatus[(int)RoomStatus.rw, roomIndex] / 2.0f) * GroundSetting.size.x,
+                defaultPosition.y,
+                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, roomIndex] + roomStatus[(int)RoomStatus.rh, roomIndex] / 2.0f) * GroundSetting.size.z
+            );
 
+            Vector3 size = new Vector3(
+                roomStatus[(int)RoomStatus.rw, roomIndex] * GroundSetting.size.x,
+                GroundSetting.size.y,
+                roomStatus[(int)RoomStatus.rh, roomIndex] * GroundSetting.size.z
+            );
 
-    //敵の生成
-    void PlaceEnemyInRoom(Vector3 roomCenter, Vector3 roomSize)
+            PlaceObjectInRoom(prefab, center, size);
+        }
+    }
+
+    //俳諧地点を部屋内にランダム生成
+    void PlacePatrolPointInRoom(Transform patrolPoint, Vector3 roomCenter, Vector3 roomSize)
     {
 
-        Debug.Log("敵生成");
+        Debug.Log(patrolPoint + "生成");
 
 
         // 壁から1m離す
@@ -627,14 +623,58 @@ public class TestMap01 : MonoBehaviour
         if (Physics.Raycast(spawnPosinon, Vector3.down, out RaycastHit hit, 10f))
         {
             Vector3 finalPos =
-                hit.point + Vector3.up * (enemyPrefab.transform.localScale.y * 0.5f + 0.05f);
+                hit.point + Vector3.up * (patrolPoint.transform.localScale.y * 0.5f + 0.05f);
 
-            Instantiate(enemyPrefab, finalPos, Quaternion.identity);
+            Instantiate(patrolPoint, finalPos, Quaternion.identity);
         }
         else
         {
-            Debug.LogWarning("地面が見つからなかったため敵は生成されませんでした");
+            Debug.LogWarning("地面が見つからなかったため" + patrolPoint + "生成されませんでした");
         }
     }
+
+
+    //プレハブを部屋内にランダム生成
+    void PlaceObjectInRoom(GameObject prefab, Vector3 roomCenter, Vector3 roomSize)
+    {
+
+        Debug.Log(prefab + "生成");
+
+
+        // 壁から1m離す
+        float margin = 1.0f;
+
+        // 部屋の中のランダムな位置を取得
+        float x = 
+            Random.Range(roomCenter.x - roomSize.x / 2 + margin, 
+            roomCenter.x + roomSize.x / 2 - margin);
+
+        float z = 
+            Random.Range(roomCenter.z - roomSize.z / 2 + margin, 
+            roomCenter.z + roomSize.z / 2 - margin);
+
+        // 空中からRaycastを飛ばすため地面から少し浮かせる
+        float y = roomCenter.y + 5.0f;
+
+
+        Vector3 spawnPosinon = new Vector3(x, y, z);
+
+        // レイキャストで地面の高さを検出
+        if (Physics.Raycast(spawnPosinon, Vector3.down, out RaycastHit hit, 10f))
+        {
+            Vector3 finalPos = 
+                hit.point + Vector3.up * (prefab.transform.localScale.y * 0.5f + 0.05f);
+
+            Instantiate(prefab, finalPos, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning("地面が見つからなかったため"+ prefab + "生成されませんでした");
+        }
+    }
+
+
+
+    
 
 }

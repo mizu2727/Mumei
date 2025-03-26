@@ -12,7 +12,9 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
 
     //追従したいオブジェクト(Hieralchy内のオブジェクトをアタッチする)
     [SerializeField] public Transform tagetPoint;
-    public Transform[] patrolPoint;
+
+    //徘徊地点
+    TestMap01 testMap01;
     private int positionNumber = 0;
     private int maxPositionNumber;
 
@@ -122,6 +124,7 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
     {
         //追従用の目的地を設定
         navMeshAgent.SetDestination(tagetPoint.position);
+        Debug.Log("プレイヤー追従");
     }
 
     //次の俳諧地点を決める
@@ -129,22 +132,28 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
     {
         positionNumber = Random.Range(0, maxPositionNumber);
 
-        navMeshAgent.destination = patrolPoint[positionNumber].position;
+        navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
 
         Debug.Log("次の俳諧地点の要素番号は" + positionNumber);
     }
 
     void Start()
     {
+        
+    }
+
+    public void Patrol() 
+    {
         navMeshAgent = GetComponent<NavMeshAgent>();
-        navMeshAgent.destination = patrolPoint[positionNumber].position;
-        maxPositionNumber = patrolPoint.Length;
-        Debug.Log("最大の俳諧地点の要素番号は" + patrolPoint[maxPositionNumber - 1]);
+        navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
+        maxPositionNumber = testMap01.patrolPoint.Length;
+        Debug.Log("最大の俳諧地点の要素番号は" + testMap01.patrolPoint[maxPositionNumber - 1]);
+        testMap01.isGeneratePatrolPoint = true;
     }
 
     void Update()
     {
-        if (player.IsDead || player == null) return;
+        if (player.IsDead || player == null || !testMap01.isGeneratePatrolPoint) return;
 
         //プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, tagetPoint.position);
