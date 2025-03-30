@@ -143,7 +143,7 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         if (NavMesh.SamplePosition(targetPos, out hit, findPatrolPointRange, NavMesh.AllAreas)) 
         {
             navMeshAgent.destination = hit.position;
-            Debug.Log("目的地をNavMesh上に補正: " + hit.position);
+            //Debug.Log("目的地をNavMesh上に補正: " + hit.position);
         }
         else
         {
@@ -218,11 +218,11 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         }
         else
         {
-            Debug.Log($"現在地: {transform.position}");
-            Debug.Log($"目的地: {navMeshAgent.destination}");
-            Debug.Log($"目的地までの距離: {navMeshAgent.remainingDistance}");
-            Debug.Log($"移動速度: {navMeshAgent.velocity}");
-            Debug.Log($"NavMeshAgentの状態: {navMeshAgent.pathStatus}");
+            //Debug.Log($"現在地: {transform.position}");
+            //Debug.Log($"目的地: {navMeshAgent.destination}");
+            //Debug.Log($"目的地までの距離: {navMeshAgent.remainingDistance}");
+            //Debug.Log($"移動速度: {navMeshAgent.velocity}");
+            //Debug.Log($"NavMeshAgentの状態: {navMeshAgent.pathStatus}");
 
             //敵と俳諧地点の距離が指定の値の範囲内の場合の処理
             if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 0.5f)

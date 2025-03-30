@@ -13,11 +13,4 @@ MonoBehaviour:
   m_Name: SO_Item
   m_EditorClassIdentifier: 
   itemList:
-  - id: 0
-    prefab: {fileID: 0}
-    icon: {fileID: 0}
-    itemType: 0
-    itemName: 
-    description: 
-    count: 0
-    effectValue: 0
+  - {fileID: 0}

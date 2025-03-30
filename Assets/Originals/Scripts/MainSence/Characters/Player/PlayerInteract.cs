@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -55,17 +56,18 @@ public class PlayerInteract : MonoBehaviour
                     {
                         Debug.Log("Itemコンポーネントがアタッチされている");
 
-                        int id = item.id;
-                        int count = item.count;
+                        if (inventory == null) Debug.LogError("Inventoryが初期化されていません！");
 
-                        if (inventory != null)
+
+                        if (item.itemType == ItemType.Document)
                         {
-                            inventory.GetItem(id, count);
+                            inventory.GetDocument(item.id, item.count);
                         }
-                        else
+                        else 
                         {
-                            Debug.LogError("Inventoryが初期化されていません！");
+                            inventory.GetItem(item.id, item.count);
                         }
+                        
 
                         Destroy(pickUpItem);
                     }

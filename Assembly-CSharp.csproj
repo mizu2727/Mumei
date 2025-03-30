@@ -78,6 +78,7 @@
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ColorCorrectionRamp.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\BloomOptimized.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Tonemapping.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Controllers\PauseController.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\Player\PlayerInteract.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Objects\Others\Door.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Items\SO_Item.cs" />

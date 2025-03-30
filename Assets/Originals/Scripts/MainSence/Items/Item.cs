@@ -4,6 +4,8 @@ using UnityEngine;
 public enum ItemType
 {
     Test,       // テスト用
+    UseItem,    // 使用アイテム
+    MysteryItem,// ゴールに必要なアイテム
     Document,   //ドキュメント
     Key         //鍵
 }
