@@ -5,6 +5,8 @@ using System;
 using Random = UnityEngine.Random;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
+using static UnityEngine.UI.Image;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -48,7 +50,7 @@ public class TestMap01 : MonoBehaviour
 
     //徘徊地点の生成位置を指定
     [SerializeField] public Transform[] patrolPoint;
-    public bool isGeneratePatrolPoint = false;
+
 
 
     //敵の生成位置を指定
@@ -112,8 +114,17 @@ public class TestMap01 : MonoBehaviour
     {
         MapGenerate();
         Debug.Log("マップ生成");
-        baseEnemy.Patrol();
-        //isGeneratePatrolPoint = true;
+    }
+
+    IEnumerator RebuildNavMesh()
+    {
+        yield return new WaitForEndOfFrame(); // フレーム終了後に実行
+        groundSurface.BuildNavMesh();
+        roadSurface.BuildNavMesh();
+    }
+    void Start()
+    {
+        StartCoroutine(RebuildNavMesh());
     }
 
     // 生成用のオブジェクトを用意
@@ -127,17 +138,18 @@ public class TestMap01 : MonoBehaviour
 
         // GroundにNavMeshSurface追加
         groundSurface = groundParent.AddComponent<NavMeshSurface>();
-        groundSurface.collectObjects = CollectObjects.Children;
+        groundSurface.collectObjects = CollectObjects.All;
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         GameObjectUtility.SetStaticEditorFlags(groundParent, 
             StaticEditorFlags.NavigationStatic);
         #endif
 
         // RoadにNavMeshSurface追加
         roadSurface = roadParent.AddComponent<NavMeshSurface>();
-        roadSurface.collectObjects = CollectObjects.Children;
-        #if UNITY_EDITOR
+        roadSurface.collectObjects = CollectObjects.All;
+
+#if UNITY_EDITOR
         GameObjectUtility.SetStaticEditorFlags(roadParent, 
             StaticEditorFlags.NavigationStatic);
         #endif
@@ -502,16 +514,39 @@ public class TestMap01 : MonoBehaviour
             }
         }
 
+        
+
+        // NavMeshのBakeを実行
+        if (groundSurface != null)
+        {
+            groundSurface.BuildNavMesh();
+            Debug.Log("groundSurface の NavMesh を再構築しました！");
+        }
+        else
+        {
+            Debug.LogError("groundSurface が設定されていません！");
+        }
+
+        if (roadSurface != null)
+        {
+            roadSurface.BuildNavMesh();
+            Debug.Log("roadSurface の NavMesh を再構築しました！");
+        }
+        else
+        {
+            Debug.LogError("roadSurface が設定されていません！");
+        }
+
+        Bounds bounds = groundSurface.navMeshData.sourceBounds;
+        Debug.Log("NavMesh範囲: " + bounds);
+
         //俳諧地点を生成
         for (int i = 0; i < roomNum; i++)
         {
             GeneratePatrolPointInRooms(patrolPoint[i], roomNum);
         }
 
-
-
         //敵を生成
-        //敵プレハブにColliderがついている必要がある
         for (int i = 0; i < enemyPrefabs.Count; i++)
         {
             GenerateObjectsInRooms(enemyPrefabs[i], enemyGenerateNums[i]);
@@ -519,17 +554,10 @@ public class TestMap01 : MonoBehaviour
 
 
         //アイテムを生成
-        //アイテムプレハブにColliderがついている必要がある
         for (int i = 0; i < itemPrefabs.Count; i++)
         {
             GenerateObjectsInRooms(itemPrefabs[i], itemGenerateNums[i]);
         }
-
-
-
-        // NavMeshのBakeを実行
-        groundSurface.BuildNavMesh();
-        roadSurface.BuildNavMesh();
     }
 
     // 分割点のセット(int x, int y)、大きい方を分割する
@@ -616,20 +644,26 @@ public class TestMap01 : MonoBehaviour
         // 空中からRaycastを飛ばすため地面から少し浮かせる
         float y = roomCenter.y + 5.0f;
 
+        Vector3 spawnPosition = new Vector3(x, y, z);
 
-        Vector3 spawnPosinon = new Vector3(x, y, z);
-
-        // レイキャストで地面の高さを検出
-        if (Physics.Raycast(spawnPosinon, Vector3.down, out RaycastHit hit, 10f))
+        if (Physics.Raycast(spawnPosition, Vector3.down, out RaycastHit hit, 10f))
         {
-            Vector3 finalPos =
-                hit.point + Vector3.up * (patrolPoint.transform.localScale.y * 0.5f + 0.05f);
+            Vector3 finalPos = hit.point + Vector3.up * 0.05f;
 
-            Instantiate(patrolPoint, finalPos, Quaternion.identity);
+            // NavMesh上の位置に修正
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(finalPos, out navHit, 2.0f, NavMesh.AllAreas))
+            {
+                Instantiate(patrolPoint, navHit.position, Quaternion.identity);
+            }
+            else
+            {
+                Debug.LogWarning("NavMesh上の位置が見つからず patrolPoint を生成できませんでした: " + finalPos);
+            }
         }
         else
         {
-            Debug.LogWarning("地面が見つからなかったため" + patrolPoint + "生成されませんでした");
+            Debug.LogWarning("地面が見つからなかったため"+patrolPoint+"を生成できませんでした: " + spawnPosition);
         }
     }
 
@@ -672,9 +706,4 @@ public class TestMap01 : MonoBehaviour
             Debug.LogWarning("地面が見つからなかったため"+ prefab + "生成されませんでした");
         }
     }
-
-
-
-    
-
 }

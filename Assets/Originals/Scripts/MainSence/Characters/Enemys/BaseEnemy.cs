@@ -13,10 +13,14 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
     //追従したいオブジェクト(Hieralchy内のオブジェクトをアタッチする)
     [SerializeField] public Transform tagetPoint;
 
-    //徘徊地点
-    TestMap01 testMap01;
+    //徘徊
+    [SerializeField] private TestMap01 testMap01;//プレハブ化したオブジェクトをアタッチ
     private int positionNumber = 0;
     private int maxPositionNumber;
+
+    //この値が狭すぎると徘徊地点が見つからず、広すぎるとNaveMeshの範囲外になる
+    //要調整が必要
+    [SerializeField] private float findPatrolPointRange = 2500f;
 
     private Animator animator;
     public Animator PlayAnimator
@@ -131,29 +135,78 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
     void NextPosition() 
     {
         positionNumber = Random.Range(0, maxPositionNumber);
+        Vector3 targetPos = testMap01.patrolPoint[positionNumber].position;
 
-        navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
+        NavMeshHit hit;
 
-        Debug.Log("次の俳諧地点の要素番号は" + positionNumber);
+        //目的地がNaveMeshの範囲内にあるかを判定する
+        if (NavMesh.SamplePosition(targetPos, out hit, findPatrolPointRange, NavMesh.AllAreas)) 
+        {
+            navMeshAgent.destination = hit.position;
+            Debug.Log("目的地をNavMesh上に補正: " + hit.position);
+        }
+        else
+        {
+            Debug.LogError("目的地がNavMeshの範囲外です: " + targetPos);
+
+            // **ランダムな位置を探索する**
+            Vector3 randomPos = targetPos + new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
+            if (NavMesh.SamplePosition(randomPos, out hit, 10.0f, NavMesh.AllAreas))
+            {
+                navMeshAgent.destination = hit.position;
+                Debug.LogWarning("代わりにNavMesh上のランダムな位置に移動: " + hit.position);
+            }
+            else
+            {
+                Debug.LogError("適切なNavMesh位置が見つかりませんでした");
+            }
+        }
     }
 
-    void Start()
-    {
-        
-    }
-
-    public void Patrol() 
+    void Start() 
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
+
+        if (navMeshAgent.isOnNavMesh)
+        {
+            Debug.Log("NavMeshAgent は NavMesh 上に配置されています！");
+        }
+        else
+        {
+            Debug.LogError("NavMeshAgent が NavMesh 上にありません！");
+        }
+
+        //移動を有効化
+        navMeshAgent.isStopped = false;
+        navMeshAgent.updatePosition = true;
+        navMeshAgent.updateRotation = true;
+
+        // NavMesh 上の適切な位置に移動
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(transform.position, out hit, 2.0f, NavMesh.AllAreas))
+        {
+            navMeshAgent.Warp(hit.position);
+            Debug.Log("敵の初期位置を調整: " + hit.position);
+        }
+
         navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
         maxPositionNumber = testMap01.patrolPoint.Length;
-        Debug.Log("最大の俳諧地点の要素番号は" + testMap01.patrolPoint[maxPositionNumber - 1]);
-        testMap01.isGeneratePatrolPoint = true;
+        Debug.Log("patrolPointの数: " + maxPositionNumber);
+
+        if (maxPositionNumber > 0)
+        {
+            navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
+            Debug.Log("初期徘徊地点は" + testMap01.patrolPoint[positionNumber].position);
+        }
+        else
+        {
+            Debug.LogError("patrolPointが一つも作られていません！");
+        }
     }
 
     void Update()
     {
-        if (player.IsDead || player == null || !testMap01.isGeneratePatrolPoint) return;
+        if (player.IsDead || player == null || testMap01 == null) return;
 
         //プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, tagetPoint.position);
@@ -165,8 +218,14 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         }
         else
         {
+            Debug.Log($"現在地: {transform.position}");
+            Debug.Log($"目的地: {navMeshAgent.destination}");
+            Debug.Log($"目的地までの距離: {navMeshAgent.remainingDistance}");
+            Debug.Log($"移動速度: {navMeshAgent.velocity}");
+            Debug.Log($"NavMeshAgentの状態: {navMeshAgent.pathStatus}");
+
             //敵と俳諧地点の距離が指定の値の範囲内の場合の処理
-            if (navMeshAgent.remainingDistance < 0.5f)
+            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 0.5f)
             {
                 NextPosition();
             }
