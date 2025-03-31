@@ -105,7 +105,7 @@ public class Player : MonoBehaviour, CharacterInterface
     Vector3 moveDirection = Vector3.zero;//ˆÚ“®•ûŒü
 
     [SerializeField] public bool isHoldDocument = false;
-
+    [SerializeField] public bool isHoldMysteryItem = false;
 
     private void Start()
     {

@@ -9,6 +9,8 @@ public class Inventory : MonoBehaviour
     //　アイテム所持数管理
     private readonly List<int> countList = new();
 
+    
+
     private Player player;
 
     void Start()
