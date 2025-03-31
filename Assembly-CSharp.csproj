@@ -85,6 +85,7 @@
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\CameraMotionBlur.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Antialiasing.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\TiltShift.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Objects\Others\Goal.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ScreenOverlay.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Quads.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\SepiaTone.cs" />

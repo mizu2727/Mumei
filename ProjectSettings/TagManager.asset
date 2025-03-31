@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Item
   - Door
+  - Goal
   layers:
   - Default
   - TransparentFX

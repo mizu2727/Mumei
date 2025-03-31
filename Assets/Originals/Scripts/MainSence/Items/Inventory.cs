@@ -9,9 +9,11 @@ public class Inventory : MonoBehaviour
     //　アイテム所持数管理
     private readonly List<int> countList = new();
 
+    private Player player;
+
     void Start()
     {
-
+        player = GetComponent<Player>();
     }
     void Update()
     {
@@ -21,6 +23,8 @@ public class Inventory : MonoBehaviour
     //インベントリにアイテムを追加
     public void GetItem(int id, int count)
     {
+        
+
 
         //リストの中にアイテムが何番目に存在するのかを確認
         //存在しない場合は-1を返す
@@ -48,6 +52,7 @@ public class Inventory : MonoBehaviour
 
     public void GetDocument(int id, int count)
     {
+        player.isHoldDocument = true;
 
         //リストの中にアイテムが何番目に存在するのかを確認
         //存在しない場合は-1を返す

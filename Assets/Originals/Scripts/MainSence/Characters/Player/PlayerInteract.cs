@@ -15,6 +15,7 @@ public class PlayerInteract : MonoBehaviour
     private Inventory inventory;
     private Item item;
     private Door door;
+    private Goal goal;
 
     private void Start()
     {
@@ -85,6 +86,14 @@ public class PlayerInteract : MonoBehaviour
                     interactDoor = raycastHit.transform.gameObject;
                     door = interactDoor.GetComponent<Door>();
                     door.DoorSystem();
+                }
+
+                //ÉSÅ[Éã
+                if (raycastHit.transform.tag == "Goal")
+                {
+                    isInteract = true;
+                    goal = raycastHit.transform.gameObject.GetComponent<Goal>();
+                    goal.GoalCheck();
                 }
             }   
         }

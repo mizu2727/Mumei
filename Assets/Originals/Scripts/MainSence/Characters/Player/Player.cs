@@ -99,8 +99,13 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
     [SerializeField] string aliasName = "ƒCƒt";//‰¼‚Ì–¼‘O
+
     [SerializeField] public bool isHoldKey = false;
+
     Vector3 moveDirection = Vector3.zero;//ˆÚ“®•ûŒü
+
+    [SerializeField] public bool isHoldDocument = false;
+
 
     private void Start()
     {

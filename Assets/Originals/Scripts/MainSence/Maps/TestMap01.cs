@@ -110,8 +110,11 @@ public class TestMap01 : MonoBehaviour
 
     BaseEnemy baseEnemy;
 
+    [SerializeField] private bool isDebugOffGenerate = false;
+
     void Awake()
     {
+        if (isDebugOffGenerate) return;
         MapGenerate();
         Debug.Log("É}ÉbÉvê∂ê¨");
     }
