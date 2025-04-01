@@ -4,6 +4,7 @@ public class Goal : MonoBehaviour
 {
     [SerializeField] private Player player;
 
+
     private void Start()
     {
 

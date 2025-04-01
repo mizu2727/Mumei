@@ -62,10 +62,17 @@ public class PlayerInteract : MonoBehaviour
 
                         if (item.itemType == ItemType.Document)
                         {
+                            Debug.Log(item.name + "‚ğE‚Á‚½");
                             inventory.GetDocument(item.id, item.count);
                         }
-                        else 
+                        else if (item.itemType == ItemType.MysteryItem) 
                         {
+                            Debug.Log(item.name + "‚ğE‚Á‚½");
+                            inventory.GetMysteryItem(item.id, item.count);
+                        }
+                        else
+                        {
+                            Debug.Log(item.name + "‚ğE‚Á‚½");
                             inventory.GetItem(item.id, item.count);
                         }
                         
