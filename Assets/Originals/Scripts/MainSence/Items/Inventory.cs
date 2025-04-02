@@ -1,3 +1,4 @@
+//廃止
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,8 @@ public class Inventory : MonoBehaviour
     //　アイテム所持数管理
     private readonly List<int> countList = new();
 
-    
+    //SO_Item sO_Item;
+    //private Item item;
 
     private Player player;
 
@@ -59,6 +61,9 @@ public class Inventory : MonoBehaviour
         //リストの中にアイテムが何番目に存在するのかを確認
         //存在しない場合は-1を返す
         int checkIndex = idList.IndexOf(id);
+
+        //sO_Item.GetItemById(checkIndex);
+        
 
         //インベントリに新規追加する処理
         if (checkIndex == -1)

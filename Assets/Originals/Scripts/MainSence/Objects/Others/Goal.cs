@@ -3,7 +3,9 @@ using UnityEngine;
 public class Goal : MonoBehaviour
 {
     [SerializeField] private Player player;
-
+    [SerializeField] public SO_Item sO_Item;
+    Item item;
+    public bool isDebugGoal = false;
 
     private void Start()
     {
@@ -19,13 +21,27 @@ public class Goal : MonoBehaviour
             return;
         }
 
-        Debug.Log("このドキュメントに関係するアイテムを選択せよ");
+        if (!player.isHoldMysteryItem)
+        {
+            Debug.Log("ミステリーアイテムが必要だ！");
+            return;
+        }
+        else 
+        {
+            MysteryItemCheck();
+        }
+        
 
-        MysteryItemCheck();
+        
     }
 
     void MysteryItemCheck() 
     {
-        
+        Debug.Log("このドキュメントに関係するアイテムを選択せよ");
+
+        if (isDebugGoal) 
+        {
+         
+        }
     }
 }

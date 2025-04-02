@@ -12,8 +12,8 @@ public class PlayerInteract : MonoBehaviour
     GameObject interactDoor;//インタラクトするドア
     public bool isInteract;
 
-    private Inventory inventory;
     private Item item;
+    [SerializeField] public SO_Item sO_Item;
     private Door door;
     private Goal goal;
 
@@ -21,8 +21,8 @@ public class PlayerInteract : MonoBehaviour
     {
         isInteract = false;
 
-        //Inventoryコンポーネントを取得して初期化
-        inventory = GetComponent<Inventory>();  
+        //初期化
+        sO_Item = ScriptableObject.CreateInstance<SO_Item>();
     }
 
     private void Update()
@@ -55,27 +55,21 @@ public class PlayerInteract : MonoBehaviour
 
                     if (item != null)
                     {
-                        Debug.Log("Itemコンポーネントがアタッチされている");
-
-                        if (inventory == null) Debug.LogError("Inventoryが初期化されていません！");
+                        if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
 
                         if (item.itemType == ItemType.Document)
                         {
-                            Debug.Log(item.name + "を拾った");
-                            inventory.GetDocument(item.id, item.count);
+                            sO_Item.AddDocument(item);
                         }
                         else if (item.itemType == ItemType.MysteryItem) 
                         {
-                            Debug.Log(item.name + "を拾った");
-                            inventory.GetMysteryItem(item.id, item.count);
+                            sO_Item.AddMysteryItem(item);
                         }
                         else
                         {
-                            Debug.Log(item.name + "を拾った");
-                            inventory.GetItem(item.id, item.count);
+                            sO_Item.AddItem(item);
                         }
-                        
 
                         Destroy(pickUpItem);
                     }
