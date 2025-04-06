@@ -121,6 +121,7 @@ MonoBehaviour:
   playerName: 
   Speed: 3
   dashSpeed: 5
+  playerDetectionRange: 10
   playerGravity: 10
   playerHP: 1
   playerIsDead: 0
@@ -128,6 +129,8 @@ MonoBehaviour:
   playerStartPosition: {x: 0, y: 0, z: 0}
   aliasName: "\u30A4\u30D5"
   isHoldKey: 0
+  isHoldDocument: 0
+  isHoldMysteryItem: 0
 --- !u!114 &6780924145020651641
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,6 +145,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   distance: 30
   isInteract: 1
+  sO_Item: {fileID: 0}
+  puaseController: {fileID: 4606473561031218724, guid: 6578a3cb56718e74dba764f8a1ba282f, type: 3}
 --- !u!114 &-616744936085992425
 MonoBehaviour:
   m_ObjectHideFlags: 0

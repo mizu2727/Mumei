@@ -4,13 +4,22 @@ using System.Collections.Generic;
 
 public class PauseController : MonoBehaviour
 {
-    private Player player;//プレイヤー
+    [SerializeField] private Player player;//プレイヤー
     //[SerializeField] private Goal goal;//ゴール
     [SerializeField] private GameObject pausePanel;//ポーズパネル
+
+    [SerializeField] public bool isPause = false;
 
     //Audio系
     //public BGM BGMScript;//メインゲームBGM
     //public AudioClip pauseSE;//クリックSE
+
+    private void Start()
+    {
+        pausePanel.SetActive(false);
+        isPause = false;
+    }
+
 
     //Pキーでポーズ/ポーズ解除
     public void Update()
@@ -22,12 +31,7 @@ public class PauseController : MonoBehaviour
             //GameController.instance.PlayAudioSE(pauseSE);
             if (Time.timeScale == 1)
             {
-                //BGMScript.PauseBGM();
-                Time.timeScale = 0;
-
-                //ポーズ時に他のUIに触れないようにするために必要
-                pausePanel.transform.SetAsLastSibling();
-                pausePanel.SetActive(true);
+                ViewPausePanel();
             }
             else
             {
@@ -36,20 +40,42 @@ public class PauseController : MonoBehaviour
         }
     }
 
+    void ViewPausePanel() 
+    {
+        //BGMScript.PauseBGM();
+        Time.timeScale = 0;
+        isPause = true;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+
+        //ポーズ時に他のUIに触れないようにするために必要
+        pausePanel.transform.SetAsLastSibling();
+        pausePanel.SetActive(true);
+        Debug.Log(isPause);
+    }
+
+
     //ポーズ解除
     public void OnClickedClosePauseButton()
     {
+        pausePanel.SetActive(false);
+        isPause = false;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Debug.Log("ポーズ解除");
         //GameController.instance.PlayAudioSE(pauseSE);
         //BGMScript.UnPauseBGM();
-        pausePanel.SetActive(false);
+        Debug.Log(isPause);
         Time.timeScale = 1;
     }
 
-    //ステージ選択へ戻る
-    public void OnClickedReturnToStageSelectButton()
+
+    //アイテム確認
+    public void OnClickedViewItemButton()
     {
         //BGMScript.StopBGM();
         //GameController.instance.ReturnToStageSelect();
+        Debug.Log("アイテム確認");
     }
 
     //タイトルへ戻る
@@ -57,5 +83,6 @@ public class PauseController : MonoBehaviour
     {
         //BGMScript.StopBGM();
         //GameController.instance.ReturnToTitle();
+        Debug.Log("タイトルへ戻る");
     }
 }
