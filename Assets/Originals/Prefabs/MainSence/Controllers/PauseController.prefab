@@ -46,3 +46,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: -3777981246576777323, guid: ca6b4068ed0259f4eac400d4e3d4a3e3, type: 3}
   pausePanel: {fileID: 1538074798328123999, guid: 0628abd5fa598ac4b980ac7a4761d3f3, type: 3}
+  viewItemsPanel: {fileID: 1356936793018799875, guid: efab981fc2b9294439c43f64a11d9571, type: 3}
+  isPause: 0

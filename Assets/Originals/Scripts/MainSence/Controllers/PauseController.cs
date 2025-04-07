@@ -1,12 +1,15 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class PauseController : MonoBehaviour
 {
     [SerializeField] private Player player;//プレイヤー
     //[SerializeField] private Goal goal;//ゴール
     [SerializeField] private GameObject pausePanel;//ポーズパネル
+    [SerializeField] private GameObject viewItemsPanel;//アイテム確認パネル
+
 
     [SerializeField] public bool isPause = false;
 
@@ -16,7 +19,6 @@ public class PauseController : MonoBehaviour
 
     private void Start()
     {
-        pausePanel.SetActive(false);
         isPause = false;
     }
 
@@ -26,11 +28,12 @@ public class PauseController : MonoBehaviour
     {
         //if (Input.GetKeyDown(KeyCode.P)&& player.IsDead == false && goal.isGoal == false)
         if (Input.GetKeyDown(KeyCode.P)
-            && player.IsDead == false)
+            && !player.IsDead && !isPause)
         {
             //GameController.instance.PlayAudioSE(pauseSE);
             if (Time.timeScale == 1)
             {
+                isPause = true;
                 ViewPausePanel();
             }
             else
@@ -40,11 +43,11 @@ public class PauseController : MonoBehaviour
         }
     }
 
-    void ViewPausePanel() 
+    public void ViewPausePanel() 
     {
         //BGMScript.PauseBGM();
         Time.timeScale = 0;
-        isPause = true;
+        //isPause = true;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
 
@@ -73,9 +76,13 @@ public class PauseController : MonoBehaviour
     //アイテム確認
     public void OnClickedViewItemButton()
     {
-        //BGMScript.StopBGM();
-        //GameController.instance.ReturnToStageSelect();
-        Debug.Log("アイテム確認");
+        Debug.Log("アイテム確認1");
+        Debug.Log($"viewItemsPanel is null: {viewItemsPanel == null}");
+        Debug.Log($"pausePanel is null: {pausePanel == null}");
+        viewItemsPanel.transform.SetAsLastSibling();
+        viewItemsPanel.SetActive(true);
+        pausePanel.SetActive(false);
+        Debug.Log("アイテム確認2");
     }
 
     //タイトルへ戻る
@@ -84,5 +91,18 @@ public class PauseController : MonoBehaviour
         //BGMScript.StopBGM();
         //GameController.instance.ReturnToTitle();
         Debug.Log("タイトルへ戻る");
+    }
+
+
+    //ポーズ画面へ戻る
+    public void OnClickedReturnToPausePanel()
+    {
+        pausePanel.transform.SetAsLastSibling();
+        pausePanel.SetActive(true);
+        viewItemsPanel.SetActive(false);
+
+        //BGMScript.StopBGM();
+        //GameController.instance.ReturnToTitle();
+        Debug.Log("ポーズ画面へ戻る");
     }
 }
