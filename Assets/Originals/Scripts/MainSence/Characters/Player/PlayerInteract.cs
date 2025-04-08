@@ -13,7 +13,11 @@ public class PlayerInteract : MonoBehaviour
     public bool isInteract;
 
     private Item item;
+
+    //共通のScriptableObjectをアタッチする必要がある
     [SerializeField] public SO_Item sO_Item;
+
+
     private Door door;
     private Goal goal;
 
@@ -22,9 +26,6 @@ public class PlayerInteract : MonoBehaviour
     private void Start()
     {
         isInteract = false;
-
-        //初期化
-        sO_Item = ScriptableObject.CreateInstance<SO_Item>();
     }
 
     private void Update()
@@ -55,18 +56,18 @@ public class PlayerInteract : MonoBehaviour
                     //Itemコンポーネントを取得
                     item = pickUpItem.GetComponent<Item>();
 
-                    if (item != null)
+                    if (item != null )
                     {
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
+                        Debug.Log($"拾ったアイテムのタイプ: {item.itemType}");
 
-                        if (item.itemType == ItemType.Document)
+                        if ((item.itemType == ItemType.Document) 
+                            || (item.itemType == ItemType.MysteryItem))
                         {
-                            sO_Item.AddDocument(item);
-                        }
-                        else if (item.itemType == ItemType.MysteryItem) 
-                        {
-                            sO_Item.AddMysteryItem(item);
+                            sO_Item.AddDocumentORMysteryItem(item);
+                            Debug.Log("Player側SO_ItemのインスタンスID: " + sO_Item.GetInstanceID());
+
                         }
                         else
                         {

@@ -47,7 +47,7 @@ public class PauseController : MonoBehaviour
     {
         //BGMScript.PauseBGM();
         Time.timeScale = 0;
-        //isPause = true;
+
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
 
@@ -61,6 +61,7 @@ public class PauseController : MonoBehaviour
     //É|Å[ÉYâèú
     public void OnClickedClosePauseButton()
     {
+        Time.timeScale = 1;
         pausePanel.SetActive(false);
         isPause = false;
         Cursor.visible = false;
@@ -69,7 +70,7 @@ public class PauseController : MonoBehaviour
         //GameController.instance.PlayAudioSE(pauseSE);
         //BGMScript.UnPauseBGM();
         Debug.Log(isPause);
-        Time.timeScale = 1;
+        
     }
 
 

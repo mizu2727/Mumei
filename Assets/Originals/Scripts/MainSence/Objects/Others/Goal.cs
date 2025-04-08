@@ -1,10 +1,12 @@
+using Mono.Cecil.Cil;
 using UnityEngine;
 
 public class Goal : MonoBehaviour
 {
-    [SerializeField] private Player player;
+    //共通のScriptableObjectをアタッチする必要がある
     [SerializeField] public SO_Item sO_Item;
-    Item item;
+
+
     public bool isDebugGoal = false;
 
     private void Start()
@@ -14,14 +16,30 @@ public class Goal : MonoBehaviour
 
     public void GoalCheck()
     {
-        Debug.Log("GoalCheck()");
-        if (!player.isHoldDocument)
+        sO_Item.CleanNullItems();
+
+        Debug.Log($"GoalCheck 実行時のitemList数: {sO_Item.itemList.Count}");
+        foreach (var item in sO_Item.itemList)
+        {
+            if (item != null)
+            {
+                Debug.Log($"itemList内: {item.itemName} - {item.itemType}");
+            }
+            else
+            {
+                Debug.LogWarning("itemList に null が含まれています！");
+            }
+        }
+
+        if (sO_Item.GetItemByType(ItemType.Document) == false)
         {
             Debug.Log("ドキュメントが必要だ！");
             return;
         }
 
-        if (!player.isHoldMysteryItem)
+        Debug.Log("ドキュメントが見つかりました！");
+
+        if (!sO_Item.GetItemByType(ItemType.MysteryItem))
         {
             Debug.Log("ミステリーアイテムが必要だ！");
             return;
@@ -43,5 +61,6 @@ public class Goal : MonoBehaviour
         {
          
         }
+
     }
 }

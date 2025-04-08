@@ -56,7 +56,7 @@ public class Inventory : MonoBehaviour
 
     public void GetDocument(int id, int count)
     {
-        player.isHoldDocument = true;
+        //player.isHoldDocument = true;
 
         //リストの中にアイテムが何番目に存在するのかを確認
         //存在しない場合は-1を返す
@@ -85,7 +85,7 @@ public class Inventory : MonoBehaviour
 
     public void GetMysteryItem(int id, int count)
     {
-        player.isHoldMysteryItem = true;
+        //player.isHoldMysteryItem = true;
 
         //リストの中にアイテムが何番目に存在するのかを確認
         //存在しない場合は-1を返す

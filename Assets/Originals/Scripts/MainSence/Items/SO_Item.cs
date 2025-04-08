@@ -7,22 +7,76 @@ using UnityEditorInternal.Profiling.Memory.Experimental;
 [CreateAssetMenu(fileName = "SO_Item", menuName = "Scriptable Objects/SO_Item")]
 public class SO_Item : ScriptableObject
 {
-    public List<Item> itemList = new ();
+    
+    //Itemのデータを保存するためのクラス
+    //セーブデータ保存時にも保存できる？
+    [System.Serializable]
+    public class ItemData
+    {
+        public int id;             // アイテムのID
+        public GameObject prefab;  // アイテムのプレハブ
+        public Sprite icon;        // アイテムのアイコン画像
+        public ItemType itemType;  // アイテムの種類
+        public string itemName;    // アイテムの名前
+        [TextArea]
+        public string description; // アイテムの説明
+        public int count;          // 所持数
+        public int effectValue;    // 効果値
 
+        public ItemData(Item item)
+        {
+            id = item.id;
+            prefab = item.prefab;
+            icon = item.icon;
+            itemType = item.itemType;
+            itemName = item.itemName;
+            description = item.description;
+            count = item.count;
+            effectValue = item.effectValue;
+        }
+    }
+
+    public List<ItemData> itemList = new List<ItemData>();
 
     //　アイテムリストを返す
-    public List<Item> GetItemLists()
+    public List<ItemData> GetItemLists()
     {
         return itemList;
     }
 
 
-    // idでアイテムを検索するメソッド
-    public Item GetItemById(int id)
+    // 保存しているアイテムを全て初期化する
+    public void ResetItems()
     {
-        Debug.Log(itemList.Find(item => item.id == id));
+        itemList.Clear();
+        Debug.Log("itemListをリセットしました");
+    }
+
+
+    // idでアイテムを検索するメソッド
+    public ItemData GetItemById(int id)
+    {
         return itemList.Find(item => item.id == id);
     }
+
+    //itemTypeでアイテムを検索するメソッド
+    public bool GetItemByType(ItemType targetType)
+    {
+        if (itemList == null)
+        {
+            Debug.LogError("itemList is null");
+            return false;
+        }
+
+        // null なアイテムを除外してチェック
+        bool result = 
+            itemList.Exists(item => item != null && item.itemType == targetType);
+        Debug.Log(result);
+        return result;
+    }
+
+    
+
 
     //アイテム追加
     public void AddItem(Item newItem)
@@ -30,7 +84,8 @@ public class SO_Item : ScriptableObject
         if (!itemList.Exists(item => item.id == newItem.id))
         {
             //アイテム新規追加
-            itemList.Add(newItem);
+            ItemData itemData = new ItemData(newItem);
+            itemList.Add(itemData);
             Debug.Log($"アイテム {newItem.id} を+ {newItem.count}新規追加");
         }
         else 
@@ -42,33 +97,36 @@ public class SO_Item : ScriptableObject
         }
     }
 
-    //ドキュメント追加
-    public void AddDocument(Item newItem)
+    //ドキュメント・ミステリーアイテム追加
+    public void AddDocumentORMysteryItem(Item newItem)
     {
-        if (!itemList.Exists(item => item.id == newItem.id))
+        if (newItem == null || newItem.gameObject == null)
         {
-            //ドキュメント新規追加
-            itemList.Add(newItem);
-            Debug.Log($"ドキュメント {newItem.id} を+ {newItem.count}新規追加");
+            Debug.LogWarning("AddDocument に null な item が渡されました！");
+            return;
+        }
+
+        Debug.Log($"追加しようとしているアイテム: {newItem.itemType}, 現在のitemList数: {itemList.Count}");
+        if (!itemList.Exists(item => item != null && item.itemType == newItem.itemType))
+        {
+            ItemData itemData = new ItemData(newItem);
+            itemList.Add(itemData);
+            Debug.Log($"アイテムを追加: {itemData.itemType}, 新しいitemList数: {itemList.Count}");
         }
         else
         {
-            Debug.LogError($"{newItem.id}をすでに所持しています");
+            Debug.Log("同じタイプのアイテムはすでに追加済み");
         }
     }
 
-    //ミステリーアイテム追加
-    public void AddMysteryItem(Item newItem)
+    
+
+    //nullアイテムを削除
+    public void CleanNullItems()
     {
-        if (!itemList.Exists(item => item.id == newItem.id))
-        {
-            //ミステリーアイテム新規追加
-            itemList.Add(newItem);
-            Debug.Log($"ミステリーアイテム {newItem.id} を+ {newItem.count}新規追加");
-        }
-        else
-        {
-            Debug.LogError($"{newItem.id}をすでに所持しています");
-        }
+        int before = itemList.Count;
+        itemList.RemoveAll(item => item == null);
+        Debug.Log($"null を削除しました: {before - itemList.Count} 件");
     }
 }
+

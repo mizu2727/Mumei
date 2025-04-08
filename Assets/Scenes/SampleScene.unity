@@ -1726,7 +1726,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1685770010587869071, guid: 6edcc89d5d6e0574d85f42344e3b26ca, type: 3}
       propertyPath: m_Color.a
-      value: 1
+      value: 0.8235294
       objectReference: {fileID: 0}
     - target: {fileID: 1685770010587869071, guid: 6edcc89d5d6e0574d85f42344e3b26ca, type: 3}
       propertyPath: m_Color.b
@@ -2389,14 +2389,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2070932129}
     m_Modifications:
-    - target: {fileID: 0}
-      propertyPath: pausePanel
-      value: 
-      objectReference: {fileID: 2147357703}
-    - target: {fileID: 0}
-      propertyPath: viewItemsPanel
-      value: 
-      objectReference: {fileID: 1194649167}
     - target: {fileID: 646314186119282291, guid: 6578a3cb56718e74dba764f8a1ba282f, type: 3}
       propertyPath: m_Name
       value: PauseController
