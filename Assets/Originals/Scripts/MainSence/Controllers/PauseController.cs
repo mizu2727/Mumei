@@ -2,9 +2,14 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class PauseController : MonoBehaviour
 {
+    public static PauseController instance;
+
+
     [SerializeField] private Player player;//プレイヤー
     //[SerializeField] private Goal goal;//ゴール
     [SerializeField] private GameObject pausePanel;//ポーズパネル
@@ -17,8 +22,27 @@ public class PauseController : MonoBehaviour
     //public BGM BGMScript;//メインゲームBGM
     //public AudioClip pauseSE;//クリックSE
 
+
+    private void Awake()
+    {
+        // シングルトンの設定
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject); // シーン遷移時に破棄されないようにする（必要に応じて）
+        }
+        else
+        {
+            Destroy(gameObject); // すでにインスタンスが存在する場合は破棄
+        }
+    }
+
+
     private void Start()
     {
+        // パネルを初期状態で非表示に
+        pausePanel.SetActive(false);
+
         isPause = false;
     }
 
@@ -26,50 +50,37 @@ public class PauseController : MonoBehaviour
     //Pキーでポーズ/ポーズ解除
     public void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.P)&& player.IsDead == false && goal.isGoal == false)
-        if (Input.GetKeyDown(KeyCode.P)
-            && !player.IsDead && !isPause)
+        if (Input.GetKeyDown(KeyCode.P) && !player.IsDead && !isPause)
         {
-            //GameController.instance.PlayAudioSE(pauseSE);
-            if (Time.timeScale == 1)
-            {
-                isPause = true;
-                ViewPausePanel();
-            }
-            else
-            {
-                OnClickedClosePauseButton();
-            }
+            ViewPausePanel();
+        }
+        else if (Input.GetKeyDown(KeyCode.P) && !player.IsDead && isPause)
+        {
+            OnClickedClosePauseButton();
         }
     }
 
     public void ViewPausePanel() 
     {
-        //BGMScript.PauseBGM();
         Time.timeScale = 0;
-
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
-
-        //ポーズ時に他のUIに触れないようにするために必要
         pausePanel.transform.SetAsLastSibling();
         pausePanel.SetActive(true);
-        Debug.Log(isPause);
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+        isPause = true;
     }
-
 
     //ポーズ解除
     public void OnClickedClosePauseButton()
     {
-        Time.timeScale = 1;
-        pausePanel.SetActive(false);
-        isPause = false;
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        Debug.Log("ポーズ解除");
-        //GameController.instance.PlayAudioSE(pauseSE);
-        //BGMScript.UnPauseBGM();
-        Debug.Log(isPause);
+        if (!viewItemsPanel.activeSelf) 
+        {
+            Time.timeScale = 1;
+            pausePanel.SetActive(false);
+            isPause = false;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
         
     }
 
@@ -77,13 +88,9 @@ public class PauseController : MonoBehaviour
     //アイテム確認
     public void OnClickedViewItemButton()
     {
-        Debug.Log("アイテム確認1");
-        Debug.Log($"viewItemsPanel is null: {viewItemsPanel == null}");
-        Debug.Log($"pausePanel is null: {pausePanel == null}");
         viewItemsPanel.transform.SetAsLastSibling();
         viewItemsPanel.SetActive(true);
         pausePanel.SetActive(false);
-        Debug.Log("アイテム確認2");
     }
 
     //タイトルへ戻る
@@ -95,6 +102,10 @@ public class PauseController : MonoBehaviour
     }
 
 
+
+
+
+
     //ポーズ画面へ戻る
     public void OnClickedReturnToPausePanel()
     {
@@ -104,6 +115,13 @@ public class PauseController : MonoBehaviour
 
         //BGMScript.StopBGM();
         //GameController.instance.ReturnToTitle();
-        Debug.Log("ポーズ画面へ戻る");
+    }
+
+
+
+    //DocumentNameTextの記載内容を変更
+    public void ChangeDocumentNameText() 
+    {
+        
     }
 }

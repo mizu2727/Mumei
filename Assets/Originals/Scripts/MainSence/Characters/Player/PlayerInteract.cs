@@ -21,7 +21,6 @@ public class PlayerInteract : MonoBehaviour
     private Door door;
     private Goal goal;
 
-    [SerializeField] PauseController puaseController;
 
     private void Start()
     {
@@ -45,7 +44,7 @@ public class PlayerInteract : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, 
             Camera.main.transform.forward, out raycastHit, distance) )
         {
-            if (Input.GetKeyDown(KeyCode.E) && puaseController.isPause == false) 
+            if (Input.GetKeyDown(KeyCode.E) && !PauseController.instance.isPause) 
             {
                 //ÉAÉCÉeÉÄÇèEÇ§
                 if (raycastHit.transform.tag == "Item")
