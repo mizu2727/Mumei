@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditorInternal.Profiling.Memory.Experimental;
+using static UnityEditor.Progress;
 
 
 //アイテムDB
@@ -106,16 +107,26 @@ public class SO_Item : ScriptableObject
             return;
         }
 
-        Debug.Log($"追加しようとしているアイテム: {newItem.itemType}, 現在のitemList数: {itemList.Count}");
-        if (!itemList.Exists(item => item != null && item.itemType == newItem.itemType))
+        Debug.Log($"追加しようとしているアイテム: {newItem.id}, 現在のitemList数: {itemList.Count}");
+        if (!itemList.Exists(item => item != null && item.id == newItem.id))
         {
             ItemData itemData = new ItemData(newItem);
             itemList.Add(itemData);
-            Debug.Log($"アイテムを追加: {itemData.itemType}, 新しいitemList数: {itemList.Count}");
+
+            if (itemData.itemType == ItemType.Document)
+            {
+                PauseController.instance.ChangeDocumentNameText(itemData.itemName);
+                PauseController.instance.ChangeDocumentExplanationText(itemData.description);
+            }
+            else 
+            {
+                PauseController.instance.ChangeMysteryItemTexts(itemData.itemName ,itemData.description);
+            }
+            Debug.Log($"アイテムを追加: {itemData.id}, 新しいitemList数: {itemList.Count}");
         }
         else
         {
-            Debug.Log("同じタイプのアイテムはすでに追加済み");
+            Debug.Log("同じidのアイテムはすでに追加済み");
         }
     }
 

@@ -52,10 +52,17 @@ MonoBehaviour:
   player: {fileID: -3777981246576777323, guid: ca6b4068ed0259f4eac400d4e3d4a3e3, type: 3}
   pausePanel: {fileID: 1538074798328123999, guid: 0628abd5fa598ac4b980ac7a4761d3f3, type: 3}
   viewItemsPanel: {fileID: 1356936793018799875, guid: efab981fc2b9294439c43f64a11d9571, type: 3}
-  showItemButton: {fileID: 0}
-  returnToHomeButton: {fileID: 0}
-  closePauseButton: {fileID: 0}
+  DocumentInventoryPanel: {fileID: 4420171419895770132, guid: 36fb627c17606d34aa51734430097540, type: 3}
+  DocumentExplanationPanel: {fileID: 3540101939223070493, guid: 089c26fd90377e646a791ce88dc93c78, type: 3}
+  DocumentNameText: {fileID: 6306591241827473061, guid: e97fb9ac767bdbb4c86f3389a4d63ccd, type: 3}
+  DocumentExplanationText: {fileID: 2756882248052514971, guid: acf374422adad4145b62ead0e7f4cc96, type: 3}
+  MysteryItemInventoryPanel: {fileID: 9175874231561258047, guid: fa7d5fb7177a9264da609c543f2732c1, type: 3}
   isPause: 0
+  isViewItemsPanel: 0
+  isDocumentPanels: 0
+  isDocumentExplanationPanel: 0
+  isMysteryItemPanels: 0
+  sO_Item: {fileID: 11400000, guid: e8953430267464843b679e4e89bcba78, type: 2}
 --- !u!114 &4019841943897729559
 MonoBehaviour:
   m_ObjectHideFlags: 0

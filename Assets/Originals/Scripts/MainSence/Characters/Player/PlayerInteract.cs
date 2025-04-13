@@ -22,9 +22,13 @@ public class PlayerInteract : MonoBehaviour
     private Goal goal;
 
 
+    public bool isDebugResetItem = false;
+
     private void Start()
     {
         isInteract = false;
+
+        if (isDebugResetItem) sO_Item.ResetItems();
     }
 
     private void Update()
