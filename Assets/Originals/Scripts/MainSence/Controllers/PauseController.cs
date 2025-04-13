@@ -16,25 +16,25 @@ public class PauseController : MonoBehaviour
 
     [SerializeField] private GameObject viewItemsPanel;//アイテム確認パネル
 
-    [SerializeField] private GameObject DocumentInventoryPanel;//ドキュメント確認パネル
-    [SerializeField] private GameObject DocumentExplanationPanel;//ドキュメント説明欄パネル
-    [SerializeField] private Text DocumentNameText;//ドキュメント名称テキスト
-    [SerializeField] private Text DocumentExplanationText;//ドキュメント説明欄テキスト
+    [SerializeField] private GameObject documentInventoryPanel;//ドキュメント確認パネル
+    [SerializeField] private GameObject documentExplanationPanel;//ドキュメント説明欄パネル
+    [SerializeField] private Text documentNameText;//ドキュメント名称テキスト
+    [SerializeField] private Text documentExplanationText;//ドキュメント説明欄テキスト
 
-    [SerializeField] private GameObject MysteryItemInventoryPanel;//ミステリーアイテム確認パネル
+    [SerializeField] private GameObject mysteryItemInventoryPanel;//ミステリーアイテム確認パネル
     [SerializeField] private Button[] mysteryItemNameButton;//ミステリーアイテム名称ボタン
     [SerializeField] private Text[] mysteryItemNameText;//ミステリーアイテム名称テキスト
     [SerializeField] private Image[] mysteryItemImage;//ミステリーアイテム画像
     [SerializeField] private Text[] mysteryItemExplanationText;//ミステリーアイテム説明欄テキスト
-    [SerializeField] private GameObject MysteryItemExplanationPanel;//ミステリーアイテム説明欄パネル
+    [SerializeField] private GameObject mysteryItemExplanationPanel;//ミステリーアイテム説明欄パネル
 
 
-    [SerializeField] public bool isPause = false;
-    [SerializeField] public bool isViewItemsPanel = false;
-    [SerializeField] public bool isDocumentPanels = false;
-    [SerializeField] public bool isDocumentExplanationPanel = false;
-    [SerializeField] public bool isMysteryItemPanels = false;
-    [SerializeField] public bool isMysteryItemExplanationPanel = false;
+    public bool isPause = false;
+    public bool isViewItemsPanel = false;
+    public bool isDocumentPanels = false;
+    public bool isDocumentExplanationPanel = false;
+    public bool isMysteryItemPanels = false;
+    public bool isMysteryItemExplanationPanel = false;
 
 
     private List<string> mysteryItemNames = new(); // ミステリーアイテム名のリスト
@@ -227,13 +227,13 @@ public class PauseController : MonoBehaviour
     {
         if (isDocumentPanels)
         {
-            DocumentInventoryPanel.transform.SetAsLastSibling();
-            DocumentInventoryPanel.SetActive(true);
+            documentInventoryPanel.transform.SetAsLastSibling();
+            documentInventoryPanel.SetActive(true);
 
         }
         else 
         {
-            DocumentInventoryPanel.SetActive(false);
+            documentInventoryPanel.SetActive(false);
 
             isDocumentExplanationPanel = false;
 
@@ -246,11 +246,11 @@ public class PauseController : MonoBehaviour
     {
         if (isDocumentExplanationPanel)
         {
-            DocumentExplanationPanel.SetActive(true);
+            documentExplanationPanel.SetActive(true);
         }
         else
         {
-            DocumentExplanationPanel.SetActive(false);
+            documentExplanationPanel.SetActive(false);
         }
     }
 
@@ -258,16 +258,16 @@ public class PauseController : MonoBehaviour
     //DocumentNameTextの記載内容を変更
     public void ChangeDocumentNameText(string documentName) 
     {
-        DocumentNameText = DocumentNameText.GetComponent<Text>();
-        DocumentNameText.text = documentName;
+        documentNameText = documentNameText.GetComponent<Text>();
+        documentNameText.text = documentName;
     }
 
     //DocumentExplanationTextの記載内容を変更
     public void ChangeDocumentExplanationText(string documentDescription)
     {
-        DocumentExplanationText = DocumentExplanationText.GetComponent<Text>();
-        DocumentExplanationText.text = documentDescription;
-        Debug.Log("ドキュメント説明欄："+ DocumentExplanationText.text);
+        documentExplanationText = documentExplanationText.GetComponent<Text>();
+        documentExplanationText.text = documentDescription;
+        Debug.Log("ドキュメント説明欄："+ documentExplanationText.text);
     }
 
 
@@ -276,12 +276,12 @@ public class PauseController : MonoBehaviour
     {
         if (isMysteryItemPanels)
         {
-            MysteryItemInventoryPanel.transform.SetAsLastSibling();
-            MysteryItemInventoryPanel.SetActive(true);
+            mysteryItemInventoryPanel.transform.SetAsLastSibling();
+            mysteryItemInventoryPanel.SetActive(true);
         }
         else
         {
-            MysteryItemInventoryPanel.SetActive(false);
+            mysteryItemInventoryPanel.SetActive(false);
 
             isMysteryItemExplanationPanel = false;
             ChangeViewMysteryItemExplanationPanel();
@@ -294,11 +294,11 @@ public class PauseController : MonoBehaviour
     {
         if (isMysteryItemExplanationPanel)
         {
-            MysteryItemExplanationPanel.SetActive(true);
+            mysteryItemExplanationPanel.SetActive(true);
         }
         else
         {
-            MysteryItemExplanationPanel.SetActive(false);
+            mysteryItemExplanationPanel.SetActive(false);
         }
     }
 

@@ -1,20 +1,33 @@
 using Mono.Cecil.Cil;
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
+using Cysharp.Threading.Tasks;
+
+
 
 public class Goal : MonoBehaviour
 {
     //共通のScriptableObjectをアタッチする必要がある
     [SerializeField] public SO_Item sO_Item;
 
+    [SerializeField] public int anserItemId;//正解用のアイテムid
 
-    public bool isDebugGoal = false;
+
+    [SerializeField] private GameObject selectMysteryItemPanel;
+    [SerializeField] private Button[] selectMysteryItemNameButton;//ミステリーアイテム名称ボタン
+    [SerializeField] private Image[] selectMysteryItemImage;//ミステリーアイテム画像
+
+    public bool isSelectMysteryItemPanel;
 
     private void Start()
     {
-
+        isSelectMysteryItemPanel = false;
+        ViewSelectMysteryItemPanel();
     }
 
-    public void GoalCheck()
+    public async void GoalCheck()
     {
         sO_Item.CleanNullItems();
 
@@ -33,15 +46,28 @@ public class Goal : MonoBehaviour
 
         if (sO_Item.GetItemByType(ItemType.Document) == false)
         {
-            Debug.Log("ドキュメントが必要だ！");
+            string message = "ドキュメントを集めてください";
+
+            MessageController.instance.ShowMessage(message);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+            MessageController.instance.ResetMessage();
+
             return;
         }
 
-        Debug.Log("ドキュメントが見つかりました！");
 
         if (!sO_Item.GetItemByType(ItemType.MysteryItem))
         {
-            Debug.Log("ミステリーアイテムが必要だ！");
+            string message = "ミステリーアイテムを集めてください";
+
+            MessageController.instance.ShowMessage(message);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+            MessageController.instance.ResetMessage();
+
             return;
         }
         else 
@@ -55,12 +81,22 @@ public class Goal : MonoBehaviour
 
     void MysteryItemCheck() 
     {
-        Debug.Log("このドキュメントに関係するアイテムを選択せよ");
+        string message = "このドキュメントに関係するアイテムを選択せよ";
 
-        if (isDebugGoal) 
+        MessageController.instance.ShowMessage(message);
+
+
+    }
+
+    public void ViewSelectMysteryItemPanel()
+    {
+        if (isSelectMysteryItemPanel)
         {
-         
+            selectMysteryItemPanel.SetActive(true);
         }
-
+        else
+        {
+            selectMysteryItemPanel.SetActive(false);
+        }
     }
 }
