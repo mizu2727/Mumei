@@ -125,7 +125,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 996
   prefab: {fileID: 7883139824648023020}
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 24b8db556fd37e94e974c89a373a4351, type: 3}
   itemType: 2
   itemName: TestMysteryItem02
   description: "\u30C6\u30B9\u30C8\u7528\u30DF\u30B9\u30C6\u30EA\u30FC\u30A2\u30A4\u30C6\u30E002"

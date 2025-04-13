@@ -24,6 +24,7 @@ public class PauseController : MonoBehaviour
     [SerializeField] private GameObject MysteryItemInventoryPanel;//ミステリーアイテム確認パネル
     [SerializeField] private Button[] mysteryItemNameButton;//ミステリーアイテム名称ボタン
     [SerializeField] private Text[] mysteryItemNameText;//ミステリーアイテム名称テキスト
+    [SerializeField] private Image[] mysteryItemImage;//ミステリーアイテム画像
     [SerializeField] private Text[] mysteryItemExplanationText;//ミステリーアイテム説明欄テキスト
     [SerializeField] private GameObject MysteryItemExplanationPanel;//ミステリーアイテム説明欄パネル
 
@@ -324,21 +325,36 @@ public class PauseController : MonoBehaviour
 
     public void OnClickedMysteryItemNameButton(int index) 
     {
-        if (index < mysteryItemNames.Count)
+        if (index < mysteryItemNames.Count && index < sO_Item.itemList.Count)
         {
             isMysteryItemExplanationPanel = true;
             ChangeViewMysteryItemExplanationPanel();
 
-            // アイテムの説明を表示
-            var item = sO_Item.itemList[index]; 
+            var item = sO_Item.itemList[index];
+            if (item != null)
+            {
+                // 説明テキストを更新
+                if (mysteryItemExplanationText != null)
+                {
+                    mysteryItemExplanationText[0].text = item.description;
+                    Debug.Log($"Set explanation text to: {item.description}");
+                }
 
-            if (item != null && mysteryItemExplanationText.Length > 0)
-            {
-                mysteryItemExplanationText[0].text = item.description;
+                // 画像を更新
+                if (mysteryItemImage != null)
+                {
+                    mysteryItemImage[0].sprite = item.icon;
+                    mysteryItemImage[0].enabled = (item.icon != null); // アイコンがない場合は非表示
+                    Debug.Log($"Set image to: {(item.icon != null ? item.icon.name : "null")}");
+                }
+                else
+                {
+                    Debug.LogWarning("mysteryItemImage が未設定です");
+                }
             }
-            else 
+            else
             {
-                Debug.LogError("mysteryItemNameTextとmysteryItemExplanationTextの要素数が一致していない");
+                Debug.LogError("アイテムが見つかりません");
             }
             Debug.Log($"Clicked Mystery Item: {mysteryItemNames[index]}");
         }
@@ -368,6 +384,13 @@ public class PauseController : MonoBehaviour
                 mysteryItemNameButton[i].interactable = true;
 
                 mysteryItemExplanationText[i].text = mysteryItemExplanations[i];
+
+
+                if (i < mysteryItemImage.Length)
+                {
+                    mysteryItemImage[i].sprite = sO_Item.itemList[i].icon;
+                    mysteryItemImage[i].enabled = (sO_Item.itemList[i].icon != null);
+                }
             }
             else
             {
@@ -375,6 +398,13 @@ public class PauseController : MonoBehaviour
                 mysteryItemNameButton[i].interactable = false;
 
                 mysteryItemExplanationText[i].text = "";
+
+
+                if (i < mysteryItemImage.Length)
+                {
+                    mysteryItemImage[i].sprite = null;
+                    mysteryItemImage[i].enabled = false;
+                }
             }
         }
     }
