@@ -11,7 +11,7 @@ public class PauseController : MonoBehaviour
 
 
     [SerializeField] private Player player;//プレイヤー
-    //[SerializeField] private Goal goal;//ゴール
+    [SerializeField] private Goal goal;//ゴール
     [SerializeField] private GameObject pausePanel;//ポーズパネル
 
     [SerializeField] private GameObject viewItemsPanel;//アイテム確認パネル

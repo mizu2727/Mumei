@@ -72,7 +72,6 @@ public class SO_Item : ScriptableObject
         // null なアイテムを除外してチェック
         bool result = 
             itemList.Exists(item => item != null && item.itemType == targetType);
-        Debug.Log(result);
         return result;
     }
 
@@ -121,6 +120,7 @@ public class SO_Item : ScriptableObject
             else 
             {
                 PauseController.instance.ChangeMysteryItemTexts(itemData.itemName ,itemData.description);
+
             }
             Debug.Log($"アイテムを追加: {itemData.id}, 新しいitemList数: {itemList.Count}");
         }
