@@ -100,7 +100,9 @@ public class PlayerInteract : MonoBehaviour
                 {
                     isInteract = true;
                     goal = raycastHit.transform.gameObject.GetComponent<Goal>();
-                    goal.GoalCheck();
+
+                    if (!goal.isGoalPanel) goal.GoalCheck();
+
                 }
             }   
         }

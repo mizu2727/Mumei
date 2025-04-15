@@ -5,7 +5,6 @@ using System;
 using Random = UnityEngine.Random;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
-using static UnityEngine.UI.Image;
 
 
 #if UNITY_EDITOR
@@ -56,6 +55,13 @@ public class TestMap01 : MonoBehaviour
     //敵の生成位置を指定
     [SerializeField] private List<GameObject> enemyPrefabs; // 複数の敵プレハブ
     [SerializeField] private List<int> enemyGenerateNums;   // 各敵の生成数
+
+
+    //ゴール地点
+    [SerializeField] private GameObject goalGround; // ゴール地点の地面
+    [SerializeField] private Vector3 goalConnectionPoint; // ゴールとの接続点（インスペクターで設定、自動選択時は無視）
+    [SerializeField] private int connectionRoadLength = 3; // ゴールへの通路の長さ
+    [SerializeField] private bool autoSelectConnectionPoint = true; // 接続点を自動選択するか
 
 
     private NavMeshSurface groundSurface;
@@ -200,6 +206,21 @@ public class TestMap01 : MonoBehaviour
     private void MapGenerate()
     {
         initPrefab();
+
+
+        // マップ生成コード（部屋分割、部屋生成、通路生成）
+        roomStatus = new int[System.Enum.GetNames(typeof(RoomStatus)).Length, roomNum];
+        map = new int[mapSizeW, mapSizeH];
+
+        // フロアの初期化
+        for (int nowW = 0; nowW < mapSizeW; nowW++)
+        {
+            for (int nowH = 0; nowH < mapSizeH; nowH++)
+            {
+                map[nowW, nowH] = 2; // 壁
+            }
+        }
+
 
         // 部屋（StartX、StartY、幅、高さ）
         roomStatus = new int[System.Enum.GetNames(typeof(RoomStatus)).Length, roomNum];
@@ -517,7 +538,66 @@ public class TestMap01 : MonoBehaviour
             }
         }
 
-        
+
+        //ゴール地点への通路を追加
+        AddGoalConnection();
+
+
+        // オブジェクト生成
+        for (int nowH = 0; nowH < mapSizeH; nowH++)
+        {
+            for (int nowW = 0; nowW < mapSizeW; nowW++)
+            {
+                if (map[nowW, nowH] == (int)objectType.wall)
+                {
+                    GameObject mazeObject = Instantiate(
+                        mapObjects[map[nowW, nowH]],
+                        new Vector3(
+                            defaultPosition.x + nowW * mapObjects[map[nowW, nowH]].transform.localScale.x,
+                            defaultPosition.y + ((WallSetting.size.y - 1) * 0.5f),
+                            defaultPosition.z + nowH * mapObjects[map[nowW, nowH]].transform.localScale.z),
+                        Quaternion.identity, objectParents[map[nowW, nowH]].transform);
+                }
+                else if (map[nowW, nowH] == (int)objectType.ground)
+                {
+                    GameObject mazeObject = Instantiate(
+                        mapObjects[map[nowW, nowH]],
+                        new Vector3(
+                            defaultPosition.x + nowW * mapObjects[map[nowW, nowH]].transform.localScale.x,
+                            defaultPosition.y,
+                            defaultPosition.z + nowH * mapObjects[map[nowW, nowH]].transform.localScale.z),
+                        Quaternion.identity, objectParents[map[nowW, nowH]].transform);
+                }
+                else if (map[nowW, nowH] == (int)objectType.road)
+                {
+                    GameObject mazeObject = Instantiate(
+                        mapObjects[map[nowW, nowH]],
+                        new Vector3(
+                            defaultPosition.x + nowW * mapObjects[map[nowW, nowH]].transform.localScale.x,
+                            defaultPosition.y,
+                            defaultPosition.z + nowH * mapObjects[map[nowW, nowH]].transform.localScale.z),
+                        Quaternion.identity, objectParents[map[nowW, nowH]].transform);
+                }
+            }
+        }
+
+        // ゴール地点のNavMeshを統合
+        if (goalGround != null)
+        {
+            var goalSurface = goalGround.GetComponent<NavMeshSurface>();
+            if (goalSurface == null)
+            {
+                goalSurface = goalGround.AddComponent<NavMeshSurface>();
+                goalSurface.collectObjects = CollectObjects.All;
+                #if UNITY_EDITOR
+                GameObjectUtility.SetStaticEditorFlags(goalGround, StaticEditorFlags.NavigationStatic);
+                #endif
+            }
+            goalSurface.BuildNavMesh();
+            Debug.Log("goalSurface の NavMesh を構築しました！");
+        }
+
+
 
         // NavMeshのBakeを実行
         if (groundSurface != null)
@@ -579,6 +659,157 @@ public class TestMap01 : MonoBehaviour
         }
     }
 
+
+    // ゴール地点への通路を追加するメソッド
+    private void AddGoalConnection()
+    {
+        if (goalGround == null)
+        {
+            Debug.LogWarning("GoalGround が設定されていません！");
+            return;
+        }
+
+        // 接続点を自動選択
+        Vector2Int connectPoint;
+        if (autoSelectConnectionPoint)
+        {
+            connectPoint = FindValidConnectionPoint();
+            if (connectPoint == Vector2Int.one * -1)
+            {
+                Debug.LogWarning("有効な接続点が見つかりませんでした！");
+                return;
+            }
+            goalConnectionPoint = new Vector3(connectPoint.x, 0, connectPoint.y);
+            Debug.Log($"自動選択した接続点: ({goalConnectionPoint.x}, {goalConnectionPoint.z})");
+        }
+        else
+        {
+            connectPoint = new Vector2Int((int)goalConnectionPoint.x, (int)goalConnectionPoint.z);
+        }
+
+        // 接続点の検証
+        int connectX = connectPoint.x;
+        int connectZ = connectPoint.y;
+        if (connectX < 0 || connectX >= mapSizeW || connectZ < 0 || connectZ >= mapSizeH)
+        {
+            Debug.LogWarning($"接続点 ({connectX}, {connectZ}) がマップ範囲外です！");
+            return;
+        }
+
+        // 接続点が部屋または通路であることを確認
+        if (map[connectX, connectZ] != (int)objectType.ground && map[connectX, connectZ] != (int)objectType.road)
+        {
+            Debug.LogWarning($"接続点 ({connectX}, {connectZ}) は部屋または通路ではありません！");
+            return;
+        }
+
+        // 通路パスをクリア（壁を道路に変更）
+        ClearPathToGoal(connectX, connectZ);
+
+        // 通路を生成（右方向）
+        for (int i = 1; i <= connectionRoadLength; i++)
+        {
+            int roadX = connectX + i;
+            if (roadX >= mapSizeW) break; // マップ範囲外はスキップ
+
+            Vector3 roadPos = new Vector3(
+                defaultPosition.x + roadX * RoadSetting.size.x,
+                defaultPosition.y,
+                defaultPosition.z + connectZ * RoadSetting.size.z);
+            GameObject road = Instantiate(
+                mapObjects[(int)objectType.road],
+                roadPos,
+                Quaternion.identity,
+                objectParents[(int)objectType.road].transform);
+            Debug.Log($"通路を生成: {roadPos}");
+        }
+
+        // マップ範囲外に追加の通路を生成（必要に応じて）
+        int extendedRoads = connectionRoadLength - (mapSizeW - connectX - 1);
+        if (extendedRoads > 0)
+        {
+            for (int i = 0; i < extendedRoads; i++)
+            {
+                Vector3 roadPos = new Vector3(
+                    defaultPosition.x + (mapSizeW + i) * RoadSetting.size.x,
+                    defaultPosition.y,
+                    defaultPosition.z + connectZ * RoadSetting.size.z);
+                GameObject road = Instantiate(
+                    mapObjects[(int)objectType.road],
+                    roadPos,
+                    Quaternion.identity,
+                    objectParents[(int)objectType.road].transform);
+                Debug.Log($"拡張通路を生成: {roadPos}");
+            }
+        }
+
+        // ゴール地点の位置を調整
+        int totalRoadLength = Mathf.Min(connectionRoadLength, mapSizeW - connectX - 1) + (extendedRoads > 0 ? extendedRoads : 0);
+        goalGround.transform.position = new Vector3(
+            defaultPosition.x + (connectX + totalRoadLength) * RoadSetting.size.x,
+            defaultPosition.y,
+            defaultPosition.z + connectZ * RoadSetting.size.z);
+        Debug.Log($"GoalGround を {goalGround.transform.position} に配置");
+    }
+
+
+    // 有効な接続点（部屋または通路、壁から離れた位置）を見つける
+    private Vector2Int FindValidConnectionPoint()
+    {
+        List<Vector2Int> validPoints = new List<Vector2Int>();
+
+        // マップ内を走査して部屋または通路を収集
+        for (int x = 1; x < mapSizeW - 1; x++) // 端を避ける
+        {
+            for (int z = 1; z < mapSizeH - 1; z++)
+            {
+                if (map[x, z] == (int)objectType.ground || map[x, z] == (int)objectType.road)
+                {
+                    // 右方向に壁がないかチェック
+                    bool isClear = true;
+                    for (int i = 1; i <= connectionRoadLength && x + i < mapSizeW; i++)
+                    {
+                        if (map[x + i, z] == (int)objectType.wall)
+                        {
+                            isClear = false;
+                            break;
+                        }
+                    }
+                    if (isClear)
+                    {
+                        validPoints.Add(new Vector2Int(x, z));
+                    }
+                }
+            }
+        }
+
+        if (validPoints.Count == 0)
+        {
+            Debug.LogWarning("有効な接続点が見つかりませんでした！壁に隣接しない部屋/通路を試してください。");
+            return Vector2Int.one * -1;
+        }
+
+        // ランダムに選択
+        return validPoints[Random.Range(0, validPoints.Count)];
+    }
+
+
+    // 通路パスをクリア（壁を道路に変更）
+    private void ClearPathToGoal(int startX, int startZ)
+    {
+        for (int i = 1; i <= connectionRoadLength && startX + i < mapSizeW; i++)
+        {
+            int roadX = startX + i;
+            if (map[roadX, startZ] == (int)objectType.wall)
+            {
+                map[roadX, startZ] = (int)objectType.road;
+                Debug.Log($"壁を道路に変更: ({roadX}, {startZ})");
+            }
+        }
+    }
+
+
+
     //
     private void GeneratePatrolPointInRooms(Transform patrolPoint, int generateNum)
     {
@@ -628,7 +859,6 @@ public class TestMap01 : MonoBehaviour
     //俳諧地点を部屋内にランダム生成
     void PlacePatrolPointInRoom(Transform patrolPoint, Vector3 roomCenter, Vector3 roomSize)
     {
-
         Debug.Log(patrolPoint + "生成");
 
 
