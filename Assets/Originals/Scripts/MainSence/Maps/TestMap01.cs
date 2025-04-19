@@ -62,6 +62,7 @@ public class TestMap01 : MonoBehaviour
     [SerializeField] private Vector3 goalConnectionPoint; // ゴールとの接続点（インスペクターで設定、自動選択時は無視）
     [SerializeField] private int connectionRoadLength = 3; // ゴールへの通路の長さ
     [SerializeField] private bool autoSelectConnectionPoint = true; // 接続点を自動選択するか
+    [SerializeField] private GameObject goalObjectPrefab; // ゴールオブジェクトのプレハブ
 
 
     private NavMeshSurface groundSurface;
@@ -660,7 +661,6 @@ public class TestMap01 : MonoBehaviour
     }
 
 
-    // ゴール地点への通路を追加するメソッド
     private void AddGoalConnection()
     {
         if (goalGround == null)
@@ -732,7 +732,7 @@ public class TestMap01 : MonoBehaviour
             {
                 Vector3 roadPos = new Vector3(
                     defaultPosition.x + (mapSizeW + i) * RoadSetting.size.x,
-                    defaultPosition.y,
+                    defaultPosition.y, // goalGround と同じ高さ
                     defaultPosition.z + connectZ * RoadSetting.size.z);
                 GameObject road = Instantiate(
                     mapObjects[(int)objectType.road],
@@ -750,6 +750,66 @@ public class TestMap01 : MonoBehaviour
             defaultPosition.y,
             defaultPosition.z + connectZ * RoadSetting.size.z);
         Debug.Log($"GoalGround を {goalGround.transform.position} に配置");
+
+        // goalGround の NavMesh を構築
+        if (goalGround != null)
+        {
+            var goalSurface = goalGround.GetComponent<NavMeshSurface>();
+            if (goalSurface == null)
+            {
+                goalSurface = goalGround.AddComponent<NavMeshSurface>();
+                goalSurface.collectObjects = CollectObjects.All;
+#if UNITY_EDITOR
+                GameObjectUtility.SetStaticEditorFlags(goalGround, StaticEditorFlags.NavigationStatic);
+#endif
+            }
+            goalSurface.BuildNavMesh();
+            Debug.Log("goalSurface の NavMesh を構築しました！");
+
+            // NavMesh の範囲をデバッグ
+            if (goalSurface.navMeshData != null)
+            {
+                Bounds bounds = goalSurface.navMeshData.sourceBounds;
+                Debug.Log($"goalSurface NavMesh 範囲: {bounds}");
+            }
+            else
+            {
+                Debug.LogWarning("goalSurface の NavMesh データが生成されていません！");
+            }
+        }
+
+        // ゴールオブジェクトの生成
+        if (goalObjectPrefab != null)
+        {
+            Vector3 goalObjectPosition = goalGround.transform.position + Vector3.up * 0.1f; // 地面からわずかに浮かせる
+            NavMeshHit navHit;
+            if (NavMesh.SamplePosition(goalObjectPosition, out navHit, 5.0f, NavMesh.AllAreas))
+            {
+                GameObject goalObject = Instantiate(
+                    goalObjectPrefab,
+                    navHit.position,
+                    Quaternion.identity,
+                    goalGround.transform);
+                Debug.Log($"ゴールオブジェクトを {navHit.position} に生成しました");
+            }
+            else
+            {
+                Debug.LogWarning($"NavMesh 上の位置が見つからなかったため、ゴールオブジェクトを生成できませんでした: {goalObjectPosition}");
+                // フォールバック: NavMesh なしで直接配置
+                Vector3 fallbackPosition = goalGround.transform.position + Vector3.up * 0.1f;
+                GameObject goalObject = Instantiate(
+                    goalObjectPrefab,
+                    fallbackPosition,
+                    Quaternion.identity,
+                    goalGround.transform);
+                Debug.Log($"フォールバック: ゴールオブジェクトを {fallbackPosition} に生成しました（NavMeshなし）");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("ゴールオブジェクトのプレハブが設定されていません！");
+        }
+
     }
 
 
