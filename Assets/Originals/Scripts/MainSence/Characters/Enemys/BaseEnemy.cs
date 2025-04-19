@@ -169,7 +169,7 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
 
         if (navMeshAgent.isOnNavMesh)
         {
-            Debug.Log("NavMeshAgent は NavMesh 上に配置されています！");
+            //Debug.Log("NavMeshAgent は NavMesh 上に配置されています！");
         }
         else
         {

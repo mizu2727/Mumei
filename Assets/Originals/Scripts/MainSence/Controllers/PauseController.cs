@@ -142,7 +142,7 @@ public class PauseController : MonoBehaviour
     {
         //BGMScript.StopBGM();
         //GameController.instance.ReturnToTitle();
-        Debug.Log("ƒ^ƒCƒgƒ‹‚Ö–ß‚é");
+        SceneManager.LoadScene("TitleScene");
     }
 
 

@@ -77,6 +77,8 @@
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ColorCorrectionCurves.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\CharacterInterface.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Items\Item.cs" />
+    <Compile Include="Assets\Originals\Scripts\GameOverScene\GameOverScene.cs" />
+    <Compile Include="Assets\Originals\Scripts\TitleScene\TItleController.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\VignetteAndChromaticAberration.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />

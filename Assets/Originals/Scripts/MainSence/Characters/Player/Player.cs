@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour, CharacterInterface
 {
@@ -82,7 +83,8 @@ public class Player : MonoBehaviour, CharacterInterface
 
     public void Dead()
     {
-        Destroy(gameObject);
+        SceneManager.LoadScene("GameOverScene");
+        //Destroy(gameObject);
     }
 
     public void Attack()
@@ -104,8 +106,12 @@ public class Player : MonoBehaviour, CharacterInterface
 
     Vector3 moveDirection = Vector3.zero;//移動方向
 
+    public bool isDebug = false;
+
     private void Start()
     {
+        IsDead = false;
+
         //コンポーネントの取得
         characterConttroller = GetComponent<CharacterController>();
         PlayAnimator = GetComponent<Animator>();
@@ -117,7 +123,13 @@ public class Player : MonoBehaviour, CharacterInterface
 
     private void Update()
     {
+        if (isDebug && Input.GetKeyDown(KeyCode.Q)) 
+        {
+            Debug.Log("プレイヤー死亡(デバッグモード)");
+            Dead();
+        }
         
+
       if (playerIsDead) return;
 
 

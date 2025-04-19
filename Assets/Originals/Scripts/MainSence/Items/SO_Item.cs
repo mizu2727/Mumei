@@ -50,7 +50,6 @@ public class SO_Item : ScriptableObject
     public void ResetItems()
     {
         itemList.Clear();
-        Debug.Log("itemList‚ðƒŠƒZƒbƒg‚µ‚Ü‚µ‚½");
     }
 
 
