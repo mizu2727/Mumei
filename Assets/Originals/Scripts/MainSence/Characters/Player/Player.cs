@@ -128,9 +128,15 @@ public class Player : MonoBehaviour, CharacterInterface
             Debug.Log("プレイヤー死亡(デバッグモード)");
             Dead();
         }
-        
 
-      if (playerIsDead) return;
+        if (isDebug && Input.GetKeyDown(KeyCode.C))
+        {
+            Debug.Log("クリア(デバッグモード)");
+            SceneManager.LoadScene("GameClearScene");
+        }
+
+
+        if (playerIsDead) return;
 
 
         // 移動速度を取得。左Shiftキーを入力している間はダッシュ

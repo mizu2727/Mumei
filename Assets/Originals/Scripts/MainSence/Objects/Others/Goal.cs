@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 
 
@@ -178,7 +179,7 @@ public class Goal : MonoBehaviour
             if (mysteryItems[index].id == anserItemId)
             {
                 Debug.Log("正解のアイテムが選択されました！");
-                // 正解時の処理（例：ゲームクリア）
+                SceneManager.LoadScene("GameClearScene");
             }
             else
             {

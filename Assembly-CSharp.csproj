@@ -76,8 +76,8 @@
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\Player\PlayerCamera.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ColorCorrectionCurves.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\CharacterInterface.cs" />
-    <Compile Include="Assets\Originals\Scripts\MainSence\Items\Item.cs" />
     <Compile Include="Assets\Originals\Scripts\GameOverScene\GameOverScene.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Items\Item.cs" />
     <Compile Include="Assets\Originals\Scripts\TitleScene\TItleController.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\VignetteAndChromaticAberration.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
@@ -107,6 +107,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Quads.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
+    <Compile Include="Assets\Originals\Scripts\GameClearScene\GameClearController.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SimpleScript.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark04.cs" />
