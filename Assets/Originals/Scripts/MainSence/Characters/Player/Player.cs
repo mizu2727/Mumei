@@ -6,8 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour, CharacterInterface
 {
+    public static Player instance { get; private set; }
 
-    CharacterController characterConttroller;
+    CharacterController characterController;
 
     private Animator animator;
     public Animator PlayAnimator
@@ -108,12 +109,36 @@ public class Player : MonoBehaviour, CharacterInterface
 
     public bool isDebug = false;
 
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            Debug.Log($"[Player] シングルトン初期化: {gameObject.name}");
+        }
+        else
+        {
+            Debug.LogWarning($"[Player] 重複インスタンスを破棄: {gameObject.name}");
+            Destroy(gameObject);
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
+
+
     private void Start()
     {
         IsDead = false;
 
         //コンポーネントの取得
-        characterConttroller = GetComponent<CharacterController>();
+        characterController = GetComponent<CharacterController>();
         PlayAnimator = GetComponent<Animator>();
 
         //プレイヤーの初期位置
@@ -150,7 +175,7 @@ public class Player : MonoBehaviour, CharacterInterface
         Vector3 move = transform.right * moveX + transform.forward * moveZ;
 
         // isGrounded は地面にいるかどうかを判定する
-        if (characterConttroller.isGrounded)
+        if (characterController.isGrounded)
         {
             moveDirection = move * speed;
         }
@@ -162,7 +187,7 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
         // Move は指定したベクトルだけ移動させる命令
-        characterConttroller.Move(moveDirection  * Time.deltaTime);
+        characterController.Move(moveDirection  * Time.deltaTime);
 
         // 移動のアニメーション
         //animator.SetFloat("MoveSpeed", move.magnitude);

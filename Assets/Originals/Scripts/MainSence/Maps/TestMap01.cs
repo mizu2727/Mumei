@@ -13,6 +13,8 @@ using UnityEditor;
 
 public class TestMap01 : MonoBehaviour
 {
+    public static TestMap01 Instance { get; private set; }
+
     [SerializeField] MeshFilter meshFilter;
     [SerializeField] Mesh mesh;
     [SerializeField] float width = 1;
@@ -20,42 +22,42 @@ public class TestMap01 : MonoBehaviour
     [SerializeField] MeshRenderer meshRenderer;
     [SerializeField] Material mapMaterial;
 
-    // ステージの見た目の色とサイズを指定
-    [SerializeField] ObjectState WallSetting; // 壁の色とサイズ
-    [SerializeField] ObjectState GroundSetting; // 地面の色とサイズ
-    [SerializeField] ObjectState RoadSetting; // 道の色とサイズ
+    [SerializeField] ObjectState WallSetting;
+    [SerializeField] ObjectState GroundSetting;
+    [SerializeField] ObjectState RoadSetting;
 
-    // ステージのプレハブ
-    [SerializeField] GameObject groundPrefab; // 地面のプレハブ
-    [SerializeField] GameObject wallPrefab; // 壁のプレハブ
-    [SerializeField] GameObject roadPrefab; // 廊下のプレハブ
+    [SerializeField] GameObject groundPrefab;
+    [SerializeField] GameObject wallPrefab;
+    [SerializeField] GameObject roadPrefab;
 
-    // マップ生成の初期位置
-    [SerializeField] Vector3 defaultPosition; // マップ生成の初期位置
+    [SerializeField] Vector3 defaultPosition;
 
-    // アイテムの設定
     [Header("アイテムの設定")]
-    [SerializeField] private List<GameObject> itemPrefabs; // 複数のアイテムプレハブ
-    [SerializeField] private List<int> itemGenerateNums; // 各アイテムの生成数
-    [SerializeField] public Vector3 roomCenter; // 部屋の中心位置
-    [SerializeField] public Vector3 roomSize; // 部屋のサイズ
+    [SerializeField] private List<GameObject> itemPrefabs;
+    [SerializeField] private List<int> itemGenerateNums;
+    [SerializeField] public Vector3 roomCenter;
+    [SerializeField] public Vector3 roomSize;
 
-    // 徘徊地点の設定
-    [SerializeField] public Transform[] patrolPoint; // 徘徊地点のプレハブ
+    [SerializeField] public Transform[] patrolPoint;
 
-    // 敵の設定
-    [SerializeField] private List<GameObject> enemyPrefabs; // 複数の敵プレハブ
-    [SerializeField] private List<int> enemyGenerateNums; // 各敵の生成数
+    [SerializeField] private List<GameObject> enemyPrefabs;
+    [SerializeField] private List<int> enemyGenerateNums;
 
-    // ゴール地点
-    [SerializeField] private GameObject goalGround; // ゴール地点の地面
-    [SerializeField] private Vector3 goalConnectionPoint; // ゴールとの接続点
-    [SerializeField] private int connectionRoadLength = 3; // ゴールへの通路の長さ
-    [SerializeField] private bool autoSelectConnectionPoint = true; // 接続点を自動選択するか
-    [SerializeField] private GameObject goalObjectPrefab; // ゴールオブジェクトのプレハブ
+    private List<Vector3> enemyPositions = new List<Vector3>();
 
-    [SerializeField] private LayerMask groundLayer = 1 << 8; // デフォルトで「Ground」レイヤー（Layer 8）を設定
+    [SerializeField] private float minDistanceFromEnemy = 15f;
 
+    [SerializeField] private GameObject goalGround;
+    [SerializeField] private Vector3 goalConnectionPoint;
+    [SerializeField] private int connectionRoadLength = 3;
+    [SerializeField] private bool autoSelectConnectionPoint = true;
+    [SerializeField] private GameObject goalObjectPrefab;
+
+    [SerializeField] private LayerMask groundLayer = 1 << 8;
+
+    [SerializeField] private GameObject playerPrefab;
+
+    public bool IsMapGenerated { get; private set; } = false;
 
     private NavMeshSurface groundSurface;
     private NavMeshSurface roadSurface;
@@ -67,17 +69,17 @@ public class TestMap01 : MonoBehaviour
         public Vector3 size;
     }
 
-    [SerializeField] private int mapSizeW; // マップの横サイズ
-    [SerializeField] private int mapSizeH; // マップの縦サイズ
-    private int[,] map; // マップの管理配列
+    [SerializeField] private int mapSizeW;
+    [SerializeField] private int mapSizeH;
+    private int[,] map;
 
-    [SerializeField] private int roomNum; // 部屋の数
-    private int roomMin = 10; // 部屋の最小値
-    private int parentNum = 0; // 分割する部屋番号
-    private int max = 0; // 最大面積
-    private int roomCount; // 部屋カウント
-    private int line = 0; // 分割点
-    private int[,] roomStatus; // 部屋の管理配列
+    [SerializeField] private int roomNum;
+    private int roomMin = 15;
+    private int parentNum = 0;
+    private int max = 0;
+    private int roomCount;
+    private int line = 0;
+    private int[,] roomStatus;
 
     private enum RoomStatus
     {
@@ -91,82 +93,125 @@ public class TestMap01 : MonoBehaviour
         road = 2,
     }
 
-    private GameObject[] mapObjects; // マップ生成用のオブジェクト配列
-    private GameObject[] objectParents; // 各タイプ別の親オブジェクト配列
-    private const int offsetWall = 2; // 壁から離す距離
-    private const int offset = 1; // 調整用
+    private GameObject[] mapObjects;
+    private GameObject[] objectParents;
+    private const int offsetWall = 2;
+    private const int offset = 1;
 
     [SerializeField] private bool isDebugOffGenerate = false;
 
-    void Awake()
+    private void Awake()
     {
-        // 複数のインスタンスを検出
-        TestMap01[] instances = FindObjectsOfType<TestMap01>();
-        if (instances.Length > 1)
+        if (Instance != null && Instance != this)
         {
-            Debug.LogWarning($"複数のTestMap01インスタンスが検出されました！({instances.Length}個)。このインスタンスを無効化します。");
-            isDebugOffGenerate = true;
+            Debug.LogWarning($"[TestMap01] インスタンスが既に存在します！({Instance.gameObject.name})。このインスタンスを破棄します。");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        Debug.Log($"[TestMap01] シングルトン初期化: {gameObject.name}");
+
+        if (mapSizeW <= 0)
+        {
+            mapSizeW = 50;
+            Debug.LogWarning($"[TestMap01] mapSizeW が無効（{mapSizeW}）でした。デフォルト値 50 に設定します。");
+        }
+        if (mapSizeH <= 0)
+        {
+            mapSizeH = 50;
+            Debug.LogWarning($"[TestMap01] mapSizeH が無効（{mapSizeH}）でした。デフォルト値 50 に設定します。");
+        }
+        if (roomNum <= 0)
+        {
+            roomNum = 5;
+            Debug.LogWarning($"[TestMap01] roomNum が無効（{roomNum}）でした。デフォルト値 5 に設定します。");
         }
 
-        if (isDebugOffGenerate) return;
-
-        // groundLayerの検証
         if (groundLayer.value == 0)
         {
-            Debug.LogWarning("groundLayerが空です！デフォルト値（Ground）に設定します。");
+            Debug.LogWarning("[TestMap01] groundLayerが空です！デフォルト値（Ground）に設定します。");
             groundLayer = LayerMask.GetMask("Ground");
         }
-        Debug.Log($"groundLayer初期値: LayerMask={LayerMask.LayerToName(Mathf.FloorToInt(Mathf.Log(groundLayer.value, 2)))}, Value={groundLayer.value}");
-
+        if (playerPrefab == null)
+        {
+            Debug.LogError("[TestMap01] プレイヤーのプレハブがインスペクターで設定されていません！");
+        }
 
         MapGenerate().Forget();
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    public async UniTask TriggerWarpAsync()
+    {
+        if (Player.instance == null)
+        {
+            Debug.LogError("[TestMap01] プレイヤーが存在しません！ワープできません。プレイヤー生成を確認してください。");
+            return;
+        }
+        await WarpPlayerAsync();
     }
 
     private async UniTask RebuildNavMeshAsync()
     {
         await UniTask.Yield();
-        await UniTask.DelayFrame(10);
-        if (groundSurface != null)
+        await UniTask.DelayFrame(150); // 待機時間を延長してコライダー生成を待つ
+        try
         {
-            groundSurface.BuildNavMesh();
-        }
-        if (roadSurface != null)
-        {
-            roadSurface.BuildNavMesh();
-        }
-        if (goalGround != null)
-        {
-            var goalSurface = goalGround.GetComponent<NavMeshSurface>();
-            if (goalSurface == null)
+            if (groundSurface != null)
             {
-                goalSurface = goalGround.AddComponent<NavMeshSurface>();
-                goalSurface.collectObjects = CollectObjects.All;
-
-#if UNITY_EDITOR
-                GameObjectUtility.SetStaticEditorFlags(goalGround, StaticEditorFlags.NavigationStatic);
-#endif
-            }
-            // コライダーの確認
-            if (!goalGround.GetComponent<Collider>())
-            {
-                Debug.LogWarning("goalGround にコライダーがありません！BoxCollider を追加します。");
-                var collider = goalGround.AddComponent<BoxCollider>();
-                collider.size = GroundSetting.size;
-            }
-            goalSurface.BuildNavMesh();
-            if (goalSurface.navMeshData != null)
-            {
-                Bounds bounds = goalSurface.navMeshData.sourceBounds;
-                Debug.Log($"goalSurface NavMesh 範囲: {bounds}, goalGround 位置: {goalGround.transform.position}");
+                groundSurface.BuildNavMesh();
+                Debug.Log("Ground NavMesh を再構築しました");
             }
             else
             {
-                Debug.LogWarning("goalSurface の NavMesh データが生成されていません！");
+                Debug.LogWarning("groundSurface が null です。NavMesh生成をスキップします。");
+            }
+            if (roadSurface != null)
+            {
+                roadSurface.BuildNavMesh();
+                Debug.Log("Road NavMesh を再構築しました");
+            }
+            else
+            {
+                Debug.LogWarning("roadSurface が null です。NavMesh生成をスキップします。");
+            }
+            if (goalGround != null)
+            {
+                var goalSurface = goalGround.GetComponent<NavMeshSurface>();
+                if (goalSurface == null)
+                {
+                    goalSurface = goalGround.AddComponent<NavMeshSurface>();
+                    goalSurface.collectObjects = CollectObjects.All;
+#if UNITY_EDITOR
+                    GameObjectUtility.SetStaticEditorFlags(goalGround, StaticEditorFlags.NavigationStatic);
+#endif
+                }
+                if (!goalGround.GetComponent<Collider>())
+                {
+                    Debug.LogWarning("goalGround にコライダーがありません！BoxCollider を追加します。");
+                    var collider = goalGround.AddComponent<BoxCollider>();
+                    collider.size = GroundSetting.size;
+                }
+                goalSurface.BuildNavMesh();
+                Debug.Log($"Goal NavMesh を再構築しました: {goalGround.transform.position}");
+            }
+            else
+            {
+                Debug.LogWarning("goalGround が null です。NavMesh生成をスキップします。");
             }
         }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"NavMesh構築中にエラーが発生しました: {ex.Message}\n{ex.StackTrace}");
+        }
     }
-
-
 
     void initPrefab()
     {
@@ -214,9 +259,32 @@ public class TestMap01 : MonoBehaviour
 
     private async UniTask MapGenerate()
     {
+        IsMapGenerated = false;
+
+        if (roomNum <= 0)
+        {
+            Debug.LogError($"roomNum が無効です: {roomNum}。1以上の値を設定してください。");
+            return;
+        }
+
         initPrefab();
         roomStatus = new int[System.Enum.GetNames(typeof(RoomStatus)).Length, roomNum];
+
+        for (int i = 0; i < roomNum; i++)
+        {
+            for (int j = 0; j < System.Enum.GetNames(typeof(RoomStatus)).Length; j++)
+            {
+                roomStatus[j, i] = 0;
+            }
+        }
+
         map = new int[mapSizeW, mapSizeH];
+
+        if (mapSizeW <= 0 || mapSizeH <= 0)
+        {
+            Debug.LogError($"mapSize が無効です: mapSizeW={mapSizeW}, mapSizeH={mapSizeH}。1以上の値を設定してください。");
+            return;
+        }
 
         for (int nowW = 0; nowW < mapSizeW; nowW++)
         {
@@ -310,16 +378,26 @@ public class TestMap01 : MonoBehaviour
                         roodPoint = Random.Range(roomStatus[(int)RoomStatus.ry, nowRoom] + offset, roomStatus[(int)RoomStatus.ry, nowRoom] + roomStatus[(int)RoomStatus.rh, nowRoom] - offset);
                         for (int w = 1; w <= splitLength[j]; w++)
                         {
-                            if (j == 0)
+                            int xIndex = (j == 0) ? (-w) + roomStatus[(int)RoomStatus.rx, nowRoom] : w + roomStatus[(int)RoomStatus.rx, nowRoom] + roomStatus[(int)RoomStatus.rw, nowRoom] - offset;
+                            if (xIndex >= 0 && xIndex < mapSizeW && roodPoint >= 0 && roodPoint < mapSizeH)
                             {
-                                map[(-w) + roomStatus[(int)RoomStatus.rx, nowRoom], roodPoint] = 2;
+                                map[xIndex, roodPoint] = 2;
                             }
                             else
                             {
-                                map[w + roomStatus[(int)RoomStatus.rx, nowRoom] + roomStatus[(int)RoomStatus.rw, nowRoom] - offset, roodPoint] = 2;
-                                if (w == splitLength[j])
+                                Debug.LogWarning($"[TestMap01] 配列範囲外アクセスを防止: xIndex={xIndex}, roodPoint={roodPoint}, mapSize=({mapSizeW}, {mapSizeH})");
+                            }
+
+                            if (w == splitLength[j] && j != 0)
+                            {
+                                int extendedXIndex = w + offset + roomStatus[(int)RoomStatus.rx, nowRoom] + roomStatus[(int)RoomStatus.rw, nowRoom] - offset;
+                                if (extendedXIndex >= 0 && extendedXIndex < mapSizeW && roodPoint >= 0 && roodPoint < mapSizeH)
                                 {
-                                    map[w + offset + roomStatus[(int)RoomStatus.rx, nowRoom] + roomStatus[(int)RoomStatus.rw, nowRoom] - offset, roodPoint] = 2;
+                                    map[extendedXIndex, roodPoint] = 2;
+                                }
+                                else
+                                {
+                                    Debug.LogWarning($"[TestMap01] 配列範囲外アクセスを防止（拡張）: extendedXIndex={extendedXIndex}, roodPoint={roodPoint}, mapSize=({mapSizeW}, {mapSizeH})");
                                 }
                             }
                         }
@@ -329,16 +407,26 @@ public class TestMap01 : MonoBehaviour
                         roodPoint = Random.Range(roomStatus[(int)RoomStatus.rx, nowRoom] + offset, roomStatus[(int)RoomStatus.rx, nowRoom] + roomStatus[(int)RoomStatus.rw, nowRoom] - offset);
                         for (int h = 1; h <= splitLength[j]; h++)
                         {
-                            if (j == 2)
+                            int yIndex = (j == 2) ? (-h) + roomStatus[(int)RoomStatus.ry, nowRoom] : h + roomStatus[(int)RoomStatus.ry, nowRoom] + roomStatus[(int)RoomStatus.rh, nowRoom] - offset;
+                            if (roodPoint >= 0 && roodPoint < mapSizeW && yIndex >= 0 && yIndex < mapSizeH)
                             {
-                                map[roodPoint, (-h) + roomStatus[(int)RoomStatus.ry, nowRoom]] = 2;
+                                map[roodPoint, yIndex] = 2;
                             }
                             else
                             {
-                                map[roodPoint, h + roomStatus[(int)RoomStatus.ry, nowRoom] + roomStatus[(int)RoomStatus.rh, nowRoom] - offset] = 2;
-                                if (h == splitLength[j])
+                                Debug.LogWarning($"[TestMap01] 配列範囲外アクセスを防止: roodPoint={roodPoint}, yIndex={yIndex}, mapSize=({mapSizeW}, {mapSizeH})");
+                            }
+
+                            if (h == splitLength[j] && j != 2)
+                            {
+                                int extendedYIndex = h + offset + roomStatus[(int)RoomStatus.ry, nowRoom] + roomStatus[(int)RoomStatus.rh, nowRoom] - offset;
+                                if (roodPoint >= 0 && roodPoint < mapSizeW && extendedYIndex >= 0 && extendedYIndex < mapSizeH)
                                 {
-                                    map[roodPoint, h + offset + roomStatus[(int)RoomStatus.ry, nowRoom] + roomStatus[(int)RoomStatus.rh, nowRoom] - offset] = 2;
+                                    map[roodPoint, extendedYIndex] = 2;
+                                }
+                                else
+                                {
+                                    Debug.LogWarning($"[TestMap01] 配列範囲外アクセスを防止（拡張）: roodPoint={roodPoint}, extendedYIndex={extendedYIndex}, mapSize=({mapSizeW}, {mapSizeH})");
                                 }
                             }
                         }
@@ -431,7 +519,6 @@ public class TestMap01 : MonoBehaviour
             }
         }
 
-        
         await RebuildNavMeshAsync();
         AddGoalConnection();
 
@@ -441,12 +528,26 @@ public class TestMap01 : MonoBehaviour
         }
         for (int i = 0; i < enemyPrefabs.Count; i++)
         {
-            await GenerateObjectsInRoomsAsync(enemyPrefabs[i], enemyGenerateNums[i]);
+            await GenerateEnemiesInRoomsAsync(enemyPrefabs[i], enemyGenerateNums[i]);
         }
         for (int i = 0; i < itemPrefabs.Count; i++)
         {
             await GenerateObjectsInRoomsAsync(itemPrefabs[i], itemGenerateNums[i]);
         }
+
+        // プレイヤーを生成
+        if (playerPrefab != null)
+        {
+            Debug.Log($"[TestMap01] プレイヤー生成を開始: プレハブ={playerPrefab.name}");
+            GameObject playerObj = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            Debug.Log($"[TestMap01] プレイヤーを生成しました: {playerObj.name}");
+        }
+        else
+        {
+            Debug.LogError("[TestMap01] プレイヤーのプレハブが設定されていません！プレイヤーを生成できません。");
+        }
+
+        IsMapGenerated = true;
     }
 
     private bool SplitPoint(int x, int y)
@@ -471,6 +572,16 @@ public class TestMap01 : MonoBehaviour
             return;
         }
 
+        // 親オブジェクトが永続化されていないことを確認
+        Transform roadParent = objectParents[(int)objectType.road].transform; // 修正: .transformを追加
+        if (roadParent.gameObject.scene != gameObject.scene)
+        {
+            Debug.LogWarning("Road の親オブジェクトが永続化されています。新たな親をシーン内に作成します。");
+            GameObject newRoadParent = new GameObject("Road_Temp");
+            roadParent = newRoadParent.transform;
+            newRoadParent.transform.SetParent(transform); // シーン内のオブジェクトにリンク
+        }
+
         Vector2Int connectPoint;
         if (autoSelectConnectionPoint)
         {
@@ -481,7 +592,6 @@ public class TestMap01 : MonoBehaviour
                 return;
             }
             goalConnectionPoint = new Vector3(connectPoint.x, 0, connectPoint.y);
-            
         }
         else
         {
@@ -516,7 +626,14 @@ public class TestMap01 : MonoBehaviour
                 mapObjects[(int)objectType.road],
                 roadPos,
                 Quaternion.identity,
-                objectParents[(int)objectType.road].transform);
+                roadParent);
+            // コライダーの存在を確認
+            if (!road.GetComponent<Collider>())
+            {
+                Debug.LogWarning($"道路オブジェクト {road.name} にコライダーがありません！BoxColliderを追加します。");
+                var collider = road.AddComponent<BoxCollider>();
+                collider.size = RoadSetting.size;
+            }
         }
 
         int extendedRoads = connectionRoadLength - (mapSizeW - connectX - 1);
@@ -532,7 +649,13 @@ public class TestMap01 : MonoBehaviour
                     mapObjects[(int)objectType.road],
                     roadPos,
                     Quaternion.identity,
-                    objectParents[(int)objectType.road].transform);
+                    roadParent);
+                if (!road.GetComponent<Collider>())
+                {
+                    Debug.LogWarning($"拡張道路オブジェクト {road.name} にコライダーがありません！BoxColliderを追加します。");
+                    var collider = road.AddComponent<BoxCollider>();
+                    collider.size = RoadSetting.size;
+                }
                 Debug.Log($"拡張通路を生成: {roadPos}");
             }
         }
@@ -544,7 +667,14 @@ public class TestMap01 : MonoBehaviour
             defaultPosition.z + connectZ * RoadSetting.size.z);
         Debug.Log($"GoalGround を {goalGround.transform.position} に配置");
 
-        // 位置の検証
+        // goalGround にコライダーを確認・追加
+        if (!goalGround.GetComponent<Collider>())
+        {
+            Debug.LogWarning($"goalGround にコライダーがありません！BoxColliderを追加します。");
+            var collider = goalGround.AddComponent<BoxCollider>();
+            collider.size = GroundSetting.size;
+        }
+
         int goalMapX = Mathf.FloorToInt((goalGround.transform.position.x - defaultPosition.x) / GroundSetting.size.x);
         int goalMapZ = Mathf.FloorToInt((goalGround.transform.position.z - defaultPosition.z) / GroundSetting.size.z);
         Debug.Log($"GoalGround マップ位置: ({goalMapX}, {goalMapZ}), マップ範囲: ({mapSizeW}, {mapSizeH})");
@@ -584,7 +714,254 @@ public class TestMap01 : MonoBehaviour
         }
     }
 
+    private async UniTask GenerateEnemiesInRoomsAsync(GameObject prefab, int generateNum)
+    {
+        for (int i = 0; i < generateNum; i++)
+        {
+            int roomIndex = Random.Range(0, roomStatus.GetLength(1));
+            Vector3 center = new Vector3(
+                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, roomIndex] + roomStatus[(int)RoomStatus.rw, roomIndex] / 2.0f) * GroundSetting.size.x,
+                defaultPosition.y,
+                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, roomIndex] + roomStatus[(int)RoomStatus.rh, roomIndex] / 2.0f) * GroundSetting.size.z
+            );
+            Vector3 size = new Vector3(
+                roomStatus[(int)RoomStatus.rw, roomIndex] * GroundSetting.size.x,
+                GroundSetting.size.y,
+                roomStatus[(int)RoomStatus.rh, roomIndex] * GroundSetting.size.z
+            );
 
+            Vector3 enemyPosition = await PlaceEnemyAsync(prefab, center, size);
+            if (enemyPosition != Vector3.zero)
+            {
+                enemyPositions.Add(enemyPosition);
+                Debug.Log($"敵を {enemyPosition} に生成しました");
+            }
+        }
+    }
+
+    private async UniTask<Vector3> PlaceEnemyAsync(GameObject prefab, Vector3 roomCenter, Vector3 roomSize)
+    {
+        string objectName = prefab.name;
+        float margin = 1.0f;
+        int maxAttempts = 5;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            float x = Random.Range(roomCenter.x - roomSize.x / 2 + margin, roomCenter.x + roomSize.x / 2 - margin);
+            float z = Random.Range(roomCenter.z - roomSize.z / 2 + margin, roomCenter.z + roomSize.z / 2 - margin);
+            float y = roomCenter.y + 5.0f;
+            Vector3 spawnPosition = new Vector3(x, y, z);
+
+            int mapX = Mathf.FloorToInt((x - defaultPosition.x) / GroundSetting.size.x);
+            int mapZ = Mathf.FloorToInt((z - defaultPosition.z) / GroundSetting.size.z);
+            if (mapX < 0 || mapX >= mapSizeW || mapZ < 0 || mapZ >= mapSizeH || map[mapX, mapZ] != (int)objectType.ground)
+            {
+                Debug.LogWarning($"位置 ({x}, {z}) は地面ではありません。試行 {attempt + 1}/{maxAttempts}");
+                continue;
+            }
+
+            if (Physics.Raycast(spawnPosition, Vector3.down, out RaycastHit hit, 10f, groundLayer))
+            {
+                Vector3 finalPos = hit.point + Vector3.up * (prefab.transform.localScale.y * 0.5f + 0.05f);
+                NavMeshHit navHit;
+                if (NavMesh.SamplePosition(finalPos, out navHit, 2.0f, NavMesh.AllAreas))
+                {
+                    Instantiate(prefab, navHit.position, Quaternion.identity);
+                    return navHit.position;
+                }
+                else
+                {
+                    Debug.LogWarning($"NavMesh上の位置が見つからず {objectName} を生成できませんでした: {finalPos}");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"地面検出失敗: 位置={spawnPosition}");
+                Debug.DrawRay(spawnPosition, Vector3.down * 10f, Color.red, 5f);
+            }
+            await UniTask.Yield();
+        }
+        Debug.LogError($"最大試行回数を超えても {objectName} を生成できませんでした");
+        return Vector3.zero;
+    }
+
+    private async UniTask WarpPlayerAsync()
+    {
+        if (Player.instance == null)
+        {
+            Debug.LogError("Player.instance が null です！ワープできません。");
+            return;
+        }
+
+        if (!Player.instance.gameObject.activeInHierarchy)
+        {
+            Debug.LogError($"Player.instance ({Player.instance.name}) が非アクティブです！ワープできません。");
+            return;
+        }
+
+        int maxRoomAttempts = 10;
+        bool playerWarped = false;
+
+        for (int roomAttempt = 0; roomAttempt < maxRoomAttempts; roomAttempt++)
+        {
+            int roomIndex = Random.Range(0, roomStatus.GetLength(1));
+            Vector3 center = new Vector3(
+                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, roomIndex] + roomStatus[(int)RoomStatus.rw, roomIndex] / 2.0f) * GroundSetting.size.x,
+                defaultPosition.y,
+                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, roomIndex] + roomStatus[(int)RoomStatus.rh, roomIndex] / 2.0f) * GroundSetting.size.z
+            );
+            Vector3 size = new Vector3(
+                roomStatus[(int)RoomStatus.rw, roomIndex] * GroundSetting.size.x,
+                GroundSetting.size.y,
+                roomStatus[(int)RoomStatus.rh, roomIndex] * GroundSetting.size.z
+            );
+
+            Vector3 warpPosition = await FindWarpPositionAsync(center, size);
+            if (warpPosition != Vector3.zero)
+            {
+                bool isFarEnough = true;
+                foreach (Vector3 enemyPos in enemyPositions)
+                {
+                    float distance = Vector3.Distance(warpPosition, enemyPos);
+                    if (distance < minDistanceFromEnemy)
+                    {
+                        isFarEnough = false;
+                        Debug.Log($"ワープ位置 {warpPosition} が敵 {enemyPos} に近すぎます（距離: {distance} < {minDistanceFromEnemy}）");
+                        break;
+                    }
+                }
+
+                if (isFarEnough)
+                {
+                    NavMeshAgent agent = Player.instance.GetComponent<NavMeshAgent>();
+                    if (agent != null && agent.isOnNavMesh)
+                    {
+                        agent.enabled = false;
+                        Debug.Log($"NavMeshAgent を一時的に無効化: {Player.instance.name}");
+                    }
+
+                    Player.instance.transform.position = warpPosition;
+                    Debug.Log($"プレイヤー ({Player.instance.name}) を {warpPosition} にワープしました。現在の位置: {Player.instance.transform.position}");
+
+                    if (agent != null)
+                    {
+                        agent.enabled = true;
+                        NavMeshHit navHit;
+                        if (NavMesh.SamplePosition(warpPosition, out navHit, 10.0f, NavMesh.AllAreas))
+                        {
+                            agent.Warp(navHit.position);
+                            Debug.Log($"NavMeshAgent を {navHit.position} にワープしました。");
+                        }
+                        else
+                        {
+                            Debug.LogWarning($"ワープ位置 {warpPosition} はNavMesh上にありません。NavMeshAgentのワープをスキップします。");
+                        }
+                    }
+
+                    playerWarped = true;
+                    break;
+                }
+            }
+        }
+
+        if (!playerWarped)
+        {
+            Debug.LogWarning("適切なワープ位置が見つかりませんでした。フォールバック位置にワープします。");
+
+            Vector3 fallbackPosition = new Vector3(
+                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, 0] + roomStatus[(int)RoomStatus.rw, 0] / 2.0f) * GroundSetting.size.x,
+                defaultPosition.y + (Player.instance != null ? Player.instance.transform.localScale.y * 0.5f + 0.05f : 0.5f + 0.05f),
+                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, 0] + roomStatus[(int)RoomStatus.rh, 0] / 2.0f) * GroundSetting.size.z
+            );
+
+            int mapX = Mathf.FloorToInt((fallbackPosition.x - defaultPosition.x) / GroundSetting.size.x);
+            int mapZ = Mathf.FloorToInt((fallbackPosition.z - defaultPosition.z) / GroundSetting.size.z);
+            if (mapX < 0 || mapX >= mapSizeW || mapZ < 0 || mapZ >= mapSizeH || map[mapX, mapZ] != (int)objectType.ground)
+            {
+                Debug.LogError($"フォールバック位置 {fallbackPosition} は無効です。mapX={mapX}, mapZ={mapZ}, map[{mapX}, {mapZ}]={(mapX >= 0 && mapX < mapSizeW && mapZ >= 0 && mapZ < mapSizeH ? (objectType)map[mapX, mapZ] : "範囲外")}");
+                return;
+            }
+
+            NavMeshAgent agent = Player.instance.GetComponent<NavMeshAgent>();
+            if (agent != null && agent.isOnNavMesh)
+            {
+                agent.enabled = false;
+                Debug.Log($"NavMeshAgent を一時的に無効化（フォールバック）: {Player.instance.name}");
+            }
+
+            Player.instance.transform.position = fallbackPosition;
+            Debug.Log($"プレイヤー ({Player.instance.name}) をフォールバック位置 {fallbackPosition} にワープしました。現在の位置: {Player.instance.transform.position}");
+
+            if (agent != null)
+            {
+                agent.enabled = true;
+                NavMeshHit navHit;
+                if (NavMesh.SamplePosition(fallbackPosition, out navHit, 10.0f, NavMesh.AllAreas))
+                {
+                    agent.Warp(navHit.position);
+                    Debug.Log($"NavMeshAgent をフォールバック位置 {navHit.position} にワープしました。");
+                }
+                else
+                {
+                    Debug.LogWarning($"フォールバック位置 {fallbackPosition} もNavMesh上にありません。NavMeshAgentのワープをスキップします。");
+                }
+            }
+        }
+    }
+
+    private async UniTask<Vector3> FindWarpPositionAsync(Vector3 roomCenter, Vector3 roomSize)
+    {
+        float margin = 1.0f;
+        int maxAttempts = 20;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            float x = Random.Range(roomCenter.x - roomSize.x / 2 + margin, roomCenter.x + roomSize.x / 2 - margin);
+            float z = Random.Range(roomCenter.z - roomSize.z / 2 + margin, roomCenter.z + roomSize.z / 2 - margin);
+            float y = roomCenter.y + 5.0f;
+            Vector3 spawnPosition = new Vector3(x, y, z);
+
+            int mapX = Mathf.FloorToInt((x - defaultPosition.x) / GroundSetting.size.x);
+            int mapZ = Mathf.FloorToInt((z - defaultPosition.z) / GroundSetting.size.z);
+
+            if (mapX < 0 || mapX >= mapSizeW || mapZ < 0 || mapZ >= mapSizeH)
+            {
+                Debug.LogWarning($"試行 {attempt + 1}/{maxAttempts}: 位置 ({x}, {z}) はマップ範囲外です。mapX={mapX}, mapZ={mapZ}, mapSize=({mapSizeW}, {mapSizeH}), roomCenter={roomCenter}, roomSize={roomSize}");
+                continue;
+            }
+
+            if (map[mapX, mapZ] != (int)objectType.ground)
+            {
+                Debug.LogWarning($"試行 {attempt + 1}/{maxAttempts}: 位置 ({x}, {z}) は地面ではありません。map[{mapX}, {mapZ}]={(objectType)map[mapX, mapZ]}, roomCenter={roomCenter}, roomSize={roomSize}");
+                continue;
+            }
+
+            if (Physics.Raycast(spawnPosition, Vector3.down, out RaycastHit hit, 10f, groundLayer))
+            {
+                Vector3 finalPos = hit.point + Vector3.up * (Player.instance != null ? Player.instance.transform.localScale.y * 0.5f + 0.1f : 0.5f + 0.1f);
+                NavMeshHit navHit;
+                if (NavMesh.SamplePosition(finalPos, out navHit, 2.0f, NavMesh.AllAreas))
+                {
+                    Debug.Log($"試行 {attempt + 1}/{maxAttempts}: ワープ位置 {navHit.position} を見つけました（地面ヒット: {hit.point}, コライダー: {hit.collider.gameObject.name}）");
+                    return navHit.position;
+                }
+                else
+                {
+                    Debug.LogWarning($"試行 {attempt + 1}/{maxAttempts}: NavMesh上の位置が見つかりませんでした: {finalPos}, roomCenter={roomCenter}, roomSize={roomSize}");
+                }
+            }
+            else
+            {
+                string layerName = groundLayer.value == 0 ? "空" : LayerMask.LayerToName(Mathf.FloorToInt(Mathf.Log(groundLayer.value, 2)));
+                Debug.LogWarning($"試行 {attempt + 1}/{maxAttempts}: 地面検出失敗: 位置={spawnPosition}, LayerMask={layerName}, LayerMaskValue={groundLayer.value}, roomCenter={roomCenter}, roomSize={roomSize}");
+                Debug.DrawRay(spawnPosition, Vector3.down * 10f, Color.red, 10f);
+            }
+            await UniTask.Yield();
+        }
+
+        Debug.LogError($"最大試行回数({maxAttempts})を超えてもワープ位置を見つけることができませんでした。roomCenter={roomCenter}, roomSize={roomSize}, mapSize=({mapSizeW}, {mapSizeH}), defaultPosition={defaultPosition}, GroundSetting.size={GroundSetting.size}");
+        return Vector3.zero;
+    }
 
     private Vector2Int FindValidConnectionPoint()
     {
@@ -648,7 +1025,7 @@ public class TestMap01 : MonoBehaviour
                 GroundSetting.size.y,
                 roomStatus[(int)RoomStatus.rh, roomIndex] * GroundSetting.size.z
             );
-            
+
             await PlaceObjectAsync(patrolPoint.gameObject, center, size, isPatrolPoint: true);
         }
     }
@@ -704,7 +1081,6 @@ public class TestMap01 : MonoBehaviour
                     if (NavMesh.SamplePosition(finalPos, out navHit, 2.0f, NavMesh.AllAreas))
                     {
                         Instantiate(prefab, navHit.position, Quaternion.identity);
-
                         return;
                     }
                     else
@@ -715,7 +1091,7 @@ public class TestMap01 : MonoBehaviour
                 else
                 {
                     Instantiate(prefab, finalPos, Quaternion.identity);
-                    Debug.Log($"{objectName} を {finalPos} に生成しました"); 
+                    Debug.Log($"{objectName} を {finalPos} に生成しました");
                     return;
                 }
             }

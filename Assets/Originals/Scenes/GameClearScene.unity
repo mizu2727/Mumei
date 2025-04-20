@@ -281,7 +281,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u7D9A\u7DE8\u3092\u5236\u4F5C\u4E2D\u306A\u306E\u3067\u3001"
+  m_Text: message
 --- !u!222 &802031512
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -304,7 +304,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2884785568149171092, guid: 5ddfb6520235af84aa576ae64a29a101, type: 3}
       propertyPath: m_Text
-      value: "\u30D7\u30EC\u30A4\u3042\u308A\u304C\u3068\u3046\u3054\u3056\u3044\u307E\u3059\u3002"
+      value: message
       objectReference: {fileID: 0}
     - target: {fileID: 2884785568149171092, guid: 5ddfb6520235af84aa576ae64a29a101, type: 3}
       propertyPath: m_Color.b

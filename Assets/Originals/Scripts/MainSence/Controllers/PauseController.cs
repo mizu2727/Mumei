@@ -158,11 +158,24 @@ public class PauseController : MonoBehaviour
 
     public void OnClickedViewMysteryItemButton()
     {
+        // ミステリーアイテムパネルを表示
         isMysteryItemPanels = true;
         ChangeViewMysteryItemPanel();
 
+        // ドキュメントパネルを非表示
         isDocumentPanels = false;
         ChangeViewDocumentPanel();
+
+        // 画像と説明テキストをクリア
+        if (mysteryItemImage.Length > 0)
+        {
+            mysteryItemImage[0].sprite = null;
+            mysteryItemImage[0].enabled = false;
+        }
+        if (mysteryItemExplanationText.Length > 0)
+        {
+            mysteryItemExplanationText[0].text = "";
+        }
     }
 
 
@@ -285,10 +298,21 @@ public class PauseController : MonoBehaviour
 
             isMysteryItemExplanationPanel = false;
             ChangeViewMysteryItemExplanationPanel();
+
+            // 画像と説明テキストをリセット
+            if (mysteryItemImage.Length > 0)
+            {
+                mysteryItemImage[0].sprite = null;
+                mysteryItemImage[0].enabled = false;
+            }
+            if (mysteryItemExplanationText.Length > 0)
+            {
+                mysteryItemExplanationText[0].text = "";
+            }
         }
     }
 
-    
+
     //ミステリーアイテム説明欄パネルの表示/非表示
     void ChangeViewMysteryItemExplanationPanel()
     {
@@ -323,40 +347,48 @@ public class PauseController : MonoBehaviour
 
 
 
-    public void OnClickedMysteryItemNameButton(int index) 
+    public void OnClickedMysteryItemNameButton(int index)
     {
-        if (index < mysteryItemNames.Count && index < sO_Item.itemList.Count)
+        if (index < mysteryItemNames.Count)
         {
-            isMysteryItemExplanationPanel = true;
-            ChangeViewMysteryItemExplanationPanel();
+            string itemName = mysteryItemNames[index];
+            var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
 
-            var item = sO_Item.itemList[index];
             if (item != null)
             {
+                // ミステリーアイテム説明パネルを表示
+                isMysteryItemExplanationPanel = true;
+                ChangeViewMysteryItemExplanationPanel();
+
+                // ドキュメント説明パネルを非表示にする
+                isDocumentExplanationPanel = false;
+                ChangeViewDocumentExplanationPanel();
+
                 // 説明テキストを更新
-                if (mysteryItemExplanationText != null)
+                if (mysteryItemExplanationText.Length > 0)
                 {
                     mysteryItemExplanationText[0].text = item.description;
                     Debug.Log($"Set explanation text to: {item.description}");
                 }
 
                 // 画像を更新
-                if (mysteryItemImage != null)
+                if (mysteryItemImage.Length > 0)
                 {
                     mysteryItemImage[0].sprite = item.icon;
-                    mysteryItemImage[0].enabled = (item.icon != null); // アイコンがない場合は非表示
+                    mysteryItemImage[0].enabled = (item.icon != null);
                     Debug.Log($"Set image to: {(item.icon != null ? item.icon.name : "null")}");
                 }
                 else
                 {
                     Debug.LogWarning("mysteryItemImage が未設定です");
                 }
+
+                Debug.Log($"Clicked Mystery Item: {itemName}");
             }
             else
             {
-                Debug.LogError("アイテムが見つかりません");
+                Debug.LogError($"アイテム '{itemName}' が見つかりません");
             }
-            Debug.Log($"Clicked Mystery Item: {mysteryItemNames[index]}");
         }
     }
 
@@ -364,11 +396,17 @@ public class PauseController : MonoBehaviour
     // ミステリーアイテム名を追加し、UIに反映
     public void ChangeMysteryItemTexts(string mysteryItemName, string mysteryItemDescription)
     {
-        if (!mysteryItemNames.Contains(mysteryItemName))
+        // アイテムリストから該当するアイテムを検索
+        var item = sO_Item.itemList.Find(x => x.itemName == mysteryItemName && x.itemType == ItemType.MysteryItem);
+        if (item != null && !mysteryItemNames.Contains(mysteryItemName))
         {
             mysteryItemNames.Add(mysteryItemName);
-            mysteryItemExplanations.Add(mysteryItemName);
+            mysteryItemExplanations.Add(mysteryItemDescription);
             UpdateMysteryItemUI();
+        }
+        else 
+        {
+            Debug.LogWarning($"MysteryItem '{mysteryItemName}' が見つからないか、すでに追加済みです");
         }
     }
 
@@ -377,19 +415,43 @@ public class PauseController : MonoBehaviour
     {
         for (int i = 0; i < mysteryItemNameText.Length; i++)
         {
-            //ボタンとテキストのindexが一致するようにする
             if (i < mysteryItemNames.Count)
             {
-                mysteryItemNameText[i].text = mysteryItemNames[i];
-                mysteryItemNameButton[i].interactable = true;
+                string itemName = mysteryItemNames[i];
+                var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
 
-                mysteryItemExplanationText[i].text = mysteryItemExplanations[i];
-
-
-                if (i < mysteryItemImage.Length)
+                if (item != null)
                 {
-                    mysteryItemImage[i].sprite = sO_Item.itemList[i].icon;
-                    mysteryItemImage[i].enabled = (sO_Item.itemList[i].icon != null);
+                    mysteryItemNameText[i].text = itemName;
+                    mysteryItemNameButton[i].interactable = true;
+
+                    if (i < mysteryItemExplanationText.Length)
+                    {
+                        mysteryItemExplanationText[i].text = mysteryItemExplanations[i];
+                    }
+
+                    if (i < mysteryItemImage.Length)
+                    {
+                        mysteryItemImage[i].sprite = item.icon;
+                        mysteryItemImage[i].enabled = (item.icon != null);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"アイテム '{itemName}' が見つかりません");
+                    mysteryItemNameText[i].text = "?????????";
+                    mysteryItemNameButton[i].interactable = false;
+
+                    if (i < mysteryItemExplanationText.Length)
+                    {
+                        mysteryItemExplanationText[i].text = "";
+                    }
+
+                    if (i < mysteryItemImage.Length)
+                    {
+                        mysteryItemImage[i].sprite = null;
+                        mysteryItemImage[i].enabled = false;
+                    }
                 }
             }
             else
@@ -397,8 +459,10 @@ public class PauseController : MonoBehaviour
                 mysteryItemNameText[i].text = "?????????";
                 mysteryItemNameButton[i].interactable = false;
 
-                mysteryItemExplanationText[i].text = "";
-
+                if (i < mysteryItemExplanationText.Length)
+                {
+                    mysteryItemExplanationText[i].text = "";
+                }
 
                 if (i < mysteryItemImage.Length)
                 {
