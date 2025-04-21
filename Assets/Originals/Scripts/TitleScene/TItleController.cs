@@ -55,14 +55,14 @@ public class TitleController : MonoBehaviour
             }
 
             // シーンが完全にロードされるまで待機
-            await UniTask.DelayFrame(10, cancellationToken: cancellationTokenSource.Token);
+            await UniTask.DelayFrame(50, cancellationToken: cancellationTokenSource.Token); // 待機時間を延長
 
-            // TestMap01.Instance を取得（最大200フレーム待機）
+            // TestMap01.Instance を取得（最大500フレーム待機）
             TestMap01 mapGenerator = null;
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 500; i++)
             {
                 mapGenerator = TestMap01.Instance;
-                if (mapGenerator != null)
+                if (mapGenerator != null && mapGenerator.gameObject.scene.IsValid())
                 {
                     Debug.Log($"[TitleController] TestMap01.Instance を {i} フレーム目で取得: {mapGenerator.gameObject.name}");
                     break;
@@ -70,9 +70,9 @@ public class TitleController : MonoBehaviour
                 await UniTask.DelayFrame(1, cancellationToken: cancellationTokenSource.Token);
             }
 
-            if (mapGenerator == null)
+            if (mapGenerator == null || !mapGenerator.gameObject.scene.IsValid())
             {
-                Debug.LogError($"[TitleController] TestMap01.Instance が見つかりません！シーン '{SceneName}' に TestMap01 がアタッチされた GameObject が存在するか確認してください。");
+                Debug.LogError($"[TitleController] TestMap01.Instance が見つかりません、またはシーンが無効です！シーン '{SceneName}' に TestMap01 がアタッチされた GameObject が存在するか確認してください。");
                 return;
             }
 

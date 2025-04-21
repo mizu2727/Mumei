@@ -8,21 +8,23 @@ public class GameController : MonoBehaviour
 
     [SerializeField] private TestMap01 map; // TestMap01への参照
 
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(this.gameObject);
+        }
+        else Destroy(this.gameObject);
+
+        Time.timeScale = 1;
+    }
+
+
     private void Start()
     {
-        //ゲーム開始後にワープを実行
-        InvokeWarpAfterDelay().Forget();
+
     }
 
-    private async UniTask InvokeWarpAfterDelay()
-    {
-        await UniTask.Delay(TimeSpan.FromSeconds(10f));
-        await map.TriggerWarpAsync();
-    }
 
-    //特定のイベントでワープをトリガー
-    public void OnSomeEvent()
-    {
-        map.TriggerWarpAsync().Forget();
-    }
 }

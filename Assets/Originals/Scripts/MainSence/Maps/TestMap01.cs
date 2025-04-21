@@ -233,23 +233,21 @@ public class TestMap01 : MonoBehaviour
 
         objectParents = new GameObject[] { groundParent, wallParent, roadParent };
 
-        GameObject ground = Instantiate(groundPrefab);
+        // プレハブをシーン内でインスタンス化
+        GameObject ground = Instantiate(groundPrefab, Vector3.zero, Quaternion.identity, groundParent.transform);
         ground.transform.localScale = GroundSetting.size;
         ground.GetComponent<Renderer>().material.color = GroundSetting.color;
         ground.name = "ground";
-        ground.transform.SetParent(groundParent.transform);
 
-        GameObject wall = Instantiate(wallPrefab);
+        GameObject wall = Instantiate(wallPrefab, Vector3.zero, Quaternion.identity, wallParent.transform);
         wall.transform.localScale = WallSetting.size;
         wall.GetComponent<Renderer>().material.color = WallSetting.color;
         wall.name = "wall";
-        wall.transform.SetParent(wallParent.transform);
 
-        GameObject road = Instantiate(roadPrefab);
+        GameObject road = Instantiate(roadPrefab, Vector3.zero, Quaternion.identity, roadParent.transform);
         road.transform.localScale = RoadSetting.size;
         road.GetComponent<Renderer>().material.color = RoadSetting.color;
         road.name = "road";
-        road.transform.SetParent(roadParent.transform);
 
         var navObstacle = wall.AddComponent<NavMeshObstacle>();
         navObstacle.carving = true;
@@ -572,14 +570,14 @@ public class TestMap01 : MonoBehaviour
             return;
         }
 
-        // 親オブジェクトが永続化されていないことを確認
-        Transform roadParent = objectParents[(int)objectType.road].transform; // 修正: .transformを追加
-        if (roadParent.gameObject.scene != gameObject.scene)
+        // 親オブジェクトをシーン内で作成
+        Transform roadParent = objectParents[(int)objectType.road].transform;
+        if (roadParent.gameObject.scene != gameObject.scene || !roadParent.gameObject.scene.IsValid())
         {
-            Debug.LogWarning("Road の親オブジェクトが永続化されています。新たな親をシーン内に作成します。");
+            Debug.LogWarning("Road の親オブジェクトが永続化されているか無効です。新しい親をシーン内に作成します。");
             GameObject newRoadParent = new GameObject("Road_Temp");
+            newRoadParent.transform.SetParent(transform, false); // 現在のGameObjectのTransformに紐づける
             roadParent = newRoadParent.transform;
-            newRoadParent.transform.SetParent(transform); // シーン内のオブジェクトにリンク
         }
 
         Vector2Int connectPoint;
@@ -840,6 +838,7 @@ public class TestMap01 : MonoBehaviour
                         Debug.Log($"NavMeshAgent を一時的に無効化: {Player.instance.name}");
                     }
 
+                    // プレイヤーの位置を設定（オフセットはFindWarpPositionAsyncで適用済み）
                     Player.instance.transform.position = warpPosition;
                     Debug.Log($"プレイヤー ({Player.instance.name}) を {warpPosition} にワープしました。現在の位置: {Player.instance.transform.position}");
 
@@ -849,12 +848,16 @@ public class TestMap01 : MonoBehaviour
                         NavMeshHit navHit;
                         if (NavMesh.SamplePosition(warpPosition, out navHit, 10.0f, NavMesh.AllAreas))
                         {
-                            agent.Warp(navHit.position);
-                            Debug.Log($"NavMeshAgent を {navHit.position} にワープしました。");
+                            // NavMeshAgentのワープ位置にも軽いオフセットを適用
+                            Vector3 adjustedNavPos = navHit.position + Vector3.up * 0.1f;
+                            agent.Warp(adjustedNavPos);
+                            Debug.Log($"NavMeshAgent を {adjustedNavPos} にワープしました。");
                         }
                         else
                         {
                             Debug.LogWarning($"ワープ位置 {warpPosition} はNavMesh上にありません。NavMeshAgentのワープをスキップします。");
+                            // フォールバックとしてTransform位置を再度設定
+                            Player.instance.transform.position = warpPosition;
                         }
                     }
 
@@ -870,7 +873,7 @@ public class TestMap01 : MonoBehaviour
 
             Vector3 fallbackPosition = new Vector3(
                 defaultPosition.x + (roomStatus[(int)RoomStatus.rx, 0] + roomStatus[(int)RoomStatus.rw, 0] / 2.0f) * GroundSetting.size.x,
-                defaultPosition.y + (Player.instance != null ? Player.instance.transform.localScale.y * 0.5f + 0.05f : 0.5f + 0.05f),
+                defaultPosition.y + (Player.instance != null ? Player.instance.transform.localScale.y * 0.5f + 0.1f : 0.6f),
                 defaultPosition.z + (roomStatus[(int)RoomStatus.ry, 0] + roomStatus[(int)RoomStatus.rh, 0] / 2.0f) * GroundSetting.size.z
             );
 
@@ -898,8 +901,9 @@ public class TestMap01 : MonoBehaviour
                 NavMeshHit navHit;
                 if (NavMesh.SamplePosition(fallbackPosition, out navHit, 10.0f, NavMesh.AllAreas))
                 {
-                    agent.Warp(navHit.position);
-                    Debug.Log($"NavMeshAgent をフォールバック位置 {navHit.position} にワープしました。");
+                    Vector3 adjustedNavPos = navHit.position + Vector3.up * 0.1f;
+                    agent.Warp(adjustedNavPos);
+                    Debug.Log($"NavMeshAgent をフォールバック位置 {adjustedNavPos} にワープしました。");
                 }
                 else
                 {
@@ -913,6 +917,7 @@ public class TestMap01 : MonoBehaviour
     {
         float margin = 1.0f;
         int maxAttempts = 20;
+        float yOffset = Player.instance != null ? Player.instance.transform.localScale.y * 0.5f + 0.1f : 0.5f + 0.1f; // オフセットを計算
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
@@ -938,12 +943,15 @@ public class TestMap01 : MonoBehaviour
 
             if (Physics.Raycast(spawnPosition, Vector3.down, out RaycastHit hit, 10f, groundLayer))
             {
-                Vector3 finalPos = hit.point + Vector3.up * (Player.instance != null ? Player.instance.transform.localScale.y * 0.5f + 0.1f : 0.5f + 0.1f);
+                // 地面のヒット位置にオフセットを追加
+                Vector3 finalPos = hit.point + Vector3.up * yOffset;
                 NavMeshHit navHit;
                 if (NavMesh.SamplePosition(finalPos, out navHit, 2.0f, NavMesh.AllAreas))
                 {
-                    Debug.Log($"試行 {attempt + 1}/{maxAttempts}: ワープ位置 {navHit.position} を見つけました（地面ヒット: {hit.point}, コライダー: {hit.collider.gameObject.name}）");
-                    return navHit.position;
+                    // NavMesh上の位置にオフセットを適用
+                    Vector3 adjustedPos = navHit.position + Vector3.up * 0.1f; // NavMesh位置にも軽いオフセット
+                    Debug.Log($"試行 {attempt + 1}/{maxAttempts}: ワープ位置 {adjustedPos} を見つけました（地面ヒット: {hit.point}, コライダー: {hit.collider.gameObject.name}, 適用オフセット: {yOffset})");
+                    return adjustedPos;
                 }
                 else
                 {

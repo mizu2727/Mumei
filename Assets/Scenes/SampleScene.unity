@@ -1172,6 +1172,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestMap02
       objectReference: {fileID: 0}
+    - target: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
+      propertyPath: startGround
+      value: 
+      objectReference: {fileID: 6574780776061053539, guid: 4a86027a9c4811a489e2833d6dae7cf1, type: 3}
+    - target: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
+      propertyPath: playerPrefab
+      value: 
+      objectReference: {fileID: 3468896028249890892, guid: e8c025f79582443449ce252a723af5c0, type: 3}
+    - target: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
+      propertyPath: startConnectionPoint.x
+      value: -50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
+      propertyPath: startConnectionPoint.z
+      value: -50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

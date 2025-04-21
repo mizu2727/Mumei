@@ -26,7 +26,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerName = value;
     }
 
-    [SerializeField] private float Speed  = 3f;
+    [SerializeField] private float Speed = 3f;
     [SerializeField]
     public float NormalSpeed
     {
@@ -148,7 +148,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
     private void Update()
     {
-        if (isDebug && Input.GetKeyDown(KeyCode.Q)) 
+        if (isDebug && Input.GetKeyDown(KeyCode.Q))
         {
             Debug.Log("プレイヤー死亡(デバッグモード)");
             Dead();
@@ -187,11 +187,11 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
         // Move は指定したベクトルだけ移動させる命令
-        characterController.Move(moveDirection  * Time.deltaTime);
+        characterController.Move(moveDirection * Time.deltaTime);
 
         // 移動のアニメーション
         //animator.SetFloat("MoveSpeed", move.magnitude);
 
-        
+
     }
 }
