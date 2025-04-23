@@ -32,9 +32,9 @@ public class TitleController : MonoBehaviour
         if (scene.name == SceneName)
         {
             Debug.Log($"[TitleController] シーン '{scene.name}' がロードされました。TestMap01.Instance をチェックします。");
-            if (TestMap01.Instance != null)
+            if (TestMap01.instance != null)
             {
-                Debug.Log($"[TitleController] TestMap01.Instance が見つかりました: {TestMap01.Instance.gameObject.name}");
+                Debug.Log($"[TitleController] TestMap01.Instance が見つかりました: {TestMap01.instance.gameObject.name}");
             }
             else
             {
@@ -61,7 +61,7 @@ public class TitleController : MonoBehaviour
             TestMap01 mapGenerator = null;
             for (int i = 0; i < 500; i++)
             {
-                mapGenerator = TestMap01.Instance;
+                mapGenerator = TestMap01.instance;
                 if (mapGenerator != null && mapGenerator.gameObject.scene.IsValid())
                 {
                     Debug.Log($"[TitleController] TestMap01.Instance を {i} フレーム目で取得: {mapGenerator.gameObject.name}");
