@@ -104,10 +104,8 @@ MonoBehaviour:
   - {fileID: 809408108765849772, guid: f501bb7c14fb9354ea4f07840949eaa4, type: 3}
   - {fileID: 809408108765849772, guid: f501bb7c14fb9354ea4f07840949eaa4, type: 3}
   enemyPrefabs:
-  - {fileID: 5348626555388503888, guid: 681dab3fc26f6d04699cee4467c301d7, type: 3}
+  - {fileID: 4061999138098054953, guid: abeb8622f1bf44e45af7876bf14bfd6d, type: 3}
   enemyGenerateNums: 05000000
-  playerPrefab: {fileID: 3468896028249890892, guid: e8c025f79582443449ce252a723af5c0, type: 3}
-  minDistanceFromEnemy: 10
   goalGround: {fileID: 746560455713512265, guid: a508ee2f976ae9c4fb3e5efe7fa70578, type: 3}
   goalConnectionPoint: {x: 50, y: 25, z: 50}
   connectionRoadLength: 3
@@ -116,6 +114,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 256
+  minDistanceFromEnemy: 10
   mapSizeW: 50
   mapSizeH: 50
   roomNum: 5

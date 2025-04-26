@@ -188,8 +188,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerName: 
-  Speed: 3
-  dashSpeed: 10
+  Speed: 15
+  dashSpeed: 20
   playerDetectionRange: 10
   playerGravity: 10
   playerHP: 1

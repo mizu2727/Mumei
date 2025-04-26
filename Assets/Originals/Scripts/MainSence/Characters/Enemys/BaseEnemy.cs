@@ -4,14 +4,11 @@ using UnityEngine.AI;
 
 public class BaseEnemy: MonoBehaviour,CharacterInterface
 {
-    //
-    [SerializeField] private Player player;
-
     //NavMeshAgentを取得
     NavMeshAgent navMeshAgent;
 
-    //追従したいオブジェクト(Hieralchy内のオブジェクトをアタッチする)
-    [SerializeField] public Transform tagetPoint;
+    //追従したいオブジェクト
+    public Transform tagetPoint;
 
     //徘徊
     [SerializeField] private TestMap01 testMap01;//プレハブ化したオブジェクトをアタッチ
@@ -57,7 +54,7 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         set => dashSpeed = value;
     }
 
-    [SerializeField] private float enemyDetectionRange = 10f;
+    [SerializeField] private float enemyDetectionRange = 100f;
     [SerializeField]
     public float DetectionRange
     {
@@ -106,11 +103,11 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
     //攻撃
     public void Attack()
     {
-        if (player.IsDead) return;
+        if (Player.instance.IsDead) return;
 
-        player.HP -= 1;
+        Player.instance.HP -= 1;
 
-        if (player.HP <= 0) player.Dead() ;
+        if (Player.instance.HP <= 0) Player.instance.Dead() ;
 
     }
 
@@ -163,53 +160,87 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         }
     }
 
-    void Start() 
+    void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
-
-        if (navMeshAgent.isOnNavMesh)
+        if (navMeshAgent == null)
         {
-            //Debug.Log("NavMeshAgent は NavMesh 上に配置されています！");
-        }
-        else
-        {
-            Debug.LogError("NavMeshAgent が NavMesh 上にありません！");
+            Debug.LogError($"[{gameObject.name}] NavMeshAgentがアタッチされていません！");
+            return;
         }
 
-        //移動を有効化
+        // NavMeshAgentの初期化
         navMeshAgent.isStopped = false;
         navMeshAgent.updatePosition = true;
         navMeshAgent.updateRotation = true;
 
-        // NavMesh 上の適切な位置に移動
-        NavMeshHit hit;
-        if (NavMesh.SamplePosition(transform.position, out hit, 2.0f, NavMesh.AllAreas))
+        // NavMesh上に配置されているか確認
+        if (!navMeshAgent.isOnNavMesh)
         {
-            navMeshAgent.Warp(hit.position);
-            Debug.Log("敵の初期位置を調整: " + hit.position);
-        }
-
-        navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
-        maxPositionNumber = testMap01.patrolPoint.Length;
-        Debug.Log("patrolPointの数: " + maxPositionNumber);
-
-        if (maxPositionNumber > 0)
-        {
-            navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
-            Debug.Log("初期徘徊地点は" + testMap01.patrolPoint[positionNumber].position);
+            Debug.LogWarning($"[{gameObject.name}] NavMesh上にありません。位置を補正します。");
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(transform.position, out hit, 5.0f, NavMesh.AllAreas))
+            {
+                navMeshAgent.Warp(hit.position);
+                Debug.Log($"[{gameObject.name}] 初期位置をNavMesh上に補正: {hit.position}");
+            }
+            else
+            {
+                Debug.LogError($"[{gameObject.name}] NavMesh位置補正に失敗しました。位置: {transform.position}");
+            }
         }
         else
         {
-            Debug.LogError("patrolPointが一つも作られていません！");
+            Debug.Log($"[{gameObject.name}] NavMesh上に配置されています。位置: {transform.position}");
         }
+
+        // 徘徊地点の初期化
+        if (testMap01 == null || testMap01.patrolPoint == null || testMap01.patrolPoint.Length == 0)
+        {
+            Debug.LogError($"[{gameObject.name}] testMap01またはpatrolPointが設定されていません！");
+            return;
+        }
+
+        maxPositionNumber = testMap01.patrolPoint.Length;
+        positionNumber = Random.Range(0, maxPositionNumber);
+        navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
+        Debug.Log($"[{gameObject.name}] 初期徘徊地点: {testMap01.patrolPoint[positionNumber].position}");
     }
 
     void Update()
     {
-        if (player.IsDead || player == null || testMap01 == null) return;
+        if (Player.instance.IsDead || Player.instance == null || testMap01 == null) return;
+
+        // 必須コンポーネントのチェック
+        if (navMeshAgent == null || !navMeshAgent.enabled)
+        {
+            Debug.LogWarning($"[{gameObject.name}] NavMeshAgentが無効または存在しません。");
+            return;
+        }
+        if (Player.instance == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] Player.instanceがnullです。");
+            return;
+        }
+        if (Player.instance.IsDead)
+        {
+            Debug.Log($"[{gameObject.name}] プレイヤーが死にました。追従を停止。");
+            return;
+        }
+        if (testMap01 == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] testMap01がnullです。");
+            return;
+        }
+        if (tagetPoint == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] tagetPointがnullです。プレイヤーのTransformを設定してください。");
+            return;
+        }
 
         //プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, tagetPoint.position);
+        Debug.Log($"[{gameObject.name}] プレイヤーとの距離: {distance}, 検知範囲: {DetectionRange}, 現在位置: {transform.position}, プレイヤー位置: {tagetPoint.position}");
 
         //プレイヤーが一定の範囲に入った場合の処理
         if (distance <= DetectionRange)
@@ -218,12 +249,6 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         }
         else
         {
-            //Debug.Log($"現在地: {transform.position}");
-            //Debug.Log($"目的地: {navMeshAgent.destination}");
-            //Debug.Log($"目的地までの距離: {navMeshAgent.remainingDistance}");
-            //Debug.Log($"移動速度: {navMeshAgent.velocity}");
-            //Debug.Log($"NavMeshAgentの状態: {navMeshAgent.pathStatus}");
-
             //敵と俳諧地点の距離が指定の値の範囲内の場合の処理
             if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 0.5f)
             {
@@ -236,8 +261,8 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
     {
         if (other.CompareTag("Player"))
         {
-            player = other.GetComponent<Player>();
-            if (player != null && !player.IsDead)
+            //Player.instance = other.GetComponent<Player>();
+            if (Player.instance != null && !Player.instance.IsDead)
             {
                 Attack();
             }
