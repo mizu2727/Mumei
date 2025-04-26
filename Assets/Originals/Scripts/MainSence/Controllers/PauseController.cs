@@ -44,10 +44,9 @@ public class PauseController : MonoBehaviour
     //共通のScriptableObjectをアタッチする必要がある
     [SerializeField] public SO_Item sO_Item;
 
-    //Audio系
-    //public BGM BGMScript;//メインゲームBGM
-    //public AudioClip pauseSE;//クリックSE
-
+    //SE系
+    public AudioClip buttonSE;//ボタンSE
+    public AudioClip documentNameButtonSE;//ドキュメント名称ボタンSE
 
     private void Awake()
     {
@@ -108,6 +107,9 @@ public class PauseController : MonoBehaviour
         ChangeViewPausePanel();
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+
+        //MusicController.instance.PauseBGM();
+        MusicController.Instance.PlayAudioSE(buttonSE);
     }
 
     //ポーズ解除
@@ -120,6 +122,9 @@ public class PauseController : MonoBehaviour
             ChangeViewPausePanel();
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+
+            MusicController.Instance.PlayAudioSE(buttonSE);
+            //MusicController.instance.UnPauseBGM();
         }
         
     }
@@ -128,6 +133,8 @@ public class PauseController : MonoBehaviour
     //アイテム確認
     public void OnClickedViewItemButton()
     {
+        MusicController.Instance.PlayAudioSE(buttonSE);
+
         isPause = false;
         ChangeViewPausePanel();
 
@@ -140,7 +147,8 @@ public class PauseController : MonoBehaviour
     //タイトルへ戻る
     public void OnClickedReturnToTitleButton()
     {
-        //BGMScript.StopBGM();
+        MusicController.Instance.PlayAudioSE(buttonSE);
+        //MusicController.instance.StopBGM();
         //GameController.instance.ReturnToTitle();
         SceneManager.LoadScene("TitleScene");
     }
@@ -149,15 +157,21 @@ public class PauseController : MonoBehaviour
 
     public void OnClickedViewDocumentButton() 
     {
+        MusicController.Instance.PlayAudioSE(buttonSE);
+
+        // ドキュメントパネルを表示
         isDocumentPanels = true;
         ChangeViewDocumentPanel();
 
+        // ミステリーアイテムパネルを非表示
         isMysteryItemPanels = false;
         ChangeViewMysteryItemPanel();
     }
 
     public void OnClickedViewMysteryItemButton()
     {
+        MusicController.Instance.PlayAudioSE(buttonSE);
+
         // ミステリーアイテムパネルを表示
         isMysteryItemPanels = true;
         ChangeViewMysteryItemPanel();
@@ -182,6 +196,8 @@ public class PauseController : MonoBehaviour
     //ポーズ画面へ戻る
     public void OnClickedReturnToPausePanel()
     {
+        MusicController.Instance.PlayAudioSE(buttonSE);
+
         pausePanel.transform.SetAsLastSibling();
         isPause = true;
         ChangeViewPausePanel();
@@ -194,14 +210,13 @@ public class PauseController : MonoBehaviour
 
         isMysteryItemPanels = false;
         ChangeViewMysteryItemPanel();
-
-        //BGMScript.StopBGM();
-        //GameController.instance.ReturnToTitle();
     }
 
 
     public void OnClickedDocumentNameButton() 
     {
+        MusicController.Instance.PlayAudioSE(documentNameButtonSE);
+
         isDocumentExplanationPanel = true;
         ChangeViewDocumentExplanationPanel();
     }
@@ -349,6 +364,8 @@ public class PauseController : MonoBehaviour
 
     public void OnClickedMysteryItemNameButton(int index)
     {
+        MusicController.Instance.PlayAudioSE(buttonSE);
+
         if (index < mysteryItemNames.Count)
         {
             string itemName = mysteryItemNames[index];
