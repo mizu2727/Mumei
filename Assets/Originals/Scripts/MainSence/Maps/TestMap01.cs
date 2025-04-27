@@ -50,7 +50,8 @@ public class TestMap01 : MonoBehaviour
     [SerializeField] private List<int> enemyGenerateNums; // 各敵の生成数
 
     // ゴール地点
-    [SerializeField] private GameObject goalGround; // ゴール地点の地面
+    [SerializeField] private GameObject goalGroundPrefab; // ゴール地面のプレハブ
+    [SerializeField] private GameObject goalGround; // // シーン内のゴール地面（インスタンス）
     [SerializeField] private Vector3 goalConnectionPoint; // ゴールとの接続点
     [SerializeField] private int connectionRoadLength = 3; // ゴールへの通路の長さ
     [SerializeField] private bool autoSelectConnectionPoint = true; // 接続点を自動選択するか
@@ -144,8 +145,11 @@ public class TestMap01 : MonoBehaviour
             Debug.LogWarning("groundLayerが空です！デフォルト値（Ground）に設定します。");
             groundLayer = LayerMask.GetMask("Ground");
         }
-        Debug.Log($"groundLayer初期値: LayerMask={LayerMask.LayerToName(Mathf.FloorToInt(Mathf.Log(groundLayer.value, 2)))}, Value={groundLayer.value}");
-
+        int layerIndex = Mathf.FloorToInt(Mathf.Log(groundLayer.value, 2));
+        string layerName = (groundLayer.value != 0 && layerIndex >= 0 && layerIndex < 32)
+            ? LayerMask.LayerToName(layerIndex)
+            : $"無効なレイヤー (Value={groundLayer.value})";
+        Debug.Log($"groundLayer初期値: LayerMask={layerName}, Value={groundLayer.value}");
 
         MapGenerate().Forget();
     }
@@ -160,33 +164,60 @@ public class TestMap01 : MonoBehaviour
 
     private void Update()
     {
-        // マップ生成が完了し、プレイヤーと敵がまだスポーンしていない場合
-        if (IsMapGenerated && !hasPlayerSpawned && !hasEnemiesSpawned && Input.GetKeyDown(KeyCode.Space))
+        if (!IsMapGenerated)
         {
-            SpawnPlayerAndEnemiesAsync().Forget();
+            Debug.Log("[TestMap01] マップ生成がまだ完了していません。");
+            return;
         }
 
-        // スペースキー押下でプレイヤー生成
-        //if (IsMapGenerated && !hasPlayerSpawned && Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    SpawnPlayerAsync().Forget();
-        //}
+        if (!hasPlayerSpawned && !hasEnemiesSpawned && Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("[TestMap01] スペースキーが押されました。プレイヤーと敵を生成します。");
+            SpawnPlayerAndEnemiesAsync().Forget();
+        }
     }
 
     private async UniTask RebuildNavMeshAsync()
     {
         await UniTask.Yield();
         await UniTask.DelayFrame(10);
+
         if (groundSurface != null)
         {
             groundSurface.BuildNavMesh();
-            Debug.Log("[TestMap01] groundSurface のNavMeshを構築しました。");
+            if (groundSurface.navMeshData != null)
+            {
+                Bounds bounds = groundSurface.navMeshData.sourceBounds;
+                Debug.Log($"[TestMap01] groundSurface NavMesh 構築完了: 範囲={bounds}");
+            }
+            else
+            {
+                Debug.LogError("[TestMap01] groundSurface のNavMeshデータ生成に失敗しました！");
+            }
         }
+        else
+        {
+            Debug.LogError("[TestMap01] groundSurface がnullです！");
+        }
+
         if (roadSurface != null)
         {
             roadSurface.BuildNavMesh();
-            Debug.Log("[TestMap01] roadSurface のNavMeshを構築しました。");
+            if (roadSurface.navMeshData != null)
+            {
+                Bounds bounds = roadSurface.navMeshData.sourceBounds;
+                Debug.Log($"[TestMap01] roadSurface NavMesh 構築完了: 範囲={bounds}");
+            }
+            else
+            {
+                Debug.LogError("[TestMap01] roadSurface のNavMeshデータ生成に失敗しました！");
+            }
         }
+        else
+        {
+            Debug.LogError("[TestMap01] roadSurface がnullです！");
+        }
+
         if (goalGround != null)
         {
             var goalSurface = goalGround.GetComponent<NavMeshSurface>();
@@ -214,6 +245,10 @@ public class TestMap01 : MonoBehaviour
             {
                 Debug.LogError("[TestMap01] goalSurface のNavMeshデータ生成に失敗しました！");
             }
+        }
+        else
+        {
+            Debug.LogError("[TestMap01] goalGround がnullです！");
         }
     }
 
@@ -256,6 +291,21 @@ public class TestMap01 : MonoBehaviour
 
         objectParents = new GameObject[] { groundParent, wallParent, roadParent };
 
+        // プレハブの検証
+        if (groundPrefab == null || wallPrefab == null || roadPrefab == null)
+        {
+            Debug.LogError("プレハブが設定されていません！groundPrefab, wallPrefab, roadPrefabを確認してください。");
+            return;
+        }
+
+        // プレハブがシーン内のオブジェクトでないことを確認
+        if (groundPrefab.scene.IsValid() || wallPrefab.scene.IsValid() || roadPrefab.scene.IsValid())
+        {
+            Debug.LogError("プレハブがシーン内のオブジェクトです！プレハブアセットを指定してください。");
+            return;
+        }
+
+        // プレハブのインスタンス化 
         GameObject ground = Instantiate(groundPrefab);
         ground.transform.localScale = GroundSetting.size;
         ground.GetComponent<Renderer>().material.color = GroundSetting.color;
@@ -278,6 +328,12 @@ public class TestMap01 : MonoBehaviour
         navObstacle.carving = true;
 
         mapObjects = new GameObject[] { ground, wall, road };
+
+        // 初期化されたオブジェクトの状態を確認
+        foreach (var obj in mapObjects)
+        {
+            Debug.Log($"mapObjects[{obj.name}] シーン内: {obj.scene.IsValid()}, 位置: {obj.transform.position}");
+        }
     }
 
     private async UniTask MapGenerate()
@@ -524,6 +580,14 @@ public class TestMap01 : MonoBehaviour
     // プレイヤーワープと敵生成を順番に実行
     private async UniTask SpawnPlayerAndEnemiesAsync()
     {
+        if (hasPlayerSpawned || hasEnemiesSpawned)
+        {
+            Debug.LogWarning("[TestMap01] プレイヤーまたは敵がすでに生成されています。処理をスキップします。");
+            return;
+        }
+
+        Debug.Log("[TestMap01] プレイヤーと敵の生成を開始します。");
+
         // プレイヤーをスポーン
         await SpawnPlayerAsync();
 
@@ -531,12 +595,28 @@ public class TestMap01 : MonoBehaviour
         if (hasPlayerSpawned && !hasEnemiesSpawned)
         {
             enemyPositions.Clear();
+            Debug.Log($"[TestMap01] 敵生成開始: プレハブ数={enemyPrefabs.Count}, 生成数リスト={string.Join(", ", enemyGenerateNums)}");
+
+            int totalEnemiesGenerated = 0;
             for (int i = 0; i < enemyPrefabs.Count; i++)
             {
-                await GenerateEnemiesInRoomsAsync(enemyPrefabs[i], enemyGenerateNums[i]);
+                if (i >= enemyGenerateNums.Count || enemyPrefabs[i] == null)
+                {
+                    Debug.LogWarning($"[TestMap01] 敵プレハブ[{i}]が無効または生成数が未設定です。スキップします。");
+                    continue;
+                }
+                int generateNum = enemyGenerateNums[i];
+                Debug.Log($"[TestMap01] 敵プレハブ {enemyPrefabs[i].name} を {generateNum} 体生成します。");
+                await GenerateEnemiesInRoomsAsync(enemyPrefabs[i], generateNum);
+                totalEnemiesGenerated += generateNum;
             }
+
             hasEnemiesSpawned = true;
-            Debug.Log("[TestMap01] 敵の生成が完了しました。");
+            Debug.Log($"[TestMap01] 敵の生成が完了しました。総生成数: {totalEnemiesGenerated}");
+        }
+        else
+        {
+            Debug.LogWarning("[TestMap01] プレイヤーのスポーンに失敗したため、敵生成をスキップしました。");
         }
     }
 
@@ -572,8 +652,8 @@ public class TestMap01 : MonoBehaviour
 
         if (!Player.instance.gameObject.activeInHierarchy)
         {
-            Debug.LogError($"[TestMap01] Player.instance ({Player.instance.name}) が非アクティブです！ワープできません。");
-            return;
+            Debug.LogWarning($"[TestMap01] Player.instance ({Player.instance.name}) が非アクティブです。アクティブ化します。");
+            Player.instance.gameObject.SetActive(true);
         }
 
         int maxRoomAttempts = 10;
@@ -659,6 +739,13 @@ public class TestMap01 : MonoBehaviour
         int maxAttempts = 20;
         float yOffset = Player.instance != null ? Player.instance.transform.localScale.y * 0.5f + 0.1f : 0.5f + 0.1f;
 
+        // groundLayerの検証
+        if (groundLayer.value == 0)
+        {
+            Debug.LogWarning("[TestMap01] groundLayerが空です。デフォルトでGroundレイヤー（Layer 8）を設定します。");
+            groundLayer = LayerMask.GetMask("Ground");
+        }
+
         for (int attempt = 0; attempt < maxAttempts; attempt++)
         {
             float x = Random.Range(roomCenter.x - roomSize.x / 2 + margin, roomCenter.x + roomSize.x / 2 - margin);
@@ -711,7 +798,12 @@ public class TestMap01 : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"試行 {attempt + 1}/{maxAttempts}: 地面検出失敗: 位置={spawnPosition}, LayerMask={LayerMask.LayerToName(groundLayer.value)}");
+                // レイヤーインデックスを安全に取得
+                int layerIndex = Mathf.FloorToInt(Mathf.Log(groundLayer.value, 2));
+                string layerName = (groundLayer.value != 0 && layerIndex >= 0 && layerIndex < 32)
+                    ? LayerMask.LayerToName(layerIndex)
+                    : $"無効なレイヤー (Value={groundLayer.value})";
+                Debug.LogWarning($"試行 {attempt + 1}/{maxAttempts}: 地面検出失敗: 位置={spawnPosition}, LayerMask={layerName}");
                 Debug.DrawRay(spawnPosition, Vector3.down * 10f, Color.red, 10f);
             }
             await UniTask.Yield();
@@ -724,6 +816,15 @@ public class TestMap01 : MonoBehaviour
     // 敵を生成するメソッド（敵の位置を記録）
     private async UniTask GenerateEnemiesInRoomsAsync(GameObject prefab, int generateNum)
     {
+        if (prefab == null)
+        {
+            Debug.LogError("[TestMap01] 敵プレハブがnullです！");
+            return;
+        }
+
+        Debug.Log($"[TestMap01] 敵 {prefab.name} の生成を開始: 生成数={generateNum}");
+        int enemiesGenerated = 0;
+
         for (int i = 0; i < generateNum; i++)
         {
             int roomIndex = Random.Range(0, roomStatus.GetLength(1));
@@ -742,24 +843,27 @@ public class TestMap01 : MonoBehaviour
             if (position != Vector3.zero)
             {
                 enemyPositions.Add(position);
-                // 生成した敵にプレイヤーのTransformを設定
                 GameObject enemy = Instantiate(prefab, position, Quaternion.identity);
+                enemy.name = $"{prefab.name}_{enemiesGenerated}";
                 BaseEnemy enemyScript = enemy.GetComponent<BaseEnemy>();
                 if (enemyScript != null && Player.instance != null)
                 {
                     enemyScript.tagetPoint = Player.instance.transform;
-                    Debug.Log($"敵 {enemy.name} にプレイヤーのTransformを設定: {Player.instance.transform.position}");
+                    Debug.Log($"[TestMap01] 敵 {enemy.name} を {position} に生成。プレイヤーのTransformを設定: {Player.instance.transform.position}");
                 }
                 else
                 {
-                    Debug.LogError($"敵の生成に失敗またはPlayer.instanceがnull: {enemy.name}");
+                    Debug.LogError($"[TestMap01] 敵 {enemy.name} の生成に失敗またはPlayer.instanceがnullです。");
                 }
+                enemiesGenerated++;
             }
             else
             {
                 Debug.LogWarning($"[TestMap01] 敵の生成位置が見つかりませんでした。部屋インデックス: {roomIndex}");
             }
         }
+
+        Debug.Log($"[TestMap01] 敵 {prefab.name} の生成完了: 生成数={enemiesGenerated}/{generateNum}");
     }
 
 
@@ -781,7 +885,13 @@ public class TestMap01 : MonoBehaviour
     {
         if (goalGround == null)
         {
-            Debug.LogWarning("GoalGround が設定されていません！");
+            Debug.LogError("[TestMap01] goalGroundが設定されていません！プレハブまたはシーン内のオブジェクトを設定してください。");
+            return;
+        }
+
+        if (!goalGround.scene.IsValid())
+        {
+            Debug.LogError("[TestMap01] goalGroundがシーン内のオブジェクトではありません！シーン内でインスタンス化してください。");
             return;
         }
 
@@ -791,7 +901,7 @@ public class TestMap01 : MonoBehaviour
             connectPoint = FindValidConnectionPoint();
             if (connectPoint == Vector2Int.one * -1)
             {
-                Debug.LogWarning("有効な接続点が見つかりませんでした！");
+                Debug.LogWarning("[TestMap01] 有効な接続点が見つかりませんでした！");
                 return;
             }
             goalConnectionPoint = new Vector3(connectPoint.x, 0, connectPoint.y);
@@ -805,17 +915,24 @@ public class TestMap01 : MonoBehaviour
         int connectZ = connectPoint.y;
         if (connectX < 0 || connectX >= mapSizeW || connectZ < 0 || connectZ >= mapSizeH)
         {
-            Debug.LogWarning($"接続点 ({connectX}, {connectZ}) がマップ範囲外です！");
+            Debug.LogWarning($"[TestMap01] 接続点 ({connectX}, {connectZ}) がマップ範囲外です！");
             return;
         }
 
         if (map[connectX, connectZ] != (int)objectType.ground && map[connectX, connectZ] != (int)objectType.road)
         {
-            Debug.LogWarning($"接続点 ({connectX}, {connectZ}) は部屋または通路ではありません！");
+            Debug.LogWarning($"[TestMap01] 接続点 ({connectX}, {connectZ}) は部屋または通路ではありません！");
             return;
         }
 
         ClearPathToGoal(connectX, connectZ);
+
+        // objectParentsがシーン内のオブジェクトであることを確認
+        if (objectParents[(int)objectType.road] == null || !objectParents[(int)objectType.road].scene.IsValid())
+        {
+            Debug.LogError("[TestMap01] objectParents[road]がシーン内のオブジェクトではありません！initPrefabを確認してください。");
+            return;
+        }
 
         // 通路の生成
         for (int i = 1; i <= connectionRoadLength && connectX + i < mapSizeW; i++)
@@ -826,12 +943,11 @@ public class TestMap01 : MonoBehaviour
                 defaultPosition.x + roadX * RoadSetting.size.x,
                 defaultPosition.y,
                 defaultPosition.z + connectZ * RoadSetting.size.z);
-            // 親を指定せずにインスタンス化
             GameObject road = Instantiate(
                 mapObjects[(int)objectType.road],
                 roadPos,
                 Quaternion.identity);
-            // 後で親を設定
+            road.name = $"Road_{roadX}_{connectZ}";
             road.transform.SetParent(objectParents[(int)objectType.road].transform, false);
         }
 
@@ -845,14 +961,13 @@ public class TestMap01 : MonoBehaviour
                     defaultPosition.x + (mapSizeW + i) * RoadSetting.size.x,
                     defaultPosition.y,
                     defaultPosition.z + connectZ * RoadSetting.size.z);
-                // 親を指定せずにインスタンス化
                 GameObject road = Instantiate(
                     mapObjects[(int)objectType.road],
                     roadPos,
                     Quaternion.identity);
-                // 後で親を設定
+                road.name = $"ExtendedRoad_{mapSizeW + i}_{connectZ}";
                 road.transform.SetParent(objectParents[(int)objectType.road].transform, false);
-                Debug.Log($"拡張通路を生成: {roadPos}");
+                Debug.Log($"[TestMap01] 拡張通路を生成: {roadPos}");
             }
         }
 
@@ -862,7 +977,7 @@ public class TestMap01 : MonoBehaviour
             defaultPosition.x + (connectX + totalRoadLength) * RoadSetting.size.x,
             defaultPosition.y,
             defaultPosition.z + connectZ * RoadSetting.size.z);
-        Debug.Log($"GoalGround を {goalGround.transform.position} に配置");
+        Debug.Log($"[TestMap01] GoalGround を {goalGround.transform.position} に配置");
 
         // ゴールオブジェクトの生成
         if (goalObjectPrefab != null)
@@ -871,32 +986,30 @@ public class TestMap01 : MonoBehaviour
             NavMeshHit navHit;
             if (NavMesh.SamplePosition(goalObjectPosition, out navHit, 20.0f, NavMesh.AllAreas))
             {
-                // 親を指定せずにインスタンス化
                 GameObject goalObject = Instantiate(
                     goalObjectPrefab,
                     navHit.position,
                     Quaternion.identity);
-                // 後で親を設定
+                goalObject.name = "GoalObject";
                 goalObject.transform.SetParent(goalGround.transform, false);
-                Debug.Log($"ゴールオブジェクトを {navHit.position} に生成しました");
+                Debug.Log($"[TestMap01] ゴールオブジェクトを {navHit.position} に生成しました");
             }
             else
             {
-                Debug.LogWarning("NavMesh 上の位置が見つからなかったため、ゴールオブジェクトを生成できませんでした");
+                Debug.LogWarning("[TestMap01] NavMesh 上の位置が見つからなかったため、ゴールオブジェクトを生成できませんでした");
                 Vector3 fallbackPosition = goalGround.transform.position + Vector3.up * 0.1f;
-                // 親を指定せずにインスタンス化
                 GameObject goalObject = Instantiate(
                     goalObjectPrefab,
                     fallbackPosition,
                     Quaternion.identity);
-                // 後で親を設定
+                goalObject.name = "GoalObject_Fallback";
                 goalObject.transform.SetParent(goalGround.transform, false);
-                Debug.Log($"フォールバック: ゴールオブジェクトを {fallbackPosition} に生成しました（NavMeshなし）");
+                Debug.Log($"[TestMap01] フォールバック: ゴールオブジェクトを {fallbackPosition} に生成しました（NavMeshなし）");
             }
         }
         else
         {
-            Debug.LogWarning("ゴールオブジェクトのプレハブが設定されていません！");
+            Debug.LogWarning("[TestMap01] ゴールオブジェクトのプレハブが設定されていません！");
         }
     }
 

@@ -160,8 +160,21 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         }
     }
 
+    public bool IsEnemyMoving()
+    {
+        // NavMeshAgentが有効で、経路が存在し、停止しておらず、速度がある場合に移動中と判定
+        if (navMeshAgent != null && navMeshAgent.enabled)
+        {
+            return navMeshAgent.hasPath && !navMeshAgent.isStopped && navMeshAgent.velocity.magnitude > 0.1f;
+        }
+        return false;
+    }
+
     void Start()
     {
+        PlayAnimator = GetComponent<Animator>();
+        
+
         navMeshAgent = GetComponent<NavMeshAgent>();
         if (navMeshAgent == null)
         {
@@ -238,6 +251,9 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
             return;
         }
 
+        // 移動中かどうかを判定
+        IsMove = IsEnemyMoving();
+
         //プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, tagetPoint.position);
         Debug.Log($"[{gameObject.name}] プレイヤーとの距離: {distance}, 検知範囲: {DetectionRange}, 現在位置: {transform.position}, プレイヤー位置: {tagetPoint.position}");
@@ -246,15 +262,20 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         if (distance <= DetectionRange)
         {
             ChasePlayer();
+            animator.SetBool("isRun", IsMove);
         }
         else
         {
+            animator.SetBool("isWalk", IsMove);
+
             //敵と俳諧地点の距離が指定の値の範囲内の場合の処理
             if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 0.5f)
             {
                 NextPosition();
             }
         }
+
+        
     }
 
     private void OnTriggerEnter(Collider other)

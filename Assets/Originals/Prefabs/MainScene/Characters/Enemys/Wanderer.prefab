@@ -1210,7 +1210,7 @@ Animator:
   m_GameObject: {fileID: 4061999138098054953}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 97b0cd269422460b9c5672eb06af8f7c, type: 3}
-  m_Controller: {fileID: 9100000, guid: 727c5ee11e9e413fa17bba52ac4dca41, type: 2}
+  m_Controller: {fileID: 9100000, guid: 0d2e7a49894aaa34c9dc3d9d39d4f073, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1337,7 +1337,7 @@ MonoBehaviour:
   enemyName: "\u5F77\u5FA8\u3046\u8005"
   Speed: 17
   dashSpeed: 22
-  enemyDetectionRange: 3
+  enemyDetectionRange: 50
   enemyGravity: 10
   enemyHP: 1
   enemyIsDead: 0

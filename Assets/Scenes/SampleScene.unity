@@ -1247,6 +1247,10 @@ PrefabInstance:
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
+      propertyPath: goalGround
+      value: 
+      objectReference: {fileID: 2757355796512243103}
+    - target: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
       propertyPath: roomSize.x
       value: 7
       objectReference: {fileID: 0}
@@ -1268,7 +1272,7 @@ PrefabInstance:
       objectReference: {fileID: 3468896028249890892, guid: e8c025f79582443449ce252a723af5c0, type: 3}
     - target: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
       propertyPath: isDebugOffGenerate
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
       propertyPath: goalConnectionPoint.x
@@ -2700,6 +2704,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a508ee2f976ae9c4fb3e5efe7fa70578, type: 3}
+--- !u!1 &2757355796512243103 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 746560455713512265, guid: a508ee2f976ae9c4fb3e5efe7fa70578, type: 3}
+  m_PrefabInstance: {fileID: 2757355796512243102}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2777000349531545350
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -106,6 +106,7 @@ MonoBehaviour:
   enemyPrefabs:
   - {fileID: 4061999138098054953, guid: abeb8622f1bf44e45af7876bf14bfd6d, type: 3}
   enemyGenerateNums: 05000000
+  goalGroundPrefab: {fileID: 746560455713512265, guid: a508ee2f976ae9c4fb3e5efe7fa70578, type: 3}
   goalGround: {fileID: 746560455713512265, guid: a508ee2f976ae9c4fb3e5efe7fa70578, type: 3}
   goalConnectionPoint: {x: 50, y: 25, z: 50}
   connectionRoadLength: 3
