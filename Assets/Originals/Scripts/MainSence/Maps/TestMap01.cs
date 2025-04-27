@@ -6,6 +6,8 @@ using Random = UnityEngine.Random;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Cysharp.Threading.Tasks;
+using System.Linq;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -63,6 +65,8 @@ public class TestMap01 : MonoBehaviour
     // マップ生成が完了したかどうかを管理するフラグ
     public bool IsMapGenerated { get; private set; }
 
+    private bool isGeneratingMap = false; // マップ生成中フラグ
+
     // プレイヤーがすでにスポーンしたかどうかを管理するフラグ
     private bool hasPlayerSpawned = false;
 
@@ -119,38 +123,51 @@ public class TestMap01 : MonoBehaviour
 
     void Awake()
     {
-        if (instance == null)
+        // シングルトンのチェック
+        if (instance != null && instance != this)
         {
-            instance = this;
-        }
-        else
-        {
+            Debug.LogWarning($"[TestMap01] 別のインスタンスがすでに存在します: {instance.gameObject.name}。このインスタンスを破棄します: {gameObject.name}");
             Destroy(gameObject);
             return;
         }
 
-        // 複数のインスタンスを検出
+        instance = this;
+
+        // シーン内の他のTestMap01コンポーネントを検索
         TestMap01[] instances = FindObjectsOfType<TestMap01>();
         if (instances.Length > 1)
         {
-            Debug.LogWarning($"複数のTestMap01インスタンスが検出されました！({instances.Length}個)。このインスタンスを無効化します。");
-            isDebugOffGenerate = true;
+            Debug.LogWarning($"[TestMap01] シーン内に複数のTestMap01インスタンスが検出されました！({instances.Length}個)");
+            for (int i = 0; i < instances.Length; i++)
+            {
+                if (instances[i] != this)
+                {
+                    Debug.LogWarning($"[TestMap01] 他のインスタンスを破棄します: {instances[i].gameObject.name}");
+                    Destroy(instances[i].gameObject);
+                }
+            }
         }
 
-        if (isDebugOffGenerate) return;
+        if (isDebugOffGenerate)
+        {
+            Debug.LogWarning("[TestMap01] isDebugOffGenerateがtrueのため、マップ生成をスキップします。");
+            return;
+        }
 
         // groundLayerの検証
         if (groundLayer.value == 0)
         {
-            Debug.LogWarning("groundLayerが空です！デフォルト値（Ground）に設定します。");
+            Debug.LogWarning("[TestMap01] groundLayerが空です！デフォルト値（Ground）に設定します。");
             groundLayer = LayerMask.GetMask("Ground");
         }
         int layerIndex = Mathf.FloorToInt(Mathf.Log(groundLayer.value, 2));
         string layerName = (groundLayer.value != 0 && layerIndex >= 0 && layerIndex < 32)
             ? LayerMask.LayerToName(layerIndex)
             : $"無効なレイヤー (Value={groundLayer.value})";
-        Debug.Log($"groundLayer初期値: LayerMask={layerName}, Value={groundLayer.value}");
+        Debug.Log($"[TestMap01] groundLayer初期値: LayerMask={layerName}, Value={groundLayer.value}");
 
+        // マップ生成を一度だけ実行
+        Debug.Log($"[TestMap01] マップ生成を開始します: ゲームオブジェクト={gameObject.name}");
         MapGenerate().Forget();
     }
 
@@ -235,6 +252,7 @@ public class TestMap01 : MonoBehaviour
                 var collider = goalGround.AddComponent<BoxCollider>();
                 collider.size = GroundSetting.size;
             }
+            goalSurface.agentTypeID = NavMesh.GetSettingsByIndex(0).agentTypeID; // デフォルトエージェントを使用
             goalSurface.BuildNavMesh();
             if (goalSurface.navMeshData != null)
             {
@@ -256,16 +274,18 @@ public class TestMap01 : MonoBehaviour
 
     void initPrefab()
     {
-        // 既存の親オブジェクトがあれば破棄する（シーンをまたがないように）
-        if (objectParents != null)
+        // 既存の親オブジェクトがあれば破棄する
+    if (objectParents != null)
         {
             foreach (var parent in objectParents)
             {
                 if (parent != null)
                 {
+                    Debug.Log($"[TestMap01] 既存の親オブジェクトを破棄します: {parent.name}");
                     Destroy(parent);
                 }
             }
+            objectParents = null; // 明示的にnullに設定
         }
 
         GameObject groundParent = new GameObject("Ground");
@@ -305,24 +325,34 @@ public class TestMap01 : MonoBehaviour
             return;
         }
 
-        // プレハブのインスタンス化 
+        // 地面プレハブのインスタンス化 
+        // 地面プレハブにコライダーとレイヤーを設定
         GameObject ground = Instantiate(groundPrefab);
         ground.transform.localScale = GroundSetting.size;
         ground.GetComponent<Renderer>().material.color = GroundSetting.color;
         ground.name = "ground";
         ground.transform.SetParent(groundParent.transform);
+        ground.layer = LayerMask.NameToLayer("Ground");
+        if (!ground.GetComponent<Collider>())
+        {
+            Debug.LogWarning("[TestMap01] groundPrefab にコライダーがありません。BoxColliderを追加します。");
+            ground.AddComponent<BoxCollider>().size = GroundSetting.size;
+        }
 
+        // 壁プレハブのインスタンス化 
         GameObject wall = Instantiate(wallPrefab);
         wall.transform.localScale = WallSetting.size;
         wall.GetComponent<Renderer>().material.color = WallSetting.color;
         wall.name = "wall";
         wall.transform.SetParent(wallParent.transform);
 
+        // 道プレハブのインスタンス化 
         GameObject road = Instantiate(roadPrefab);
         road.transform.localScale = RoadSetting.size;
         road.GetComponent<Renderer>().material.color = RoadSetting.color;
         road.name = "road";
         road.transform.SetParent(roadParent.transform);
+
 
         var navObstacle = wall.AddComponent<NavMeshObstacle>();
         navObstacle.carving = true;
@@ -338,10 +368,26 @@ public class TestMap01 : MonoBehaviour
 
     private async UniTask MapGenerate()
     {
+        // すでにマップ生成中または生成済みの場合は実行しない
+        if (isGeneratingMap || IsMapGenerated)
+        {
+            Debug.LogWarning($"[TestMap01] マップ生成はすでに実行中または完了しています。isGeneratingMap={isGeneratingMap}, IsMapGenerated={IsMapGenerated}, ゲームオブジェクト={gameObject.name}");
+            return;
+        }
+
+        isGeneratingMap = true;
+
         // マップ生成開始時にフラグをfalseに設定
         IsMapGenerated = false;
 
         initPrefab();
+        if (mapObjects == null || mapObjects.Any(obj => obj == null))
+        {
+            Debug.LogError("[TestMap01] initPrefab が失敗しました。マップ生成を中断します。");
+            isGeneratingMap = false;
+            return;
+        }
+
         roomStatus = new int[System.Enum.GetNames(typeof(RoomStatus)).Length, roomNum];
         map = new int[mapSizeW, mapSizeH];
 
@@ -572,8 +618,13 @@ public class TestMap01 : MonoBehaviour
             await GenerateObjectsInRoomsAsync(itemPrefabs[i], itemGenerateNums[i]);
         }
 
+
+
         // マップ生成完了後にフラグをtrueに設定
         IsMapGenerated = true;
+
+        isGeneratingMap = false;
+
         Debug.Log("[TestMap01] マップ生成が完了しました。スペースキーを押してプレイヤーを生成してください。");
     }
 
@@ -597,15 +648,32 @@ public class TestMap01 : MonoBehaviour
             enemyPositions.Clear();
             Debug.Log($"[TestMap01] 敵生成開始: プレハブ数={enemyPrefabs.Count}, 生成数リスト={string.Join(", ", enemyGenerateNums)}");
 
-            int totalEnemiesGenerated = 0;
-            for (int i = 0; i < enemyPrefabs.Count; i++)
+            // 設定の検証
+            if (enemyPrefabs.Count == 0 || enemyGenerateNums.Count == 0)
             {
-                if (i >= enemyGenerateNums.Count || enemyPrefabs[i] == null)
+                Debug.LogError("[TestMap01] 敵プレハブまたは生成数が設定されていません！");
+                return;
+            }
+            if (enemyPrefabs.Count != enemyGenerateNums.Count)
+            {
+                Debug.LogWarning($"[TestMap01] 敵プレハブ数({enemyPrefabs.Count})と生成数リスト({enemyGenerateNums.Count})が一致しません。最小のサイズを使用します。");
+            }
+
+            int totalEnemiesGenerated = 0;
+            int maxIndex = Mathf.Min(enemyPrefabs.Count, enemyGenerateNums.Count);
+            for (int i = 0; i < maxIndex; i++)
+            {
+                if (enemyPrefabs[i] == null)
                 {
-                    Debug.LogWarning($"[TestMap01] 敵プレハブ[{i}]が無効または生成数が未設定です。スキップします。");
+                    Debug.LogWarning($"[TestMap01] 敵プレハブ[{i}]が無効です。スキップします。");
                     continue;
                 }
                 int generateNum = enemyGenerateNums[i];
+                if (generateNum <= 0)
+                {
+                    Debug.LogWarning($"[TestMap01] 敵プレハブ[{i}]の生成数が無効({generateNum})です。スキップします。");
+                    continue;
+                }
                 Debug.Log($"[TestMap01] 敵プレハブ {enemyPrefabs[i].name} を {generateNum} 体生成します。");
                 await GenerateEnemiesInRoomsAsync(enemyPrefabs[i], generateNum);
                 totalEnemiesGenerated += generateNum;
@@ -843,7 +911,7 @@ public class TestMap01 : MonoBehaviour
             if (position != Vector3.zero)
             {
                 enemyPositions.Add(position);
-                GameObject enemy = Instantiate(prefab, position, Quaternion.identity);
+                GameObject enemy = Instantiate(prefab, position, Quaternion.identity); // ここでのみInstantiate
                 enemy.name = $"{prefab.name}_{enemiesGenerated}";
                 BaseEnemy enemyScript = enemy.GetComponent<BaseEnemy>();
                 if (enemyScript != null && Player.instance != null)
@@ -1064,6 +1132,15 @@ public class TestMap01 : MonoBehaviour
 
     private async UniTask GeneratePatrolPointInRoomsAsync(Transform patrolPoint, int generateNum)
     {
+        if (patrolPoint == null)
+        {
+            Debug.LogError("[TestMap01] 徘徊地点プレハブがnullです！");
+            return;
+        }
+
+        Debug.Log($"[TestMap01] 徘徊地点 {patrolPoint.name} の生成を開始: 生成数={generateNum}");
+        int pointsGenerated = 0;
+
         for (int i = 0; i < generateNum; i++)
         {
             int roomIndex = Random.Range(0, roomStatus.GetLength(1));
@@ -1078,34 +1155,94 @@ public class TestMap01 : MonoBehaviour
                 roomStatus[(int)RoomStatus.rh, roomIndex] * GroundSetting.size.z
             );
 
-            await PlaceObjectAsync(patrolPoint.gameObject, center, size, isPatrolPoint: true);
+            Vector3 position = await PlaceObjectAsync(patrolPoint.gameObject, center, size, isPatrolPoint: true);
+            if (position != Vector3.zero)
+            {
+                GameObject obj = Instantiate(patrolPoint.gameObject, position, Quaternion.identity);
+                obj.name = $"{patrolPoint.name}_{pointsGenerated}";
+                Debug.Log($"[TestMap01] 徘徊地点 {obj.name} を {position} に生成しました");
+                pointsGenerated++;
+            }
+            else
+            {
+                Debug.LogWarning($"[TestMap01] 徘徊地点の生成位置が見つかりませんでした。部屋インデックス: {roomIndex}");
+            }
         }
+
+        Debug.Log($"[TestMap01] 徘徊地点 {patrolPoint.name} の生成完了: 生成数={pointsGenerated}/{generateNum}");
     }
 
     private async UniTask GenerateObjectsInRoomsAsync(GameObject prefab, int generateNum)
     {
+        if (prefab == null)
+        {
+            Debug.LogError("[TestMap01] アイテムプレハブがnullです！");
+            return;
+        }
+
+        Debug.Log($"[TestMap01] アイテム {prefab.name} の生成を開始: 生成数={generateNum}");
+        int itemsGenerated = 0;
+
+        List<(int index, int groundArea)> roomAreas = new List<(int, int)>();
+        for (int i = 0; i < roomStatus.GetLength(1); i++)
+        {
+            int groundArea = roomStatus[(int)RoomStatus.rw, i] * roomStatus[(int)RoomStatus.rh, i];
+            roomAreas.Add((i, groundArea));
+        }
+        roomAreas.Sort((a, b) => b.groundArea.CompareTo(a.groundArea));
+
         for (int i = 0; i < generateNum; i++)
         {
-            int roomIndex = Random.Range(0, roomStatus.GetLength(1));
-            Vector3 center = new Vector3(
-                defaultPosition.x + (roomStatus[(int)RoomStatus.rx, roomIndex] + roomStatus[(int)RoomStatus.rw, roomIndex] / 2.0f) * GroundSetting.size.x,
-                defaultPosition.y,
-                defaultPosition.z + (roomStatus[(int)RoomStatus.ry, roomIndex] + roomStatus[(int)RoomStatus.rh, roomIndex] / 2.0f) * GroundSetting.size.z
-            );
-            Vector3 size = new Vector3(
-                roomStatus[(int)RoomStatus.rw, roomIndex] * GroundSetting.size.x,
-                GroundSetting.size.y,
-                roomStatus[(int)RoomStatus.rh, roomIndex] * GroundSetting.size.z
-            );
-            await PlaceObjectAsync(prefab, center, size, isPatrolPoint: false);
+            bool placed = false;
+            for (int j = 0; j < Mathf.Min(3, roomAreas.Count); j++)
+            {
+                int roomIndex = roomAreas[j].index;
+                Vector3 center = new Vector3(
+                    defaultPosition.x + (roomStatus[(int)RoomStatus.rx, roomIndex] + roomStatus[(int)RoomStatus.rw, roomIndex] / 2.0f) * GroundSetting.size.x,
+                    defaultPosition.y,
+                    defaultPosition.z + (roomStatus[(int)RoomStatus.ry, roomIndex] + roomStatus[(int)RoomStatus.rh, roomIndex] / 2.0f) * GroundSetting.size.z
+                );
+                Vector3 size = new Vector3(
+                    roomStatus[(int)RoomStatus.rw, roomIndex] * GroundSetting.size.x,
+                    GroundSetting.size.y,
+                    roomStatus[(int)RoomStatus.rh, roomIndex] * GroundSetting.size.z
+                );
+
+                Vector3 position = await PlaceObjectAsync(prefab, center, size, isPatrolPoint: false);
+                if (position != Vector3.zero)
+                {
+                    GameObject obj = Instantiate(prefab, position, Quaternion.identity);
+                    obj.name = $"{prefab.name}_{itemsGenerated}";
+                    Debug.Log($"[TestMap01] アイテム {obj.name} を {position} に生成しました (部屋{roomIndex})");
+                    itemsGenerated++;
+                    placed = true;
+                    break;
+                }
+            }
+
+            if (!placed && roomAreas.Count > 0)
+            {
+                // フォールバック：最大面積の部屋の中心に配置
+                int roomIndex = roomAreas[0].index;
+                Vector3 center = new Vector3(
+                    defaultPosition.x + (roomStatus[(int)RoomStatus.rx, roomIndex] + roomStatus[(int)RoomStatus.rw, roomIndex] / 2.0f) * GroundSetting.size.x,
+                    defaultPosition.y + prefab.transform.localScale.y * 0.5f + 0.05f,
+                    defaultPosition.z + (roomStatus[(int)RoomStatus.ry, roomIndex] + roomStatus[(int)RoomStatus.rh, roomIndex] / 2.0f) * GroundSetting.size.z
+                );
+                GameObject obj = Instantiate(prefab, center, Quaternion.identity);
+                obj.name = $"{prefab.name}_{itemsGenerated}_Fallback";
+                Debug.Log($"[TestMap01] フォールバック: アイテム {obj.name} を {center} に生成しました (部屋{roomIndex})");
+                itemsGenerated++;
+            }
         }
+
+        Debug.Log($"[TestMap01] アイテム {prefab.name} の生成完了: 生成数={itemsGenerated}/{generateNum}");
     }
 
-    // PlaceObjectAsync を修正して配置位置を返すようにする
     private async UniTask<Vector3> PlaceObjectAsync(GameObject prefab, Vector3 roomCenter, Vector3 roomSize, bool isPatrolPoint)
     {
         string objectName = prefab.name;
-        float margin = 1.0f;
+        float margin = 0.5f; // マージンを小さくして配置可能な範囲を拡大
         int maxAttempts = 5;
 
         for (int attempt = 0; attempt < maxAttempts; attempt++)
@@ -1119,43 +1256,42 @@ public class TestMap01 : MonoBehaviour
             int mapZ = Mathf.FloorToInt((z - defaultPosition.z) / GroundSetting.size.z);
             if (mapX < 0 || mapX >= mapSizeW || mapZ < 0 || mapZ >= mapSizeH || map[mapX, mapZ] != (int)objectType.ground)
             {
-                Debug.LogWarning($"位置 ({x}, {z}) は地面ではありません。試行 {attempt + 1}/{maxAttempts}, map[{mapX}, {mapZ}]={(mapX >= 0 && mapX < mapSizeW && mapZ >= 0 && mapZ < mapSizeH ? map[mapX, mapZ] : "範囲外")}");
+                Debug.LogWarning($"[TestMap01] 試行 {attempt + 1}/{maxAttempts}: 位置 ({x}, {z}) は地面ではありません。map[{mapX}, {mapZ}]={(mapX >= 0 && mapX < mapSizeW && mapZ >= 0 && mapZ < mapSizeH ? (objectType)map[mapX, mapZ] : "範囲外")} ({objectName})");
                 continue;
             }
 
             if (Physics.Raycast(spawnPosition, Vector3.down, out RaycastHit hit, 10f, groundLayer))
             {
-                Debug.Log($"地面検出成功: ヒット位置={hit.point}, オブジェクト={hit.collider.gameObject.name}, LayerMask={LayerMask.LayerToName(Mathf.FloorToInt(Mathf.Log(groundLayer.value, 2)))}");
-                Vector3 finalPos = hit.point + Vector3.up * (isPatrolPoint ? 0.05f : prefab.transform.localScale.y * 0.5f + 0.05f);
-                if (isPatrolPoint)
+                if (hit.collider.gameObject.layer != LayerMask.NameToLayer("Ground"))
                 {
-                    NavMeshHit navHit;
-                    if (NavMesh.SamplePosition(finalPos, out navHit, 2.0f, NavMesh.AllAreas))
-                    {
-                        Instantiate(prefab, navHit.position, Quaternion.identity);
-                        return navHit.position;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"NavMesh上の位置が見つからず {objectName} を生成できませんでした: {finalPos}");
-                    }
+                    Debug.LogWarning($"[TestMap01] 試行 {attempt + 1}/{maxAttempts}: ヒットしたオブジェクト {hit.collider.gameObject.name} はGroundレイヤーではありません ({objectName})");
+                    continue;
+                }
+
+                Vector3 finalPos = hit.point + Vector3.up * (isPatrolPoint ? 0.05f : prefab.transform.localScale.y * 0.5f + 0.05f);
+                NavMeshHit navHit;
+                if (NavMesh.SamplePosition(finalPos, out navHit, 2.0f, NavMesh.AllAreas))
+                {
+                    Debug.Log($"[TestMap01] 試行 {attempt + 1}/{maxAttempts}: 配置位置 {navHit.position} を見つけました (NavMesh, {objectName})");
+                    return navHit.position;
                 }
                 else
                 {
-                    GameObject obj = Instantiate(prefab, finalPos, Quaternion.identity);
-                    Debug.Log($"{objectName} を {finalPos} に生成しました");
+                    // NavMeshが見つからない場合、Raycastのヒット位置を使用
+                    Debug.Log($"[TestMap01] 試行 {attempt + 1}/{maxAttempts}: NavMeshが見つかりませんでしたが、地面位置 {finalPos} を使用します ({objectName})");
                     return finalPos;
                 }
             }
             else
             {
                 string layerName = groundLayer.value == 0 ? "空" : LayerMask.LayerToName(Mathf.FloorToInt(Mathf.Log(groundLayer.value, 2)));
-                Debug.LogWarning($"地面検出失敗: 位置={spawnPosition}, LayerMask={layerName}, LayerMaskValue={groundLayer.value}");
+                Debug.LogWarning($"[TestMap01] 試行 {attempt + 1}/{maxAttempts}: 地面検出失敗: 位置={spawnPosition}, LayerMask={layerName}, LayerMaskValue={groundLayer.value} ({objectName})");
                 Debug.DrawRay(spawnPosition, Vector3.down * 10f, Color.red, 5f);
             }
             await UniTask.Yield();
         }
-        Debug.LogError($"最大試行回数を超えても {objectName} を生成できませんでした");
+
+        Debug.LogError($"[TestMap01] 最大試行回数({maxAttempts})を超えても {objectName} の配置位置を見つけられませんでした。roomCenter={roomCenter}, roomSize={roomSize}");
         return Vector3.zero;
     }
 }
