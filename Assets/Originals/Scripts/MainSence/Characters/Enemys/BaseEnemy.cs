@@ -262,10 +262,15 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
         if (distance <= DetectionRange)
         {
             ChasePlayer();
+
+            // ’Ç]’†‚ÍRunƒAƒjƒ[ƒVƒ‡ƒ“‚ðÄ¶
             animator.SetBool("isRun", IsMove);
+            animator.SetBool("isWalk", false); // Walk‚ð–³Œø‰»
         }
         else
         {
+            // œpœj’†‚ÍWalkƒAƒjƒ[ƒVƒ‡ƒ“‚ðÄ¶
+            animator.SetBool("isRun", false); // Run‚ð–³Œø‰»
             animator.SetBool("isWalk", IsMove);
 
             //“G‚Æ”oæ~’n“_‚Ì‹——£‚ªŽw’è‚Ì’l‚Ì”ÍˆÍ“à‚Ìê‡‚Ìˆ—
