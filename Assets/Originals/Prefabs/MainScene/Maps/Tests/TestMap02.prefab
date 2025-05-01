@@ -119,4 +119,4 @@ MonoBehaviour:
   mapSizeW: 50
   mapSizeH: 50
   roomNum: 5
-  isDebugOffGenerate: 0
+  isDebugOffGenerate: 1

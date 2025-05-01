@@ -2,8 +2,14 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
-    [SerializeField]  public float mouseSensitivity = 100f;//マウス感度
+    [Header("マウス感度")]
+    [SerializeField]  public float mouseSensitivity = 100f;
+
+    [Header("カメラのX軸回転角度")]
     private float xRotation = 0f;//カメラのX軸回転角度
+
+    [Header("カメラのX軸回転範囲")]
+    [SerializeField] private float xRotationRange = 90f ;
 
     private void Start()
     {
@@ -23,8 +29,8 @@ public class PlayerCamera : MonoBehaviour
 
         xRotation -= mouseY;
 
-        //視点の回転範囲を-90度から90度に制限する
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        //視点の回転範囲を-A度からB度に制限する
+        xRotation = Mathf.Clamp(xRotation, -xRotationRange, xRotationRange);
 
         //回転角度を更新
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);

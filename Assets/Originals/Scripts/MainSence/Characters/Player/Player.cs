@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using UnityEngine.SceneManagement;
+using UnityEngine.AI;
 
 public class Player : MonoBehaviour, CharacterInterface
 {
@@ -124,6 +125,14 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
+    public bool IsPlayerMoving()
+    {
+        // 移動入力があるかどうかを判定
+        float moveX = Input.GetAxis("Horizontal");
+        float moveZ = Input.GetAxis("Vertical");
+        return Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f;
+    }
+
     void OnDestroy()
     {
         if (instance == this)
@@ -189,9 +198,22 @@ public class Player : MonoBehaviour, CharacterInterface
         // Move は指定したベクトルだけ移動させる命令
         characterController.Move(moveDirection * Time.deltaTime);
 
-        // 移動のアニメーション
-        //animator.SetFloat("MoveSpeed", move.magnitude);
+
+        IsMove = IsPlayerMoving();
 
 
+        // アニメーションの制御
+        if (IsMove)
+        {
+            // 移動中: LeftShiftに応じて走行または歩行
+            animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift));
+            animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift));
+        }
+        else
+        {
+            // 停止中: 両方のアニメーションをオフ
+            animator.SetBool("isWalk", false);
+            animator.SetBool("isRun", false);
+        }
     }
 }

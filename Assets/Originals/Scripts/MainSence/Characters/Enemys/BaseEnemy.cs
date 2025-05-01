@@ -224,33 +224,6 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
     {
         if (Player.instance.IsDead || Player.instance == null || testMap01 == null) return;
 
-        // 必須コンポーネントのチェック
-        if (navMeshAgent == null || !navMeshAgent.enabled)
-        {
-            Debug.LogWarning($"[{gameObject.name}] NavMeshAgentが無効または存在しません。");
-            return;
-        }
-        if (Player.instance == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] Player.instanceがnullです。");
-            return;
-        }
-        if (Player.instance.IsDead)
-        {
-            Debug.Log($"[{gameObject.name}] プレイヤーが死にました。追従を停止。");
-            return;
-        }
-        if (testMap01 == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] testMap01がnullです。");
-            return;
-        }
-        if (tagetPoint == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] tagetPointがnullです。プレイヤーのTransformを設定してください。");
-            return;
-        }
-
         // 移動中かどうかを判定
         IsMove = IsEnemyMoving();
 
@@ -287,7 +260,6 @@ public class BaseEnemy: MonoBehaviour,CharacterInterface
     {
         if (other.CompareTag("Player"))
         {
-            //Player.instance = other.GetComponent<Player>();
             if (Player.instance != null && !Player.instance.IsDead)
             {
                 Attack();
