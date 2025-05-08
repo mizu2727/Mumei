@@ -22,6 +22,9 @@ public class PlayerInteract : MonoBehaviour
     private Goal goal;
 
 
+    [SerializeField] private AudioClip getItemSE;
+
+
     public bool isDebugResetItem = false;
 
     private void Start()
@@ -64,6 +67,8 @@ public class PlayerInteract : MonoBehaviour
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
                         Debug.Log($"拾ったアイテムのタイプ: {item.itemType}");
+
+                        MusicController.Instance.PlayAudioSE(getItemSE);
 
                         if ((item.itemType == ItemType.Document) 
                             || (item.itemType == ItemType.MysteryItem))

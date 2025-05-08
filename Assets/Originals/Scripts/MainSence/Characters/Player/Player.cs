@@ -108,6 +108,12 @@ public class Player : MonoBehaviour, CharacterInterface
 
     Vector3 moveDirection = Vector3.zero;//移動方向
 
+
+    [SerializeField] private AudioClip walkSE;
+    [SerializeField] private AudioClip runSE;
+
+    private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
+
     public bool isDebug = false;
 
 
@@ -208,12 +214,42 @@ public class Player : MonoBehaviour, CharacterInterface
             // 移動中: LeftShiftに応じて走行または歩行
             animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift));
             animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift));
+
         }
         else
         {
             // 停止中: 両方のアニメーションをオフ
             animator.SetBool("isWalk", false);
             animator.SetBool("isRun", false);
+
         }
+
+
+        // 移動状態の変化を検知して効果音を制御
+        AudioClip currentSE = Input.GetKey(KeyCode.LeftShift) ? runSE : walkSE;
+
+        if (IsMove && !wasMovingLastFrame)
+        {
+            // 移動開始時に効果音を再生
+            MusicController.Instance.LoopPlayAudioSE(currentSE);
+        }
+        else if (!IsMove && wasMovingLastFrame)
+        {
+            // 移動停止時に効果音を停止
+            MusicController.Instance.StopSE(walkSE);
+            MusicController.Instance.StopSE(runSE);
+        }
+        else if (IsMove && wasMovingLastFrame && MusicController.Instance.IsPlayingSE() 
+            && MusicController.Instance.GetCurrentSE() != currentSE)
+        {
+            // 移動中に歩行/ダッシュが切り替わった場合、効果音を変更
+            MusicController.Instance.StopSE(walkSE);
+            MusicController.Instance.StopSE(runSE);
+            MusicController.Instance.LoopPlayAudioSE(currentSE);
+        }
+
+        // 現在の移動状態を記録
+        wasMovingLastFrame = IsMove;
+
     }
 }

@@ -210,6 +210,8 @@ MonoBehaviour:
   playerStartPosition: {x: 0, y: 0, z: 0}
   aliasName: "\u30A4\u30D5"
   isHoldKey: 0
+  walkSE: {fileID: 8300000, guid: 1746761be059435468917139493aab7c, type: 3}
+  runSE: {fileID: 8300000, guid: 1a7b81bf81e84b849b1543fa00fca696, type: 3}
   isDebug: 0
 --- !u!114 &7057186210567818730
 MonoBehaviour:
@@ -226,6 +228,7 @@ MonoBehaviour:
   distance: 30
   isInteract: 1
   sO_Item: {fileID: 11400000, guid: e8953430267464843b679e4e89bcba78, type: 2}
+  getItemSE: {fileID: 8300000, guid: 8494d31510f8321449afda52cba3fae5, type: 3}
   isDebugResetItem: 1
 --- !u!114 &128685572945399523
 MonoBehaviour:
