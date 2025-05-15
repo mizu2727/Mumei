@@ -1333,7 +1333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tagetPoint: {fileID: 4280722176294353654, guid: e8c025f79582443449ce252a723af5c0, type: 3}
   testMap01: {fileID: 4407525310434832975, guid: 01008187df93e6a468891f0629c45ec4, type: 3}
-  findPatrolPointRange: 2500
+  findPatrolPointRange: 1000
   enemyName: "\u5F77\u5FA8\u3046\u8005"
   Speed: 17
   dashSpeed: 22
@@ -1343,6 +1343,10 @@ MonoBehaviour:
   enemyIsDead: 0
   enemyIsMove: 1
   enemyStartPosition: {x: 0, y: 0, z: 0}
+  raycastDistance: 1
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!195 &-2513333413666125057
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1353,7 +1357,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 20
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -1380,7 +1384,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2

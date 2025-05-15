@@ -48,8 +48,13 @@ public class TestMap01 : MonoBehaviour
 
 
     [Header("徘徊地点の設定(徘徊地点のプレハブを設定すること)")]
-    [SerializeField] public Transform[] patrolPoint;
+    [SerializeField] private GameObject[] patrolPointPrefabs; // 徘徊地点プレハブのリスト
+    [HideInInspector] public Transform[] patrolPoint; // 動的に生成された徘徊地点
+    [Header("徘徊地点の親オブジェクト")]
+    private GameObject patrolPointParent; // 徘徊地点の親オブジェクト
 
+    // 徘徊地点を格納するリスト（動的生成用）
+    private List<Transform> patrolPointsList = new List<Transform>();
 
     [Header("敵の設定")]
     [SerializeField] private List<GameObject> enemyPrefabs; // 複数の敵プレハブ
@@ -242,7 +247,7 @@ public class TestMap01 : MonoBehaviour
 
     void initPrefab()
     {
-        // 既存の親オブジェクトがあれば破棄する
+        // 既存の親オブジェクトがあれば破棄
         if (objectParents != null)
         {
             foreach (var parent in objectParents.Where(p => p != null))
@@ -252,32 +257,43 @@ public class TestMap01 : MonoBehaviour
             objectParents = null;
         }
 
+        // 徘徊地点の親オブジェクトがあれば破棄
+        if (patrolPointParent != null)
+        {
+            Destroy(patrolPointParent);
+            patrolPointParent = null;
+        }
+
+        // 既存の親オブジェクト生成（Ground, Wall, Road）
         GameObject groundParent = new GameObject("Ground");
         GameObject wallParent = new GameObject("Wall");
         GameObject roadParent = new GameObject("Road");
 
-        // シーンに親オブジェクトを関連付ける（永続化を防ぐ）
+        // 徘徊地点の親オブジェクトを生成
+        patrolPointParent = new GameObject("PatrolPoints");
+        patrolPointParent.transform.SetParent(transform); // TestMap01の子として設定
+
+        // シーンに親オブジェクトを関連付ける
         groundParent.transform.SetParent(transform);
         wallParent.transform.SetParent(transform);
         roadParent.transform.SetParent(transform);
 
+        // NavMeshSurfaceの設定（既存コード）
         groundSurface = groundParent.AddComponent<NavMeshSurface>();
         groundSurface.collectObjects = CollectObjects.All;
 #if UNITY_EDITOR
-        GameObjectUtility.SetStaticEditorFlags(groundParent, 
-            StaticEditorFlags.NavigationStatic);
+        GameObjectUtility.SetStaticEditorFlags(groundParent, StaticEditorFlags.NavigationStatic);
 #endif
 
         roadSurface = roadParent.AddComponent<NavMeshSurface>();
         roadSurface.collectObjects = CollectObjects.All;
 #if UNITY_EDITOR
-        GameObjectUtility.SetStaticEditorFlags(roadParent, 
-            StaticEditorFlags.NavigationStatic);
+        GameObjectUtility.SetStaticEditorFlags(roadParent, StaticEditorFlags.NavigationStatic);
 #endif
 
         objectParents = new GameObject[] { groundParent, wallParent, roadParent };
 
-        // プレハブの検証
+        // プレハブの検証（既存コード）
         if (groundPrefab == null || wallPrefab == null || roadPrefab == null)
         {
             Debug.LogError("プレハブが設定されていません！groundPrefab, wallPrefab, roadPrefabを確認してください。");
@@ -291,8 +307,7 @@ public class TestMap01 : MonoBehaviour
             return;
         }
 
-        // 地面プレハブのインスタンス化 
-        // 地面プレハブにコライダーとレイヤーを設定
+        // 地面プレハブのインスタンス化（以下、既存コードをそのまま使用）
         GameObject ground = Instantiate(groundPrefab);
         ground.transform.localScale = GroundSetting.size;
         ground.GetComponent<Renderer>().material.color = GroundSetting.color;
@@ -305,20 +320,19 @@ public class TestMap01 : MonoBehaviour
             ground.AddComponent<BoxCollider>().size = GroundSetting.size;
         }
 
-        // 壁プレハブのインスタンス化 
+        // 壁プレハブのインスタンス化
         GameObject wall = Instantiate(wallPrefab);
         wall.transform.localScale = WallSetting.size;
         wall.GetComponent<Renderer>().material.color = WallSetting.color;
         wall.name = "wall";
         wall.transform.SetParent(wallParent.transform);
 
-        // 道プレハブのインスタンス化 
+        // 道プレハブのインスタンス化
         GameObject road = Instantiate(roadPrefab);
         road.transform.localScale = RoadSetting.size;
         road.GetComponent<Renderer>().material.color = RoadSetting.color;
         road.name = "road";
         road.transform.SetParent(roadParent.transform);
-
 
         var navObstacle = wall.AddComponent<NavMeshObstacle>();
         navObstacle.carving = true;
@@ -564,10 +578,25 @@ public class TestMap01 : MonoBehaviour
         await RebuildNavMeshAsync();
         AddGoalConnection();
 
-        for (int i = 0; i < roomNum; i++)
+        // 徘徊地点リストをクリア
+        patrolPointsList.Clear();
+
+        // 徘徊地点を各プレハブごとに生成
+        for (int i = 0; i < patrolPointPrefabs.Length; i++)
         {
-            await GeneratePatrolPointInRoomsAsync(patrolPoint[i], roomNum);
+            if (patrolPointPrefabs[i] != null)
+            {
+                await GeneratePatrolPointInRoomsAsync(patrolPointPrefabs[i].transform, roomNum);
+            }
+            else
+            {
+                Debug.LogWarning($"[TestMap01] patrolPointPrefabs[{i}] がnullです。スキップします。");
+            }
         }
+
+        // 生成された徘徊地点をpatrolPoint配列に設定
+        patrolPoint = patrolPointsList.ToArray();
+        Debug.Log($"[TestMap01] patrolPoint配列に{patrolPoint.Length}個の徘徊地点を設定しました。");
 
 
         for (int i = 0; i < itemPrefabs.Count; i++)
@@ -1016,7 +1045,13 @@ public class TestMap01 : MonoBehaviour
             Debug.LogError("[TestMap01] 徘徊地点プレハブがnullです！");
             return;
         }
-        
+
+        if (patrolPointParent == null)
+        {
+            Debug.LogError("[TestMap01] 徘徊地点の親オブジェクトがnullです！initPrefabを確認してください。");
+            return;
+        }
+
         int pointsGenerated = 0;
 
         for (int i = 0; i < generateNum; i++)
@@ -1038,7 +1073,8 @@ public class TestMap01 : MonoBehaviour
             {
                 GameObject obj = Instantiate(patrolPoint.gameObject, position, Quaternion.identity);
                 obj.name = $"{patrolPoint.name}_{pointsGenerated}";
-
+                obj.transform.SetParent(patrolPointParent.transform); // 親をPatrolPointsに設定
+                patrolPointsList.Add(obj.transform); // リストに追加
                 pointsGenerated++;
             }
             else
@@ -1046,6 +1082,8 @@ public class TestMap01 : MonoBehaviour
                 Debug.LogWarning($"[TestMap01] 徘徊地点の生成位置が見つかりませんでした。部屋インデックス: {roomIndex}");
             }
         }
+
+        Debug.Log($"[TestMap01] 徘徊地点の生成が完了しました。生成数: {pointsGenerated}");
     }
 
     private async UniTask GenerateObjectsInRoomsAsync(GameObject prefab, int generateNum)

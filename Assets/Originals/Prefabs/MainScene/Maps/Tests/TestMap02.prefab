@@ -96,6 +96,12 @@ MonoBehaviour:
   itemGenerateNums: 010000000100000001000000010000000100000001000000
   roomCenter: {x: 0, y: 0, z: 0}
   roomSize: {x: 7, y: 7, z: 7}
+  patrolPointPrefabs:
+  - {fileID: 6033071488468774632, guid: 64f13cd9353bcd049ac825e4ce625033, type: 3}
+  - {fileID: 6033071488468774632, guid: 64f13cd9353bcd049ac825e4ce625033, type: 3}
+  - {fileID: 6033071488468774632, guid: 64f13cd9353bcd049ac825e4ce625033, type: 3}
+  - {fileID: 6033071488468774632, guid: 64f13cd9353bcd049ac825e4ce625033, type: 3}
+  - {fileID: 6033071488468774632, guid: 64f13cd9353bcd049ac825e4ce625033, type: 3}
   patrolPoint:
   - {fileID: 3099045796114238571, guid: 37cf75df25255684fb9abcd0a81aa2ce, type: 3}
   - {fileID: 3099045796114238571, guid: 37cf75df25255684fb9abcd0a81aa2ce, type: 3}
