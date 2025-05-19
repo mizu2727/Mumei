@@ -156,6 +156,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9ac74a577cfb70a4b9441c9c81c64469, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2881174430426363049}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9ac74a577cfb70a4b9441c9c81c64469, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5323071971328055560}
   m_SourcePrefab: {fileID: 100100000, guid: 9ac74a577cfb70a4b9441c9c81c64469, type: 3}
 --- !u!1 &3468896028249890892 stripped
 GameObject:
@@ -265,6 +268,28 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!195 &-5323071971328055560
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3468896028249890892}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!4 &4280722176294353654 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9ac74a577cfb70a4b9441c9c81c64469, type: 3}

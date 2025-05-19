@@ -70,6 +70,7 @@
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\Player\Player.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ColorCorrectionLookup.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\GlobalFog.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Objects\Others\ChangeScene.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Controllers\GameController.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\EdgeDetection.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />

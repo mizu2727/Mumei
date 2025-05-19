@@ -1343,6 +1343,9 @@ MonoBehaviour:
   enemyIsDead: 0
   enemyIsMove: 1
   enemyStartPosition: {x: 0, y: 0, z: 0}
+  walkSE: {fileID: 8300000, guid: 3c1a6febdc882754fbfba539fd9a4299, type: 3}
+  runSE: {fileID: 8300000, guid: a58231fb637c92f4c9adbd0622bbd469, type: 3}
+  findPlayerSE: {fileID: 0}
   raycastDistance: 1
   groundLayer:
     serializedVersion: 2

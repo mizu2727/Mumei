@@ -124,6 +124,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     private Vector3 lastCollisionPoint;
 
+    //SE
+    [SerializeField] private AudioClip walkSE;
+    [SerializeField] private AudioClip runSE;
+    [SerializeField] private AudioClip findPlayerSE;
+
+
+    private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
+
+
     // 追従
     void ChasePlayer()
     {
@@ -350,6 +359,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             // 追従中はRunアニメーションを再生
             animator.SetBool("isRun", IsMove);
             animator.SetBool("isWalk", false); // Walkを無効化
+
+
         }
         else
         {
@@ -363,6 +374,34 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 NextPosition();
             }
         }
+
+        // 移動状態の変化を検知して効果音を制御
+        AudioClip currentSE = distance <= DetectionRange ? runSE : walkSE;
+
+        if (IsMove && !wasMovingLastFrame)
+        {
+            // 移動開始時に効果音を再生
+            MusicController.Instance.LoopPlayAudioSE(currentSE);
+        }
+        else if (!IsMove && wasMovingLastFrame)
+        {
+            // 移動停止時に効果音を停止
+            MusicController.Instance.StopSE(walkSE);
+            MusicController.Instance.StopSE(runSE);
+        }
+        else if (IsMove && wasMovingLastFrame && MusicController.Instance.IsPlayingSE()
+            && MusicController.Instance.GetCurrentSE() != currentSE)
+        {
+            // 移動中に歩行/ダッシュが切り替わった場合、効果音を変更
+            MusicController.Instance.StopSE(walkSE);
+            MusicController.Instance.StopSE(runSE);
+            MusicController.Instance.LoopPlayAudioSE(currentSE);
+        }
+
+        // 現在の移動状態を記録
+        wasMovingLastFrame = IsMove;
+
+
 
         // Raycastで地面との距離をチェックし、NavMeshAgentのbaseOffsetを調整する
         RaycastHit hit;

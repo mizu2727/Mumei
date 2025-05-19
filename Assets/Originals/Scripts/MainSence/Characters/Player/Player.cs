@@ -119,16 +119,13 @@ public class Player : MonoBehaviour, CharacterInterface
 
     private void Awake()
     {
-        if (instance == null)
+        if (instance != null && instance != this)
         {
-            instance = this;
-            Debug.Log($"[Player] シングルトン初期化: {gameObject.name}");
-        }
-        else
-        {
-            Debug.LogWarning($"[Player] 重複インスタンスを破棄: {gameObject.name}");
             Destroy(gameObject);
+            return;
         }
+        instance = this;
+        DontDestroyOnLoad(gameObject); // シーン間で維持する場合
     }
 
     public bool IsPlayerMoving()

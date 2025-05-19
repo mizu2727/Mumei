@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   titlesCanvas: {fileID: 7627301958611840904}
-  SceneName: SampleScene
+  SceneName: SampleScene02
 --- !u!4 &1130733131
 Transform:
   m_ObjectHideFlags: 0
