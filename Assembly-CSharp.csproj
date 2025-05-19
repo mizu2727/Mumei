@@ -86,6 +86,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Objects\Others\TestWarp01.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Bloom.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Controllers\MessageController.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ColorCorrectionRamp.cs" />

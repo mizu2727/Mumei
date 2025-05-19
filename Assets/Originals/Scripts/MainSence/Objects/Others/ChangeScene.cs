@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
+using UnityEngine.AI;
 
 public class ChangeScene : MonoBehaviour
 {
@@ -38,7 +39,6 @@ public class ChangeScene : MonoBehaviour
             }
             Debug.Log("[ChangeScene] SampleScene02 のオブジェクトを非アクティブにしました。");
         }
-
 
         // 2. SampleScene01 を非同期でロード（Additiveモード）
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Additive);
@@ -85,11 +85,16 @@ public class ChangeScene : MonoBehaviour
         Debug.Log("[ChangeScene] スペースキーを押下してください。");
 
         // 6. スペースキー入力待ち
-        while (!Input.GetKeyDown(KeyCode.Space))
+        bool spacePressed = false;
+        while (!spacePressed)
         {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                spacePressed = true;
+                Debug.Log("[ChangeScene] スペースキーが押されました。");
+            }
             await UniTask.Yield();
         }
-        Debug.Log("[ChangeScene] スペースキーが押されました。");
 
         // 7. プレイヤーを SampleScene01 にワープ（シーン切り替え処理）
         Scene targetScene = SceneManager.GetSceneByName(targetSceneName);
@@ -99,8 +104,20 @@ public class ChangeScene : MonoBehaviour
             return;
         }
 
+        // シーン移動前にプレイヤーのNavMeshAgentを無効化
+        NavMeshAgent playerAgent = Player.instance.GetComponent<NavMeshAgent>();
+        if (playerAgent != null && playerAgent.enabled)
+        {
+            playerAgent.enabled = false;
+            Debug.Log("[ChangeScene] プレイヤーのNavMeshAgentを無効化しました。");
+        }
+
         // プレイヤーを SampleScene01 に移動
+        Debug.Log($"[ChangeScene] プレイヤー移動前: 位置={Player.instance.transform.position}, シーン={Player.instance.gameObject.scene.name}");
         SceneManager.MoveGameObjectToScene(Player.instance.gameObject, targetScene);
+        Debug.Log($"[ChangeScene] プレイヤー移動後: 位置={Player.instance.transform.position}, シーン={Player.instance.gameObject.scene.name}");
+
+        // 8. プレイヤーをワープ
         await testMap.SpawnPlayerAsync();
         if (!testMap.hasPlayerSpawned)
         {
@@ -109,7 +126,7 @@ public class ChangeScene : MonoBehaviour
         }
         Debug.Log("[ChangeScene] プレイヤーのワープが完了しました。");
 
-        // 8. SampleScene02 をアンロード
+        // 9. SampleScene02 をアンロード
         currentScene = SceneManager.GetSceneByName("SampleScene02");
         if (currentScene.IsValid())
         {
@@ -121,11 +138,11 @@ public class ChangeScene : MonoBehaviour
             Debug.Log("[ChangeScene] SampleScene02 をアンロードしました。");
         }
 
-        // 9. SampleScene01 をアクティブシーンに設定
+        // 10. SampleScene01 をアクティブシーンに設定
         SceneManager.SetActiveScene(targetScene);
         Debug.Log("[ChangeScene] SampleScene01 をアクティブシーンに設定しました。");
 
-        // 10. 敵を生成
+        // 11. 敵を生成
         await testMap.SpawnEnemiesAsync();
         if (!testMap.hasEnemiesSpawned)
         {

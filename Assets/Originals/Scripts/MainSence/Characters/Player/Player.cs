@@ -125,7 +125,6 @@ public class Player : MonoBehaviour, CharacterInterface
             return;
         }
         instance = this;
-        DontDestroyOnLoad(gameObject); // ƒV[ƒ“ŠÔ‚ÅˆÛ‚·‚éê‡
     }
 
     public bool IsPlayerMoving()

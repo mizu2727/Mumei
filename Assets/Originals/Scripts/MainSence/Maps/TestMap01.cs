@@ -1183,7 +1183,7 @@ public class TestMap01 : MonoBehaviour
         for (int i = 1; i <= connectionRoadLength && startX + i < mapSizeW; i++)
         {
             int roadX = startX + i;
-            if (map[roadX, startZ] == (int)objectType.wall) 
+            if (map[roadX, startZ] == (int)objectType.wall)
             {
                 map[roadX, startZ] = (int)objectType.road;
             }
