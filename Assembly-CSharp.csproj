@@ -68,6 +68,7 @@
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\Enemys\EnemyCollisionHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\Player\Player.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Maps\AddRoomTagToPrefabs.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ColorCorrectionLookup.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\GlobalFog.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Objects\Others\ChangeScene.cs" />
@@ -108,8 +109,10 @@
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Antialiasing.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\TiltShift.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Objects\Others\Goal.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Maps\TestMap02.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ScreenOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Maps\EnableReadWriteForMeshes.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Quads.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\Originals\Scripts\GameClearScene\GameClearController.cs" />
@@ -245,6 +248,7 @@
     <None Include="Assets\Novacorp Studios\Shaders\VRMShaders\GLTF\IO\Resources\UniGLTF\StandardMapImporter.shader" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\MotionBlur.shader" />
+    <None Include="Assets\Abandoned_Asylum\Read_me.txt" />
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\_DepthOfField\DepthOfFieldScatter.shader" />
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\_Antialiasing\FXAA2.shader" />
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\CreaseApply.shader" />
