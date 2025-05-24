@@ -996,7 +996,7 @@ public class TestMap01 : MonoBehaviour
             enemy.name = $"{prefab.name}_{enemiesGenerated}";
             var enemyScript = enemy.GetComponent<BaseEnemy>();
             if (enemyScript != null && Player.instance != null)
-                enemyScript.tagetPoint = Player.instance.transform;
+                enemyScript.targetPoint = Player.instance.transform;
             enemiesGenerated++;
         }
     }

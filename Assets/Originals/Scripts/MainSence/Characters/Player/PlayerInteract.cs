@@ -7,25 +7,27 @@ using static UnityEditor.Progress;
 
 public class PlayerInteract : MonoBehaviour
 {
-    [SerializeField]  public float distance = 30f;//インタラクトできる距離
+    [Header("インタラクトできる距離")]
+    [SerializeField]  public float distance = 30f;
     GameObject pickUpItem;//拾ったアイテム
     GameObject interactDoor;//インタラクトするドア
     public bool isInteract;
 
     private Item item;
 
-    //共通のScriptableObjectをアタッチする必要がある
+    [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
 
     private Door door;
     private Goal goal;
 
-
+    [Header("SE関係")]
     private AudioSource audioSourceSE;
     [SerializeField] private AudioClip getItemSE;
 
 
+    [Header("アイテムリセット(デバッグ用)")]
     public bool isDebugResetItem = false;
 
     private void Start()
