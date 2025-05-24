@@ -363,6 +363,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     // 衝突判定と処理を追加
     private void OnCollisionEnter(Collision collision)
     {
+        Debug.Log($"[{gameObject.name}] 衝突検出: {collision.gameObject.name}, タグ: {collision.gameObject.tag}");
+
         // 衝突したオブジェクトが "Wall" レイヤーまたは "Wall" タグを持っているか確認
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") || collision.gameObject.CompareTag("Wall"))
         {
@@ -377,6 +379,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         if (collision.gameObject.CompareTag("Player"))
         {
+            Debug.Log($"[{gameObject.name}] プレイヤーと衝突！ HP減少処理開始");
+            if (Player.instance != null && !Player.instance.IsDead)
+            {
+                Attack();
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (collider.gameObject.CompareTag("Player"))
+        {
+            Debug.Log($"[{gameObject.name}] プレイヤーと衝突！ HP減少処理開始");
             if (Player.instance != null && !Player.instance.IsDead)
             {
                 Attack();
@@ -426,10 +441,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             }
         }
     }
-
-    
-
-    
 
     void Update()
     {
@@ -571,17 +582,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         wasMovingLastFrame = IsMove;
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            if (Player.instance != null && !Player.instance.IsDead)
-            {
-                Attack();
-            }
-        }
     }
 
 

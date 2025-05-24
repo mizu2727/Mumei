@@ -151,7 +151,18 @@ public class Player : MonoBehaviour, CharacterInterface
 
         //コンポーネントの取得
         characterController = GetComponent<CharacterController>();
+        CapsuleCollider capsuleCollider = GetComponent<CapsuleCollider>();
         PlayAnimator = GetComponent<Animator>();
+
+        if (capsuleCollider != null && characterController != null)
+        {
+            // CharacterControllerのRadiusをCapsuleColliderのRadiusより小さく設定（例: 0.9倍）
+            characterController.radius = capsuleCollider.radius * 0.9f;
+        }
+        else
+        {
+            Debug.LogWarning("CapsuleColliderまたはCharacterControllerが見つかりません。");
+        }
 
         //プレイヤーの初期位置
         playerStartPosition = transform.position;
