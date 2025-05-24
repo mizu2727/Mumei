@@ -5,21 +5,8 @@ using Random = UnityEngine.Random; // System.Random と UnityEngine.Random の衝突
 
 public class BaseEnemy : MonoBehaviour, CharacterInterface
 {
-    // NavMeshAgentを取得
-    NavMeshAgent navMeshAgent;
-
-    // 追従したいオブジェクト
-    public Transform tagetPoint;
-
-    // 徘徊
-    [SerializeField] private TestMap01 testMap01;//プレハブ化したオブジェクトをアタッチ
-    private int positionNumber = 0;
-    private int maxPositionNumber;
-
-    // この値が狭すぎると徘徊地点が見つからず、広すぎるとNaveMeshの範囲外になる
-    // 要調整が必要
-    [SerializeField] private float findPatrolPointRange = 10f;
-
+    // 敵のステータス
+    [Header("Enemy Stats")]
     private Animator animator;
     public Animator PlayAnimator
     {
@@ -55,7 +42,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => dashSpeed = value;
     }
 
-    [SerializeField] private float enemyDetectionRange = 100f;
+    
     [SerializeField]
     public float DetectionRange
     {
@@ -124,27 +111,74 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     private Vector3 lastCollisionPoint;
 
-    //SE
+
+    // NavMesh関連
+    [Header("NavMesh Settings")]
+    NavMeshAgent navMeshAgent;
+    // この値が狭すぎると徘徊地点が見つからず、広すぎるとNaveMeshの範囲外になる
+    // 要調整が必要
+    [SerializeField] private float findPatrolPointRange = 10f;
+    [SerializeField] private float enemyDetectionRange = 100f;
+    [SerializeField] private float alertRange = 15f;
+    [SerializeField] private float sightRange = 10f;
+    [SerializeField] private LayerMask sightLayer;
+    [SerializeField] private float raycastDistance = 5.0f;
+    [SerializeField] private LayerMask groundLayer; // 地面として判定するLayer
+
+
+    // 徘徊関連
+    [Header("Patrol Settings")]
+    [SerializeField] private TestMap01 testMap01;//プレハブ化したオブジェクトをアタッチ
+    [SerializeField] public Transform[] patrolPoint;
+
+    private int positionNumber = 0;
+    private int maxPositionNumber;
+
+
+    // 検知・視線関連
+    [Header("Detection Settings")]
+    // 追従したいオブジェクト
+    public Transform tagetPoint;//ヒエラルキー上のプレイヤーをアタッチする
+
+
+
+
+    // サウンド関連
+    [Header("Audio Settings")]
+    private AudioSource audioSourceSE; // 敵専用のAudioSource
     [SerializeField] private AudioClip walkSE;
     [SerializeField] private AudioClip runSE;
     [SerializeField] private AudioClip findPlayerSE;
 
 
+
     private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
 
 
-    // 追従
+
+    
+    private bool isAlertMode = false;
+
+
+
     void ChasePlayer()
     {
-        // 追従用の目的地を設定
+        if (tagetPoint == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] tagetPointがnullです。プレイヤーを設定してください。");
+            return;
+        }
         navMeshAgent.SetDestination(tagetPoint.position);
-        Debug.Log("プレイヤー追従");
+        navMeshAgent.speed = dashSpeed; // 追従時はダッシュ速度
+        navMeshAgent.isStopped = false;
+        Debug.Log($"[{gameObject.name}] プレイヤー追従: 目的地 {tagetPoint.position}");
     }
 
     // 次の俳諧地点を決める
     void NextPosition()
     {
-        if (testMap01.patrolPoint == null || testMap01.patrolPoint.Length == 0)
+        //testMap01.patrolPoint
+        if (patrolPoint == null || patrolPoint.Length == 0)
         {
             Debug.LogError($"[{gameObject.name}] patrolPointが無効です！移動を停止します。");
             navMeshAgent.isStopped = true;
@@ -152,7 +186,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         positionNumber = Random.Range(0, maxPositionNumber);
-        Vector3 targetPos = testMap01.patrolPoint[positionNumber].position;
+        Vector3 targetPos = patrolPoint[positionNumber].position;
 
         NavMeshHit hit;
 
@@ -167,10 +201,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             Debug.LogError("目的地がNavMeshの範囲外です: " + targetPos);
 
             // フォールバック：別の徘徊地点を試す
-            for (int i = 0; i < testMap01.patrolPoint.Length; i++)
+            for (int i = 0; i < patrolPoint.Length; i++)
             {
-                int nextIndex = (positionNumber + i + 1) % testMap01.patrolPoint.Length;
-                Vector3 fallbackPos = testMap01.patrolPoint[nextIndex].position;
+                int nextIndex = (positionNumber + i + 1) % patrolPoint.Length;
+                Vector3 fallbackPos = patrolPoint[nextIndex].position;
                 if (NavMesh.SamplePosition(fallbackPos, out hit, findPatrolPointRange, NavMesh.AllAreas))
                 {
                     navMeshAgent.destination = hit.position;
@@ -273,14 +307,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
     }
 
-
-    [SerializeField] private float raycastDistance = 1.0f; // 地面までの距離をRaycastで確認する距離
-    [SerializeField] private LayerMask groundLayer; // 地面として判定するLayer
+    
 
     void Start()
     {
         PlayAnimator = GetComponent<Animator>();
 
+
+        // MusicControllerからAudioSourceを取得
+        audioSourceSE = MusicController.Instance.GetAudioSource();
 
         navMeshAgent = GetComponent<NavMeshAgent>();
         if (navMeshAgent == null)
@@ -292,8 +327,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         // NavMeshAgentの初期化
         navMeshAgent.isStopped = false;
         navMeshAgent.updatePosition = true;
-        navMeshAgent.updateRotation = true;
-        navMeshAgent.baseOffset = -0.1f; //baseOffsetを調整
+        navMeshAgent.updateRotation = true; // 回転をNavMeshAgentに任せる
+        navMeshAgent.angularSpeed = 360f; // 回転速度を適切に設定
+        navMeshAgent.baseOffset = 0f; // モデルに合わせて調整
+
+        // モデルの回転を初期化（必要に応じて）
+        transform.rotation = Quaternion.identity;
 
         // NavMesh上に配置されているか確認
         if (!navMeshAgent.isOnNavMesh)
@@ -316,16 +355,16 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         // 徘徊地点の初期化
-        if (testMap01 == null || testMap01.patrolPoint == null || testMap01.patrolPoint.Length == 0)
+        if (testMap01 == null || patrolPoint == null || patrolPoint.Length == 0)
         {
             Debug.LogError($"[{gameObject.name}] testMap01またはpatrolPointが設定されていません！");
             return;
         }
 
         // patrolPointの各要素を検証
-        for (int i = 0; i < testMap01.patrolPoint.Length; i++)
+        for (int i = 0; i < patrolPoint.Length; i++)
         {
-            if (testMap01.patrolPoint[i] == null)
+            if (patrolPoint[i] == null)
             {
                 Debug.LogError($"[{gameObject.name}] patrolPoint[{i}] がnullです！停止します。");
                 navMeshAgent.isStopped = true;
@@ -334,68 +373,88 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
 
-        maxPositionNumber = testMap01.patrolPoint.Length;
+        maxPositionNumber = patrolPoint.Length;
         positionNumber = Random.Range(0, maxPositionNumber);
-        navMeshAgent.destination = testMap01.patrolPoint[positionNumber].position;
-        Debug.Log($"[{gameObject.name}] 初期徘徊地点: {testMap01.patrolPoint[positionNumber].position}");
+        navMeshAgent.destination = patrolPoint[positionNumber].position;
+        Debug.Log($"[{gameObject.name}] 初期徘徊地点: {patrolPoint[positionNumber].position}");
     }
 
     void Update()
     {
-        if (Player.instance.IsDead || Player.instance == null || testMap01 == null) return;
+        if (Player.instance == null || Player.instance.IsDead || testMap01 == null || tagetPoint == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] Update処理をスキップ: Player={Player.instance}, testMap01={testMap01}, tagetPoint={tagetPoint}");
+            navMeshAgent.isStopped = true;
+            return;
+        }
 
         // 移動中かどうかを判定
         IsMove = IsEnemyMoving();
 
         // プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, tagetPoint.position);
-        Debug.Log($"[{gameObject.name}] プレイヤーとの距離: {distance}, 検知範囲: {DetectionRange}, 現在位置: {transform.position}, プレイヤー位置: {tagetPoint.position}");
-
-        // プレイヤーが一定の範囲に入った場合の処理
-        if (distance <= DetectionRange)
+        
+        // 警戒モード判定
+        if (distance <= alertRange)
         {
-            ChasePlayer();
+            if (!isAlertMode)
+            {
+                Debug.Log($"[{gameObject.name}] 警戒モード開始: プレイヤーとの距離 {distance}");
+                isAlertMode = true;
+                MusicController.Instance.LoopPlayAudioSE(audioSourceSE, findPlayerSE); // プレイヤー発見時のSE
+            }
 
-            // 追従中はRunアニメーションを再生
-            animator.SetBool("isRun", IsMove);
-            animator.SetBool("isWalk", false); // Walkを無効化
-
-
+            if (CanSeePlayer())
+            {
+                ChasePlayer();
+                animator.SetBool("isRun", true);
+                animator.SetBool("isWalk", false);
+            }
+            else
+            {
+                animator.SetBool("isRun", false);
+                animator.SetBool("isWalk", IsMove);
+                if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
+                {
+                    NextPosition();
+                }
+            }
         }
         else
         {
-            // 徘徊中はWalkアニメーションを再生
-            animator.SetBool("isRun", false); // Runを無効化
+            if (isAlertMode)
+            {
+                Debug.Log($"[{gameObject.name}] 警戒モード解除: プレイヤーとの距離 {distance}");
+                isAlertMode = false;
+            }
+            animator.SetBool("isRun", false);
             animator.SetBool("isWalk", IsMove);
-
-            // 敵と俳徊地点の距離が指定の値の範囲内の場合の処理
-            if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 0.5f)
+            navMeshAgent.speed = Speed; // 通常速度に戻す
+            if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
             {
                 NextPosition();
             }
         }
 
-        // 移動状態の変化を検知して効果音を制御
-        AudioClip currentSE = distance <= DetectionRange ? runSE : walkSE;
+        // 効果音制御
+        AudioClip currentSE = isAlertMode && CanSeePlayer() ? runSE : walkSE;
 
         if (IsMove && !wasMovingLastFrame)
         {
-            // 移動開始時に効果音を再生
-            MusicController.Instance.LoopPlayAudioSE(currentSE);
+            // 移動開始時に適切な効果音を再生
+            MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
         }
         else if (!IsMove && wasMovingLastFrame)
         {
             // 移動停止時に効果音を停止
-            MusicController.Instance.StopSE(walkSE);
-            MusicController.Instance.StopSE(runSE);
+            MusicController.Instance.StopSE(audioSourceSE);
         }
-        else if (IsMove && wasMovingLastFrame && MusicController.Instance.IsPlayingSE()
-            && MusicController.Instance.GetCurrentSE() != currentSE)
+        else if (IsMove && wasMovingLastFrame && MusicController.Instance.IsPlayingSE(audioSourceSE)
+                 && MusicController.Instance.GetCurrentSE(audioSourceSE) != currentSE)
         {
-            // 移動中に歩行/ダッシュが切り替わった場合、効果音を変更
-            MusicController.Instance.StopSE(walkSE);
-            MusicController.Instance.StopSE(runSE);
-            MusicController.Instance.LoopPlayAudioSE(currentSE);
+            // 移動中に状態が切り替わった場合、効果音を変更
+            MusicController.Instance.StopSE(audioSourceSE);
+            MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
         }
 
         // 現在の移動状態を記録
@@ -403,18 +462,45 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
 
 
-        // Raycastで地面との距離をチェックし、NavMeshAgentのbaseOffsetを調整する
+        // 地面との距離調整
         RaycastHit hit;
         if (Physics.Raycast(transform.position, Vector3.down, out hit, raycastDistance, groundLayer))
         {
-            // 自身の中心と地面の距離を調整
             navMeshAgent.baseOffset = -hit.distance;
-            Debug.Log($"[{gameObject.name}] 地面との距離: {hit.distance}, baseOffset: {navMeshAgent.baseOffset}");
         }
         else
         {
-            Debug.LogWarning($"[{gameObject.name}] 地面を検知できませんでした。baseOffsetは調整されません。");
+            Debug.LogWarning($"[{gameObject.name}] 地面を検知できませんでした。位置: {transform.position}");
+            navMeshAgent.baseOffset = -0.1f;
         }
+    }
+
+    bool CanSeePlayer()
+    {
+        RaycastHit hit;
+        Vector3 directionToPlayer = (tagetPoint.position - transform.position).normalized;
+        Vector3 rayOrigin = transform.position + Vector3.up * 1f; // 視線を少し高くして頭部から出す
+
+        // Raycastの描画（緑：ヒット、赤：ヒットなし）
+        if (Physics.Raycast(rayOrigin, directionToPlayer, out hit, sightRange, sightLayer))
+        {
+            Debug.DrawRay(rayOrigin, directionToPlayer * hit.distance, Color.green, 0.1f);
+            if (hit.collider.CompareTag("Player"))
+            {
+                Debug.Log($"[{gameObject.name}] プレイヤーを視認: 距離 {hit.distance}");
+                return true;
+            }
+            else
+            {
+                Debug.Log($"[{gameObject.name}] 視線が障害物に遮られた: {hit.collider.name}");
+                Debug.DrawRay(rayOrigin, directionToPlayer * hit.distance, Color.red, 0.1f);
+            }
+        }
+        else
+        {
+            Debug.DrawRay(rayOrigin, directionToPlayer * sightRange, Color.red, 0.1f);
+        }
+        return false;
     }
 
     private void OnTriggerEnter(Collider other)

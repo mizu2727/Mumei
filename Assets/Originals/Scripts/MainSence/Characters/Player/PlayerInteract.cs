@@ -22,6 +22,7 @@ public class PlayerInteract : MonoBehaviour
     private Goal goal;
 
 
+    private AudioSource audioSourceSE;
     [SerializeField] private AudioClip getItemSE;
 
 
@@ -68,7 +69,7 @@ public class PlayerInteract : MonoBehaviour
 
                         Debug.Log($"拾ったアイテムのタイプ: {item.itemType}");
 
-                        MusicController.Instance.PlayAudioSE(getItemSE);
+                        MusicController.Instance.PlayAudioSE(audioSourceSE,getItemSE);
 
                         if ((item.itemType == ItemType.Document) 
                             || (item.itemType == ItemType.MysteryItem))

@@ -5,6 +5,8 @@ public class GameOverScene : MonoBehaviour
 {
     [SerializeField] private Canvas gameOverCanvas;
     [SerializeField] private string SceneName;
+
+    private AudioSource audioSourceSE;
     [SerializeField] private AudioClip gameOverSE;
 
     void Start()
@@ -13,7 +15,7 @@ public class GameOverScene : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
 
-        MusicController.Instance.PlayAudioSE(gameOverSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, gameOverSE);
         //MusicController.instance.StopBGM();
     }
 

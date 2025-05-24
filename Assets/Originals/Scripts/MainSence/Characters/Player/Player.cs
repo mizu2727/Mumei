@@ -109,6 +109,7 @@ public class Player : MonoBehaviour, CharacterInterface
     Vector3 moveDirection = Vector3.zero;//移動方向
 
 
+    private AudioSource audioSourceSE; // プレイヤー専用のAudioSource
     [SerializeField] private AudioClip walkSE;
     [SerializeField] private AudioClip runSE;
 
@@ -154,6 +155,9 @@ public class Player : MonoBehaviour, CharacterInterface
 
         //プレイヤーの初期位置
         playerStartPosition = transform.position;
+
+        // MusicControllerからAudioSourceを取得
+        audioSourceSE = MusicController.Instance.GetAudioSource();
     }
 
 
@@ -227,21 +231,19 @@ public class Player : MonoBehaviour, CharacterInterface
         if (IsMove && !wasMovingLastFrame)
         {
             // 移動開始時に効果音を再生
-            MusicController.Instance.LoopPlayAudioSE(currentSE);
+            MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
         }
         else if (!IsMove && wasMovingLastFrame)
         {
             // 移動停止時に効果音を停止
-            MusicController.Instance.StopSE(walkSE);
-            MusicController.Instance.StopSE(runSE);
+            MusicController.Instance.StopSE(audioSourceSE);
         }
-        else if (IsMove && wasMovingLastFrame && MusicController.Instance.IsPlayingSE() 
-            && MusicController.Instance.GetCurrentSE() != currentSE)
+        else if (IsMove && wasMovingLastFrame && MusicController.Instance.IsPlayingSE(audioSourceSE)
+                 && MusicController.Instance.GetCurrentSE(audioSourceSE) != currentSE)
         {
             // 移動中に歩行/ダッシュが切り替わった場合、効果音を変更
-            MusicController.Instance.StopSE(walkSE);
-            MusicController.Instance.StopSE(runSE);
-            MusicController.Instance.LoopPlayAudioSE(currentSE);
+            MusicController.Instance.StopSE(audioSourceSE);
+            MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
         }
 
         // 現在の移動状態を記録

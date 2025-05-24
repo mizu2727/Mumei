@@ -1,28 +1,14 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Audio;
 
 public class MusicController : MonoBehaviour
 {
     private static MusicController _instance;
-    public static MusicController Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                // 新しいゲームオブジェクトを生成
-                GameObject musicControllerObj = new GameObject("MusicController");
-                _instance = musicControllerObj.AddComponent<MusicController>();
-                DontDestroyOnLoad(musicControllerObj);
-                Debug.Log("[MusicController] 遅延初期化で MusicController を生成しました。");
-            }
-            return _instance;
-        }
-    }
+    public static MusicController Instance => _instance;
 
-    [SerializeField] private AudioSource audioSourceBGM;//BGM
-    private AudioSource audioSourceSE = null;//AudioSourece
-    [SerializeField] private bool isDebug;//デバッグモード
+    [SerializeField] private AudioSource audioSourceBGM;
+    private readonly List<AudioSource> audioSourceSEList = new ();
+    [SerializeField] private bool isDebug;
 
     private void Awake()
     {
@@ -40,8 +26,6 @@ public class MusicController : MonoBehaviour
         {
             audioSourceBGM = gameObject.AddComponent<AudioSource>();
         }
-
-        audioSourceSE = gameObject.AddComponent<AudioSource>();
     }
 
     void Start()
@@ -68,74 +52,77 @@ public class MusicController : MonoBehaviour
         audioSourceBGM.UnPause();
     }
 
-    //BGM停止
+    // BGM停止
     public void StopBGM()
     {
         audioSourceBGM.Stop();
     }
 
-    //SEを鳴らす
-    public void PlayAudioSE(AudioClip audioClip)
+    // 新しいAudioSourceを取得または作成
+    public AudioSource GetAudioSource()
     {
-        if (audioSourceSE != null && !isDebug)
+        var audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSourceSEList.Add(audioSource);
+        return audioSource;
+    }
+
+    // SE再生
+    public void PlayAudioSE(AudioSource audioSource, AudioClip audioClip)
+    {
+        if (audioSource != null && !isDebug)
         {
             if (audioClip != null)
             {
-                audioSourceSE.PlayOneShot(audioClip);
+                audioSource.clip = audioClip;
+                audioSource.loop = false;
+                audioSource.Play();
             }
             else
             {
                 Debug.LogWarning("[MusicController] audioClip が null です！");
             }
         }
-        else
-        {
-            Debug.LogWarning($"[MusicController] 効果音再生失敗: audioSourceSE={(audioSourceSE != null ? "設定済み" : "null")}, isDebug={isDebug}, audioClip={(audioClip != null ? audioClip.name : "null")}");
-        }
     }
 
-    //ループしてSEを鳴らす
-    public void LoopPlayAudioSE(AudioClip audioClip)
+    // SEをループ再生
+    public void LoopPlayAudioSE(AudioSource audioSource, AudioClip audioClip)
     {
-        if (audioSourceSE != null && !isDebug)
+        if (audioSource != null && !isDebug)
         {
             if (audioClip != null)
             {
-                // ループ再生を設定して再生
-                audioSourceSE.clip = audioClip;
-                audioSourceSE.loop = true; // ループを有効化
-                audioSourceSE.Play();
+                audioSource.clip = audioClip;
+                audioSource.loop = true;
+                audioSource.Play();
             }
             else
             {
-                Debug.LogWarning("SEループ失敗");
+                Debug.LogWarning("[MusicController] loop用のaudioClip が null です！");
             }
         }
-        else
+    }
+
+    // SE停止
+    public void StopSE(AudioSource audioSource)
+    {
+        if (audioSource != null)
         {
-            Debug.LogWarning($"[MusicController] 効果音ループ再生失敗: audioSourceSE={(audioSourceSE != null ? "設定済み" : "null")}, isDebug={isDebug}, audioClip={(audioClip != null ? audioClip.name : "null")}");
+            audioSource.Stop();
+            audioSource.loop = false;
+            audioSource.clip = null;
         }
     }
 
-    //SE停止
-    public void StopSE(AudioClip audioClip)
+    // 指定されたAudioSourceが再生中か確認
+    public bool IsPlayingSE(AudioSource audioSource)
     {
-        if (audioSourceSE != null && audioSourceSE.clip == audioClip)
-        {
-            audioSourceSE.Stop();
-            audioSourceSE.loop = false; // ループを解除
-            audioSourceSE.clip = null; // クリップをクリア
-        }
+        return audioSource != null && audioSource.isPlaying;
     }
 
-
-    public bool IsPlayingSE()
+    // 現在のSEクリップを取得
+    public AudioClip GetCurrentSE(AudioSource audioSource)
     {
-        return audioSourceSE != null && audioSourceSE.isPlaying;
-    }
-
-    public AudioClip GetCurrentSE()
-    {
-        return audioSourceSE != null ? audioSourceSE.clip : null;
+        return audioSource != null ? audioSource.clip : null;
     }
 }
