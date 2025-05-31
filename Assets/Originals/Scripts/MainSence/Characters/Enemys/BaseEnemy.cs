@@ -175,14 +175,27 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] private AudioClip runSE;
     [SerializeField] private AudioClip findPlayerSE;
 
+    [Header("サウンドの距離関連(要調整)")]
+    [SerializeField] private float maxSoundDistance = 10f; // 音量が最大になる距離
+    [SerializeField] private float minSoundDistance = 20f; // 音量が最小になる距離
+    [SerializeField] private float maxVolume = 1.0f; // 最大音量
+    [SerializeField] private float minVolume = 0.0f; // 最小音量
+
 
 
     private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
-
-
-
-    
+ 
     private bool isAlertMode = false;
+
+
+    [Header("タグ・レイヤー関連")]
+    [SerializeField] string playerTag = "Player";
+    [SerializeField] string wallTag = "Wall";
+    //[SerializeField] string doorTag = "Door";
+
+
+    //private Door door;
+    //GameObject gameObjectDoor;
 
     void Start()
     {
@@ -268,7 +281,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             Vector3 rayOrigin = transform.position + Vector3.up * 1.5f; // 視線の開始位置
             if (Physics.SphereCast(rayOrigin, sphereCastRadius, directionToPlayer.normalized, out hit, enemyDetectionRange, detectionLayer))
             {
-                if (hit.collider.CompareTag("Player"))
+                if (hit.collider.CompareTag(playerTag))
                 {
                     // 障害物をチェック
                     if (!Physics.Linecast(rayOrigin, targetPoint.position + Vector3.up * 1.0f, obstacleLayer))
@@ -366,7 +379,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         Debug.Log($"[{gameObject.name}] 衝突検出: {collision.gameObject.name}, タグ: {collision.gameObject.tag}");
 
         // 衝突したオブジェクトが "Wall" レイヤーまたは "Wall" タグを持っているか確認
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") || collision.gameObject.CompareTag("Wall"))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") || collision.gameObject.CompareTag(wallTag))
         {
             navMeshAgent.velocity = Vector3.zero; // 速度を0に設定して停止させる
             navMeshAgent.isStopped = true; // NavMeshAgentの移動を停止
@@ -377,7 +390,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
 
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag(playerTag))
         {
             Debug.Log($"[{gameObject.name}] プレイヤーと衝突！ HP減少処理開始");
             if (Player.instance != null && !Player.instance.IsDead)
@@ -385,18 +398,42 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 Attack();
             }
         }
+
+        //if (collision.gameObject.CompareTag(doorTag))
+        //{
+        //    gameObjectDoor = collision.gameObject;
+        //    door = gameObjectDoor.GetComponent<Door>();
+
+        //    Debug.Log("敵がドアと衝突");
+        //    if (!door.isNeedKeyDoor)
+        //    {
+        //        door.OpenDoor();
+        //    }
+        //}
     }
 
     private void OnTriggerEnter(Collider collider)
     {
-        if (collider.gameObject.CompareTag("Player"))
+        if (collider.gameObject.CompareTag(playerTag))
         {
-            Debug.Log($"[{gameObject.name}] プレイヤーと衝突！ HP減少処理開始");
+            Debug.Log($"[{gameObject.name}] プレイヤーと衝突2！ HP減少処理開始");
             if (Player.instance != null && !Player.instance.IsDead)
             {
                 Attack();
             }
         }
+
+        //if (collider.gameObject.CompareTag(doorTag))
+        //{
+        //    gameObjectDoor = collider.gameObject;
+        //    door = gameObjectDoor.GetComponent<Door>();
+
+        //    Debug.Log("敵がドアと衝突2");
+        //    if (!door.isNeedKeyDoor)
+        //    {
+        //        door.OpenDoor();
+        //    }
+        //}
     }
 
     //方向転換
@@ -566,9 +603,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         // 効果音制御
         AudioClip currentSE = (currentState == EnemyState.Chase) ? runSE : walkSE;
 
+        // 距離に基づく音量計算
+        float volume = CalculateVolumeBasedOnDistance(distance);
+
         if (IsMove && !wasMovingLastFrame)
         {
             MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
+
+            //音量を設定
+            audioSourceSE.volume = volume;
         }
         else if (!IsMove && wasMovingLastFrame)
         {
@@ -579,6 +622,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         {
             MusicController.Instance.StopSE(audioSourceSE);
             MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
+
+            audioSourceSE.volume = volume;
+        }
+        else if (IsMove && MusicController.Instance.IsPlayingSE(audioSourceSE))
+        {
+            audioSourceSE.volume = volume; // 移動中に音量を継続的に更新
         }
 
         wasMovingLastFrame = IsMove;
@@ -601,6 +650,25 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         if (targetPoint != null)
         {
             Gizmos.DrawWireSphere(targetPoint.position + Vector3.up * 1.0f, sphereCastRadius);
+        }
+    }
+
+    // 距離に基づく音量を計算するメソッド
+    private float CalculateVolumeBasedOnDistance(float distance)
+    {
+        if (distance <= maxSoundDistance)
+        {
+            return maxVolume; // 最大音量
+        }
+        else if (distance >= minSoundDistance)
+        {
+            return minVolume; // 最小音量
+        }
+        else
+        {
+            // 距離に基づいて線形補間
+            float t = (distance - maxSoundDistance) / (minSoundDistance - maxSoundDistance);
+            return Mathf.Lerp(maxVolume, minVolume, t);
         }
     }
 }

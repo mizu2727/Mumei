@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Door : MonoBehaviour
 {
     bool isOpenDoor = false;//ドアの開閉の判定
-    [SerializeField]  public bool isNeedKeyDoor = false;//鍵が掛かっているかを判定
-    [SerializeField]  float openDirenctionValue = 90.0f;//ドアを開ける角度
-    [SerializeField]  float closeDirenctionValue = 0.0f;//ドアを閉じる角度
-
+    [SerializeField] public bool isNeedKeyDoor = false;//鍵が掛かっているかを判定
+    [SerializeField] float openDirenctionValue = 90.0f;//ドアを開ける角度
+    [SerializeField] float closeDirenctionValue = 0.0f;//ドアを閉じる角度
+    
     private Player player;//プレイヤー
 
     public void DoorSystem() 
@@ -36,7 +37,7 @@ public class Door : MonoBehaviour
     }
 
     //ドアを開ける
-    void OpenDoor() 
+    public void OpenDoor() 
     {
         isOpenDoor = true;
         transform.Rotate(0, openDirenctionValue, 0);
