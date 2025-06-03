@@ -191,11 +191,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("タグ・レイヤー関連")]
     [SerializeField] string playerTag = "Player";
     [SerializeField] string wallTag = "Wall";
-    //[SerializeField] string doorTag = "Door";
+    [SerializeField] string doorTag = "Door";
 
 
-    //private Door door;
-    //GameObject gameObjectDoor;
+    private Door door;
+    GameObject gameObjectDoor;
 
     void Start()
     {
@@ -399,21 +399,23 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             }
         }
 
-        //if (collision.gameObject.CompareTag(doorTag))
-        //{
-        //    gameObjectDoor = collision.gameObject;
-        //    door = gameObjectDoor.GetComponent<Door>();
+        if (collision.gameObject.CompareTag(doorTag))
+        {
+            gameObjectDoor = collision.gameObject;
+            door = gameObjectDoor.GetComponent<Door>();
 
-        //    Debug.Log("敵がドアと衝突");
-        //    if (!door.isNeedKeyDoor)
-        //    {
-        //        door.OpenDoor();
-        //    }
-        //}
+            Debug.Log("敵がドアと衝突");
+            if (!door.isNeedKeyDoor && !door.isOpenDoor)
+            {
+                door.OpenDoor();
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider collider)
     {
+        Debug.Log($"[{gameObject.name}] 衝突検出: {collider.gameObject.name}, タグ: {collider.gameObject.tag},その2");
+
         if (collider.gameObject.CompareTag(playerTag))
         {
             Debug.Log($"[{gameObject.name}] プレイヤーと衝突2！ HP減少処理開始");
@@ -423,17 +425,17 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             }
         }
 
-        //if (collider.gameObject.CompareTag(doorTag))
-        //{
-        //    gameObjectDoor = collider.gameObject;
-        //    door = gameObjectDoor.GetComponent<Door>();
+        if (collider.gameObject.CompareTag(doorTag))
+        {
+            gameObjectDoor = collider.gameObject;
+            door = gameObjectDoor.GetComponent<Door>();
 
-        //    Debug.Log("敵がドアと衝突2");
-        //    if (!door.isNeedKeyDoor)
-        //    {
-        //        door.OpenDoor();
-        //    }
-        //}
+            Debug.Log("敵がドアと衝突2");
+            if (!door.isNeedKeyDoor && !door.isOpenDoor)
+            {
+                door.OpenDoor();
+            }
+        }
     }
 
     //方向転換
