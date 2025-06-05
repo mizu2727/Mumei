@@ -20,9 +20,9 @@ TagManager:
   - Wall
   - Door
   - Ground
-  - 
-  - 
-  - 
+  - Item
+  - Goal
+  - Outline
   - 
   - 
   - 

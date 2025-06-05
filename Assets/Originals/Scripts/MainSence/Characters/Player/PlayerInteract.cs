@@ -22,6 +22,12 @@ public class PlayerInteract : MonoBehaviour
     private Door door;
     private Goal goal;
 
+
+    private string itemTag = "Item";
+    private string doorTag = "Door";
+    private string goalTag = "Goal";
+    private string outlineTag = "Outline";
+
     [Header("SE関係")]
     private AudioSource audioSourceSE;
     [SerializeField] private AudioClip getItemSE;
@@ -54,10 +60,10 @@ public class PlayerInteract : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, 
             Camera.main.transform.forward, out raycastHit, distance) )
         {
-            if (Input.GetKeyDown(KeyCode.E) && !PauseController.instance.isPause) 
+            if (PlayInteract() && !PauseController.instance.isPause) 
             {
-                //アイテムを拾う
-                if (raycastHit.transform.tag == "Item")
+                //アイテム
+                if (raycastHit.transform.tag == itemTag)
                 {
                     isInteract = true;
                     pickUpItem = raycastHit.transform.gameObject;
@@ -65,8 +71,13 @@ public class PlayerInteract : MonoBehaviour
                     //Itemコンポーネントを取得
                     item = pickUpItem.GetComponent<Item>();
 
-                    if (item != null )
+                    //SwitchLayer(pickUpItem, outlineTag);
+
+                    //アイテムを拾う
+                    if (item != null)
                     {
+                        //SwitchLayer(pickUpItem, itemTag);
+
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
                         Debug.Log($"拾ったアイテムのタイプ: {item.itemType}");
@@ -94,22 +105,25 @@ public class PlayerInteract : MonoBehaviour
                     
                 }
 
-                //ドアの開閉
-                if (raycastHit.transform.tag == "Door") 
+                //ドア
+                if (raycastHit.transform.tag == doorTag) 
                 {
                     isInteract = true;
                     interactDoor = raycastHit.transform.gameObject;
                     door = interactDoor.GetComponent<Door>();
-                    door.DoorSystem();
+
+                    //ドアの開閉
+                    if (door != null) door.DoorSystem();                    
                 }
 
                 //ゴール
-                if (raycastHit.transform.tag == "Goal")
+                if (raycastHit.transform.tag == goalTag)
                 {
                     isInteract = true;
                     goal = raycastHit.transform.gameObject.GetComponent<Goal>();
 
-                    if (!goal.isGoalPanel) goal.GoalCheck();
+                    //ゴールチェック
+                    if (!goal.isGoalPanel && goal != null) goal.GoalCheck();
 
                 }
             }   
@@ -119,4 +133,26 @@ public class PlayerInteract : MonoBehaviour
             isInteract = false;
         }
     }
+
+    bool PlayInteract() 
+    {
+        return Input.GetKeyDown(KeyCode.E);
+    }
+
+    //オブジェクトのレイヤーを変更する
+    void SwitchLayer(GameObject obj, string layerName)
+    {
+        obj.layer = LayerMask.NameToLayer(layerName);
+        Debug.Log("レイヤーを"+ layerName + "へ変更");
+    }
+
+    //
+    //void resetCurrentDrawer()
+    //{
+    //    if (currentDrawer != null)
+    //    {
+    //        SwitchLayer(currentDrawer, "Default");
+    //        currentDrawer = null;
+    //    }
+    //}
 }
