@@ -170,10 +170,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
 
     [Header("サウンド関連")]
-    private AudioSource audioSourceSE; // 敵専用のAudioSource
+    private AudioSource audioSourceSE; 
     [SerializeField] private AudioClip walkSE;
     [SerializeField] private AudioClip runSE;
     [SerializeField] private AudioClip findPlayerSE;
+
+    [Header("走る音の再生速度(要調整)")]
+    [SerializeField] private float runSEPitch = 2f;
 
     [Header("サウンドの距離関連(要調整)")]
     [SerializeField] private float maxSoundDistance = 10f; // 音量が最大になる距離
@@ -610,6 +613,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         if (IsMove && !wasMovingLastFrame)
         {
+            // 走る音の場合、ピッチを調整
+            audioSourceSE.pitch = (currentSE == runSE) ? runSEPitch : 1.0f;
+
             MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
 
             //音量を設定
@@ -618,10 +624,16 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         else if (!IsMove && wasMovingLastFrame)
         {
             MusicController.Instance.StopSE(audioSourceSE);
+
+            // 停止時にピッチをリセット
+            audioSourceSE.pitch = 1.0f; 
         }
         else if (IsMove && wasMovingLastFrame && MusicController.Instance.IsPlayingSE(audioSourceSE)
                  && MusicController.Instance.GetCurrentSE(audioSourceSE) != currentSE)
         {
+            // 走る音の場合、ピッチを調整
+            audioSourceSE.pitch = (currentSE == runSE) ? runSEPitch : 1.0f;
+
             MusicController.Instance.StopSE(audioSourceSE);
             MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
 
@@ -629,7 +641,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
         else if (IsMove && MusicController.Instance.IsPlayingSE(audioSourceSE))
         {
-            audioSourceSE.volume = volume; // 移動中に音量を継続的に更新
+            // 移動中に音量を継続的に更新
+            audioSourceSE.volume = volume; 
         }
 
         wasMovingLastFrame = IsMove;
