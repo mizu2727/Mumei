@@ -11,16 +11,22 @@ using UnityEngine.SceneManagement;
 
 public class Goal : MonoBehaviour
 {
-    //共通のScriptableObjectをアタッチする必要がある
+    [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
-    [SerializeField] public int anserItemId;//正解用のアイテムid
+    [Header("正解用のアイテムid")]
+    [SerializeField] public int anserItemId;
 
+    [Header("ゴールパネル(ヒエラルキー上のパネルをアタッチする必要がある)")]
+    [SerializeField] private GameObject GoalPanel;
 
-    [SerializeField] private GameObject GoalPanel;//コールパネル
-    [SerializeField] private Button[] selectMysteryItemButton;//ミステリーアイテム名称ボタン
-    [SerializeField] private Image[] selectMysteryItemImage;//ミステリーアイテム画像
+    [Header("ミステリーアイテム名称ボタン(ヒエラルキー上のボタンをアタッチする必要がある)")]
+    [SerializeField] private Button[] selectMysteryItemButton;
 
+    [Header("ミステリーアイテム画像(ヒエラルキー上の画像をアタッチする必要がある)")]
+    [SerializeField] private Image[] selectMysteryItemImage;
+
+    [Header("ゴール判定")]
     public bool isGoalPanel;
 
     private void Start()

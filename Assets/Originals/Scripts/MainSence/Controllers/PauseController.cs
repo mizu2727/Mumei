@@ -9,18 +9,20 @@ public class PauseController : MonoBehaviour
 {
     public static PauseController instance;
 
-
     [SerializeField] private Player player;//プレイヤー
     [SerializeField] private Goal goal;//ゴール
     [SerializeField] private GameObject pausePanel;//ポーズパネル
 
+
     [SerializeField] private GameObject viewItemsPanel;//アイテム確認パネル
 
+    [Header("ドキュメントパネル関連")]
     [SerializeField] private GameObject documentInventoryPanel;//ドキュメント確認パネル
     [SerializeField] private GameObject documentExplanationPanel;//ドキュメント説明欄パネル
     [SerializeField] private Text documentNameText;//ドキュメント名称テキスト
     [SerializeField] private Text documentExplanationText;//ドキュメント説明欄テキスト
 
+    [Header("ミステリーアイテムパネル関連")]
     [SerializeField] private GameObject mysteryItemInventoryPanel;//ミステリーアイテム確認パネル
     [SerializeField] private Button[] mysteryItemNameButton;//ミステリーアイテム名称ボタン
     [SerializeField] private Text[] mysteryItemNameText;//ミステリーアイテム名称テキスト
@@ -41,10 +43,10 @@ public class PauseController : MonoBehaviour
     private List<string> mysteryItemExplanations = new(); // ミステリーアイテム説明欄のリスト
 
 
-    //共通のScriptableObjectをアタッチする必要がある
+    [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
-    //SE系
+    [Header("サウンド関連")]
     private AudioSource audioSourceSE;
     public AudioClip buttonSE;//ボタンSE
     public AudioClip documentNameButtonSE;//ドキュメント名称ボタンSE
@@ -66,6 +68,8 @@ public class PauseController : MonoBehaviour
 
     private void Start()
     {
+        audioSourceSE = MusicController.Instance.GetAudioSource();
+
         // パネルを初期状態で非表示に
         isPause = false;
         ChangeViewPausePanel();

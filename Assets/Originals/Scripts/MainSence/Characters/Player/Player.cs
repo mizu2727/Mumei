@@ -18,6 +18,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => animator = value;
     }
 
+    [Header("名前")]
     [SerializeField] private string playerName;
 
     [SerializeField]
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerName = value;
     }
 
+    [Header("歩行速度")]
     [SerializeField] private float Speed = 3f;
     [SerializeField]
     public float NormalSpeed
@@ -35,6 +37,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => Speed = value;
     }
 
+    [Header("ダッシュ速度")]
     [SerializeField] private float dashSpeed = 5f;
     [SerializeField]
     public float SprintSpeed
@@ -51,6 +54,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerDetectionRange = value;
     }
 
+    [Header("重力")]
     [SerializeField] private float playerGravity = 10f;
     [SerializeField]
     public float Gravity
@@ -59,6 +63,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerGravity = value;
     }
 
+    [Header("体力")]
     [SerializeField] private int playerHP = 1;
     [SerializeField]
     public int HP
@@ -67,6 +72,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerHP = value;
     }
 
+    [Header("死亡判定")]
     [SerializeField] private bool playerIsDead = false;
     [SerializeField]
     public bool IsDead
@@ -75,6 +81,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsDead = value;
     }
 
+    [Header("プレイヤーが動いているかを判定")]
     [SerializeField] private bool playerIsMove = true;
     [SerializeField]
     public bool IsMove
@@ -102,19 +109,22 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerStartPosition = value;
     }
 
-    [SerializeField] string aliasName = "イフ";//仮の名前
+    [Header("仮の名前")]
+    [SerializeField] string aliasName = "イフ";
 
+    [Header("鍵の所持の有無")]
     [SerializeField] public bool isHoldKey = false;
 
     Vector3 moveDirection = Vector3.zero;//移動方向
 
-
+    [Header("サウンド関連")]
     private AudioSource audioSourceSE; // プレイヤー専用のAudioSource
     [SerializeField] private AudioClip walkSE;
     [SerializeField] private AudioClip runSE;
 
     private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
 
+    [Header("デバッグモード")]
     public bool isDebug = false;
 
 
