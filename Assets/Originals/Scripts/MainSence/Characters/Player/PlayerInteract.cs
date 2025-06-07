@@ -9,7 +9,7 @@ using static UnityEditor.Progress;
 public class PlayerInteract : MonoBehaviour
 {
     [Header("インタラクトできる距離")]
-    [SerializeField]  public float distance = 30f;
+    [SerializeField]  public float distance = 3f;
     GameObject pickUpItem;//拾ったアイテム
     GameObject interactDoor;//インタラクトするドア
     public bool isInteract;
@@ -51,6 +51,7 @@ public class PlayerInteract : MonoBehaviour
     private void Start()
     {
         isInteract = false;
+        audioSourceSE = MusicController.Instance.GetAudioSource();
 
         if (isDebugResetItem) sO_Item.ResetItems();
     }

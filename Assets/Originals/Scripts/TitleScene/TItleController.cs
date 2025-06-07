@@ -9,8 +9,19 @@ using UnityEditor;
 
 public class TitleController : MonoBehaviour
 {
+    [Header("タイトル画面のCanvas")]
     [SerializeField] private Canvas titlesCanvas;
+
+    [Header("ロードしたいScene名")]
+    [Header("デモ用Scene名：AbandonedAsylum01")]
     [SerializeField] private string SceneName;
+
+    [Header("Sceneロード時間")]
+    [SerializeField] private int sceneRoadTime = 50;
+
+    [Header("マップロード時間")]
+    [SerializeField] private float mapRoadTime = 500f;
+
     private CancellationTokenSource cancellationTokenSource;
 
     private void Awake()
@@ -31,7 +42,6 @@ public class TitleController : MonoBehaviour
     {
         if (scene.name == SceneName)
         {
-            Debug.Log($"[TitleController] シーン '{scene.name}' がロードされました。TestMap01.Instance をチェックします。");
             if (TestMap01.instance != null)
             {
                 Debug.Log($"[TitleController] TestMap01.Instance が見つかりました: {TestMap01.instance.gameObject.name}");
@@ -55,11 +65,11 @@ public class TitleController : MonoBehaviour
             }
 
             // シーンが完全にロードされるまで待機
-            await UniTask.DelayFrame(50, cancellationToken: cancellationTokenSource.Token); // 待機時間を延長
+            await UniTask.DelayFrame(sceneRoadTime, cancellationToken: cancellationTokenSource.Token); // 待機時間を延長
 
             // TestMap01.Instance を取得（最大500フレーム待機）
             TestMap01 mapGenerator = null;
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < mapRoadTime; i++)
             {
                 mapGenerator = TestMap01.instance;
                 if (mapGenerator != null && mapGenerator.gameObject.scene.IsValid())
@@ -100,6 +110,7 @@ public class TitleController : MonoBehaviour
         cancellationTokenSource = null;
     }
 
+    //ゲーム終了
     public void EndGame()
     {
 #if UNITY_EDITOR
