@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 // アイテムの種類を表す列挙型
