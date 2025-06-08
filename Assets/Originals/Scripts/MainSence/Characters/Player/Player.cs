@@ -200,8 +200,8 @@ public class Player : MonoBehaviour, CharacterInterface
         if (playerIsDead) return;
 
 
-        // 移動速度を取得。左Shiftキーを入力している間はダッシュ
-        float speed = Input.GetKey(KeyCode.LeftShift) ? SprintSpeed : NormalSpeed;
+        // 移動速度を取得。Shiftキーを入力している間はダッシュ
+        float speed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? SprintSpeed : NormalSpeed;
 
         // 前後左右の入力から、移動のためのベクトルを計算
         float moveX = Input.GetAxis("Horizontal");
@@ -233,8 +233,8 @@ public class Player : MonoBehaviour, CharacterInterface
         if (IsMove)
         {
             // 移動中: LeftShiftに応じて走行または歩行
-            animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift));
-            animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift));
+            animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+            animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
 
         }
         else
@@ -247,7 +247,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         // 移動状態の変化を検知して効果音を制御
-        AudioClip currentSE = Input.GetKey(KeyCode.LeftShift) ? runSE : walkSE;
+        AudioClip currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? runSE : walkSE;
 
         if (IsMove && !wasMovingLastFrame)
         {

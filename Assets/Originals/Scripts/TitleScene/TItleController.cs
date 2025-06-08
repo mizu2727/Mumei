@@ -17,10 +17,10 @@ public class TitleController : MonoBehaviour
     [SerializeField] private string SceneName;
 
     [Header("Sceneロード時間")]
-    [SerializeField] private int sceneRoadTime = 50;
+    [SerializeField] private int sceneRoadTime = 1;
 
     [Header("マップロード時間")]
-    [SerializeField] private float mapRoadTime = 500f;
+    [SerializeField] private float mapRoadTime = 1f;
 
     private CancellationTokenSource cancellationTokenSource;
 
