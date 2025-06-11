@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 91f625d317eee1646ad0537f4d2cc6b6
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 63901
+  packageName: Color-pattern highlight
+  packageVersion: 1.0
+  assetPath: Assets/ColorPatternHighlight/DemoScene/Materials/green.mat
+  uploadId: 119976

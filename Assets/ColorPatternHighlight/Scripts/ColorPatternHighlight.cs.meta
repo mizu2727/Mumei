@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 4c27b4825fb7a2c4782ffe1116af8c46
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 63901
+  packageName: Color-pattern highlight
+  packageVersion: 1.0
+  assetPath: Assets/ColorPatternHighlight/Scripts/ColorPatternHighlight.cs
+  uploadId: 119976

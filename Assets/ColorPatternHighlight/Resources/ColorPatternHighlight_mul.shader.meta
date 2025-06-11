@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2ccdf2cd15264f941a611748a3af9612
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 63901
+  packageName: Color-pattern highlight
+  packageVersion: 1.0
+  assetPath: Assets/ColorPatternHighlight/Resources/ColorPatternHighlight_mul.shader
+  uploadId: 119976
