@@ -243,6 +243,7 @@
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\NoiseEffectShaderRGB.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\CameraMotionBlurDX11.shader" />
+    <None Include="Assets\MannequinAsset\READ ME.txt" />
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\SeparableBlurPlus.shader" />
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\ColorCorrectionSelective.shader" />
     <None Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Shaders\SepiaToneEffect.shader" />
