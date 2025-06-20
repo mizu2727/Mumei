@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{1906A006-2854-A805-27CD-EB7616949EB1}</ProjectGuid>
+    <ProjectGuid>{53E06FAB-080F-066A-4CD7-67A8DE166D4D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>VRMShaders.VRM10.MToon10.Tests</AssemblyName>
@@ -1051,6 +1051,14 @@
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.0.33f1\Editor\Data\UnityReferenceAssemblies\unity-4.8-api\Facades\System.Xml.XPath.XDocument.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.TestRunner">
+      <HintPath>Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.TestRunner">
+      <HintPath>Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
       <Private>False</Private>
@@ -1062,16 +1070,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="VRMShaders.VRM10.MToon10.Runtime.csproj">
-      <Project>{6EB6C172-474A-D402-D958-1EB37672BF71}</Project>
+      <Project>{F5BB7E00-13F5-91AC-DB40-524501CB464E}</Project>
       <Name>VRMShaders.VRM10.MToon10.Runtime</Name>
-    </ProjectReference>
-    <ProjectReference Include="UnityEngine.TestRunner.csproj">
-      <Project>{D3EDA0B3-3D44-C148-3E23-54FAD3683837}</Project>
-      <Name>UnityEngine.TestRunner</Name>
-    </ProjectReference>
-    <ProjectReference Include="UnityEditor.TestRunner.csproj">
-      <Project>{40A699FC-D32B-DE3F-2D74-77C711A88E9C}</Project>
-      <Name>UnityEditor.TestRunner</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
