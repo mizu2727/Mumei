@@ -150,9 +150,10 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
+    //左クリックでインタラクト操作
     bool PlayInteract() 
     {
-        return Input.GetKeyDown(KeyCode.E);
+        return Input.GetMouseButton(0);
     }
 
     // オブジェクトのレイヤーを変更する

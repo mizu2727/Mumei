@@ -94,7 +94,7 @@ public class PauseController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P) && !player.IsDead && !isPause && !isViewItemsPanel
             && !isDocumentPanels && !isDocumentExplanationPanel && !isMysteryItemPanels
-            && !isMysteryItemExplanationPanel)
+            && !isMysteryItemExplanationPanel && !goal.isGoalPanel)
         {
             ViewPausePanel();
         }
