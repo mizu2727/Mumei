@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{5A716905-B6B9-140C-9E9F-2EF260E5E162}</ProjectGuid>
+    <ProjectGuid>{2A7E6527-0BB0-0EAF-4915-E884975DEAEF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>VRMShaders.GLTF.IO.Editor</AssemblyName>
@@ -1101,19 +1101,19 @@
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.TestRunner">
-      <HintPath>Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEditor.TestRunner">
-      <HintPath>Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="VRMShaders.GLTF.IO.Runtime.csproj">
-      <Project>{66AD4941-181D-5BF0-975C-A2EEE90E3889}</Project>
+      <Project>{DF2CCCE9-D671-33F8-0809-0E9C085CFEF2}</Project>
       <Name>VRMShaders.GLTF.IO.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityEngine.TestRunner.csproj">
+      <Project>{D3EDA0B3-3D44-C148-3E23-54FAD3683837}</Project>
+      <Name>UnityEngine.TestRunner</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityEditor.TestRunner.csproj">
+      <Project>{40A699FC-D32B-DE3F-2D74-77C711A88E9C}</Project>
+      <Name>UnityEditor.TestRunner</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

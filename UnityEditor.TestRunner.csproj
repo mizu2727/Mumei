@@ -268,8 +268,8 @@
     <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\Api\ICallbacks.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\Api\TestResultAdaptor.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\CommandLineTest\RunSettings.cs" />
-    <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\TestRun\Tasks\PrebuildSetupTask.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\CommandLineTest\IExecuter.cs" />
+    <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\TestRun\Tasks\PrebuildSetupTask.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\TestRunner\Utils\IEditorCompilationInterfaceProxy.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\TestRunner\Utils\IEditorLoadedTestAssemblyProvider.cs" />
     <Compile Include="Library\PackageCache\com.unity.test-framework\UnityEditor.TestRunner\TestSettings\ITestSettings.cs" />

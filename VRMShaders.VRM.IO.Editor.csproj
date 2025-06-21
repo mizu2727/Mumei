@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{DDF962A5-1242-C047-2F09-51D148C67657}</ProjectGuid>
+    <ProjectGuid>{932F59D8-7C3E-759C-04B6-FB63781CB58B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>VRMShaders.VRM.IO.Editor</AssemblyName>
@@ -1099,19 +1099,19 @@
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.TestRunner">
-      <HintPath>Library\ScriptAssemblies\UnityEngine.TestRunner.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEditor.TestRunner">
-      <HintPath>Library\ScriptAssemblies\UnityEditor.TestRunner.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="VRMShaders.VRM.IO.Runtime.csproj">
-      <Project>{CAD0F9AD-E3D2-B76A-84B3-EFA40716FC4D}</Project>
+      <Project>{D6B0600A-F853-CB19-B67A-B66F30745A29}</Project>
       <Name>VRMShaders.VRM.IO.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityEngine.TestRunner.csproj">
+      <Project>{D3EDA0B3-3D44-C148-3E23-54FAD3683837}</Project>
+      <Name>UnityEngine.TestRunner</Name>
+    </ProjectReference>
+    <ProjectReference Include="UnityEditor.TestRunner.csproj">
+      <Project>{40A699FC-D32B-DE3F-2D74-77C711A88E9C}</Project>
+      <Name>UnityEditor.TestRunner</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

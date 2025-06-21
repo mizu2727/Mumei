@@ -10,7 +10,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{66AD4941-181D-5BF0-975C-A2EEE90E3889}</ProjectGuid>
+    <ProjectGuid>{DF2CCCE9-D671-33F8-0809-0E9C085CFEF2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>VRMShaders.GLTF.IO.Runtime</AssemblyName>
@@ -1114,7 +1114,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="VRMShaders.GLTF.UniUnlit.Runtime.csproj">
-      <Project>{57078324-02B2-7D39-62E5-F730997E68AF}</Project>
+      <Project>{4AF04CE9-8F8F-20BD-E0F5-957C0B47D6D3}</Project>
       <Name>VRMShaders.GLTF.UniUnlit.Runtime</Name>
     </ProjectReference>
   </ItemGroup>
