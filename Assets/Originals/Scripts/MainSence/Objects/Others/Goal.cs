@@ -42,9 +42,8 @@ public class Goal : MonoBehaviour
 
         if (sO_Item.GetItemByType(ItemType.Document) == false)
         {
-            string message = "ドキュメントを集めてください";
 
-            MessageController.instance.ShowMessage(message);
+            MessageController.instance.ShowGoalMessage(1);
 
             await UniTask.Delay(TimeSpan.FromSeconds(3));
 
@@ -56,9 +55,7 @@ public class Goal : MonoBehaviour
 
         if (!sO_Item.GetItemByType(ItemType.MysteryItem))
         {
-            string message = "ミステリーアイテムを集めてください";
-
-            MessageController.instance.ShowMessage(message);
+            MessageController.instance.ShowGoalMessage(2);
 
             await UniTask.Delay(TimeSpan.FromSeconds(3));
 
@@ -77,9 +74,7 @@ public class Goal : MonoBehaviour
 
     void MysteryItemCheck() 
     {
-        string message = "ドキュメントに関係するアイテムを選択せよ";
-
-        MessageController.instance.ShowMessage(message);
+        MessageController.instance.ShowGoalMessage(3);
 
         // MysteryItemはUpdateSelectMysteryItemUIで処理するため、ここでは保持しない
         var mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);

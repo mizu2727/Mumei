@@ -66,6 +66,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\EnvMapAnimator.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\MotionBlur.cs" />
     <Compile Include="Assets\Samples\Universal RP\17.0.3\URP Package Samples\RendererFeatures\DepthBlit\DepthBlitEdgePass.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Messages\Goal\GoalMessage.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\Enemys\EnemyCollisionHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\Player\Player.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\Player\PlayerCamera.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ColorCorrectionCurves.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Characters\CharacterInterface.cs" />
+    <Compile Include="Assets\ExcelImporter\Example\Scripts\Entity\MstItemEntity.cs" />
     <Compile Include="Assets\Originals\Scripts\GameOverScene\GameOverScene.cs" />
     <Compile Include="Assets\Originals\Scripts\MainSence\Items\Item.cs" />
     <Compile Include="Assets\Originals\Scripts\TitleScene\TItleController.cs" />
@@ -137,11 +139,13 @@
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\SepiaTone.cs" />
     <Compile Include="Assets\Samples\Universal RP\17.0.3\URP Package Samples\RendererFeatures\DepthBlit\DepthBlitDepthOnlyPass.cs" />
     <Compile Include="Assets\Samples\Universal RP\17.0.3\URP RenderGraph Samples\GbufferVisualization\GbufferVisualizationRendererFeature.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Messages\Goal\GoalMessageEntity.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ImageEffectBase.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Vortex.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_DigitValidator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\Samples\Universal RP\17.0.3\URP RenderGraph Samples\Blit w. FrameData\BlitRendererFeature.cs" />
+    <Compile Include="Assets\ExcelImporter\Example\Scripts\Example.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\DepthOfField.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\ScreenSpaceAmbientObscurance.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
@@ -186,6 +190,7 @@
     <Compile Include="Assets\Samples\Universal RP\17.0.3\URP RenderGraph Samples\BlitWithMaterial\BlitAndSwapColorRendererFeature.cs" />
     <Compile Include="Assets\Samples\Universal RP\17.0.3\URP RenderGraph Samples\OutputTexture\OutputTextureRendererFeature.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Fisheye.cs" />
+    <Compile Include="Assets\ExcelImporter\Example\Scripts\ExcelAsset\MstItems.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Scripts\SlenderExample.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\DepthOfFieldDeprecated.cs" />
@@ -1444,6 +1449,10 @@
       <Project>{32404E47-8C0D-8C92-3F6C-3BEC6EE48022}</Project>
       <Name>Unity.Collections</Name>
     </ProjectReference>
+    <ProjectReference Include="ExcelImporter.csproj">
+      <Project>{9A9C1FB6-92C3-7FFE-B2EB-E31268C3B7B6}</Project>
+      <Name>ExcelImporter</Name>
+    </ProjectReference>
     <ProjectReference Include="UniTask.DOTween.csproj">
       <Project>{6E5E361D-5EF2-D4C3-472A-DE335AF6A693}</Project>
       <Name>UniTask.DOTween</Name>
@@ -1483,6 +1492,10 @@
     <ProjectReference Include="Autodesk.Fbx.Editor.csproj">
       <Project>{D40F5389-E013-5876-CF57-DF01D2887172}</Project>
       <Name>Autodesk.Fbx.Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="ExcelImporter.Editor.csproj">
+      <Project>{DD593935-46F5-49DE-74E4-898B922033DF}</Project>
+      <Name>ExcelImporter.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="Unity.VisualScripting.SettingsProvider.Editor.csproj">
       <Project>{4525EBF1-A96C-9938-C417-E6BECE7ADB39}</Project>

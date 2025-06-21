@@ -6,11 +6,15 @@ public class MessageController : MonoBehaviour
 {
     public static MessageController instance;
 
-
+    [Header("メッセージパネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject MessagePanel;
     [SerializeField] private Text MessageText;
 
 
+    [Header("ゴールメッセージ関連(Prefabをアタッチ)")]
+    [SerializeField] private GoalMessage goalMessage;
+
+    [Header("メッセージパネル判定")]
     public bool isMessagePanel = false;
 
 
@@ -52,10 +56,10 @@ public class MessageController : MonoBehaviour
         ViewMessagePanel();
     }
 
-    //メッセージを表示
-    public void ShowMessage(string message) 
+    //ゴールメッセージを表示
+    public void ShowGoalMessage(int number) 
     {
-        MessageText.text = message;
+        MessageText.text = goalMessage.goalMessage[number].message;
         isMessagePanel = true;
         ViewMessagePanel();
     }
