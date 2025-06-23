@@ -197,6 +197,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Scripts\SlenderExample.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\DepthOfFieldDeprecated.cs" />
+    <Compile Include="Assets\Originals\Scripts\MainSence\Objects\Others\MeshCombiner.cs" />
     <Compile Include="Assets\#NVJOB Slender\Example\Environment\Standard Assets\Effects\ImageEffects\Scripts\Triangles.cs" />
     <Compile Include="Assets\Samples\Universal RP\17.0.3\URP RenderGraph Samples\Compute\ComputeRendererFeature.cs" />
   </ItemGroup>
