@@ -153,7 +153,7 @@ public class PlayerInteract : MonoBehaviour
     //左クリックでインタラクト操作
     bool PlayInteract() 
     {
-        return Input.GetMouseButton(0);
+        return Input.GetMouseButtonDown(0);
     }
 
     // オブジェクトのレイヤーを変更する
