@@ -176,15 +176,16 @@ public class Goal : MonoBehaviour
 
         if (index < mysteryItems.Count && mysteryItems[index] != null)
         {
+            //正解のミステリーアイテムであるかを判定
             if (mysteryItems[index].id == anserItemId)
             {
-                Debug.Log("正解のアイテムが選択されました！");
+                //正解時の処理
                 SceneManager.LoadScene("GameClearScene");
             }
             else
             {
-                Debug.Log("不正解のアイテムが選択されました");
-                // 不正解時の処理（例：メッセージ表示）
+                //不正解時の処理
+                MessageController.instance.ShowGoalMessage(4);
             }
         }
     }
