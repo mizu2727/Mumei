@@ -32,6 +32,9 @@ interface CharacterInterface
     //ˆÚ“®”»’è
     bool IsMove { get; set; }
 
+    //ƒ‰ƒCƒg‚ÌØ‚è‘Ö‚¦
+    bool IsLight { get; set; }
+
     //UŒ‚
     void Attack();
 

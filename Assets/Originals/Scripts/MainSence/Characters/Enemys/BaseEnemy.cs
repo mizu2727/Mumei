@@ -80,6 +80,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyIsMove = value;
     }
 
+    [SerializeField] private bool enemyIsLight = true;
+    [SerializeField]
+    public bool IsLight
+    {
+        get => enemyIsLight;
+        set => enemyIsLight = value;
+    }
+
     public void Dead()
     {
         Debug.Log("Enemy Dead");

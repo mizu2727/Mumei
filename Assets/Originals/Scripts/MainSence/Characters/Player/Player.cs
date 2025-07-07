@@ -90,6 +90,15 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsMove = value;
     }
 
+    [Header("ƒ‰ƒCƒgØ‚è‘Ö‚¦")]
+    [SerializeField] private bool playerIsLight = true;
+    [SerializeField]
+    public bool IsLight
+    {
+        get => playerIsLight;
+        set => playerIsLight = value;
+    }
+
     public void Dead()
     {
         SceneManager.LoadScene("GameOverScene");

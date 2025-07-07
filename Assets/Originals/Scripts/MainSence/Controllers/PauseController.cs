@@ -11,18 +11,20 @@ public class PauseController : MonoBehaviour
 
     [SerializeField] private Player player;//プレイヤー
     [SerializeField] private Goal goal;//ゴール
-    [SerializeField] private GameObject pausePanel;//ポーズパネル
 
+    [Header("ポーズパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject pausePanel;
 
-    [SerializeField] private GameObject viewItemsPanel;//アイテム確認パネル
+    [Header("アイテム確認パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject viewItemsPanel;
 
-    [Header("ドキュメントパネル関連")]
+    [Header("ドキュメントパネル関連(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject documentInventoryPanel;//ドキュメント確認パネル
     [SerializeField] private GameObject documentExplanationPanel;//ドキュメント説明欄パネル
     [SerializeField] private Text documentNameText;//ドキュメント名称テキスト
     [SerializeField] private Text documentExplanationText;//ドキュメント説明欄テキスト
 
-    [Header("ミステリーアイテムパネル関連")]
+    [Header("ミステリーアイテムパネル関連(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject mysteryItemInventoryPanel;//ミステリーアイテム確認パネル
     [SerializeField] private Button[] mysteryItemNameButton;//ミステリーアイテム名称ボタン
     [SerializeField] private Text[] mysteryItemNameText;//ミステリーアイテム名称テキスト
