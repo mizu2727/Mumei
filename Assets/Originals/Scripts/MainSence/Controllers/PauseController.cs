@@ -33,8 +33,12 @@ public class PauseController : MonoBehaviour
     [SerializeField] private GameObject mysteryItemExplanationPanel;//ミステリーアイテム説明欄パネル
 
 
+    [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject returnToTitlePanel;
+
     public bool isPause = false;
     public bool isViewItemsPanel = false;
+    public bool isReturnToTitlePanel = false;
     public bool isDocumentPanels = false;
     public bool isDocumentExplanationPanel = false;
     public bool isMysteryItemPanels = false;
@@ -86,6 +90,9 @@ public class PauseController : MonoBehaviour
         isMysteryItemPanels = false;
         ChangeViewMysteryItemPanel();
 
+        isReturnToTitlePanel = false;
+        ChangeReturnToTitlePanel();
+
         // ミステリーアイテムのボタンとテキストを初期化
         InitializeMysteryItemUI();
     }
@@ -96,7 +103,7 @@ public class PauseController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P) && !player.IsDead && !isPause && !isViewItemsPanel
             && !isDocumentPanels && !isDocumentExplanationPanel && !isMysteryItemPanels
-            && !isMysteryItemExplanationPanel && !goal.isGoalPanel)
+            && !isMysteryItemExplanationPanel && !goal.isGoalPanel && Time.timeScale != 0)
         {
             ViewPausePanel();
         }
@@ -108,9 +115,9 @@ public class PauseController : MonoBehaviour
 
     public void ViewPausePanel() 
     {
+        isPause = true;
         Time.timeScale = 0;
         pausePanel.transform.SetAsLastSibling();
-        isPause = true;
         ChangeViewPausePanel();
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
@@ -155,9 +162,32 @@ public class PauseController : MonoBehaviour
     public void OnClickedReturnToTitleButton()
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+
+        isReturnToTitlePanel = true;
+        ChangeReturnToTitlePanel();
+
+        isPause = false;
+        ChangeViewPausePanel();
+    }
+
+    //「はい」押下
+    public void OnClickedYesButton()
+    {
+        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
         //MusicController.instance.StopBGM();
         //GameController.instance.ReturnToTitle();
         SceneManager.LoadScene("TitleScene");
+    }
+
+    //「いいえ」押下
+    public void OnClickedNoButton()
+    {
+        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        isPause = true;
+        ChangeViewPausePanel();
+
+        isReturnToTitlePanel = false;
+        ChangeReturnToTitlePanel();
     }
 
 
@@ -253,6 +283,19 @@ public class PauseController : MonoBehaviour
         else
         {
             viewItemsPanel.SetActive(false);
+        }
+    }
+
+    //アイテム系確認パネルの表示/非表示
+    void ChangeReturnToTitlePanel()
+    {
+        if (isReturnToTitlePanel)
+        {
+            returnToTitlePanel.SetActive(true);
+        }
+        else
+        {
+            returnToTitlePanel.SetActive(false);
         }
     }
 

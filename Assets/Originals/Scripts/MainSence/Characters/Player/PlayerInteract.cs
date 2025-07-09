@@ -74,7 +74,7 @@ public class PlayerInteract : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, 
             Camera.main.transform.forward, out raycastHit, distance) )
         {
-            if (PlayInteract() && !PauseController.instance.isPause) 
+            if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0) 
             {
                 //アイテム
                 if (raycastHit.transform.tag == itemTag)
@@ -136,14 +136,21 @@ public class PlayerInteract : MonoBehaviour
                     goal = raycastHit.transform.gameObject.GetComponent<Goal>();
 
                     //ゴールチェック
-                    if (!goal.isGoalPanel && goal != null) goal.GoalCheck();
+                    if (!goal.isGoalPanel && goal != null) 
+                    {
+                        goal.GoalCheck();
 
+                        //ゴールパネルを非表示にする際に、
+                        //goal.isGoalPanelがtrueのままになってしまうバグを防ぐ
+                        goal.isGoalPanel = false;
+                    } 
                 }
             }   
         }
         else
         {
             isInteract = false;
+            goal = null;
 
             // Rayが何にも当たっていない場合もリセット
             ResetLayer(); 

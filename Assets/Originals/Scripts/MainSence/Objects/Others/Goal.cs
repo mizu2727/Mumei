@@ -66,20 +66,18 @@ public class Goal : MonoBehaviour
         else 
         {
             MysteryItemCheck();
-        }
-        
-
-        
+        } 
     }
 
     void MysteryItemCheck() 
     {
+        isGoalPanel = true;
         MessageController.instance.ShowGoalMessage(3);
 
         // MysteryItem‚ÍUpdateSelectMysteryItemUI‚Åˆ—‚·‚é‚½‚ßA‚±‚±‚Å‚Í•ÛŽ‚µ‚È‚¢
         var mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
         
-        isGoalPanel = true;
+        
         ViewGoalPanel();
 
     }
@@ -88,6 +86,7 @@ public class Goal : MonoBehaviour
     {
         if (isGoalPanel)
         {
+
             Time.timeScale = 0;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.Confined;
@@ -106,7 +105,6 @@ public class Goal : MonoBehaviour
         }
         else
         {
-            Time.timeScale = 1;
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             GoalPanel.SetActive(false);
@@ -125,6 +123,7 @@ public class Goal : MonoBehaviour
 
     public void OnClickedReturnToInGameButton() 
     {
+        Time.timeScale = 1;
         isGoalPanel = false;
         ViewGoalPanel();
 
