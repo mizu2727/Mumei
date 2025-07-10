@@ -32,12 +32,15 @@ public class PauseController : MonoBehaviour
     [SerializeField] private Text[] mysteryItemExplanationText;//ミステリーアイテム説明欄テキスト
     [SerializeField] private GameObject mysteryItemExplanationPanel;//ミステリーアイテム説明欄パネル
 
+    [Header("オプションパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject optionPanel;
 
     [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject returnToTitlePanel;
 
     public bool isPause = false;
     public bool isViewItemsPanel = false;
+    public bool isOptionPanel = false;
     public bool isReturnToTitlePanel = false;
     public bool isDocumentPanels = false;
     public bool isDocumentExplanationPanel = false;
@@ -86,9 +89,11 @@ public class PauseController : MonoBehaviour
         isDocumentPanels = false;
         ChangeViewDocumentPanel();
 
-
         isMysteryItemPanels = false;
         ChangeViewMysteryItemPanel();
+
+        isOptionPanel = false;
+        ChangeOptionPanel();
 
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
@@ -156,6 +161,29 @@ public class PauseController : MonoBehaviour
         viewItemsPanel.transform.SetAsLastSibling();
         isViewItemsPanel = true;
         ChangeViewItemsPanel();
+    }
+
+    //オプション設定
+    public void OnClickedOptionButton()
+    {
+        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+
+        isOptionPanel = true;
+        ChangeOptionPanel();
+
+        isPause = false;
+        ChangeViewPausePanel();
+    }
+
+    //オプション設定からポーズ画面へ戻る
+    public void OnClickedFromOptionToPauseButton()
+    {
+        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        isPause = true;
+        ChangeViewPausePanel();
+
+        isOptionPanel = false;
+        ChangeOptionPanel();
     }
 
     //タイトルへ戻る
@@ -286,7 +314,20 @@ public class PauseController : MonoBehaviour
         }
     }
 
-    //アイテム系確認パネルの表示/非表示
+    //オプションパネルの表示/非表示
+    void ChangeOptionPanel()
+    {
+        if (isOptionPanel)
+        {
+            optionPanel.SetActive(true);
+        }
+        else
+        {
+            optionPanel.SetActive(false);
+        }
+    }
+
+    //タイトルへ戻るパネルの表示/非表示
     void ChangeReturnToTitlePanel()
     {
         if (isReturnToTitlePanel)

@@ -50,7 +50,7 @@ public class Player : MonoBehaviour, CharacterInterface
     //移動速度の現在値
     float speed;
 
-    [Header("スタミナSlider")]
+    [Header("スタミナSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider staminaSlider;
 
     [Header("スタミナ最大値")]
@@ -223,11 +223,8 @@ public class Player : MonoBehaviour, CharacterInterface
         //スタミナ現在値の初期化
         stamina = maxStamina;
 
-        //スタミナSliderの初期化
-        if (staminaSlider)
-        {
-            staminaSlider.maxValue = maxStamina;
-        }
+        //スタミナSliderSliderの最大値を設定
+        if (staminaSlider) staminaSlider.maxValue = maxStamina;
 
         isStamina = true;
     }
