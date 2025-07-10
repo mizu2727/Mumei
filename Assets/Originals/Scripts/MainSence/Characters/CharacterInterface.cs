@@ -32,6 +32,9 @@ interface CharacterInterface
     //移動判定
     bool IsMove { get; set; }
 
+    //ダッシュ判定
+    bool IsDash { get; set; }
+
     //ライトの切り替え
     bool IsLight { get; set; }
 

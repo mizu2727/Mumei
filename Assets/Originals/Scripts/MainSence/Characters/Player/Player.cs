@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.SceneManagement;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour, CharacterInterface
 {
@@ -29,12 +30,12 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
     [Header("歩行速度")]
-    [SerializeField] private float Speed = 3f;
+    [SerializeField] private float walkSpeed = 3f;
     [SerializeField]
     public float NormalSpeed
     {
-        get => Speed;
-        set => Speed = value;
+        get => walkSpeed;
+        set => walkSpeed = value;
     }
 
     [Header("ダッシュ速度")]
@@ -45,6 +46,27 @@ public class Player : MonoBehaviour, CharacterInterface
         get => dashSpeed;
         set => dashSpeed = value;
     }
+
+    //移動速度の現在値
+    float speed;
+
+    [Header("スタミナSlider")]
+    [SerializeField] public Slider staminaSlider;
+
+    [Header("スタミナ最大値")]
+    [SerializeField] float maxStamina = 100f;
+
+    //スタミナの現在値
+    float stamina;
+
+    [Header("スタミナ消費値")]
+    [SerializeField] float staminaConsumeRatio = 50f;
+
+    [Header("スタミナ回復値")]
+    [SerializeField] float staminaRecoveryRatio = 20f;
+
+    //スタミナの使用が可能であるかを判定
+    bool isStamina;
 
     [SerializeField] private float playerDetectionRange = 10f;
     [SerializeField]
@@ -88,6 +110,15 @@ public class Player : MonoBehaviour, CharacterInterface
     {
         get => playerIsMove;
         set => playerIsMove = value;
+    }
+
+    [Header("プレイヤーがダッシュしているかを判定")]
+    [SerializeField] private bool playerIsDash = true;
+    [SerializeField]
+    public bool IsDash
+    {
+        get => playerIsDash;
+        set => playerIsDash = value;
     }
 
     [Header("ライト切り替え")]
@@ -188,6 +219,17 @@ public class Player : MonoBehaviour, CharacterInterface
 
         // MusicControllerからAudioSourceを取得
         audioSourceSE = MusicController.Instance.GetAudioSource();
+
+        //スタミナ現在値の初期化
+        stamina = maxStamina;
+
+        //スタミナSliderの初期化
+        if (staminaSlider)
+        {
+            staminaSlider.maxValue = maxStamina;
+        }
+
+        isStamina = true;
     }
 
 
@@ -209,8 +251,10 @@ public class Player : MonoBehaviour, CharacterInterface
         if (playerIsDead) return;
 
 
-        // 移動速度を取得。Shiftキーを入力している間はダッシュ
-        float speed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? SprintSpeed : NormalSpeed;
+        //ダッシュ判定
+        PlayerDashOrWalk();
+
+        //speed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? SprintSpeed : NormalSpeed;
 
         // 前後左右の入力から、移動のためのベクトルを計算
         float moveX = Input.GetAxis("Horizontal");
@@ -236,6 +280,10 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         IsMove = IsPlayerMoving();
+
+        //スタミナ管理
+        PlayerStaminaManage();
+
 
 
         // アニメーションの制御
@@ -280,4 +328,79 @@ public class Player : MonoBehaviour, CharacterInterface
         wasMovingLastFrame = IsMove;
 
     }
+
+    //ダッシュ判定
+    void PlayerDashOrWalk() 
+    {
+        //speed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? SprintSpeed : NormalSpeed;
+
+        //Shiftキーを入力している間はダッシュ
+        if (isStamina && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+        {
+            //ダッシュ開始
+            IsDash = true;
+            Debug.Log("Player.IsDash =" + IsDash);
+
+            speed = SprintSpeed;
+
+        }
+        else
+        {
+            //ダッシュ終了
+            IsDash = false;
+            Debug.Log("Player.IsDash =" + IsDash);
+
+            speed = NormalSpeed;
+        }
+    }
+
+    //スタミナ管理
+    void PlayerStaminaManage() 
+    {
+        if (IsDash)
+        {
+            if (0 < stamina)
+            {
+                //ダッシュ中はスタミナを消費
+                stamina -= staminaConsumeRatio * Time.deltaTime;
+            }
+            else
+            {
+                print("exhausted.");
+                IsDash = false;
+
+                // ここでスピードを落とす
+
+                //スタミナ切れでダッシュ不可
+                isStamina = false;
+
+                speed = NormalSpeed;
+            }
+        }
+        else if (stamina < maxStamina)
+        {
+            //ダッシュしていないときはスタミナを回復
+            stamina += staminaRecoveryRatio * Time.deltaTime;
+
+
+
+            
+        }
+        else if (maxStamina <= stamina)
+        {
+            //スタミナ復活でダッシュ可能
+            stamina = maxStamina;
+            isStamina = true;
+        }
+
+
+
+        if (staminaSlider)
+        {
+            //スライダーに値を反映
+            staminaSlider.value = stamina;
+        }
+    }
+
+
 }

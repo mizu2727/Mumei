@@ -80,6 +80,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyIsMove = value;
     }
 
+    [SerializeField] private bool enemyIsDash = true;
+    [SerializeField]
+    public bool IsDash
+    {
+        get => enemyIsDash;
+        set => enemyIsDash = value;
+    }
+
     [SerializeField] private bool enemyIsLight = true;
     [SerializeField]
     public bool IsLight
