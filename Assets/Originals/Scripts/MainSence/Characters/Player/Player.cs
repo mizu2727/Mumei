@@ -336,7 +336,6 @@ public class Player : MonoBehaviour, CharacterInterface
         {
             //ダッシュ開始
             IsDash = true;
-            Debug.Log("Player.IsDash =" + IsDash);
 
             speed = SprintSpeed;
 
@@ -345,7 +344,6 @@ public class Player : MonoBehaviour, CharacterInterface
         {
             //ダッシュ終了
             IsDash = false;
-            Debug.Log("Player.IsDash =" + IsDash);
 
             speed = NormalSpeed;
         }
@@ -363,7 +361,6 @@ public class Player : MonoBehaviour, CharacterInterface
             }
             else
             {
-                print("exhausted.");
                 IsDash = false;
 
                 // ここでスピードを落とす
@@ -377,11 +374,7 @@ public class Player : MonoBehaviour, CharacterInterface
         else if (stamina < maxStamina)
         {
             //ダッシュしていないときはスタミナを回復
-            stamina += staminaRecoveryRatio * Time.deltaTime;
-
-
-
-            
+            stamina += staminaRecoveryRatio * Time.deltaTime;  
         }
         else if (maxStamina <= stamina)
         {
@@ -389,8 +382,6 @@ public class Player : MonoBehaviour, CharacterInterface
             stamina = maxStamina;
             isStamina = true;
         }
-
-
 
         if (staminaSlider)
         {

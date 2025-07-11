@@ -1,5 +1,8 @@
+using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 
 public class BaseEnemy : MonoBehaviour, CharacterInterface
@@ -199,6 +202,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] private float minSoundDistance = 20f; // 音量が最小になる距離
     [SerializeField] private float maxVolume = 1.0f; // 最大音量
     [SerializeField] private float minVolume = 0.0f; // 最小音量
+
+
+    [Header("プレイヤー発見時のパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] GameObject playerFoundPanel;
+
 
 
 
@@ -500,7 +508,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
     }
 
-    void Update()
+    async void Update()
     {
         if (Player.instance == null || Player.instance.IsDead  || targetPoint == null)
         {
@@ -530,10 +538,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     if (IsPlayerInFront())
                     {
                         //プレイヤーが視野内にいる場合、追従状態に移行
+                        //一瞬だけ実行したい処理もここに記載する
                         currentState = EnemyState.Chase;
                         isAlertMode = true;
                         lastKnownPlayerPosition = targetPoint.position;
-                        MusicController.Instance.LoopPlayAudioSE(audioSourceSE, findPlayerSE);
+
+                        Debug.Log("プレイヤー発見時に一瞬だけ実行01");
+                        playerFoundPanel.SetActive(true);
                     }
                     else
                     {
@@ -558,8 +569,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 if (IsPlayerInFront())
                 {
                     //プレイヤーが視野内にいる場合、追従状態に移行
+                    //一瞬だけ実行したい処理もここに記載する
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
+
+                    Debug.Log("プレイヤー発見時に一瞬だけ実行02");
+                    playerFoundPanel.SetActive(true);
                 }
                 else if (distance > alertRange)
                 {
@@ -591,6 +606,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 {
                     //プレイヤーが視野内にいる場合、追従状態を続ける
                     lastKnownPlayerPosition = targetPoint.position;
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.3));
+
+                    playerFoundPanel.SetActive(false);
                 }
                 break;
 
