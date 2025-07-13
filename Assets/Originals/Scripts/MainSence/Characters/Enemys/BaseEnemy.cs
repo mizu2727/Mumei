@@ -543,15 +543,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         isAlertMode = true;
                         lastKnownPlayerPosition = targetPoint.position;
 
-                        Debug.Log("プレイヤー発見時に一瞬だけ実行01");
                         playerFoundPanel.SetActive(true);
                     }
                     else
                     {
+
                         //プレイヤーが視野内にいるが視線がない場合、警戒状態に移行
                         currentState = EnemyState.Alert;
                         isAlertMode = true;
-                        MusicController.Instance.LoopPlayAudioSE(audioSourceSE, findPlayerSE);
+                        
                     }
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
@@ -573,7 +573,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
 
-                    Debug.Log("プレイヤー発見時に一瞬だけ実行02");
                     playerFoundPanel.SetActive(true);
                 }
                 else if (distance > alertRange)

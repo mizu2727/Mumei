@@ -282,7 +282,6 @@ public class Player : MonoBehaviour, CharacterInterface
         PlayerStaminaManage();
 
 
-
         // アニメーションの制御
         if (IsMove)
         {
