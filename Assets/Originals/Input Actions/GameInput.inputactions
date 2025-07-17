@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "GameInput",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "e8e32dbc-61c6-4c4b-ace4-063a1281c495",
+            "actions": [
+                {
+                    "name": "PressPlusButton",
+                    "type": "Button",
+                    "id": "7a3040f2-871c-49df-83e5-3d2b6cf3619c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "c7a47bb5-cf88-4ac9-a8df-27fc5074def6",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PressPlusButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

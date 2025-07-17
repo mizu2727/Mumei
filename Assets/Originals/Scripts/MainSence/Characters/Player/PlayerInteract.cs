@@ -157,10 +157,11 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
-    //左クリックでインタラクト操作
+    //左クリック・Rボタンでインタラクト操作
+    //Interact…"joystick button 5"を割り当て。コントローラーではRボタンになる
     bool PlayInteract() 
     {
-        return Input.GetMouseButtonDown(0);
+        return Input.GetMouseButtonDown(0) || Input.GetButtonDown("Interact");
     }
 
     // オブジェクトのレイヤーを変更する

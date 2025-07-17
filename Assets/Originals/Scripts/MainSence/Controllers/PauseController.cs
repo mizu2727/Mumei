@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
 public class PauseController : MonoBehaviour
@@ -60,6 +61,9 @@ public class PauseController : MonoBehaviour
     public AudioClip buttonSE;//ボタンSE
     public AudioClip documentNameButtonSE;//ドキュメント名称ボタンSE
 
+    [Header("Input Actions")]
+    public GameInput gameInput;
+
     private void Awake()
     {
         // シングルトンの設定
@@ -72,6 +76,11 @@ public class PauseController : MonoBehaviour
         {
             Destroy(gameObject); // すでにインスタンスが存在する場合は破棄
         }
+
+        gameInput = new GameInput();
+
+        // アクションにコールバックを登録
+        gameInput.Gameplay.PressPlusButton.performed += OnPlusButtonPressed;
     }
 
 
@@ -106,16 +115,29 @@ public class PauseController : MonoBehaviour
     //Pキーでポーズ/ポーズ解除
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P) && !player.IsDead && !isPause && !isViewItemsPanel
+        if (OpenOrClosePauseMenu() && !player.IsDead && !isPause && !isViewItemsPanel
             && !isDocumentPanels && !isDocumentExplanationPanel && !isMysteryItemPanels
             && !isMysteryItemExplanationPanel && !goal.isGoalPanel && Time.timeScale != 0)
         {
             ViewPausePanel();
         }
-        else if (Input.GetKeyDown(KeyCode.P) && !player.IsDead && isPause)
+        else if (OpenOrClosePauseMenu() && !player.IsDead && isPause)
         {
             OnClickedClosePauseButton();
         }
+    }
+
+    //Pキー・ボタンでインタラクト操作
+    //
+    bool OpenOrClosePauseMenu()
+    {
+        return Input.GetKeyDown(KeyCode.P) ;
+    }
+
+    private void OnPlusButtonPressed(InputAction.CallbackContext context)
+    {
+        Debug.Log("プラスボタンが押されました！");
+        // ここにプラスボタンが押された時の処理を書く
     }
 
     public void ViewPausePanel() 

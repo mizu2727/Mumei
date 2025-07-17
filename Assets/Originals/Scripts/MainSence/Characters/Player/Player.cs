@@ -286,8 +286,8 @@ public class Player : MonoBehaviour, CharacterInterface
         if (IsMove)
         {
             // 移動中: LeftShiftに応じて走行または歩行
-            animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
-            animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift));
+            animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetKey("joystick button 2"));
+            animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetKey("joystick button 2"));
 
         }
         else
@@ -300,7 +300,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         // 移動状態の変化を検知して効果音を制御
-        AudioClip currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? runSE : walkSE;
+        AudioClip currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetKey("joystick button 2") ? runSE : walkSE;
 
         if (IsMove && !wasMovingLastFrame)
         {
@@ -328,10 +328,9 @@ public class Player : MonoBehaviour, CharacterInterface
     //ダッシュ判定
     void PlayerDashOrWalk() 
     {
-        //speed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? SprintSpeed : NormalSpeed;
-
-        //Shiftキーを入力している間はダッシュ
-        if (isStamina && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+        //Shiftキー・Xボタンを入力している間はダッシュ
+        //Dash…"joystick button 2"を割り当て。コントローラーではXボタンになる
+        if (IsMove && isStamina && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash")))
         {
             //ダッシュ開始
             IsDash = true;
