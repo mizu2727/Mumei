@@ -81,6 +81,19 @@ public class PauseController : MonoBehaviour
 
         // アクションにコールバックを登録
         gameInput.Gameplay.PressPlusButton.performed += OnPlusButtonPressed;
+
+        // Input Systemを有効にする
+        gameInput.Enable(); 
+    }
+
+    private void OnEnable()
+    {
+        gameInput.Enable();
+    }
+
+    private void OnDisable()
+    {
+        gameInput.Disable();
     }
 
 
@@ -115,29 +128,33 @@ public class PauseController : MonoBehaviour
     //Pキーでポーズ/ポーズ解除
     public void Update()
     {
-        if (OpenOrClosePauseMenu() && !player.IsDead && !isPause && !isViewItemsPanel
+        if (Input.GetKeyDown(KeyCode.P)) TogglePause();
+
+    }
+
+    //コントローラーの+ボタンでポーズ/ポーズ解除
+    private void OnPlusButtonPressed(InputAction.CallbackContext context)
+    {
+        TogglePause();
+    }
+
+    /// <summary>
+    /// ポーズ画面の表示/非表示を切り替える
+    /// </summary>
+    private void TogglePause()
+    {
+        // ポーズを開く条件
+        if (!player.IsDead && !isPause && !isViewItemsPanel
             && !isDocumentPanels && !isDocumentExplanationPanel && !isMysteryItemPanels
             && !isMysteryItemExplanationPanel && !goal.isGoalPanel && Time.timeScale != 0)
         {
             ViewPausePanel();
         }
-        else if (OpenOrClosePauseMenu() && !player.IsDead && isPause)
+        // ポーズを閉じる条件
+        else if (!player.IsDead && isPause)
         {
             OnClickedClosePauseButton();
         }
-    }
-
-    //Pキー・ボタンでインタラクト操作
-    //
-    bool OpenOrClosePauseMenu()
-    {
-        return Input.GetKeyDown(KeyCode.P) ;
-    }
-
-    private void OnPlusButtonPressed(InputAction.CallbackContext context)
-    {
-        Debug.Log("プラスボタンが押されました！");
-        // ここにプラスボタンが押された時の処理を書く
     }
 
     public void ViewPausePanel() 
