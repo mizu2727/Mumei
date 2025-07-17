@@ -25,9 +25,10 @@ public class PlayerLight : MonoBehaviour
     }
 
     //右クリックでライト切り替え
+    //Light…"joystick button 0"を割り当て。コントローラーではAボタンになる
     bool PlayerIsLight()
     {
-        return Input.GetMouseButtonDown(1);
+        return Input.GetMouseButtonDown(1)　|| Input.GetButtonDown("Light");
     }
 
     void TranceCamera()
@@ -45,14 +46,12 @@ public class PlayerLight : MonoBehaviour
             // ライトをアクティブ状態にする・・・＞ライトが点く
             playerHasLight.SetActive(true);
             Player.instance.IsLight = true;
-            Debug.Log("ライト点灯");
         }
         else if ((PlayerIsLight() && Player.instance.IsLight))
         {
             // ライトをノン・アクティブ状態にする・・・＞ライトが消える
             playerHasLight.SetActive(false);
             Player.instance.IsLight = false;
-            Debug.Log("ライト消灯");
         }
     }
 }

@@ -251,8 +251,6 @@ public class Player : MonoBehaviour, CharacterInterface
         //ダッシュ判定
         PlayerDashOrWalk();
 
-        //speed = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? SprintSpeed : NormalSpeed;
-
         // 前後左右の入力から、移動のためのベクトルを計算
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
@@ -286,8 +284,8 @@ public class Player : MonoBehaviour, CharacterInterface
         if (IsMove)
         {
             // 移動中: LeftShiftに応じて走行または歩行
-            animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetKey("joystick button 2"));
-            animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetKey("joystick button 2"));
+            animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash"));
+            animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash"));
 
         }
         else
@@ -300,7 +298,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         // 移動状態の変化を検知して効果音を制御
-        AudioClip currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetKey("joystick button 2") ? runSE : walkSE;
+        AudioClip currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash") ? runSE : walkSE;
 
         if (IsMove && !wasMovingLastFrame)
         {
@@ -329,7 +327,7 @@ public class Player : MonoBehaviour, CharacterInterface
     void PlayerDashOrWalk() 
     {
         //Shiftキー・Xボタンを入力している間はダッシュ
-        //Dash…"joystick button 2"を割り当て。コントローラーではXボタンになる
+        //Dash…"joystick button 4"を割り当て。コントローラーではLボタンになる
         if (IsMove && isStamina && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash")))
         {
             //ダッシュ開始
