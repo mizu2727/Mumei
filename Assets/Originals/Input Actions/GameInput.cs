@@ -100,6 +100,24 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""194ee54c-cd71-4c10-9a0b-8e46ef0bad74"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""UINavigate"",
+                    ""type"": ""Value"",
+                    ""id"": ""c382b3a7-97f8-49fe-8bd6-aed66f1cd0e0"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -113,6 +131,50 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
                     ""action"": ""PressPlusButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""67085b8a-6b38-46bc-a00d-141aa3c6c96d"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4068b235-bc7d-4479-8886-1f16c9b04ce8"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UINavigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""39a16d60-cfd7-4b19-af26-069da039f190"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UINavigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a4b6299d-3953-46ee-ac2c-3c3204cce28f"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UINavigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -122,6 +184,8 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_PressPlusButton = m_Gameplay.FindAction("PressPlusButton", throwIfNotFound: true);
+        m_Gameplay_Submit = m_Gameplay.FindAction("Submit", throwIfNotFound: true);
+        m_Gameplay_UINavigate = m_Gameplay.FindAction("UINavigate", throwIfNotFound: true);
     }
 
     ~@GameInput()
@@ -203,6 +267,8 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Gameplay;
     private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
     private readonly InputAction m_Gameplay_PressPlusButton;
+    private readonly InputAction m_Gameplay_Submit;
+    private readonly InputAction m_Gameplay_UINavigate;
     /// <summary>
     /// Provides access to input actions defined in input action map "Gameplay".
     /// </summary>
@@ -218,6 +284,14 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Gameplay/PressPlusButton".
         /// </summary>
         public InputAction @PressPlusButton => m_Wrapper.m_Gameplay_PressPlusButton;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/Submit".
+        /// </summary>
+        public InputAction @Submit => m_Wrapper.m_Gameplay_Submit;
+        /// <summary>
+        /// Provides access to the underlying input action "Gameplay/UINavigate".
+        /// </summary>
+        public InputAction @UINavigate => m_Wrapper.m_Gameplay_UINavigate;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -247,6 +321,12 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @PressPlusButton.started += instance.OnPressPlusButton;
             @PressPlusButton.performed += instance.OnPressPlusButton;
             @PressPlusButton.canceled += instance.OnPressPlusButton;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+            @UINavigate.started += instance.OnUINavigate;
+            @UINavigate.performed += instance.OnUINavigate;
+            @UINavigate.canceled += instance.OnUINavigate;
         }
 
         /// <summary>
@@ -261,6 +341,12 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
             @PressPlusButton.started -= instance.OnPressPlusButton;
             @PressPlusButton.performed -= instance.OnPressPlusButton;
             @PressPlusButton.canceled -= instance.OnPressPlusButton;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+            @UINavigate.started -= instance.OnUINavigate;
+            @UINavigate.performed -= instance.OnUINavigate;
+            @UINavigate.canceled -= instance.OnUINavigate;
         }
 
         /// <summary>
@@ -308,5 +394,19 @@ public partial class @GameInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPressPlusButton(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Submit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSubmit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "UINavigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUINavigate(InputAction.CallbackContext context);
     }
 }

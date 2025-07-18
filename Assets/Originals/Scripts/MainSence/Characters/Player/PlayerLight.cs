@@ -41,13 +41,13 @@ public class PlayerLight : MonoBehaviour
 
     void TurnOnAndOfLight() 
     {
-        if (PlayerIsLight() && !Player.instance.IsLight)
+        if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.isPause && Time.timeScale != 0)
         {
             // ライトをアクティブ状態にする・・・＞ライトが点く
             playerHasLight.SetActive(true);
             Player.instance.IsLight = true;
         }
-        else if ((PlayerIsLight() && Player.instance.IsLight))
+        else if ((PlayerIsLight() && Player.instance.IsLight) && !PauseController.instance.isPause && Time.timeScale != 0)
         {
             // ライトをノン・アクティブ状態にする・・・＞ライトが消える
             playerHasLight.SetActive(false);

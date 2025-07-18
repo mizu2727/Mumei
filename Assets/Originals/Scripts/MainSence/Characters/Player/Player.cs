@@ -245,7 +245,7 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
 
-        if (playerIsDead) return;
+        if (playerIsDead || PauseController.instance.isPause || Time.timeScale == 0) return;
 
 
         //ƒ_ƒbƒVƒ…”»’è
