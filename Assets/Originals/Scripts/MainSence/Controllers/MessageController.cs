@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 
 public class MessageController : MonoBehaviour
@@ -16,11 +17,20 @@ public class MessageController : MonoBehaviour
     [SerializeField] private float writeSpeed = 0;
     private bool isWrite = false;//書いてる途中であるかを判定
 
+    [Header("システムメッセージ表示機能(Prefabをアタッチ)")]
+    [SerializeField] private ShowSystemMessage showSystemMessage;
+
     [Header("会話メッセージ(Prefabをアタッチ)")]
     [SerializeField] private TalkMessage talkMessage;
 
+    [Header("システムメッセージ(Prefabをアタッチ)")]
+    [SerializeField] private SystemMessage systemMessage;
+
     [Header("ゴールメッセージ(Prefabをアタッチ)")]
     [SerializeField] private GoalMessage goalMessage;
+
+    [Header("プレイヤーの名前入力(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] public InputField inputPlayerNameField;
 
     [Header("メッセージパネル判定")]
     public bool isMessagePanel = false;
@@ -41,6 +51,9 @@ public class MessageController : MonoBehaviour
             Destroy(gameObject);
         }
         ResetMessage();
+
+        inputPlayerNameField = inputPlayerNameField.GetComponent<InputField>();
+        inputPlayerNameField.gameObject.SetActive(false);
     }
 
     //メッセージパネルの表示・非表示
@@ -59,6 +72,7 @@ public class MessageController : MonoBehaviour
     //メッセージをリセット
     public void ResetMessage()
     {
+        messageText.color = Color.white;
         messageText.text = "";
         isMessagePanel = false;
         ViewMessagePanel();
@@ -115,6 +129,65 @@ public class MessageController : MonoBehaviour
         }
     }
 
+
+    //システムメッセージを表示
+    public async UniTask ShowSystemMessage(int number)
+    {
+        Debug.Log("システムメッセージを表示");
+
+        //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
+        if (isWrite) writeSpeed = 0;
+        else
+        {
+            isMessagePanel = true;
+            ViewMessagePanel();
+
+            //エクセルデータ型.リスト型[番号].カラム名
+            Write(systemMessage.systemMessage[number].message);
+            await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+            switch (number)
+            {
+                //名前入力UIを表示
+                case 3:
+                    ResetMessage();
+
+                    inputPlayerNameField.gameObject.SetActive(true);
+
+                    break;
+
+                case 6:
+                    messageText.text = "";
+                    number++;
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(2));
+
+                    // 色を赤色に設定
+                    messageText.color = Color.red;
+
+                    Write(systemMessage.systemMessage[number].message);
+
+                    await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(1));
+
+                    ResetMessage();
+
+                    break ;
+
+
+                //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
+                default:
+                    messageText.text = "";
+                    number++;
+
+                    //スペースキー押下で次のメッセージを書く
+                    showSystemMessage.ShowGameSystemMessage(number);
+                    break;
+            }
+        }
+    }
+
     //ゴールメッセージを表示
     public void ShowGoalMessage(int number) 
     {
@@ -123,4 +196,22 @@ public class MessageController : MonoBehaviour
         isMessagePanel = true;
         ViewMessagePanel();
     }
+
+    //プレイヤーの名前の入力が完了した際に呼ばれる
+    public void SavePlayerName(string playerName)
+    {
+        if (playerName.Length < 11) 
+        {
+            //名前を保存
+            inputPlayerNameField.text = playerName;
+
+            inputPlayerNameField.gameObject.SetActive(false);
+
+            showSystemMessage.ShowGameSystemMessage(5);
+        }
+        else
+        {
+            showSystemMessage.ShowGameSystemMessage(4);
+        }
+    }  
 }

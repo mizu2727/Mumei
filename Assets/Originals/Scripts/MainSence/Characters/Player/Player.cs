@@ -20,7 +20,7 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
     [Header("名前")]
-    [SerializeField] private string playerName;
+    [SerializeField] public string playerName;
 
     [SerializeField]
     public string CharacterName
@@ -386,5 +386,10 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
-
+    
+    public void DecidePlayewrName() 
+    {
+        //入力したプレイヤーの名前を格納
+        playerName　= MessageController.instance.inputPlayerNameField.text;
+    }
 }
