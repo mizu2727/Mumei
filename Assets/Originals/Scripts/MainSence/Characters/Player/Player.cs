@@ -1,10 +1,11 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
-using UnityEngine.SceneManagement;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static GameController;
 
 public class Player : MonoBehaviour, CharacterInterface
 {
@@ -121,6 +122,15 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsDash = value;
     }
 
+    [Header("プレイヤーが後ろを向いているかを判定")]
+    [SerializeField] public bool playerIsBackRotate = false;
+    [SerializeField]
+    public bool IsBackRotate
+    {
+        get => playerIsBackRotate;
+        set => playerIsBackRotate = value;
+    }
+
     [Header("ライト切り替え")]
     [SerializeField] private bool playerIsLight = true;
     [SerializeField]
@@ -164,8 +174,14 @@ public class Player : MonoBehaviour, CharacterInterface
 
     private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
 
+
+    [Header("プレイヤーが倒れているかを判定")]
+    public bool isFallDown = false;
+
     [Header("デバッグモード")]
     public bool isDebug = false;
+
+
 
 
     private void Awake()
@@ -227,6 +243,8 @@ public class Player : MonoBehaviour, CharacterInterface
         if (staminaSlider) staminaSlider.maxValue = maxStamina;
 
         isStamina = true;
+
+        playerIsBackRotate = false;
     }
 
 
@@ -244,8 +262,9 @@ public class Player : MonoBehaviour, CharacterInterface
             SceneManager.LoadScene("GameClearScene");
         }
 
+        if (playerIsBackRotate && GameController.instance.gameModeStatus == GameModeStatus.Story) PlayerTurn();
 
-        if (playerIsDead || PauseController.instance.isPause || Time.timeScale == 0) return;
+        if (playerIsDead || PauseController.instance.isPause || Time.timeScale == 0 || isFallDown || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) return;
 
 
         //ダッシュ判定
@@ -391,5 +410,15 @@ public class Player : MonoBehaviour, CharacterInterface
     {
         //入力したプレイヤーの名前を格納
         playerName　= MessageController.instance.inputPlayerNameField.text;
+    }
+
+    public void PlayerTurn() 
+    {
+        if (GameController.instance.gameModeStatus == GameModeStatus.Story) 
+        {
+            //プレイヤーの向きを180度ゆっくり回転させる
+            if (transform.rotation.y < 0) transform.Rotate(new Vector3(0, 180f, 0) * (Time.deltaTime * 0.5f));
+            else playerIsBackRotate = false;
+        }
     }
 }

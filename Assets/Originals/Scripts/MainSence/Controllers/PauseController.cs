@@ -1,10 +1,11 @@
-using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using UnityEngine.InputSystem;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using static GameController;
 
 public class PauseController : MonoBehaviour
 {
@@ -128,7 +129,7 @@ public class PauseController : MonoBehaviour
     //Pキーでポーズ/ポーズ解除
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P)) TogglePause();
+        if (Input.GetKeyDown(KeyCode.P) && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) TogglePause();
 
     }
 

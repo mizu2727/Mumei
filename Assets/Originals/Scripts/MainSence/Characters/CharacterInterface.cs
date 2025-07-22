@@ -35,6 +35,9 @@ interface CharacterInterface
     //ダッシュ判定
     bool IsDash { get; set; }
 
+    //後ろを向く判定医
+    bool IsBackRotate { get; set; }
+
     //ライトの切り替え
     bool IsLight { get; set; }
 

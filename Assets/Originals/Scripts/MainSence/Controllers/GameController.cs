@@ -6,7 +6,14 @@ public class GameController : MonoBehaviour
 {
     public static GameController instance;
 
-    [SerializeField] private TestMap01 map; // TestMap01Ç÷ÇÃéQè∆
+    public GameModeStatus gameModeStatus;
+
+    public enum  GameModeStatus
+    {
+        Story,
+        PlayInGame,
+        StopInGame,
+    }
 
     private void Awake()
     {
@@ -20,11 +27,14 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
     }
 
-
-    private void Start()
+    public void SetGameModeStatus(GameModeStatus status) 
     {
+        gameModeStatus = status;
 
+        if (gameModeStatus == GameModeStatus.Story) 
+        {
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
     }
-
-
 }

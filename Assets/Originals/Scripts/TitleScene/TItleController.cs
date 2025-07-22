@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using static GameController;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -22,6 +24,7 @@ public class TitleController : MonoBehaviour
         titlesCanvas.enabled = true;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+        GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);
     }
 
     public void OnStartButtonClicked()

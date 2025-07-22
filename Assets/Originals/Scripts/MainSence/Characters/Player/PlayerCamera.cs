@@ -1,5 +1,8 @@
+using Cysharp.Threading.Tasks;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
+using static GameController;
 
 public class PlayerCamera : MonoBehaviour
 {
@@ -44,12 +47,13 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        
+        if (Player.instance.isFallDown) return;
+
         if (maxLookSensitivity <= mouseSensitivitySlider.value) mouseSensitivitySlider.value = maxLookSensitivity;
 
         lookSensitivity = mouseSensitivitySlider.value;
 
-        if ( 0 < lookSensitivity) 
+        if ( 0 < lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
         {
             //ƒ}ƒEƒX‚ÌˆÚ“®
             lookX =

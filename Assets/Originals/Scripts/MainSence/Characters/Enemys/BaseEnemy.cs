@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using static GameController;
 using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 
@@ -89,6 +90,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     {
         get => enemyIsDash;
         set => enemyIsDash = value;
+    }
+
+    [SerializeField] private bool enemyIsBackRotate = false;
+    [SerializeField]
+    public bool IsBackRotate
+    {
+        get => enemyIsBackRotate;
+        set => enemyIsBackRotate = value;
     }
 
     [SerializeField] private bool enemyIsLight = true;
@@ -510,6 +519,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     async void Update()
     {
+        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) return;
+
         if (Player.instance == null || Player.instance.IsDead  || targetPoint == null)
         {
             Debug.LogWarning($"[{gameObject.name}] Update処理をスキップ: Player={Player.instance}, tagetPoint={targetPoint}");
