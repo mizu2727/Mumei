@@ -28,6 +28,11 @@ public class Goal : MonoBehaviour
     [Header("ゴール判定")]
     public bool isGoalPanel;
 
+    [Header("チュートリアル判定(チュートリアルステージでオンになる)")]
+    [SerializeField] public bool isTutorial;
+
+
+
     private void Start()
     {
         isGoalPanel = false;
@@ -121,13 +126,14 @@ public class Goal : MonoBehaviour
         }
     }
 
-    public void OnClickedReturnToInGameButton() 
+    public async void OnClickedReturnToInGameButton() 
     {
         Time.timeScale = 1;
         isGoalPanel = false;
         ViewGoalPanel();
 
-        MessageController.instance.ResetMessage();
+        if(isTutorial) await MessageController.instance.ShowSystemMessage(14);
+        else MessageController.instance.ResetMessage();
     }
 
 
@@ -178,8 +184,20 @@ public class Goal : MonoBehaviour
             //正解のミステリーアイテムであるかを判定
             if (mysteryItems[index].id == anserItemId)
             {
-                //正解時の処理
-                SceneManager.LoadScene("GameClearScene");
+                Debug.Log("isTutorial :000" + isTutorial);
+
+                if (isTutorial)
+                {
+                    Debug.Log("チュートリアルクリア");
+                    MessageController.instance.ShowGoalMessage(5);
+                }
+                else 
+                {
+                    Debug.Log("isTutorial :" + isTutorial);
+
+                    //正解時の処理
+                    SceneManager.LoadScene("GameClearScene");
+                }      
             }
             else
             {
@@ -223,5 +241,17 @@ public class Goal : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void OnTutorial() 
+    {
+        isTutorial = true;
+        Debug.Log("isTutorial = " + isTutorial);
+    }
+
+    public void OffTutorial()
+    {
+        isTutorial = false;
+        Debug.Log("isTutorial は " + isTutorial);
     }
 }

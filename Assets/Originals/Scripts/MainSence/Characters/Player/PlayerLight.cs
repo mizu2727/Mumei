@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using static GameController;
 
 public class PlayerLight : MonoBehaviour
 {
@@ -41,18 +42,21 @@ public class PlayerLight : MonoBehaviour
 
     void TurnOnAndOfLight() 
     {
-        if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.isPause && Time.timeScale != 0)
+        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
         {
-            // ライトをアクティブ状態にする・・・＞ライトが点く
-            playerHasLight.SetActive(true);
-            Player.instance.IsLight = true;
-        }
-        else if ((PlayerIsLight() && Player.instance.IsLight) && !PauseController.instance.isPause && Time.timeScale != 0)
-        {
-            // ライトをノン・アクティブ状態にする・・・＞ライトが消える
-            playerHasLight.SetActive(false);
-            Player.instance.IsLight = false;
-        }
+            if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.isPause && Time.timeScale != 0)
+            {
+                // ライトをアクティブ状態にする・・・＞ライトが点く
+                playerHasLight.SetActive(true);
+                Player.instance.IsLight = true;
+            }
+            else if ((PlayerIsLight() && Player.instance.IsLight) && !PauseController.instance.isPause && Time.timeScale != 0)
+            {
+                // ライトをノン・アクティブ状態にする・・・＞ライトが消える
+                playerHasLight.SetActive(false);
+                Player.instance.IsLight = false;
+            }
+        } 
     }
 }
 

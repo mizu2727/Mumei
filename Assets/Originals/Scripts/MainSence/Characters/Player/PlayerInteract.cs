@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static GameController;
 
 public class PlayerInteract : MonoBehaviour
 {
@@ -74,7 +75,7 @@ public class PlayerInteract : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, 
             Camera.main.transform.forward, out raycastHit, distance) )
         {
-            if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0) 
+            if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
             {
                 //ƒAƒCƒeƒ€
                 if (raycastHit.transform.tag == itemTag)

@@ -160,7 +160,7 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
     [Header("仮の名前")]
-    [SerializeField] string aliasName = "イフ";
+    [SerializeField] const string aliasName = "イフ";
 
     [Header("鍵の所持の有無")]
     [SerializeField] public bool isHoldKey = false;

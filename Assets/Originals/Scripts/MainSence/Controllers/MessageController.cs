@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static GameController;
 using static UnityEngine.Rendering.DebugUI;
 
 
@@ -13,6 +14,9 @@ public class MessageController : MonoBehaviour
     [Header("メッセージパネル関連(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject messagePanel;
     [SerializeField] private Text messageText;
+
+    [Header("ブラックアウト(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private GameObject blackOutPanel;
 
     [Header("メッセージを書くスピード。数値が小さいほど素早く書く")]
     [SerializeField] private float writeSpeed = 0;
@@ -36,10 +40,16 @@ public class MessageController : MonoBehaviour
     [Header("プレイヤーの名前入力(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public InputField inputPlayerNameField;
 
+    [Header("ゴール(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] public Goal goal;
+
     [Header("メッセージパネル判定")]
     public bool isMessagePanel = false;
 
-   
+    [Header("ブラックアウト判定")]
+    public bool isBlackOutPanel = false;
+
+
 
 
     private void Awake()
@@ -57,6 +67,8 @@ public class MessageController : MonoBehaviour
 
         inputPlayerNameField = inputPlayerNameField.GetComponent<InputField>();
         inputPlayerNameField.gameObject.SetActive(false);
+
+        isBlackOutPanel = false;
     }
 
     //メッセージパネルの表示・非表示
@@ -69,6 +81,19 @@ public class MessageController : MonoBehaviour
         else
         {
             messagePanel.SetActive(false);
+        }
+    }
+
+    //ブラックアウトパネルの表示・非表示
+    public void ViewBlackOutPanel()
+    {
+        if (isBlackOutPanel)
+        {
+            blackOutPanel.SetActive(true);
+        }
+        else
+        {
+            blackOutPanel.SetActive(false);
         }
     }
 
@@ -102,7 +127,7 @@ public class MessageController : MonoBehaviour
 
         //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
         if (isWrite) writeSpeed = 0;
-        else
+        else if (Time.timeScale == 1)
         {
             isMessagePanel = true;
             ViewMessagePanel();
@@ -156,7 +181,7 @@ public class MessageController : MonoBehaviour
                     break;
 
                 case 27:
-                case 37:
+                case 33:
                     messageText.text = "";
                     number++;
 
@@ -167,22 +192,96 @@ public class MessageController : MonoBehaviour
                     break;
 
 
-                //各会話において、一番最後に表示するべきテキストを表示。次のメッセージ番号の用意は行わない
+                //会話終了してチュートリアルに入る
                 case 36:
-                        //スペースキー押下で会話終了
-                        ResetMessage();
+                    ResetMessage();
 
-                        break;
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                    //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
-                    default:
-                        messageText.text = "";
-                        number++;
+                    isBlackOutPanel = true;
+                    ViewBlackOutPanel();
 
-                        //スペースキー押下で次のメッセージを書く
-                        showTalkMessage.ShowGameTalkMessage(number);
-                        break;
-                    }
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                    Kaname.instance.WarpPostion01();
+
+                    ////チュートリアル用ドキュメントを表示
+                    GameController.instance.tutorialDocument.SetActive(true);
+
+                    isBlackOutPanel = false;
+                    ViewBlackOutPanel();
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                    //システムメッセージ
+                    showSystemMessage.ShowGameSystemMessage(9);
+
+                    break;
+
+                case 42:
+                    ResetMessage();
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+                    showSystemMessage.ShowGameSystemMessage(10);
+
+
+                    break;
+
+                case 43:
+                    ResetMessage();
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+                    showSystemMessage.ShowGameSystemMessage(11);
+
+
+                    break;
+
+                //チュートリアルミステリーアイテムを表示
+                case 45:
+                    ResetMessage();
+
+                    GameController.instance.tutorialMysteryItem01.SetActive(true);
+                    GameController.instance.tutorialMysteryItem02.SetActive(true);
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+                    showSystemMessage.ShowGameSystemMessage(12);
+
+                    break;
+
+                case 46:
+                    ResetMessage();
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+                    showSystemMessage.ShowGameSystemMessage(13);
+
+
+                    break;
+
+                
+                case 48:
+                    
+
+                    ResetMessage();
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+                    showSystemMessage.ShowGameSystemMessage(14);
+
+                    break;
+
+                //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
+                default:
+                    messageText.text = "";
+                    number++;
+
+                    //スペースキー押下で次のメッセージを書く
+                    showTalkMessage.ShowGameTalkMessage(number);
+                    break;
+                }
         }
     }
 
@@ -192,8 +291,14 @@ public class MessageController : MonoBehaviour
     {
         //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
         if (isWrite) writeSpeed = 0;
-        else
+        else if (Time.timeScale == 1)
         {
+            if (number == 15 && goal.isTutorial) 
+            {
+                goal.OffTutorial();
+                //GameController.instance.tutorialGoal.SetActive(false);
+            } 
+
             isMessagePanel = true;
             ViewMessagePanel();
 
@@ -232,7 +337,82 @@ public class MessageController : MonoBehaviour
 
                     //ホームへ移動
                     SceneManager.LoadScene("HomeScene");
-                    break ;
+                    break;
+
+                //会話メッセージを表示
+                case 9:
+                    ResetMessage();
+
+                    showTalkMessage.ShowGameTalkMessage(38);
+
+                    break;
+
+                case 10:
+                    ResetMessage();
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                    showTalkMessage.ShowGameTalkMessage(43);
+
+                    break;
+
+                case 11:
+                    ResetMessage();
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                    showTalkMessage.ShowGameTalkMessage(44);
+
+                    break;
+
+                case 12:
+                    ResetMessage();
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                    showTalkMessage.ShowGameTalkMessage(46);
+
+                    break;
+
+                case 13:
+                    ResetMessage();
+
+                    //チュートリアル用ゴールを表示
+                    //GameController.instance.tutorialGoal.SetActive(true);
+
+                    goal.OnTutorial();
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                    showTalkMessage.ShowGameTalkMessage(47);
+
+                    break;
+
+                //チュートリアル終了
+                case 15:
+                    ResetMessage();
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                    isBlackOutPanel = true;
+                    ViewBlackOutPanel();
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                    Kaname.instance.WarpPostion02();
+
+                    Player.instance.transform.position = new Vector3(1, 0.562f, 0);
+
+                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                    isBlackOutPanel = false;
+                    ViewBlackOutPanel();
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));         
+
+                    showTalkMessage.ShowGameTalkMessage(49);
+
+                    break;
 
 
                 //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意

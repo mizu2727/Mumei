@@ -6,7 +6,20 @@ public class GameController : MonoBehaviour
 {
     public static GameController instance;
 
+    [Header("ゲームモードのステータス")]
     public GameModeStatus gameModeStatus;
+
+
+    [Header("チュートリアル用ドキュメント")]
+    [SerializeField] public GameObject tutorialDocument;
+
+    [Header("チュートリアル用ミステリーアイテム関連")]
+    [SerializeField] public GameObject tutorialMysteryItem01;
+    [SerializeField] public GameObject tutorialMysteryItem02;
+
+    //[Header("チュートリアル用ゴール")]
+    //[SerializeField] public GameObject tutorialGoal;
+
 
     public enum  GameModeStatus
     {
@@ -27,6 +40,7 @@ public class GameController : MonoBehaviour
         Time.timeScale = 1;
     }
 
+    //ゲームモードのステータスを設定
     public void SetGameModeStatus(GameModeStatus status) 
     {
         gameModeStatus = status;
