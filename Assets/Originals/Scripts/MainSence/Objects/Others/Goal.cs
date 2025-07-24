@@ -132,8 +132,9 @@ public class Goal : MonoBehaviour
         isGoalPanel = false;
         ViewGoalPanel();
 
-        if(isTutorial) await MessageController.instance.ShowSystemMessage(14);
-        else MessageController.instance.ResetMessage();
+        MessageController.instance.ResetMessage();
+
+        if (isTutorial) await MessageController.instance.ShowSystemMessage(14);
     }
 
 

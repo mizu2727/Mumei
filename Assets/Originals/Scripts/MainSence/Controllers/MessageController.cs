@@ -203,7 +203,7 @@ public class MessageController : MonoBehaviour
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                    Kaname.instance.WarpPostion01();
+                    Kaname.instance.WarpPostion(1, 0.505f, 7);
 
                     ////チュートリアル用ドキュメントを表示
                     GameController.instance.tutorialDocument.SetActive(true);
@@ -244,6 +244,8 @@ public class MessageController : MonoBehaviour
 
                     GameController.instance.tutorialMysteryItem01.SetActive(true);
                     GameController.instance.tutorialMysteryItem02.SetActive(true);
+
+                    goal.OnTutorial();
 
                     GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
@@ -296,7 +298,6 @@ public class MessageController : MonoBehaviour
             if (number == 15 && goal.isTutorial) 
             {
                 goal.OffTutorial();
-                //GameController.instance.tutorialGoal.SetActive(false);
             } 
 
             isMessagePanel = true;
@@ -377,11 +378,6 @@ public class MessageController : MonoBehaviour
                 case 13:
                     ResetMessage();
 
-                    //チュートリアル用ゴールを表示
-                    //GameController.instance.tutorialGoal.SetActive(true);
-
-                    goal.OnTutorial();
-
                     GameController.instance.SetGameModeStatus(GameModeStatus.Story);
 
                     showTalkMessage.ShowGameTalkMessage(47);
@@ -399,11 +395,13 @@ public class MessageController : MonoBehaviour
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                    Kaname.instance.WarpPostion02();
+                    Kaname.instance.WarpPostion(1, 0.505f, 2);
 
-                    Player.instance.transform.position = new Vector3(1, 0.562f, 0);
+                    Player.instance.PlayerWarp(1, 0.562f, 0);
 
                     GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                    GameController.instance.tutorialItems.SetActive(false);
 
                     isBlackOutPanel = false;
                     ViewBlackOutPanel();

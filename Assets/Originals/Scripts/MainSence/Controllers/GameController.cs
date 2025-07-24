@@ -17,6 +17,9 @@ public class GameController : MonoBehaviour
     [SerializeField] public GameObject tutorialMysteryItem01;
     [SerializeField] public GameObject tutorialMysteryItem02;
 
+    [Header("チュートリアル用アイテム親オブジェクト")]
+    [SerializeField] public GameObject tutorialItems;
+
     //[Header("チュートリアル用ゴール")]
     //[SerializeField] public GameObject tutorialGoal;
 

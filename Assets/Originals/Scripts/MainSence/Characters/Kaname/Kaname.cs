@@ -23,14 +23,8 @@ public class Kaname : MonoBehaviour
         
     }
 
-    public void WarpPostion01() 
+    public void WarpPostion(float x, float y, float z) 
     {
-        transform.position = new Vector3(1, 0.505f, 7);
-    }
-
-    public void WarpPostion02()
-    {
-        Debug.Log("WarpPosition02 Ç™åƒÇ—èoÇ≥ÇÍÇ‹ÇµÇΩÅB");
-        transform.position = new Vector3(1, 0.505f, 2);
+        transform.position = new Vector3(x, y, z);
     }
 }

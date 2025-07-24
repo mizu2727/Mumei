@@ -182,8 +182,6 @@ public class Player : MonoBehaviour, CharacterInterface
     public bool isDebug = false;
 
 
-
-
     private void Awake()
     {
         if (instance != null && instance != this)
@@ -419,6 +417,25 @@ public class Player : MonoBehaviour, CharacterInterface
             //プレイヤーの向きを180度ゆっくり回転させる
             if (transform.rotation.y < 0) transform.Rotate(new Vector3(0, 180f, 0) * (Time.deltaTime * 0.5f));
             else playerIsBackRotate = false;
+        }
+    }
+
+    public void PlayerWarp(float x, float y, float z) 
+    {
+        // CharacterControllerを一時的に無効にする
+        if (characterController != null)
+        {
+            characterController.enabled = false;
+        }
+
+        // transform.positionを直接設定してワープする場合、一時的にCharacterControllerを一時的に無効にする必要がある
+        transform.position = new Vector3(x, y, z);
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+
+        // CharacterControllerを再度有効にする
+        if (characterController != null)
+        {
+            characterController.enabled = true;
         }
     }
 }
