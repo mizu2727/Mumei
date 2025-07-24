@@ -161,6 +161,7 @@ public class MessageController : MonoBehaviour
 
                 case 11:
                 case 19:
+                case 60:
                     messageText.text = "";
                     number++;
 
@@ -272,6 +273,13 @@ public class MessageController : MonoBehaviour
                     GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
                     showSystemMessage.ShowGameSystemMessage(14);
+
+                    break;
+
+                case 68:
+                    ResetMessage();
+
+                    Debug.Log("チュートリアル会話終了");
 
                     break;
 
