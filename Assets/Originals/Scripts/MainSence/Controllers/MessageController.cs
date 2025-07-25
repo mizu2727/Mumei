@@ -281,6 +281,12 @@ public class MessageController : MonoBehaviour
 
                     Debug.Log("チュートリアル会話終了");
 
+                    GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+                    //ステージ1へ移動
+                    SceneManager.LoadScene("Stage01");
+
+
                     break;
 
                 //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
