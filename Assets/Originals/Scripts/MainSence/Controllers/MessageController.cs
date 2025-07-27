@@ -286,8 +286,51 @@ public class MessageController : MonoBehaviour
                     //ステージ1へ移動
                     SceneManager.LoadScene("Stage01");
 
+                    break;
+
+                case 70:
+                    messageText.text = "";
+                    number++;
+
+                    isBlackOutPanel = false;
+                    ViewBlackOutPanel();
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(1));
+
+                    //スペースキー押下で次のメッセージを書く
+                    showTalkMessage.ShowGameTalkMessage(number);
 
                     break;
+
+                case 86:
+                    messageText.text = "";
+                    number++;
+
+                    isBlackOutPanel = true;
+                    ViewBlackOutPanel();
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(1));
+
+                    // 色を赤色に設定
+                    messageText.color = Color.red;
+
+                    Write(talkMessage.talkMessage[number].message);
+                    await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                    ResetMessage();
+
+
+                    Debug.Log(showTalkMessage);
+                    GameClearController.instance.ViewGameClearUI();
+
+                    isBlackOutPanel = false;
+                    ViewBlackOutPanel();
+
+                    break;
+
+
 
                 //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
                 default:
