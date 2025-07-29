@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -83,6 +85,30 @@ public class MusicController : MonoBehaviour
                 Debug.LogWarning("[MusicController] audioClip が null です！");
             }
         }
+    }
+
+    // SEを一瞬のみ再生
+    public async void PlayMomentAudioSE(AudioSource audioSource, AudioClip audioClip)
+    {
+        if (audioSource != null && !isDebug)
+        {
+            if (audioClip != null)
+            {
+                audioSource.clip = audioClip;
+                audioSource.loop = false;
+                audioSource.Play();
+                Debug.Log("SEを一瞬のみ再生スタート");
+            }
+            else
+            {
+                Debug.LogWarning("[PlayMomentAudioSE] audioClip が null です！");
+            }
+        }
+
+        await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+        StopSE(audioSource);
+        Debug.Log("SEを一瞬のみ再生停止");
     }
 
     // SEをループ再生

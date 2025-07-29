@@ -50,7 +50,9 @@ public class MessageController : MonoBehaviour
     public bool isBlackOutPanel = false;
 
 
-
+    [Header("サウンド関連")]
+    [SerializeField] private AudioClip noiseSE;
+    private AudioSource audioSourceSE;
 
     private void Awake()
     {
@@ -64,6 +66,8 @@ public class MessageController : MonoBehaviour
             Destroy(gameObject);
         }
         ResetMessage();
+
+        audioSourceSE = MusicController.Instance.GetAudioSource();
 
         inputPlayerNameField = inputPlayerNameField.GetComponent<InputField>();
         inputPlayerNameField.gameObject.SetActive(false);
@@ -167,13 +171,20 @@ public class MessageController : MonoBehaviour
 
                     await UniTask.Delay(TimeSpan.FromSeconds(1));
 
+                    MusicController.Instance.PauseBGM();
+
+                    MusicController.Instance.PlayMomentAudioSE(audioSourceSE, noiseSE);
+
                     // 色を赤色に設定
                     messageText.color = Color.red;
 
                     Write(talkMessage.talkMessage[number].message);
                     await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
 
+
                     await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                    MusicController.Instance.UnPauseBGM();
 
                     messageText.text = "";
                     number++;
@@ -311,6 +322,8 @@ public class MessageController : MonoBehaviour
 
                     await UniTask.Delay(TimeSpan.FromSeconds(1));
 
+                    MusicController.Instance.PlayMomentAudioSE(audioSourceSE, noiseSE);
+
                     // 色を赤色に設定
                     messageText.color = Color.red;
 
@@ -348,6 +361,9 @@ public class MessageController : MonoBehaviour
     //システムメッセージを表示
     public async UniTask ShowSystemMessage(int number)
     {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+
         //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
         if (isWrite) writeSpeed = 0;
         else if (Time.timeScale == 1)
@@ -370,6 +386,9 @@ public class MessageController : MonoBehaviour
                 case 3:
                     ResetMessage();
 
+                    Cursor.visible = true;
+                    Cursor.lockState = CursorLockMode.Confined;
+
                     inputPlayerNameField.gameObject.SetActive(true);
 
                     break;
@@ -379,6 +398,8 @@ public class MessageController : MonoBehaviour
                     number++;
 
                     await UniTask.Delay(TimeSpan.FromSeconds(2));
+
+                    MusicController.Instance.PlayMomentAudioSE(audioSourceSE, noiseSE);
 
                     // 色を赤色に設定
                     messageText.color = Color.red;

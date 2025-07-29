@@ -167,7 +167,7 @@ public class PauseController : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
 
-        //MusicController.instance.PauseBGM();
+        MusicController.Instance.PauseBGM();
         MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
     }
 
@@ -183,7 +183,7 @@ public class PauseController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
 
             MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
-            //MusicController.instance.UnPauseBGM();
+            MusicController.Instance.UnPauseBGM();
         }
         
     }
@@ -242,7 +242,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedYesButton()
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
-        //MusicController.instance.StopBGM();
+        MusicController.Instance.StopBGM();
         //GameController.instance.ReturnToTitle();
         SceneManager.LoadScene("TitleScene");
     }
