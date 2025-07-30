@@ -129,6 +129,22 @@ public class MusicController : MonoBehaviour
         }
     }
 
+    // SE‚ğˆê’â~
+    public void PauseSE(AudioSource audioSource, AudioClip audioClip)
+    {
+        audioSource.clip = audioClip;
+        audioSource.Pause();
+        Debug.Log("SEˆê’â~");
+    }
+
+    // SE‚Ìˆê’â~‰ğœ
+    public void UnPauseSE(AudioSource audioSource, AudioClip audioClip)
+    {
+        audioSource.clip = audioClip;
+        audioSource.UnPause();
+        Debug.Log("SEˆê’â~‰ğœ");
+    }
+
     // SE’â~
     public void StopSE(AudioSource audioSource)
     {

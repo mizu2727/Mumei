@@ -168,9 +168,10 @@ public class Player : MonoBehaviour, CharacterInterface
     Vector3 moveDirection = Vector3.zero;//移動方向
 
     [Header("サウンド関連")]
-    private AudioSource audioSourceSE; // プレイヤー専用のAudioSource
+    public AudioSource audioSourceSE; // プレイヤー専用のAudioSource
     [SerializeField] private AudioClip walkSE;
     [SerializeField] private AudioClip runSE;
+    public AudioClip currentSE;//現在再生中の効果音
 
     private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
 
@@ -315,7 +316,9 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         // 移動状態の変化を検知して効果音を制御
-        AudioClip currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash") ? runSE : walkSE;
+        currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash") ? runSE : walkSE;
+
+
 
         if (IsMove && !wasMovingLastFrame)
         {

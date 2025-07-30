@@ -198,10 +198,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
 
     [Header("サウンド関連")]
-    private AudioSource audioSourceSE; 
+    public AudioSource audioSourceSE; 
     [SerializeField] private AudioClip walkSE;
     [SerializeField] private AudioClip runSE;
     [SerializeField] private AudioClip findPlayerSE;
+    public AudioClip currentSE;//現在再生中の効果音
 
     [Header("走る音の再生速度(要調整)")]
     [SerializeField] private float runSEPitch = 2f;
@@ -651,7 +652,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         // 効果音制御
-        AudioClip currentSE = (currentState == EnemyState.Chase) ? runSE : walkSE;
+        currentSE = (currentState == EnemyState.Chase) ? runSE : walkSE;
 
         // 距離に基づく音量計算
         float volume = CalculateVolumeBasedOnDistance(distance);

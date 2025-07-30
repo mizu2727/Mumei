@@ -11,8 +11,14 @@ public class PauseController : MonoBehaviour
 {
     public static PauseController instance;
 
+    [Header("プレイヤー")]
     [SerializeField] private Player player;//プレイヤー
+
+    [Header("ゴール(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Goal goal;//ゴール
+
+    [Header("敵(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private BaseEnemy[] baseEnemy;
 
     [Header("ポーズパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject pausePanel;
@@ -158,6 +164,7 @@ public class PauseController : MonoBehaviour
         }
     }
 
+    //ポーズ
     public void ViewPausePanel() 
     {
         isPause = true;
@@ -165,9 +172,17 @@ public class PauseController : MonoBehaviour
         pausePanel.transform.SetAsLastSibling();
         ChangeViewPausePanel();
         Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.None;
 
         MusicController.Instance.PauseBGM();
+        MusicController.Instance.PauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
+
+        for (int i = 0; i < baseEnemy.Length; i++) 
+        {
+            if(baseEnemy[i] != null) MusicController.Instance.PauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
+        }
+
+        
         MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
     }
 
@@ -183,6 +198,13 @@ public class PauseController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
 
             MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+            MusicController.Instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
+
+            for (int i = 0; i < baseEnemy.Length; i++)
+            {
+                if (baseEnemy[i] != null) MusicController.Instance.UnPauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
+            }
+
             MusicController.Instance.UnPauseBGM();
         }
         

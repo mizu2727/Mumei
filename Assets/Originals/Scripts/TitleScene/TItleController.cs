@@ -23,8 +23,13 @@ public class TitleController : MonoBehaviour
         Time.timeScale = 1;
         titlesCanvas.enabled = true;
         Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+
+        //マウスカーソルをウィンドウの外に出す
+        Cursor.lockState = CursorLockMode.None;
+
+
         GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);
+
     }
 
     public void OnStartButtonClicked()
