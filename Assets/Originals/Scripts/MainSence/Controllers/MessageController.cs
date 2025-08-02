@@ -393,6 +393,13 @@ public class MessageController : MonoBehaviour
 
                     break;
 
+                //名前入力制限に引っかかった後に、もう一度名前入力UIを表示
+                case 4:
+                    ResetMessage();
+                    showSystemMessage.ShowGameSystemMessage(3);
+
+                    break;
+
                 case 6:
                     messageText.text = "";
                     number++;
@@ -515,7 +522,7 @@ public class MessageController : MonoBehaviour
     //プレイヤーの名前の入力が完了した際に呼ばれる
     public void SavePlayerName(string playerName)
     {
-        if (playerName.Length < 11) 
+        if ((1 < playerName.Length) && (playerName.Length < 11)) 
         {
             //名前を保存
             inputPlayerNameField.text = playerName;
@@ -526,6 +533,7 @@ public class MessageController : MonoBehaviour
         }
         else
         {
+            inputPlayerNameField.gameObject.SetActive(false);
             showSystemMessage.ShowGameSystemMessage(4);
         }
     }  
