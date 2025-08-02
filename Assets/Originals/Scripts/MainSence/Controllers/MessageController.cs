@@ -113,25 +113,43 @@ public class MessageController : MonoBehaviour
     //テキストを一文字ずつ表示
     async void Write(string s)
     {
-        writeSpeed = 0;
+        // 既に書き込み中の場合は、何もしない
+        if (isWrite) return;
+
         isWrite = true;
+        messageText.text = ""; // 毎回テキストをクリアしてから書き始める
 
         for (int i = 0; i < s.Length; i++)
         {
+            // 書き込み速度が0の場合、一気に表示
+            if (writeSpeed <= 0)
+            {
+                messageText.text = s;
+                break;
+            }
+
             messageText.text += s.Substring(i, 1);
             await UniTask.Delay(TimeSpan.FromSeconds(writeSpeed));
         }
         isWrite = false;
     }
 
+
+
     //会話メッセージを表示
     public async UniTask ShowTalkMessage(int number)
     {
+        // 既にメッセージを書いてる途中である場合は、以降の処理を中断
+        if (isWrite)
+        {
+            writeSpeed = 0; // 書き込み速度を上げて高速表示
+            return;
+        }
+
         Debug.Log("会話スタート");
 
         //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
-        if (isWrite) writeSpeed = 0;
-        else if (Time.timeScale == 1)
+        if (Time.timeScale == 1)
         {
             isMessagePanel = true;
             ViewMessagePanel();
@@ -361,12 +379,18 @@ public class MessageController : MonoBehaviour
     //システムメッセージを表示
     public async UniTask ShowSystemMessage(int number)
     {
+        // 既にメッセージを書いてる途中である場合は、以降の処理を中断
+        if (isWrite)
+        {
+            writeSpeed = 0; // 書き込み速度を上げて高速表示
+            return;
+        }
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
         //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
-        if (isWrite) writeSpeed = 0;
-        else if (Time.timeScale == 1)
+        if (Time.timeScale == 1)
         {
             if (number == 15 && goal.isTutorial) 
             {
