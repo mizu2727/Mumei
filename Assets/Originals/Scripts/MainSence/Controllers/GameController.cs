@@ -29,6 +29,7 @@ public class GameController : MonoBehaviour
         Story,
         PlayInGame,
         StopInGame,
+        GoalGamenMode
     }
 
     private void Awake()

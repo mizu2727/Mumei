@@ -1,10 +1,11 @@
+using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
-using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using static GameController;
 
 
 
@@ -92,6 +93,7 @@ public class Goal : MonoBehaviour
         if (isGoalPanel)
         {
 
+
             Time.timeScale = 0;
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.Confined;
@@ -134,7 +136,11 @@ public class Goal : MonoBehaviour
 
         MessageController.instance.ResetMessage();
 
-        if (isTutorial) await MessageController.instance.ShowSystemMessage(14);
+        if (isTutorial) 
+        {
+            await MessageController.instance.ShowSystemMessage(14);
+        }
+        
     }
 
 
