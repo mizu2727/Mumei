@@ -134,6 +134,15 @@ public class MessageController : MonoBehaviour
         isWrite = false;
     }
 
+    //スペースキー押下で次のメッセージを表示
+    async UniTask ShowNextMessage() 
+    {
+        await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+        //ポーズパネル・ゴールパネルを開いている間は、次のメッセージを進めない
+        if (PauseController.instance.isPause || goal.isGoalPanel) await ShowNextMessage();
+    }
+
 
 
     //会話メッセージを表示
@@ -162,7 +171,8 @@ public class MessageController : MonoBehaviour
 
             //エクセルデータ型.リスト型[番号].カラム名
             Write(talkMessage.talkMessage[number].message);
-            await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+            await ShowNextMessage();
 
             switch (number)
             {
@@ -176,8 +186,6 @@ public class MessageController : MonoBehaviour
 
                     //スペースキー押下で次のメッセージを書く
                     showTalkMessage.ShowGameTalkMessage(number);
-
-
 
                     break;
 
@@ -197,7 +205,8 @@ public class MessageController : MonoBehaviour
                     messageText.color = Color.red;
 
                     Write(talkMessage.talkMessage[number].message);
-                    await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+                    await ShowNextMessage();
 
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.5));
@@ -295,8 +304,6 @@ public class MessageController : MonoBehaviour
 
                 
                 case 48:
-                    
-
                     ResetMessage();
 
                     GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
@@ -346,7 +353,8 @@ public class MessageController : MonoBehaviour
                     messageText.color = Color.red;
 
                     Write(talkMessage.talkMessage[number].message);
-                    await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+                    await ShowNextMessage();
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
@@ -402,7 +410,9 @@ public class MessageController : MonoBehaviour
 
             //エクセルデータ型.リスト型[番号].カラム名
             Write(systemMessage.systemMessage[number].message);
-            await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+
+            await ShowNextMessage();
+
 
             switch (number)
             {
@@ -437,7 +447,7 @@ public class MessageController : MonoBehaviour
 
                     Write(systemMessage.systemMessage[number].message);
 
-                    await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+                    await ShowNextMessage();
 
                     await UniTask.Delay(TimeSpan.FromSeconds(1));
 
