@@ -132,11 +132,10 @@ public class PauseController : MonoBehaviour
     }
 
 
-    //Pキーでポーズ/ポーズ解除
+    //PキーorZキーでポーズ/ポーズ解除
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P) && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) TogglePause();
-
+        if ((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Z)) && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) TogglePause();
     }
 
     //コントローラーの+ボタンでポーズ/ポーズ解除
