@@ -99,6 +99,8 @@ public class Goal : MonoBehaviour
             Cursor.lockState = CursorLockMode.Confined;
             GoalPanel.SetActive(true);
 
+            Debug.Log("isGoalPanel = " + isGoalPanel);
+
             // CanvasGroup ‚Ìó‘Ô‚ğŠm”F
             CanvasGroup canvasGroup = GoalPanel.GetComponent<CanvasGroup>();
             if (canvasGroup != null)

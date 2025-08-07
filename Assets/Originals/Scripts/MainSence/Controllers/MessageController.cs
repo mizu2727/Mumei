@@ -67,12 +67,19 @@ public class MessageController : MonoBehaviour
         }
         ResetMessage();
 
-        audioSourceSE = MusicController.Instance.GetAudioSource();
+        
 
         inputPlayerNameField = inputPlayerNameField.GetComponent<InputField>();
         inputPlayerNameField.gameObject.SetActive(false);
 
         isBlackOutPanel = false;
+    }
+
+    private void Start()
+    {
+        //MusicControllerのAwake関数の処理後に呼ばれるようにするため、
+        //Start関数内でAudioSourceを取得する
+        audioSourceSE = MusicController.Instance.GetAudioSource();
     }
 
     //メッセージパネルの表示・非表示
@@ -104,6 +111,7 @@ public class MessageController : MonoBehaviour
     //メッセージをリセット
     public void ResetMessage()
     {
+        //Debug.Log("goal.isGoalPanel =" + goal.isGoalPanel);
         messageText.color = Color.white;
         messageText.text = "";
         isMessagePanel = false;
@@ -140,7 +148,13 @@ public class MessageController : MonoBehaviour
         await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
 
         //ポーズパネル・ゴールパネルを開いている間は、次のメッセージを進めない
-        if (PauseController.instance.isPause || goal.isGoalPanel) await ShowNextMessage();
+        if (goal != null && PauseController.instance != null) 
+        {
+            if (PauseController.instance.isPause || goal.isGoalPanel)
+            {
+                await ShowNextMessage();
+            }
+        }     
     }
 
 
@@ -394,12 +408,10 @@ public class MessageController : MonoBehaviour
             return;
         }
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
         //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
         if (Time.timeScale == 1)
         {
+
             if (number == 15 && goal.isTutorial) 
             {
                 goal.OffTutorial();
@@ -504,8 +516,9 @@ public class MessageController : MonoBehaviour
                     break;
 
                 //チュートリアル終了
-                case 15:
-                    ResetMessage();
+                case 14:
+                    messageText.text = "";
+                    number++;
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
@@ -525,7 +538,17 @@ public class MessageController : MonoBehaviour
                     isBlackOutPanel = false;
                     ViewBlackOutPanel();
 
-                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));         
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                    showSystemMessage.ShowGameSystemMessage(number);
+
+                    break;
+
+
+                case 15:
+                    ResetMessage();
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
                     showTalkMessage.ShowGameTalkMessage(49);
 
