@@ -261,7 +261,7 @@ public class Player : MonoBehaviour, CharacterInterface
             SceneManager.LoadScene("GameClearScene");
         }
 
-        if (playerIsBackRotate && GameController.instance.gameModeStatus == GameModeStatus.Story) PlayerTurn();
+        if (playerIsBackRotate && (GameController.instance.gameModeStatus == GameModeStatus.Story)) PlayerTurn();
 
         if (playerIsDead || PauseController.instance.isPause || Time.timeScale == 0 || isFallDown || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) return;
 
@@ -341,6 +341,11 @@ public class Player : MonoBehaviour, CharacterInterface
         // 現在の移動状態を記録
         wasMovingLastFrame = IsMove;
 
+
+        //後ろを向いているかを判定
+        if (PlayerIsBackRotate()) playerIsBackRotate = true;
+        else playerIsBackRotate = false;
+
     }
 
     //ダッシュ判定
@@ -406,7 +411,13 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
-    
+    //Ctrl操作切り替え
+    public bool PlayerIsBackRotate() 
+    {
+        return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+    }
+
+
     public void DecidePlayewrName() 
     {
         //入力したプレイヤーの名前を格納
@@ -415,12 +426,17 @@ public class Player : MonoBehaviour, CharacterInterface
 
     public void PlayerTurn() 
     {
-        if (GameController.instance.gameModeStatus == GameModeStatus.Story) 
+        if (GameController.instance.gameModeStatus == GameModeStatus.Story)
         {
             //プレイヤーの向きを180度ゆっくり回転させる
             if (transform.rotation.y < 0) transform.Rotate(new Vector3(0, 180f, 0) * (Time.deltaTime * 0.5f));
             else playerIsBackRotate = false;
         }
+        else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
+        {
+            //プレイヤーの向きを180度回転させる
+            transform.Rotate(0, 180, 0);
+        } 
     }
 
     public void PlayerWarp(float x, float y, float z) 

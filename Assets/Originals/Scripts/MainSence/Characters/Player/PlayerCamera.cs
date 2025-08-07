@@ -33,6 +33,9 @@ public class PlayerCamera : MonoBehaviour
     [Header("カメラのX軸回転範囲")]
     [SerializeField] private float xRotationRange = 45f ;
 
+    // 前フレームの後ろを向く状態を保持
+    private bool wasTrunLastFrame = false; 
+
 
 
     private void Start()
@@ -43,11 +46,33 @@ public class PlayerCamera : MonoBehaviour
 
         //マウス旋回速度のSliderの最大値を設定
         if (mouseSensitivitySlider) mouseSensitivitySlider.maxValue = maxLookSensitivity;
+
+
+        wasTrunLastFrame = false;
     }
 
     private void Update()
     {
         if (Player.instance.isFallDown) return;
+
+
+        //Ctrl押下で視点が後ろを向く
+        if(GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.playerIsBackRotate && !wasTrunLastFrame) 
+        {
+            //プレイヤーが後ろを向いている時はマウス感度を0にする
+            lookSensitivity = 0f;
+            mouseSensitivitySlider.value = 0f;
+
+            //プレイヤーと一緒にカメラを180度回転させる
+            Player.instance.PlayerTurn();
+        }
+        else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.playerIsBackRotate && mouseSensitivitySlider.value == 0f && wasTrunLastFrame)
+        {
+            //プレイヤーが前を向いている時はマウス感度を元に戻す
+            mouseSensitivitySlider.value = maxLookSensitivity / 2f;
+        }
+
+        wasTrunLastFrame = Player.instance.playerIsBackRotate;
 
         if (maxLookSensitivity <= mouseSensitivitySlider.value) mouseSensitivitySlider.value = maxLookSensitivity;
 
