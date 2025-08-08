@@ -68,9 +68,12 @@ public class MessageController : MonoBehaviour
         ResetMessage();
 
         
-
-        inputPlayerNameField = inputPlayerNameField.GetComponent<InputField>();
-        inputPlayerNameField.gameObject.SetActive(false);
+        if(inputPlayerNameField != null) 
+        {
+            inputPlayerNameField = inputPlayerNameField.GetComponent<InputField>();
+            inputPlayerNameField.gameObject.SetActive(false);
+        }
+        
 
         isBlackOutPanel = false;
     }
