@@ -12,6 +12,7 @@ public class PlayerInteract : MonoBehaviour
     GameObject pickUpItem;//拾ったアイテム
     GameObject interactDoor;//インタラクトするドア
     GameObject interactStageLight;//インタラクトするステージライト
+    GameObject interactDrawer;//インタラクトする引き出し
     public bool isInteract;
 
     private Item item;
@@ -23,17 +24,20 @@ public class PlayerInteract : MonoBehaviour
     private Door door;
     private Goal goal;
     private StageLight stageLight;
+    private Drawer drawer;
 
 
     private string itemTag = "Item";
     private string doorTag = "Door";
     private string goalTag = "Goal";
     private string stageLightTag = "StageLight";
+    private string drawerTag = "Drawer";
     private string outlineTag = "Outline";
     private string itemLayer = "Item"; // アイテムの元のレイヤー
     private string doorLayer = "Door"; // ドアの元のレイヤー
     private string goalLayer = "Goal"; // ゴールの元のレイヤー
     private string stageLightLayer = "StageLight"; // ゴールの元のレイヤー
+    private string drawerLayer = "Drawer"; // 引き出しの元のレイヤー
 
     [Header("SE関係")]
     private AudioSource audioSourceSE;
@@ -145,6 +149,17 @@ public class PlayerInteract : MonoBehaviour
                     if (stageLight != null) stageLight.LitStageLight();
                 }
 
+                //引き出し
+                if (raycastHit.transform.tag == drawerTag)
+                {
+                    isInteract = true;
+                    interactDrawer = raycastHit.transform.gameObject;
+                    drawer = interactDrawer.GetComponent<Drawer>();
+
+                    //ドアの開閉
+                    if (drawer != null) drawer.DrawerSystem();
+                }
+
                 //ゴール
                 if (raycastHit.transform.tag == goalTag)
                 {
@@ -216,6 +231,10 @@ public class PlayerInteract : MonoBehaviour
             {
                 targetLayer = stageLightLayer;
             }
+            else if (currentObjectTag == drawerTag)
+            {
+                targetLayer = drawerLayer;
+            }
             else
             {
                 Debug.LogWarning($"オブジェクト {currentHighlightedObject.name} のタグ {currentObjectTag} は認識されません。'Default' にフォールバックします。");
@@ -243,7 +262,8 @@ public class PlayerInteract : MonoBehaviour
             if (raycastHit.transform.tag == itemTag ||
                 raycastHit.transform.tag == doorTag ||
                 raycastHit.transform.tag == goalTag ||
-                raycastHit.transform.tag == stageLightTag)
+                raycastHit.transform.tag == stageLightTag ||
+                raycastHit.transform.tag == drawerTag)
             {
                 GameObject hitObject = raycastHit.transform.gameObject;
 
