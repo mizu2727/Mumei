@@ -8,11 +8,20 @@ public class Drawer : MonoBehaviour
     [Header("引き出しのメッシュ部分")]
     [SerializeField] private Transform drawerMeshTransform;
 
+    [Header("引き出しに入れるアイテム")]
+    [SerializeField] public Transform drawerItemTransform;
+
     [Header("引き出しを開いた時の位置")]
     [SerializeField] private Vector3 openPosition;
 
     [Header("引き出しを閉じた時の位置")]
     [SerializeField] private Vector3 closePosition;
+
+    // 新しいTransformを用意して、アイテムを格納する場所を明確にする
+    // このTransformをdrawerMeshTransformの子に配置し、アイテムの基準点とする
+    [Header("アイテム配置の基準点")]
+    [SerializeField] private Transform itemPlacementPoint;
+
 
     [Header("移動速度")]
     [SerializeField] private float moveSpeed = 1.0f;
@@ -35,11 +44,35 @@ public class Drawer : MonoBehaviour
         {
             drawerMeshTransform.localPosition = closePosition;
         }
+
         targetPosition = closePosition;
 
 
         audioSourceSE = GetComponent<AudioSource>();
         audioSourceSE = MusicController.Instance.GetAudioSource();
+    }
+
+
+
+    public void SetItemTransform(Transform itemTransform)
+    {
+        if (itemPlacementPoint != null)
+        {
+            // アイテムの親をitemPlacementPointに設定
+            itemTransform.SetParent(itemPlacementPoint);
+            // itemPlacementPointの原点に配置
+            itemTransform.localPosition = Vector3.zero;
+            // 必要に応じて、rotationやscaleをリセット
+            itemTransform.localRotation = Quaternion.identity;
+            itemTransform.localScale = Vector3.one;
+
+            // drawerItemTransformにアタッチ
+            drawerItemTransform = itemTransform;
+        }
+        else
+        {
+            Debug.LogError("itemPlacementPointが設定されていません。");
+        }
     }
 
     void Update()
