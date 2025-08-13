@@ -52,6 +52,7 @@ public class MapAreaGenerate : MonoBehaviour
             useMapAreaList[i].transform.position = mapAreaPoint[i].position;
 
             Debug.Log("GameObject " + i + ": " + useMapAreaList[i].name);
+
         }
     }
 
@@ -82,10 +83,14 @@ public class MapAreaGenerate : MonoBehaviour
         {
             // アイテム生成地点にDrawerコンポーネントがあるか確認
             Drawer drawer = itemPoint[i].GetComponent<Drawer>();
+
             if (drawer != null)
             {
                 // アイテムを生成する際、位置情報をitemPoint[i].positionではなく、Drawerの親のTransformに合わせる
                 GameObject newItem = Instantiate(useItemList[i]);
+
+                // アイテムの位置をitemPointに合わせる
+                newItem.transform.position = itemPoint[i].position;
 
                 // 生成したアイテムをDrawerにアタッチ
                 drawer.SetItemTransform(newItem.transform);

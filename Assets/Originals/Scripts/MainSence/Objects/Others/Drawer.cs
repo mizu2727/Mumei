@@ -6,7 +6,7 @@ public class Drawer : MonoBehaviour
     [SerializeField] public bool isOpenDrawer = false;
 
     [Header("引き出しのメッシュ部分")]
-    [SerializeField] private Transform drawerMeshTransform;
+    [SerializeField] public Transform drawerMeshTransform;
 
     [Header("引き出しに入れるアイテム")]
     [SerializeField] public Transform drawerItemTransform;
@@ -21,6 +21,9 @@ public class Drawer : MonoBehaviour
     // このTransformをdrawerMeshTransformの子に配置し、アイテムの基準点とする
     [Header("アイテム配置の基準点")]
     [SerializeField] private Transform itemPlacementPoint;
+
+    [Header("引き出しを閉じた時のアイテムの位置")]
+    [SerializeField] private Vector3 closeItemPosition;
 
 
     [Header("移動速度")]
@@ -44,6 +47,10 @@ public class Drawer : MonoBehaviour
         {
             drawerMeshTransform.localPosition = closePosition;
         }
+        else
+        {
+            Debug.LogError($"{gameObject.name} の drawerMeshTransform が null です！");
+        }
 
         targetPosition = closePosition;
 
@@ -63,8 +70,13 @@ public class Drawer : MonoBehaviour
             // itemPlacementPointの原点に配置
             itemTransform.localPosition = Vector3.zero;
             // 必要に応じて、rotationやscaleをリセット
-            itemTransform.localRotation = Quaternion.identity;
+            //itemTransform.localRotation = Quaternion.identity;
+
+            //アイテムのローカルスケールをリセット
             itemTransform.localScale = Vector3.one;
+
+            //アイテムのローカルポジション
+            itemTransform.localPosition = new Vector3(0.15f, 0, -0.15f);
 
             // drawerItemTransformにアタッチ
             drawerItemTransform = itemTransform;
