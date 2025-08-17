@@ -76,7 +76,7 @@ public class Drawer : MonoBehaviour
             itemTransform.localScale = Vector3.one;
 
             //引き出し本体の向きと同じにする
-            itemTransform.localRotation = this.transform.localRotation;
+            //itemTransform.localRotation = this.transform.localRotation;
 
             //アイテムのローカルポジション
             itemTransform.localPosition = new Vector3(0.15f, 0, -0.15f);
