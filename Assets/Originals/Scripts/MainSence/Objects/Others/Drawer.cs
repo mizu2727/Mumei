@@ -5,7 +5,7 @@ public class Drawer : MonoBehaviour
     [Header("引き出しの開閉の判定")]
     [SerializeField] public bool isOpenDrawer = false;
 
-    [Header("引き出しのメッシュ部分")]
+    [Header("引き出しの戸のメッシュ部分")]
     [SerializeField] public Transform drawerMeshTransform;
 
     [Header("引き出しに入れるアイテム")]
@@ -32,6 +32,9 @@ public class Drawer : MonoBehaviour
     // 目標地点
     private Vector3 targetPosition;
 
+    [Header("BoxCollider")]
+    [SerializeField] private BoxCollider boxCollider;
+
     // サウンド関連
     private AudioSource audioSourceSE;
     [SerializeField] private AudioClip openSE;
@@ -41,6 +44,7 @@ public class Drawer : MonoBehaviour
     void Start()
     {
         isOpenDrawer = false;
+        boxCollider.enabled = true;
 
         //メッシュ部分のTransformのlocalPositionを初期化
         if (drawerMeshTransform != null)
@@ -73,13 +77,14 @@ public class Drawer : MonoBehaviour
             //itemTransform.localRotation = Quaternion.identity;
 
             //アイテムのローカルスケールをリセット
-            itemTransform.localScale = Vector3.one;
+            //itemTransform.localScale = Vector3.one;
 
             //引き出し本体の向きと同じにする
             //itemTransform.localRotation = this.transform.localRotation;
 
             //アイテムのローカルポジション
             itemTransform.localPosition = new Vector3(0.15f, 0, -0.15f);
+
 
             // drawerItemTransformにアタッチ
             drawerItemTransform = itemTransform;
@@ -128,6 +133,7 @@ public class Drawer : MonoBehaviour
     {
         targetPosition = openPosition;
         isOpenDrawer = true;
+        boxCollider.enabled = false;
         DrawerSE(true);
     }
 
@@ -135,6 +141,7 @@ public class Drawer : MonoBehaviour
     {
         targetPosition = closePosition;
         isOpenDrawer = false;
+        boxCollider.enabled = true;
         DrawerSE(false);
     }
 
