@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 public class BaseEnemy : MonoBehaviour, CharacterInterface
 {
     [Header("敵のステータス")]
-    private Animator animator;
+    public Animator animator;
     public Animator PlayAnimator
     {
         get => animator;
@@ -137,8 +137,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     private Vector3 lastCollisionPoint;
 
-
-    private enum EnemyState
+   
+    public enum EnemyState
     {
         Patrol,      // 通常徘徊
         Alert,       // 警戒（プレイヤー発見、視線なし）
@@ -146,16 +146,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         Investigate  // 調査（プレイヤーを見失った位置に向かう）
     }
 
+    [Header("EnemyState(ヒエラルキー上での編集禁止)")]
+    public EnemyState currentState = EnemyState.Patrol;
 
-    private EnemyState currentState = EnemyState.Patrol;
-    private Vector3 lastKnownPlayerPosition; // プレイヤーの最後の既知の位置
+    [Header("プレイヤーの最後の既知の位置(ヒエラルキー上での編集禁止)")]
+    public Vector3 lastKnownPlayerPosition;
+
     private float investigateTimer = 0f; // 調査時間カウンター
     private float investigateDuration = 5f; // 調査する時間（秒）
 
 
 
-    [Header("NavMesh関連")]
-    NavMeshAgent navMeshAgent;
+    [Header("NavMesh関連(ヒエラルキー上での編集禁止)")]
+    public NavMeshAgent navMeshAgent;
 
     [Header("徘徊地点を見つける範囲(この値が狭すぎると徘徊地点が見つからず、広すぎるとNaveMeshの範囲外になるため、要調整が必要)")]
     [SerializeField] private float findPatrolPointRange = 10f;
@@ -164,7 +167,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] private float enemyDetectionRange = 100f;
 
     [Header("警戒範囲(プレイヤーとの距離)")]
-    [SerializeField] private float alertRange = 15f;
+    [SerializeField] public float alertRange = 15f;
 
 
     [Header("徘徊関連")]
@@ -215,14 +218,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
 
     [Header("プレイヤー発見時のパネル(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] GameObject playerFoundPanel;
+    [SerializeField] public GameObject playerFoundPanel;
 
 
 
 
     private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
- 
-    private bool isAlertMode = false;
+
+    [Header("プレイヤーが視野内にいるかを判定(ヒエラルキー上での編集禁止)")]
+    public bool isAlertMode = false;
 
 
     [Header("タグ・レイヤー関連")]
@@ -297,7 +301,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     }
 
     //プレイヤーが視野内にいるかをチェックする
-    private bool IsPlayerInFront()
+    public bool IsPlayerInFront()
     {
 
         if (targetPoint == null)
@@ -518,7 +522,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
     }
 
-    async void Update()
+    protected virtual async void Update()
     {
         if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) return;
 
@@ -560,7 +564,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     else
                     {
 
-                        //プレイヤーが視野内にいるが視線がない場合、警戒状態に移行
+                        //プレイヤーが視野内にいるが視線がない場合、警戒圏内状態に移行
                         currentState = EnemyState.Alert;
                         isAlertMode = true;
                         
@@ -572,14 +576,18 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 }
                 break;
 
-            //警戒状態
+            //警戒圏内状態
             case EnemyState.Alert:
                 animator.SetBool("isRun", false);
                 animator.SetBool("isWalk", IsMove);
                 navMeshAgent.speed = Speed;
 
+                Debug.Log("警戒圏内状態01_01");
+
                 if (IsPlayerInFront())
                 {
+                    Debug.Log("警戒圏内状態01_02");
+
                     //プレイヤーが視野内にいる場合、追従状態に移行
                     //一瞬だけ実行したい処理もここに記載する
                     currentState = EnemyState.Chase;
@@ -589,12 +597,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 }
                 else if (distance > alertRange)
                 {
+                    Debug.Log("警戒圏内状態01_03");
+
                     //プレイヤーが視野外の場合、通常徘徊に移行
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
                 {
+                    Debug.Log("警戒圏内状態01_04");
                     NextPosition();
                 }
                 break;
@@ -630,22 +641,28 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 animator.SetBool("isWalk", IsMove);
                 navMeshAgent.speed = Speed;
 
+                Debug.Log("調査状態01_01");
+
                 investigateTimer += Time.deltaTime;
                 if (IsPlayerInFront())
                 {
+                    Debug.Log("調査状態01_02");
                     //プレイヤーが視野内に戻った場合、追従状態へ移行
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
                 }
                 else if (investigateTimer >= investigateDuration || (navMeshAgent.remainingDistance < 0.5f && !navMeshAgent.pathPending))
                 {
+                    Debug.Log("調査状態01_03");
                     //調査時間が経過した場合、通常徘徊へ移行
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
                 }
                 else if (distance <= alertRange)
                 {
-                    //プレイヤーが視野内にいる場合、警戒状態へ移行
+                    Debug.Log("調査状態01_04");
+
+                    //プレイヤーが視野内にいる場合、警戒圏内状態へ移行
                     currentState = EnemyState.Alert;
                 }
                 break;
