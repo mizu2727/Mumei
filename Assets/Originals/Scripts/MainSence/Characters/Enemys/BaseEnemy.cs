@@ -542,7 +542,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         // ó‘Ô‘JˆÚ‚Æˆ—
         switch (currentState)
         {
-            //’Êíœpœj
+            //’Êíœpœjó‘Ô
             case EnemyState.Patrol:
                 animator.SetBool("isRun", false);
                 animator.SetBool("isWalk", IsMove);
@@ -558,6 +558,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         currentState = EnemyState.Chase;
                         isAlertMode = true;
                         lastKnownPlayerPosition = targetPoint.position;
+
+                        //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğÄ¶
+                        MusicController.Instance.audioClipnum = 0;
+                        MusicController.Instance.StopBGM();
+                        MusicController.Instance.audioClipnum = 1;
+                        MusicController.Instance.PlayBGM();
+
+                        //MusicController.Instance.StopBGM();
+                        //EnemyBGMController.Instance.PlayEnemyBGM();
 
                         playerFoundPanel.SetActive(true);
                     }
@@ -593,15 +602,30 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
 
+                    //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğÄ¶
+                    MusicController.Instance.audioClipnum = 0;
+                    MusicController.Instance.StopBGM();
+                    MusicController.Instance.audioClipnum = 1;
+                    MusicController.Instance.PlayBGM();
+
+                    //MusicController.Instance.StopBGM();
+                    //EnemyBGMController.Instance.PlayEnemyBGM();
+
                     playerFoundPanel.SetActive(true);
                 }
                 else if (distance > alertRange)
                 {
                     Debug.Log("Œx‰úŒ—“àó‘Ô01_03");
 
-                    //ƒvƒŒƒCƒ„[‚ª‹–ìŠO‚Ìê‡A’Êíœpœj‚ÉˆÚs
+                    //ƒvƒŒƒCƒ„[‚ª‹–ìŠO‚Ìê‡A’Êíœpœjó‘Ô‚ÉˆÚs
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
+
+                    //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğ’â~
+                    MusicController.Instance.audioClipnum = 1;
+                    MusicController.Instance.StopBGM();
+                    MusicController.Instance.audioClipnum = 0;
+                    MusicController.Instance.PlayBGM();
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
                 {
@@ -650,13 +674,29 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     //ƒvƒŒƒCƒ„[‚ª‹–ì“à‚É–ß‚Á‚½ê‡A’Ç]ó‘Ô‚ÖˆÚs
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
+
+                    //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğÄ¶
+                    MusicController.Instance.audioClipnum = 0;
+                    MusicController.Instance.StopBGM();
+                    MusicController.Instance.audioClipnum = 1;
+                    MusicController.Instance.PlayBGM();
                 }
                 else if (investigateTimer >= investigateDuration || (navMeshAgent.remainingDistance < 0.5f && !navMeshAgent.pathPending))
                 {
                     Debug.Log("’²¸ó‘Ô01_03");
-                    //’²¸ŠÔ‚ªŒo‰ß‚µ‚½ê‡A’Êíœpœj‚ÖˆÚs
+                    //’²¸ŠÔ‚ªŒo‰ß‚µ‚½ê‡A’Êíœpœjó‘Ô‚ÖˆÚs
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
+
+                    //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğ’â~(‚±‚±‚Ìˆ—‚ª—¬‚ê‚È‚¢)
+                    MusicController.Instance.audioClipnum = 1;
+                    MusicController.Instance.StopBGM();
+                    MusicController.Instance.audioClipnum = 0;
+                    MusicController.Instance.PlayBGM();
+
+                    //EnemyBGMController.Instance.StopEnemyBGM();
+                    //MusicController.Instance.PlayBGM();
+
                 }
                 else if (distance <= alertRange)
                 {
@@ -664,6 +704,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                     //ƒvƒŒƒCƒ„[‚ª‹–ì“à‚É‚¢‚éê‡AŒx‰úŒ—“àó‘Ô‚ÖˆÚs
                     currentState = EnemyState.Alert;
+
+                    //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğ’â~
+                    MusicController.Instance.audioClipnum = 1;
+                    MusicController.Instance.StopBGM();
+                    MusicController.Instance.audioClipnum = 0;
+                    MusicController.Instance.PlayBGM();
                 }
                 break;
         }

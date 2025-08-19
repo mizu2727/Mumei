@@ -75,14 +75,14 @@ public class HearingEnemy : BaseEnemy
                         currentState = EnemyState.Patrol;
                         isInvestigatingSound = false;
                         isAlertMode = false;
-                        Debug.Log($"[{gameObject.name}] ダッシュ音の調査終了、通常徘徊に戻る");
+                        Debug.Log($"[{gameObject.name}] ダッシュ音の調査終了、通常徘徊状態に戻る");
                     }
                     // プレイヤーが近くにいる場合、警戒状態に移行
                     else if (distanceToPlayer <= alertRange)
                     {
                         currentState = EnemyState.Alert;
                         isInvestigatingSound = false;
-                        Debug.Log($"[{gameObject.name}] 調査中にプレイヤーが近くにいる、警戒状態に移行");
+                        Debug.Log($"[{gameObject.name}] 調査中にプレイヤーが近くにいる、警戒状態状態に移行");
                     }
                 }
                 else
