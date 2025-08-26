@@ -203,6 +203,7 @@ public class MessageController : MonoBehaviour
 
                     //スペースキー押下で次のメッセージを書く
                     showTalkMessage.ShowGameTalkMessage(number);
+                    //Debug.Log("Player.instance.playerName" + Player.instance.playerName);
 
                     break;
 
@@ -586,6 +587,8 @@ public class MessageController : MonoBehaviour
         {
             //名前を保存
             inputPlayerNameField.text = playerName;
+
+            GameController.playerName = playerName;
 
             inputPlayerNameField.gameObject.SetActive(false);
 

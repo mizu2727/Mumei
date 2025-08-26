@@ -21,13 +21,16 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
     [Header("名前")]
-    [SerializeField] public string playerName;
+    //[SerializeField] public string playerName;
 
     [SerializeField]
     public string CharacterName
     {
-        get => playerName;
-        set => playerName = value;
+        get => GameController.playerName; 
+        set => GameController.playerName = value;
+
+        //get => playerName;
+        //set => playerName = value;
     }
 
     [Header("歩行速度")]
@@ -263,7 +266,10 @@ public class Player : MonoBehaviour, CharacterInterface
 
         if (playerIsBackRotate && (GameController.instance.gameModeStatus == GameModeStatus.Story)) PlayerTurn();
 
-        if (playerIsDead || PauseController.instance.isPause || Time.timeScale == 0 || isFallDown || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) return;
+        if (playerIsDead  || Time.timeScale == 0 || isFallDown || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) return;
+
+        //PauseControllerがないSceneでnullチェックエラーを回避するために、個別でわけている
+        if (PauseController.instance.isPause) return;
 
 
         //ダッシュ判定
@@ -415,13 +421,6 @@ public class Player : MonoBehaviour, CharacterInterface
     public bool PlayerIsBackRotate() 
     {
         return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-    }
-
-
-    public void DecidePlayewrName() 
-    {
-        //入力したプレイヤーの名前を格納
-        playerName　= MessageController.instance.inputPlayerNameField.text;
     }
 
     public void PlayerTurn() 

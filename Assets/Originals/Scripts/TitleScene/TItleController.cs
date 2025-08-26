@@ -34,6 +34,8 @@ public class TitleController : MonoBehaviour
 
     public void OnStartButtonClicked()
     {
+        //GameController.instance.playCount++;
+        GameController.playCount++;
         SceneManager.LoadScene(SceneName);        
     }
 
