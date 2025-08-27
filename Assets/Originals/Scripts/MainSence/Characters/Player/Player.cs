@@ -279,13 +279,35 @@ public class Player : MonoBehaviour, CharacterInterface
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
+        // カメラのTransformを取得
+        Transform cameraTransform = Camera.main.transform;
+
+        // カメラのforwardベクトルをXZ平面に投影（Y成分をゼロに）
+        Vector3 cameraForwardXZ = new Vector3(cameraTransform.forward.x, 0f, cameraTransform.forward.z).normalized;
+        Vector3 cameraRightXZ = new Vector3(cameraTransform.right.x, 0f, cameraTransform.right.z).normalized;
+
+
         //移動方向を計算
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        Vector3 move;
+
+        if (playerIsBackRotate && moveZ > 0)
+        {
+            // カメラが後ろを向いていて前進入力がある場合、カメラの逆方向（プレイヤーの前方）に進む
+            move = cameraRightXZ * moveX - cameraForwardXZ * moveZ;
+        }
+        else
+        {
+            // 通常時（カメラの向きに沿って移動）
+            move = cameraRightXZ * moveX + cameraForwardXZ * moveZ;
+        }
 
         // isGrounded は地面にいるかどうかを判定する
         if (characterController.isGrounded)
         {
             moveDirection = move * speed;
+
+            // 接地時にY方向の移動をリセット
+            moveDirection.y = 0f;
         }
         else
         {
@@ -349,8 +371,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         //後ろを向いているかを判定
-        if (PlayerIsBackRotate()) playerIsBackRotate = true;
-        else playerIsBackRotate = false;
+        playerIsBackRotate = PlayerIsBackRotate();
 
     }
 
@@ -431,11 +452,6 @@ public class Player : MonoBehaviour, CharacterInterface
             if (transform.rotation.y < 0) transform.Rotate(new Vector3(0, 180f, 0) * (Time.deltaTime * 0.5f));
             else playerIsBackRotate = false;
         }
-        else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
-        {
-            //プレイヤーの向きを180度回転させる
-            transform.Rotate(0, 180, 0);
-        } 
     }
 
     public void PlayerWarp(float x, float y, float z) 

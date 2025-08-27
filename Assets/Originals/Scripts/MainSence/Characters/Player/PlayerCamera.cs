@@ -34,7 +34,9 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] private float xRotationRange = 45f ;
 
     // 前フレームの後ろを向く状態を保持
-    private bool wasTrunLastFrame = false; 
+    private bool wasTrunLastFrame = false;
+
+    private Transform playerTransform; // プレイヤーのTransform
 
 
 
@@ -47,6 +49,8 @@ public class PlayerCamera : MonoBehaviour
         //マウス旋回速度のSliderの最大値を設定
         if (mouseSensitivitySlider) mouseSensitivitySlider.maxValue = maxLookSensitivity;
 
+        // プレイヤーのTransformを取得
+        playerTransform = Player.instance.transform;
 
         wasTrunLastFrame = false;
     }
@@ -55,30 +59,41 @@ public class PlayerCamera : MonoBehaviour
     {
         if (Player.instance.isFallDown) return;
 
+        // マウス感度をスライダーから取得
+        if (mouseSensitivitySlider)
+        {
+            lookSensitivity = mouseSensitivitySlider.value;
+            if (lookSensitivity > maxLookSensitivity) lookSensitivity = maxLookSensitivity;
+        }
+
 
         //Ctrl押下で視点が後ろを向く
-        if(GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.playerIsBackRotate && !wasTrunLastFrame) 
+        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.playerIsBackRotate) 
         {
-            //プレイヤーが後ろを向いている時はマウス感度を0にする
-            lookSensitivity = 0f;
-            mouseSensitivitySlider.value = 0f;
+            if (!wasTrunLastFrame)
+            {
+                // カメラを即座に180度回転（プレイヤーの背後）
+                transform.rotation = Quaternion.LookRotation(-playerTransform.forward, Vector3.up);
+                // マウス入力を無効化
+                lookSensitivity = 0f; 
 
-            //プレイヤーと一緒にカメラを180度回転させる
-            Player.instance.PlayerTurn();
+                if (mouseSensitivitySlider) mouseSensitivitySlider.value = 0f;
+                wasTrunLastFrame = true;
+            }
         }
-        else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.playerIsBackRotate && mouseSensitivitySlider.value == 0f && wasTrunLastFrame)
+        else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.playerIsBackRotate && wasTrunLastFrame)
         {
-            //プレイヤーが前を向いている時はマウス感度を元に戻す
-            mouseSensitivitySlider.value = maxLookSensitivity / 2f;
+            // カメラをプレイヤーの前方に戻す
+            transform.rotation = Quaternion.LookRotation(playerTransform.forward, Vector3.up);
+            if (mouseSensitivitySlider)
+            {
+                mouseSensitivitySlider.value = maxLookSensitivity / 2f;
+                lookSensitivity = mouseSensitivitySlider.value;
+            }
+            wasTrunLastFrame = false;
         }
 
-        wasTrunLastFrame = Player.instance.playerIsBackRotate;
-
-        if (maxLookSensitivity <= mouseSensitivitySlider.value) mouseSensitivitySlider.value = maxLookSensitivity;
-
-        lookSensitivity = mouseSensitivitySlider.value;
-
-        if ( 0 < lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
+        if ( 0 < lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.PlayerIsBackRotate()) 
         {
             //マウスの移動
             lookX =
@@ -95,23 +110,15 @@ public class PlayerCamera : MonoBehaviour
             //Mouse Y2…Axis欄で"5th axis (Joysticks)"を選択。コントローラーでは右スティックになる
             lookY2 =
                 Input.GetAxis("Mouse Y2") * lookSensitivity * Time.deltaTime;
+
+            xRotation -= (lookY + lookY2);
+            xRotation = Mathf.Clamp(xRotation, -xRotationRange, xRotationRange);
+
+            // カメラの上下回転
+            transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+            // プレイヤーの左右回転（カメラの親オブジェクト）
+            playerTransform.Rotate(Vector3.up * (lookX + lookX2));
         }
-        
-
-
-        xRotation -= lookY;
-
-        xRotation -= lookY2;
-
-        //視点の回転範囲を-A度からB度に制限する
-        xRotation = Mathf.Clamp(xRotation, -xRotationRange, xRotationRange);
-
-        //回転角度を更新
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-
-        //このスクリプトの親オブジェクトを回転させる
-        transform.parent.Rotate(Vector3.up * lookX);
-
-        transform.parent.Rotate(Vector3.up * lookX2);
     }
 }
