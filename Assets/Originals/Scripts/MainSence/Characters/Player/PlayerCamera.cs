@@ -72,8 +72,13 @@ public class PlayerCamera : MonoBehaviour
         {
             if (!wasTrunLastFrame)
             {
+                //プレイヤーの頭で視界の邪魔になるのを防ぐためにカメラの位置を後方部分へ変更する
+                transform.localPosition = new Vector3(0, 1.5f, -0.25f);
+                
+
                 // カメラを即座に180度回転（プレイヤーの背後）
                 transform.rotation = Quaternion.LookRotation(-playerTransform.forward, Vector3.up);
+
                 // マウス入力を無効化
                 lookSensitivity = 0f; 
 
@@ -83,10 +88,15 @@ public class PlayerCamera : MonoBehaviour
         }
         else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.playerIsBackRotate && wasTrunLastFrame)
         {
+            
+
             // カメラをプレイヤーの前方に戻す
             transform.rotation = Quaternion.LookRotation(playerTransform.forward, Vector3.up);
             if (mouseSensitivitySlider)
             {
+                //プレイヤーの頭で視界の邪魔になるのを防ぐためにカメラの位置を前方部分へ変更する
+                transform.localPosition = new Vector3(0, 1.5f, 0.1f);
+
                 mouseSensitivitySlider.value = maxLookSensitivity / 2f;
                 lookSensitivity = mouseSensitivitySlider.value;
             }

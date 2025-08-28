@@ -282,7 +282,7 @@ public class Player : MonoBehaviour, CharacterInterface
         // カメラのTransformを取得
         Transform cameraTransform = Camera.main.transform;
 
-        // カメラのforwardベクトルをXZ平面に投影（Y成分をゼロに）
+        // カメラのforwardベクトルをXZ平面に投影
         Vector3 cameraForwardXZ = new Vector3(cameraTransform.forward.x, 0f, cameraTransform.forward.z).normalized;
         Vector3 cameraRightXZ = new Vector3(cameraTransform.right.x, 0f, cameraTransform.right.z).normalized;
 
@@ -290,10 +290,15 @@ public class Player : MonoBehaviour, CharacterInterface
         //移動方向を計算
         Vector3 move;
 
-        if (playerIsBackRotate && moveZ > 0)
+
+        if (playerIsBackRotate)
         {
-            // カメラが後ろを向いていて前進入力がある場合、カメラの逆方向（プレイヤーの前方）に進む
-            move = cameraRightXZ * moveX - cameraForwardXZ * moveZ;
+            // プレイヤーの体の向きを基準に移動方向を計算
+            Vector3 playerForwardXZ = new Vector3(transform.forward.x, 0f, transform.forward.z).normalized;
+            Vector3 playerRightXZ = new Vector3(transform.right.x, 0f, transform.right.z).normalized;
+
+            // プレイヤーの前方/後方（moveZ）と右/左（moveX）を基に移動ベクトルを計算
+            move = playerRightXZ * moveX + playerForwardXZ * moveZ;
         }
         else
         {
