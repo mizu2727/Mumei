@@ -1,5 +1,7 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEditorInternal.Profiling.Memory.Experimental;
+using UnityEngine;
+using static SO_Item;
 
 
 //アイテムDB
@@ -76,22 +78,48 @@ public class SO_Item : ScriptableObject
 
 
     //アイテム追加
-    public void AddItem(Item newItem)
+    public void AddUseItem(Item newItem)
     {
+        
         if (!itemList.Exists(item => item.id == newItem.id))
         {
             //アイテム新規追加
             ItemData itemData = new ItemData(newItem);
             itemList.Add(itemData);
-            Debug.Log($"アイテム {newItem.id} を+ {newItem.count}新規追加");
+            Debug.Log($"アイテムitem {newItem.id} を+ {newItem.count}新規追加");
+
+            Inventory.instance.GetItem(itemData.id, itemData.icon, itemData.itemName, itemData.count);
         }
         else 
         {
             // 既存アイテムの数を追加更新
             var updateItem = itemList.Find(item => item.id == newItem.id);
             updateItem.count += newItem.count;
-            Debug.Log($"アイテム {updateItem.id} の数を追加更新。所持数： {updateItem.count}");
+            Debug.Log($"アイテムitem {updateItem.id} の数を追加更新。所持数： {updateItem.count}");
+            Inventory.instance.GetItem(updateItem.id, updateItem.icon, updateItem.itemName, updateItem.count);
         }
+    }
+
+    /// <summary>
+    /// アイテムを削除する
+    /// </summary>
+    /// <param name="id">アイテムid</param>
+    /// <param name="count">アイテムの個数</param>
+    public void ReduceUseItem(int id, int count) 
+    {
+        if (itemList.Exists(item => item.id == id)) 
+        {
+            // 既存アイテムの数を減少更新
+            var updateItem = itemList.Find(item => item.id == id);
+            updateItem.count = count;
+            Debug.Log($"アイテムitem {updateItem.id} の数を削除更新。所持数： {updateItem.count}");
+
+            if (updateItem.count == 0) 
+            {
+                Debug.Log("updateItem.count = 0");
+            }
+        }
+        Debug.Log("ReduceUseItemの処理終了");
     }
 
     //ドキュメント・ミステリーアイテム追加
@@ -114,7 +142,7 @@ public class SO_Item : ScriptableObject
                 PauseController.instance.ChangeDocumentNameText(itemData.itemName);
                 PauseController.instance.ChangeDocumentExplanationText(itemData.description);
             }
-            else 
+            else
             {
                 PauseController.instance.ChangeMysteryItemTexts(itemData.itemName ,itemData.description);
 

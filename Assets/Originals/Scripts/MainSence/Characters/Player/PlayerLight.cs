@@ -25,11 +25,11 @@ public class PlayerLight : MonoBehaviour
 
     }
 
-    //右クリックでライト切り替え
+    //F・1キーでライト切り替え
     //Light…"joystick button 0"を割り当て。コントローラーではAボタンになる
     bool PlayerIsLight()
     {
-        return Input.GetMouseButtonDown(1)　|| Input.GetButtonDown("Light");
+        return Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1) || Input.GetButtonDown("Light");
     }
 
     void TranceCamera()

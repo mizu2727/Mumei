@@ -101,24 +101,23 @@ public class PlayerInteract : MonoBehaviour
 
                         Debug.Log($"拾ったアイテムのタイプ: {item.itemType}");
 
-                        MusicController.Instance.PlayAudioSE(audioSourceSE,getItemSE);
-
                         if ((item.itemType == ItemType.Document) 
                             || (item.itemType == ItemType.MysteryItem))
                         {
                             sO_Item.AddDocumentORMysteryItem(item);
                             Debug.Log("Player側SO_ItemのインスタンスID: " + sO_Item.GetInstanceID());
-
+                            DestroyItem(pickUpItem);
                         }
-                        else
+                        else if (item.itemType == ItemType.UseItem)
                         {
-                            sO_Item.AddItem(item);
+                            if ((Inventory.instance.keepItemId == 99999) || (Inventory.instance.keepItemId == item.id)) 
+                            {
+                                sO_Item.AddUseItem(item);
+                                DestroyItem(pickUpItem);
+                            } 
+                            else Debug.Log("アイテムitemを入れ替えできません。");
                         }
 
-                        Destroy(pickUpItem);
-
-                        // アイテムを拾ったらレイヤーをリセット
-                        ResetLayer(); 
                     }
                     else 
                     {
@@ -291,5 +290,19 @@ public class PlayerInteract : MonoBehaviour
             // Ray が何にも当たっていない場合、強調を解除
             ResetLayer();
         }
+    }
+
+    /// <summary>
+    /// 入手アイテムのゲームオブジェクトをシーンのフィールド上から削除する
+    /// </summary>
+    /// <param name="pickUpItem">入手アイテム</param>
+    void DestroyItem(GameObject pickUpItem) 
+    {
+        MusicController.Instance.PlayAudioSE(audioSourceSE, getItemSE);
+
+        Destroy(pickUpItem);
+
+        // アイテムを拾ったらレイヤーをリセット
+        ResetLayer();
     }
 }
