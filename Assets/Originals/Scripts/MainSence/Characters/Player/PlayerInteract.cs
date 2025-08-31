@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -75,7 +77,7 @@ public class PlayerInteract : MonoBehaviour
         HighlightObject(); 
     }
 
-    void Interact() 
+    async void Interact() 
     {
         RaycastHit raycastHit;
 
@@ -110,12 +112,20 @@ public class PlayerInteract : MonoBehaviour
                         }
                         else if (item.itemType == ItemType.UseItem)
                         {
-                            if ((Inventory.instance.keepItemId == 99999) || (Inventory.instance.keepItemId == item.id)) 
+                            if ((Inventory.instance.keepItemId == 99999) || (Inventory.instance.keepItemId == item.id))
                             {
                                 sO_Item.AddUseItem(item);
                                 DestroyItem(pickUpItem);
-                            } 
-                            else Debug.Log("アイテムitemを入れ替えできません。");
+                            }
+                            else 
+                            {
+                                //インベントリのアイテムがいっぱいの場合の処理
+                                MessageController.instance.ShowInventoryMessage(1);
+
+                                await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+                                MessageController.instance.ResetMessage();
+                            }
                         }
 
                     }

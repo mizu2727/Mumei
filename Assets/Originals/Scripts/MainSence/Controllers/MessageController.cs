@@ -43,6 +43,9 @@ public class MessageController : MonoBehaviour
     [Header("ゴール(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public Goal goal;
 
+    [Header("インベントリメッセージ(Prefabをアタッチ)")]
+    [SerializeField] private InventoryMessage inventoryMessage;
+
     [Header("メッセージパネル判定")]
     public bool isMessagePanel = false;
 
@@ -576,6 +579,18 @@ public class MessageController : MonoBehaviour
     {
         Debug.Log("ゴールメッセージスタート");
         messageText.text = goalMessage.goalMessage[number].message;
+        isMessagePanel = true;
+        ViewMessagePanel();
+    }
+
+    /// <summary>
+    /// インベントリメッセージを表示
+    /// </summary>
+    /// <param name="number">メッセージ番号</param>
+    public void ShowInventoryMessage(int number) 
+    {
+        Debug.Log("インベントリメッセージスタート"); 
+        messageText.text = inventoryMessage.inventoryMessage[number].message;
         isMessagePanel = true;
         ViewMessagePanel();
     }
