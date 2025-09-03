@@ -1,8 +1,10 @@
-//廃止→再利用予定
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static SO_Item;
+using UnityEngine.AddressableAssets;
+
 
 public class Inventory : MonoBehaviour
 {
@@ -27,6 +29,24 @@ public class Inventory : MonoBehaviour
     //アイテム未所持時のID(アイテムインベントリ1枠分用)
     private const int noneItemId = 99999;
 
+    //アイテムのプレハブのAddressables名
+    private string keepItemPrefabPath;
+
+    //アイテムのプレハブのAddressables名(空白)
+    private const string noneItemPrefabPath = "";
+
+    //アイテム生成位置
+    private Vector3 keepItemSpawnPosition;
+
+    //アイテム生成位置(デフォルト)
+    private Vector3 defaultItemSpawnPosition = new Vector3(0, 0, 0);
+
+    //アイテムの回転数値
+    private Quaternion keepItemSpawnRotation;
+
+    //アイテムの回転数値(デフォルト)
+    private Quaternion defaultItemSpawnRotation = Quaternion.identity;
+
     //アイテム所持数管理(アイテムインベントリ複数枠分用)
     private readonly List<int> countList = new();
 
@@ -38,8 +58,10 @@ public class Inventory : MonoBehaviour
     //アイテムリストのインデックス番号
     int checkIndex;
 
-    private Player player;
 
+
+
+    private Player player;
 
     private void Awake()
     {
@@ -58,11 +80,7 @@ public class Inventory : MonoBehaviour
     void Start()
     {
         player = GetComponent<Player>();
-        keepItemId = noneItemId;
-        keepItemCount = minKeepItemCount;
-        useItemCountText.text = keepItemCount.ToString();
-        useItemImage.sprite = null;
-        useItemImage.color = new Color(255, 255, 255, 0.05f);
+        ResetInventoryItem();
     }
 
     void Update()
@@ -80,13 +98,16 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// インベントリ内にアイテムを追加
+    /// インベントリにアイテムを追加
     /// </summary>
     /// <param name="id">アイテムid</param>
+    /// <param name="path">アイテムのパス</param>
+    /// <param name="position">アイテムの生成位置</param>
+    /// <param name="rotation">アイテムの回転</param>
     /// <param name="icon">アイテムの画像</param>
-    /// <param name="itemName">アイテムの名前</param>
-    /// <param name="count">アイテムの個数</param>
-    public void GetItem(int id, Sprite icon, string itemName, int count)
+    /// <param name="itemName">アイテム名</param>
+    /// <param name="count">アイテム個数</param>
+    public void GetItem(int id, string path, Vector3 position, Quaternion rotation, Sprite icon, string itemName, int count)
     {
         //リストの中にアイテムが何番目に存在するのかを確認
         //存在しない場合は-1を返す
@@ -101,7 +122,9 @@ public class Inventory : MonoBehaviour
             idList.Add(id);
 
             keepItemId = id;
-
+            keepItemPrefabPath = path;
+            keepItemSpawnPosition = position;
+            keepItemSpawnRotation = rotation;
             useItemImage.sprite = icon;
             useItemImage.color = new Color(255, 255, 255, 1);
 
@@ -112,6 +135,7 @@ public class Inventory : MonoBehaviour
 
             Debug.Log("id:" + id + "のアイテムitemを" + count + "個新規追加");
             Debug.Log("keepItemCount(使用アイテム):" + keepItemCount);
+            
         }
         else
         {
@@ -119,6 +143,7 @@ public class Inventory : MonoBehaviour
             countList[checkIndex] += count;
             keepItemCount = count;
             useItemCountText.text = count.ToString();
+
 
             Debug.Log("id:" + id + "のアイテムitemを" + count + "個へ増加");
 
@@ -137,23 +162,52 @@ public class Inventory : MonoBehaviour
             --keepItemCount;
             useItemCountText.text = keepItemCount.ToString();
 
+            ActivationUseItem(keepItemId);
+
             sO_Item.ReduceUseItem(keepItemId, keepItemCount);
+            
 
             Debug.Log("id:" + keepItemId + "のkeepItemCount(使用アイテム(減少)):" + keepItemCount);
 
             if (keepItemCount == minKeepItemCount)
             {
-                keepItemId = noneItemId;
-                useItemImage.sprite = null;
-                useItemImage.color = new Color(255, 255, 255, 0.05f);
+                ResetInventoryItem();
             }
         }
         else 
         {
             Debug.Log("使用できるアイテムitemがないようだ");
         }
-        
     }
 
-    
+    /// <summary>
+    /// 使用したアイテムのIDによって、それぞれの処理を行う
+    /// </summary>
+    /// <param name="keepItemId">アイテムID</param>
+    void ActivationUseItem(int keepItemId) 
+    {
+        //テスト用使用アイテム①
+        if (keepItemId == 995) 
+        {
+            //Addressablesのアドレス名を使用してプレハブステージ上にを生成
+            Addressables.InstantiateAsync(keepItemPrefabPath, Player.instance.transform.position + keepItemSpawnPosition, keepItemSpawnRotation);
+        }
+
+    }
+
+    /// <summary>
+    /// インベントリをリセットする
+    /// </summary>
+    void ResetInventoryItem() 
+    {
+        keepItemId = noneItemId;
+        keepItemCount = minKeepItemCount;
+        useItemCountText.text = keepItemCount.ToString();
+        keepItemPrefabPath = noneItemPrefabPath;
+        keepItemSpawnPosition = defaultItemSpawnPosition;
+        keepItemSpawnRotation = defaultItemSpawnRotation;
+        useItemImage.sprite = null;
+        useItemImage.color = new Color(255, 255, 255, 0.05f);
+        Debug.Log("インベントリ内をリセット");
+    }
 }

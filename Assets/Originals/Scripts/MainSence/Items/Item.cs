@@ -18,6 +18,10 @@ public class Item : MonoBehaviour
 {
     public int id;             // アイテムのID
     public GameObject prefab;  // アイテムのプレハブ
+    [TextArea]
+    public string prefabPath;　//アイテムのプレハブのAddressables名
+    public Vector3 spawnPosition; //プレイヤーの位置からアイテムを生成したい位置
+    public Quaternion spawnRotation; //アイテムの回転数値
     public Sprite icon;        // アイテムのアイコン画像
     public ItemType itemType;  // アイテムの種類
     public string itemName;    // アイテムの名前

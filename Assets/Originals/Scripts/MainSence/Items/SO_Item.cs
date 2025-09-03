@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static SO_Item;
+using static UnityEditor.Progress;
 
 
 //アイテムDB
@@ -16,6 +19,10 @@ public class SO_Item : ScriptableObject
     {
         public int id;             // アイテムのID
         public GameObject prefab;  // アイテムのプレハブ
+        [TextArea]
+        public string prefabPath; //アイテムのプレハブのAddressables名
+        public Vector3 spawnPosition; //プレイヤーの位置からアイテムを生成したい位置
+        public Quaternion spawnRotation; //アイテムの回転数値
         public Sprite icon;        // アイテムのアイコン画像
         public ItemType itemType;  // アイテムの種類
         public string itemName;    // アイテムの名前
@@ -28,6 +35,9 @@ public class SO_Item : ScriptableObject
         {
             id = item.id;
             prefab = item.prefab;
+            prefabPath = item.prefabPath;
+            spawnPosition = item.spawnPosition;
+            spawnRotation = item.spawnRotation;
             icon = item.icon;
             itemType = item.itemType;
             itemName = item.itemName;
@@ -88,7 +98,7 @@ public class SO_Item : ScriptableObject
             itemList.Add(itemData);
             Debug.Log($"アイテムitem {newItem.id} を+ {newItem.count}新規追加");
 
-            Inventory.instance.GetItem(itemData.id, itemData.icon, itemData.itemName, itemData.count);
+            Inventory.instance.GetItem(itemData.id, itemData.prefabPath, itemData.spawnPosition, itemData.spawnRotation, itemData.icon, itemData.itemName, itemData.count);
         }
         else 
         {
@@ -96,7 +106,7 @@ public class SO_Item : ScriptableObject
             var updateItem = itemList.Find(item => item.id == newItem.id);
             updateItem.count += newItem.count;
             Debug.Log($"アイテムitem {updateItem.id} の数を追加更新。所持数： {updateItem.count}");
-            Inventory.instance.GetItem(updateItem.id, updateItem.icon, updateItem.itemName, updateItem.count);
+            Inventory.instance.GetItem(updateItem.id, updateItem.prefabPath, updateItem.spawnPosition, updateItem.spawnRotation, updateItem.icon, updateItem.itemName, updateItem.count);
         }
     }
 
