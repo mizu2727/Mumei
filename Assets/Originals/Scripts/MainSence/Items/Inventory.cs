@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 using static SO_Item;
-using UnityEngine.AddressableAssets;
 
 
 public class Inventory : MonoBehaviour
@@ -189,8 +190,12 @@ public class Inventory : MonoBehaviour
         //テスト用使用アイテム①
         if (keepItemId == 995) 
         {
-            //Addressablesのアドレス名を使用してプレハブステージ上にを生成
-            Addressables.InstantiateAsync(keepItemPrefabPath, Player.instance.transform.position + keepItemSpawnPosition, keepItemSpawnRotation);
+            // ローカル座標をワールド座標に変換
+            Vector3 worldPosition = Player.instance.transform.TransformPoint(keepItemSpawnPosition);
+            Quaternion worldRotation = Player.instance.transform.rotation * keepItemSpawnRotation;
+
+            // Addressablesを使用してプレハブをステージ上に非同期生成
+            Addressables.InstantiateAsync(keepItemPrefabPath, worldPosition, worldRotation);
         }
 
     }
@@ -208,6 +213,5 @@ public class Inventory : MonoBehaviour
         keepItemSpawnRotation = defaultItemSpawnRotation;
         useItemImage.sprite = null;
         useItemImage.color = new Color(255, 255, 255, 0.05f);
-        Debug.Log("インベントリ内をリセット");
     }
 }
