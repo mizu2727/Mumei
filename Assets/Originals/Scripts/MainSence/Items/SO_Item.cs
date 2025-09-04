@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using System.IO;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static SO_Item;
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditorInternal.Profiling.Memory.Experimental;
 using static UnityEditor.Progress;
+#endif
 
 
 //ƒAƒCƒeƒ€DB

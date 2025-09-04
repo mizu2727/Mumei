@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static GameController;
 
 public class PlayerLight : MonoBehaviour
@@ -10,14 +11,74 @@ public class PlayerLight : MonoBehaviour
     [Header("ライト(ヒエラルキー上からアタッチすること)")]
     public GameObject playerHasLight;
 
+    /// <summary>
+    /// エラー防止用に追加。シーンがロードされた際にカメラ参照を更新するために、SceneManager.sceneLoaded イベントを登録
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// エラー防止用に追加。メモリリークを防ぐため、シーン遷移イベントのリスナーを削除
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// エラー防止用に追加。シーンをロード
+    /// </summary>
+    /// <param name="scene">シーン名</param>
+    /// <param name="mode">シーンモード</param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        //シーン遷移後にカメラを再設定
+        UpdateCameraReference(); 
+    }
+
+    /// <summary>
+    /// エラー防止用に追加。シーン遷移や初期化時にカメラのTransformを動的に取得
+    /// </summary>
+    void UpdateCameraReference()
+    {
+        // プレイヤーの子オブジェクトからカメラを取得
+        Camera playerCamera = Player.instance.GetComponentInChildren<Camera>();
+        if (playerCamera != null)
+        {
+            cameraTransform = playerCamera.transform;
+        }
+        else
+        {
+            Debug.LogError("No Camera found as a child of the Player!");
+        }
+    }
+
     private void Start()
     {
         playerHasLight.SetActive(false);
         Player.instance.IsLight = false;
+
+        // シーン開始時にカメラを再取得
+        UpdateCameraReference();
     }
 
     void Update()
     {
+        if (cameraTransform == null)
+        {
+            Debug.LogError("cameraTransform is null in Update!");
+            return;
+        }
+
+        //ゲームプレイモード以外の場合、強制的にライトをオフにする
+        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
+        {
+            playerHasLight.SetActive(false);
+            Player.instance.IsLight = false;
+        }
+
         TranceCamera();
 
         TurnOnAndOfLight();
@@ -25,13 +86,20 @@ public class PlayerLight : MonoBehaviour
 
     }
 
-    //F・1キーでライト切り替え
-    //Light…"joystick button 0"を割り当て。コントローラーではAボタンになる
+    /// <summary>
+    /// ライトボタンを押下しているかを判定する
+    /// ライト切り替え…F・1キー
+    /// Light…"joystick button 0"を割り当てており、コントローラーではAボタンになる
+    /// </summary>
+    /// <returns>trueでライトボタンを押下</returns>
     bool PlayerIsLight()
     {
         return Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1) || Input.GetButtonDown("Light");
     }
 
+    /// <summary>
+    /// カメラの座標・角度を追従する
+    /// </summary>
     void TranceCamera()
     {
         //座標追従
@@ -40,8 +108,14 @@ public class PlayerLight : MonoBehaviour
         this.transform.rotation = Quaternion.Slerp(this.transform.rotation, cameraTransform.rotation, 0.5f); 
     }
 
+    /// <summary>
+    /// ライトを点灯/消灯する
+    /// </summary>
     void TurnOnAndOfLight() 
     {
+        // プレイヤーの子オブジェクトからカメラを取得
+        Camera playerCamera = Player.instance.GetComponentInChildren<Camera>();
+
         if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
         {
             if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.isPause && Time.timeScale != 0)

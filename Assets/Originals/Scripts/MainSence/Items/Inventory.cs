@@ -81,6 +81,8 @@ public class Inventory : MonoBehaviour
     void Start()
     {
         player = GetComponent<Player>();
+        //Addressables‚ğ‰Šú‰»
+        Addressables.InitializeAsync();
         ResetInventoryItem();
     }
 
