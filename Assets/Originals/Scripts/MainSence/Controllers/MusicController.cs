@@ -220,6 +220,11 @@ public class MusicController : MonoBehaviour
     // SE‚ğˆê’â~
     public void PauseSE(AudioSource audioSource, AudioClip audioClip)
     {
+        if (audioSource == null || audioClip == null)
+        {
+            Debug.LogWarning("AudioSource or AudioClip is null in PauseSE");
+            return;
+        }
         audioSource.clip = audioClip;
         audioSource.Pause();
         Debug.Log("SEˆê’â~");
@@ -228,6 +233,11 @@ public class MusicController : MonoBehaviour
     // SE‚Ìˆê’â~‰ğœ
     public void UnPauseSE(AudioSource audioSource, AudioClip audioClip)
     {
+        if (audioSource == null || audioClip == null)
+        {
+            Debug.LogWarning("AudioSource or AudioClip is null in UnPauseSE");
+            return;
+        }
         audioSource.clip = audioClip;
         audioSource.UnPause();
         Debug.Log("SEˆê’â~‰ğœ");

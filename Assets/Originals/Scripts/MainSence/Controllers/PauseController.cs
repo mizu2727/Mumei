@@ -71,6 +71,7 @@ public class PauseController : MonoBehaviour
     [Header("Input Actions")]
     public GameInput gameInput;
 
+
     private void Awake()
     {
         // シングルトンの設定
@@ -93,15 +94,41 @@ public class PauseController : MonoBehaviour
         gameInput.Enable(); 
     }
 
+    /// <summary>
+    /// Playerの効果音が鳴らないバグを防止用。Input Systemを有効にする
+    /// </summary>
     private void OnEnable()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
         gameInput.Enable();
     }
 
+    /// <summary>
+    /// Playerの効果音が鳴らないバグを防止用。Input Systemとシーン遷移のコールバックを無効にする
+    /// </summary>
     private void OnDisable()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         gameInput.Disable();
     }
+
+    /// <summary>
+    /// Playerの効果音が鳴らないバグを防止用。シーン遷移時にPlayer参照を更新する
+    /// </summary>
+    /// <param name="scene">シーン名</param>
+    /// <param name="mode">シーンモード</param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (Player.instance != null)
+        {
+            player = Player.instance;
+        }
+        else
+        {
+            Debug.LogWarning("Player instance is null in scene: " + scene.name);
+        }
+    }
+
 
 
     private void Start()
@@ -174,11 +201,22 @@ public class PauseController : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
 
         MusicController.Instance.PauseBGM();
-        MusicController.Instance.PauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
+
+        if (Player.instance != null && Player.instance.audioSourceSE != null)
+        {
+            MusicController.Instance.PauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
+        }
+        else
+        {
+            Debug.LogWarning("Player or AudioSource is null in ViewPausePanel");
+        }
 
         for (int i = 0; i < baseEnemy.Length; i++) 
         {
-            if(baseEnemy[i] != null) MusicController.Instance.PauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
+            if (baseEnemy[i] != null && baseEnemy[i].audioSourceSE != null)
+            {
+                MusicController.Instance.PauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
+            }
         }
 
         
