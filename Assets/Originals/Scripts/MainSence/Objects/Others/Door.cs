@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class Door : MonoBehaviour
 {
@@ -21,11 +22,15 @@ public class Door : MonoBehaviour
     [Header("ドア間との距離を測定したいオブジェクトをアタッチ(ヒエラルキー上のプレイヤーをアタッチすること)")]
     [SerializeField] public Transform targetPoint;
 
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
 
     [Header("サウンド関連")]
     private AudioSource audioSourceSE;//Door専用のAudioSource
     [SerializeField] private AudioClip openSE;
+    private readonly int openSEid = 6; // ドアを開けるSEのID
     [SerializeField] private AudioClip closeSE;
+    private readonly int closeSEid = 5; // ドアを閉めるSEのID
 
     [Header("サウンドの距離関連(要調整)")]
     [SerializeField] private float maxSoundDistance = 10f; // 音量が最大になる距離
@@ -33,9 +38,63 @@ public class Door : MonoBehaviour
     [SerializeField] private float maxVolume = 1.0f; // 最大音量
     [SerializeField] private float minVolume = 0.0f; // 最小音量
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeAudioSource();
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        // AudioSourceの取得と検証
+        if (audioSourceSE == null || !audioSourceSE)
+        {
+            if (MusicController.Instance != null)
+            {
+                audioSourceSE = MusicController.Instance.GetAudioSource();
+                if (audioSourceSE != null)
+                {
+                    audioSourceSE.playOnAwake = false;
+                }
+                else
+                {
+                    Debug.LogError("MusicControllerからAudioSourceを取得できませんでした。");
+                }
+            }
+            else
+            {
+                Debug.LogError("MusicController.Instanceが見つかりません。");
+            }
+        }
+    }
+
     private void Start()
     {
-        audioSourceSE = MusicController.Instance.GetAudioSource();
+        // AudioSourceの初期化
+        InitializeAudioSource();
     }
 
     public void DoorSystem() 

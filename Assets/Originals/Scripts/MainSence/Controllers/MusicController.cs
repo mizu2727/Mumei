@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class MusicController : MonoBehaviour
 {
@@ -41,20 +42,29 @@ public class MusicController : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         audioSourceBGM = GetComponent<AudioSource>();
-        //if (audioSourceBGM == null)
-        //{
-        //    audioSourceBGM = gameObject.AddComponent<AudioSource>();
-        //}
-        //audioClipBGM = GetComponent<AudioClip>();
 
 
-        //audioSourceEnemyBGM = GetComponent<AudioSource>();
-        //if (audioSourceEnemyBGM == null)
-        //{
-        //    audioSourceEnemyBGM = gameObject.AddComponent<AudioSource>();
-        //}
+        if (audioSourceBGM == null)
+        {
+            Debug.LogWarning("AudioSourceBGM not found, adding one.");
+            audioSourceBGM = gameObject.AddComponent<AudioSource>();
+        }
+        Debug.Log($"MusicController initialized. Instance: {_instance}, GameObject: {gameObject.name}");
 
-        //audioClipEnemyBGM = GetComponent<AudioClip>();
+        // シーン遷移時のクリーンアップハンドラを登録
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // シーン遷移時に無効なAudioSourceをクリーンアップ
+        audioSourceSEList.RemoveAll(audioSource => audioSource == null || !audioSource.gameObject.activeInHierarchy);
+        Debug.Log($"シーン {scene.name} に遷移。audioSourceSEList の有効なAudioSource数: {audioSourceSEList.Count}");
     }
 
     void Start()
@@ -64,6 +74,9 @@ public class MusicController : MonoBehaviour
         audioClipnum = 0;
         PlayBGM();
     }
+
+
+
 
     // BGM再生
     public void PlayBGM()
@@ -151,10 +164,22 @@ public class MusicController : MonoBehaviour
     // 新しいAudioSourceを取得または作成
     public AudioSource GetAudioSource()
     {
-        var audioSource = gameObject.AddComponent<AudioSource>();
-        audioSource.playOnAwake = false;
-        audioSourceSEList.Add(audioSource);
-        return audioSource;
+        // 既存の有効なAudioSourceを探す
+        foreach (var audioSource in audioSourceSEList)
+        {
+            if (audioSource != null && audioSource.gameObject.activeInHierarchy)
+            {
+                Debug.Log($"既存の有効なAudioSourceを再利用: {audioSource.GetInstanceID()}");
+                return audioSource;
+            }
+        }
+
+        // 新しいAudioSourceを作成
+        var audioSourceNew = gameObject.AddComponent<AudioSource>();
+        audioSourceNew.playOnAwake = false;
+        audioSourceSEList.Add(audioSourceNew);
+        Debug.Log($"新しいAudioSourceを作成: {audioSourceNew.GetInstanceID()}");
+        return audioSourceNew;
     }
 
     // SE再生
@@ -164,14 +189,19 @@ public class MusicController : MonoBehaviour
         {
             if (audioClip != null)
             {
-                audioSource.clip = audioClip;
-                audioSource.loop = false;
-                audioSource.Play();
+                audioSource.clip = audioClip; // 効果音クリップを設定
+                audioSource.loop = false; // ループ再生を無効化
+                audioSource.Play(); // 効果音を再生
+                Debug.Log($"Playing SE: {audioClip.name} on AudioSource: {audioSource.GetInstanceID()}");
             }
             else
             {
                 Debug.LogWarning("[MusicController] audioClip が null です！");
             }
+        }
+        else
+        {
+            Debug.LogWarning($"[MusicController] AudioSource is null or debug mode is enabled (isDebug: {isDebug})");
         }
     }
 
@@ -220,9 +250,15 @@ public class MusicController : MonoBehaviour
     // SEを一時停止
     public void PauseSE(AudioSource audioSource, AudioClip audioClip)
     {
-        if (audioSource == null || audioClip == null)
+        if (audioSource == null)
         {
-            Debug.LogWarning("AudioSource or AudioClip is null in PauseSE");
+            Debug.LogWarning("PauseSE…audioSource :" + audioSource);
+            return;
+        }
+
+        if (audioClip == null)
+        {
+            Debug.LogWarning("PauseSE…audioClip :" + audioClip);
             return;
         }
         audioSource.clip = audioClip;
@@ -233,9 +269,15 @@ public class MusicController : MonoBehaviour
     // SEの一時停止解除
     public void UnPauseSE(AudioSource audioSource, AudioClip audioClip)
     {
-        if (audioSource == null || audioClip == null)
+        if (audioSource == null)
         {
-            Debug.LogWarning("AudioSource or AudioClip is null in UnPauseSE");
+            Debug.LogWarning("UnPauseSE…audioSource :" + audioSource);
+            return;
+        }
+
+        if (audioClip == null)
+        {
+            Debug.LogWarning("UnPauseSE…audioClip :" + audioClip);
             return;
         }
         audioSource.clip = audioClip;

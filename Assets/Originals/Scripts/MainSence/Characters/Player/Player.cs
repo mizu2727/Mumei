@@ -170,11 +170,21 @@ public class Player : MonoBehaviour, CharacterInterface
 
     Vector3 moveDirection = Vector3.zero;//移動方向
 
+    
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
     [Header("サウンド関連")]
     public AudioSource audioSourceSE; // プレイヤー専用のAudioSource
-    [SerializeField] private AudioClip walkSE;
-    [SerializeField] private AudioClip runSE;
-    public AudioClip currentSE;//現在再生中の効果音
+    //[SerializeField] private AudioClip walkSE;
+    //[SerializeField] private AudioClip runSE;
+
+    // 効果音のID（SO_SE の seList に対応）
+    private readonly int walkSEid = 0; // 歩行音のID
+    private readonly int runSEid = 1;  // ダッシュ音のID
+
+    [Header("現在再生中の効果音")]
+    public AudioClip currentSE;
 
     private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
 
@@ -212,6 +222,31 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeAudioSource();
+    }
 
     private void Start()
     {
@@ -235,8 +270,8 @@ public class Player : MonoBehaviour, CharacterInterface
         //プレイヤーの初期位置
         playerStartPosition = transform.position;
 
-        // MusicControllerからAudioSourceを取得
-        audioSourceSE = MusicController.Instance.GetAudioSource();
+        // AudioSourceの初期化
+        InitializeAudioSource();
 
         //スタミナ現在値の初期化
         stamina = maxStamina;
@@ -249,6 +284,32 @@ public class Player : MonoBehaviour, CharacterInterface
         playerIsBackRotate = false;
     }
 
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        // AudioSourceの取得と検証
+        if (audioSourceSE == null || !audioSourceSE)
+        {
+            if (MusicController.Instance != null)
+            {
+                audioSourceSE = MusicController.Instance.GetAudioSource();
+                if (audioSourceSE != null)
+                {
+                    audioSourceSE.playOnAwake = false;
+                }
+                else
+                {
+                    Debug.LogError("MusicControllerからAudioSourceを取得できませんでした。");
+                }
+            }
+            else
+            {
+                Debug.LogError("MusicController.Instanceが見つかりません。");
+            }
+        }
+    }
 
     private void Update()
     {
@@ -348,8 +409,21 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
 
+        // audioSourceSEの状態を確認
+        if (audioSourceSE == null || !audioSourceSE)
+        {
+            Debug.LogWarning("audioSourceSEがnullまたはMissingです。再設定を試みます。");
+            InitializeAudioSource();
+            if (audioSourceSE == null)
+            {
+                Debug.LogError("audioSourceSEを再設定できませんでした。MusicControllerを確認してください。");
+                return;
+            }
+        }
+
+
         // 移動状態の変化を検知して効果音を制御
-        currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash") ? runSE : walkSE;
+        currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash") ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
 
 
@@ -459,6 +533,12 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
+    /// <summary>
+    /// プレイヤーワープ処理
+    /// </summary>
+    /// <param name="x">X座標</param>
+    /// <param name="y">Y座標</param>
+    /// <param name="z">Z座標</param>
     public void PlayerWarp(float x, float y, float z) 
     {
         // CharacterControllerを一時的に無効にする

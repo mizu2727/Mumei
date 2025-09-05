@@ -63,10 +63,17 @@ public class PauseController : MonoBehaviour
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
+
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
     [Header("サウンド関連")]
     private AudioSource audioSourceSE;
-    public AudioClip buttonSE;//ボタンSE
-    public AudioClip documentNameButtonSE;//ドキュメント名称ボタンSE
+    //public AudioClip documentNameButtonSE;
+    public readonly int documentNameButtonSEid = 3;//ドキュメント名称ボタンSE
+    //public AudioClip buttonSE;//
+    private readonly int buttonSEid = 4;//ボタンSEのID
+    
 
     [Header("Input Actions")]
     public GameInput gameInput;
@@ -220,7 +227,7 @@ public class PauseController : MonoBehaviour
         }
 
         
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
     }
 
     //ポーズ解除
@@ -234,7 +241,7 @@ public class PauseController : MonoBehaviour
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
-            MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+            MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
             MusicController.Instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
 
             for (int i = 0; i < baseEnemy.Length; i++)
@@ -251,7 +258,7 @@ public class PauseController : MonoBehaviour
     //アイテム確認
     public void OnClickedViewItemButton()
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         isPause = false;
         ChangeViewPausePanel();
@@ -265,7 +272,7 @@ public class PauseController : MonoBehaviour
     //オプション設定
     public void OnClickedOptionButton()
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         isOptionPanel = true;
         ChangeOptionPanel();
@@ -277,7 +284,7 @@ public class PauseController : MonoBehaviour
     //オプション設定からポーズ画面へ戻る
     public void OnClickedFromOptionToPauseButton()
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
         isPause = true;
         ChangeViewPausePanel();
 
@@ -288,7 +295,7 @@ public class PauseController : MonoBehaviour
     //タイトルへ戻る
     public void OnClickedReturnToTitleButton()
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         isReturnToTitlePanel = true;
         ChangeReturnToTitlePanel();
@@ -300,7 +307,7 @@ public class PauseController : MonoBehaviour
     //「はい」押下
     public void OnClickedYesButton()
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
         MusicController.Instance.StopBGM();
         //GameController.instance.ReturnToTitle();
         SceneManager.LoadScene("TitleScene");
@@ -309,7 +316,7 @@ public class PauseController : MonoBehaviour
     //「いいえ」押下
     public void OnClickedNoButton()
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
         isPause = true;
         ChangeViewPausePanel();
 
@@ -321,7 +328,7 @@ public class PauseController : MonoBehaviour
 
     public void OnClickedViewDocumentButton() 
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         // ドキュメントパネルを表示
         isDocumentPanels = true;
@@ -334,7 +341,7 @@ public class PauseController : MonoBehaviour
 
     public void OnClickedViewMysteryItemButton()
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         // ミステリーアイテムパネルを表示
         isMysteryItemPanels = true;
@@ -360,7 +367,7 @@ public class PauseController : MonoBehaviour
     //ポーズ画面へ戻る
     public void OnClickedReturnToPausePanel()
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         pausePanel.transform.SetAsLastSibling();
         isPause = true;
@@ -379,7 +386,7 @@ public class PauseController : MonoBehaviour
 
     public void OnClickedDocumentNameButton() 
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, documentNameButtonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(documentNameButtonSEid));
 
         isDocumentExplanationPanel = true;
         ChangeViewDocumentExplanationPanel();
@@ -554,7 +561,7 @@ public class PauseController : MonoBehaviour
 
     public void OnClickedMysteryItemNameButton(int index)
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, buttonSE);
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         if (index < mysteryItemNames.Count)
         {

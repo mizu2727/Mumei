@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
 
@@ -41,10 +42,13 @@ public class PlayerInteract : MonoBehaviour
     private string stageLightLayer = "StageLight"; // ゴールの元のレイヤー
     private string drawerLayer = "Drawer"; // 引き出しの元のレイヤー
 
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
     [Header("SE関係")]
     private AudioSource audioSourceSE;
-    [SerializeField] private AudioClip getItemSE;
-
+    //[SerializeField] private AudioClip getItemSE;
+    private readonly int getItemSEid = 2;//アイテム取得時のSEのID
 
     [Header("アイテムリセット(デバッグ用)")]
     public bool isDebugResetItem = false;
@@ -60,9 +64,54 @@ public class PlayerInteract : MonoBehaviour
     private void Start()
     {
         isInteract = false;
-        audioSourceSE = MusicController.Instance.GetAudioSource();
+
+        // AudioSourceの初期化
+        InitializeAudioSource();
 
         if (isDebugResetItem) sO_Item.ResetItems();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeAudioSource();
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        //PlayerInteract専用のAudioSourceを取得
+        //(PlayerオブジェクトにこのスクリプトとPlayer.csをアタッチしている。
+        //移動音とアイテム取得音の競合を回避する用)
+        audioSourceSE = GetComponent<AudioSource>();
+        if (audioSourceSE == null)
+        {
+            audioSourceSE = gameObject.AddComponent<AudioSource>();
+            audioSourceSE.playOnAwake = false;
+            audioSourceSE.volume = 1.0f; // ボリュームを明示的に設定
+        }
     }
 
     private void Update()
@@ -77,6 +126,9 @@ public class PlayerInteract : MonoBehaviour
         HighlightObject(); 
     }
 
+    /// <summary>
+    /// インタラクト処理
+    /// </summary>
     async void Interact() 
     {
         RaycastHit raycastHit;
@@ -197,14 +249,22 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
-    //左クリック・Rボタンでインタラクト操作
-    //Interact…"joystick button 5"を割り当て。コントローラーではRボタンになる
+    /// <summary>
+    /// 左クリック・Rボタンでインタラクト操作
+    /// Interact…"joystick button 5"を割り当てている。コントローラーではRボタンになる
+    /// </summary>
+    /// <returns>ボタン押下でtrue</returns>
     bool PlayInteract() 
     {
         return Input.GetMouseButtonDown(0) || Input.GetButtonDown("Interact");
     }
 
-    // オブジェクトのレイヤーを変更する
+
+    /// <summary>
+    /// オブジェクトのレイヤーを変更する
+    /// </summary>
+    /// <param name="obj">対象オブジェクト</param>
+    /// <param name="layerName">レイヤー名</param>
     void SwitchLayer(GameObject obj, string layerName)
     {
         int layer = LayerMask.NameToLayer(layerName);
@@ -216,8 +276,10 @@ public class PlayerInteract : MonoBehaviour
         obj.layer = layer;
         Debug.Log($"オブジェクト {obj.name} のレイヤーを {layerName} へ変更");
     }
-
-    // 現在のオブジェクトのレイヤーを元に戻す
+ 
+    /// <summary>
+    /// 現在のオブジェクトのレイヤーを元に戻す
+    /// </summary>
     void ResetLayer()
     {
         if (currentHighlightedObject != null)
@@ -256,9 +318,10 @@ public class PlayerInteract : MonoBehaviour
             currentObjectTag = null;
         }
     }
-
-
-    // インタラクト可能なオブジェクトを強調表示する処理
+ 
+    /// <summary>
+    /// インタラクト可能なオブジェクトを強調表示する処理
+    /// </summary>
     void HighlightObject()
     {
         RaycastHit raycastHit;
@@ -308,7 +371,15 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="pickUpItem">入手アイテム</param>
     void DestroyItem(GameObject pickUpItem) 
     {
-        MusicController.Instance.PlayAudioSE(audioSourceSE, getItemSE);
+        if (audioSourceSE != null && sO_SE.GetSEClip(getItemSEid) != null)
+        {
+            // アイテム取得時の効果音を再生
+            MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(getItemSEid)); 
+        }
+        else
+        {
+            Debug.LogWarning($"AudioSource or getItemSE is null in DestroyItem");
+        }
 
         Destroy(pickUpItem);
 
