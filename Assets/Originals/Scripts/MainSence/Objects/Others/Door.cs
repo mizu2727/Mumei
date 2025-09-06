@@ -27,9 +27,7 @@ public class Door : MonoBehaviour
 
     [Header("サウンド関連")]
     private AudioSource audioSourceSE;//Door専用のAudioSource
-    [SerializeField] private AudioClip openSE;
     private readonly int openSEid = 6; // ドアを開けるSEのID
-    [SerializeField] private AudioClip closeSE;
     private readonly int closeSEid = 5; // ドアを閉めるSEのID
 
     [Header("サウンドの距離関連(要調整)")]
@@ -69,25 +67,11 @@ public class Door : MonoBehaviour
     /// </summary>
     private void InitializeAudioSource()
     {
-        // AudioSourceの取得と検証
-        if (audioSourceSE == null || !audioSourceSE)
+        audioSourceSE = GetComponent<AudioSource>();
+        if (audioSourceSE == null)
         {
-            if (MusicController.Instance != null)
-            {
-                audioSourceSE = MusicController.Instance.GetAudioSource();
-                if (audioSourceSE != null)
-                {
-                    audioSourceSE.playOnAwake = false;
-                }
-                else
-                {
-                    Debug.LogError("MusicControllerからAudioSourceを取得できませんでした。");
-                }
-            }
-            else
-            {
-                Debug.LogError("MusicController.Instanceが見つかりません。");
-            }
+            audioSourceSE = gameObject.AddComponent<AudioSource>();
+            audioSourceSE.playOnAwake = false;
         }
     }
 
@@ -95,8 +79,22 @@ public class Door : MonoBehaviour
     {
         // AudioSourceの初期化
         InitializeAudioSource();
+
+        //PlayerシングルトンからTransformを取得
+        //(シーン遷移した後にプレイヤーのtransformがnullになるエラーを防止する用)
+        if (Player.instance != null)
+        {
+            targetPoint = Player.instance.transform;
+        }
+        else
+        {
+            Debug.LogError("Player.instanceが見つかりません。シーンにPlayerオブジェクトが存在することを確認してください。");
+        }
     }
 
+    /// <summary>
+    /// ドアの開閉システム
+    /// </summary>
     public void DoorSystem() 
     {
         if (isOpenDoor)
@@ -123,7 +121,9 @@ public class Door : MonoBehaviour
         }
     }
 
-    //ドアを開ける
+    /// <summary>
+    /// ドアを開ける
+    /// </summary>
     public void OpenDoor() 
     {
         isOpenDoor = true;
@@ -131,7 +131,9 @@ public class Door : MonoBehaviour
         DoorSE();
     }
 
-    //ドアを閉める
+    /// <summary>
+    /// ドアを閉める
+    /// </summary>
     void CloseDoor()
     {
         isOpenDoor = false;
@@ -140,11 +142,19 @@ public class Door : MonoBehaviour
     }
 
 
-    //ドアの開閉の効果音
+    /// <summary>
+    /// ドアの開閉の効果音
+    /// </summary>
     void DoorSE() 
     {
+        if (targetPoint == null)
+        {
+            Debug.LogWarning("targetPointがnullです。プレイヤーオブジェクトを正しく設定してください。");
+            return;
+        }
+
         // 効果音制御
-        AudioClip currentSE = (isOpenDoor) ? openSE : closeSE;
+        AudioClip currentSE = (isOpenDoor) ? sO_SE.GetSEClip(openSEid) : sO_SE.GetSEClip(closeSEid);
 
         // プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, targetPoint.position);
@@ -152,14 +162,19 @@ public class Door : MonoBehaviour
         // 距離に基づく音量計算
         float volume = CalculateVolumeBasedOnDistance(distance);
 
-        MusicController.Instance.PlayAudioSE(audioSourceSE, currentSE);
+        // PlayOneShotを使用して、移動音と競合しないように単発再生
+        audioSourceSE.PlayOneShot(currentSE, volume);
 
         //音量を設定
         audioSourceSE.volume = volume;
     }
 
 
-    // 距離に基づく音量を計算するメソッド
+    /// <summary>
+    /// 距離に基づく音量を計算するメソッド
+    /// </summary>
+    /// <param name="distance">対象オブジェクトの距離</param>
+    /// <returns></returns>
     private float CalculateVolumeBasedOnDistance(float distance)
     {
         if (distance <= maxSoundDistance)

@@ -46,7 +46,8 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] public SO_SE sO_SE;
 
     [Header("SE関係")]
-    private AudioSource audioSourceSE;
+    //private AudioSource audioSourceSE;
+    private AudioSource audioSourceItemSE; // アイテム取得音専用
     //[SerializeField] private AudioClip getItemSE;
     private readonly int getItemSEid = 2;//アイテム取得時のSEのID
 
@@ -101,17 +102,27 @@ public class PlayerInteract : MonoBehaviour
     /// AudioSourceの初期化
     /// </summary>
     private void InitializeAudioSource()
-    {
-        //PlayerInteract専用のAudioSourceを取得
-        //(PlayerオブジェクトにこのスクリプトとPlayer.csをアタッチしている。
-        //移動音とアイテム取得音の競合を回避する用)
-        audioSourceSE = GetComponent<AudioSource>();
-        if (audioSourceSE == null)
+    {       
+        // すべての AudioSource を取得
+        var audioSources = GetComponents<AudioSource>();
+        if (audioSources.Length < 2)
         {
-            audioSourceSE = gameObject.AddComponent<AudioSource>();
-            audioSourceSE.playOnAwake = false;
-            audioSourceSE.volume = 1.0f; // ボリュームを明示的に設定
+            // 2つ目の AudioSource が不足している場合、追加
+            audioSourceItemSE = gameObject.AddComponent<AudioSource>();
+            audioSourceItemSE.playOnAwake = false;
+            audioSourceItemSE.volume = 1.0f;
         }
+        else
+        {
+            // 2番目の AudioSource をアイテム取得音用に割り当て
+            //(PlayerオブジェクトにこのスクリプトとPlayer.csをアタッチしている。
+            //移動音とアイテム取得音の競合を回避する用)
+            audioSourceItemSE = audioSources[1];
+            audioSourceItemSE.playOnAwake = false;
+            audioSourceItemSE.volume = 1.0f;
+        }
+
+
     }
 
     private void Update()
@@ -371,10 +382,12 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="pickUpItem">入手アイテム</param>
     void DestroyItem(GameObject pickUpItem) 
     {
-        if (audioSourceSE != null && sO_SE.GetSEClip(getItemSEid) != null)
+        if (audioSourceItemSE != null && sO_SE.GetSEClip(getItemSEid) != null)
         {
             // アイテム取得時の効果音を再生
-            MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(getItemSEid)); 
+            audioSourceItemSE.clip = sO_SE.GetSEClip(getItemSEid);
+            audioSourceItemSE.loop = false;
+            audioSourceItemSE.Play();
         }
         else
         {

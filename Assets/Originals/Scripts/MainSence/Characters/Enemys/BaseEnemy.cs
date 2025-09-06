@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using static GameController;
 using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
@@ -199,12 +200,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] private LayerMask obstacleLayer;
 
 
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
 
     [Header("サウンド関連")]
     public AudioSource audioSourceSE; 
-    [SerializeField] private AudioClip walkSE;
-    [SerializeField] private AudioClip runSE;
-    [SerializeField] private AudioClip findPlayerSE;
+    //[SerializeField] private AudioClip walkSE;
+    private readonly int walkSEid = 7; // 歩行音のID
+    //[SerializeField] private AudioClip runSE;
+    private readonly int runSEid = 8;  // ダッシュ音のID
+    //[SerializeField] private AudioClip findPlayerSE;
+    private readonly int findPlayerSEid = 9;  // ダッシュ音のID
+
+    [Header("現在再生中の効果音")]
     public AudioClip currentSE;//現在再生中の効果音
 
     [Header("走る音の再生速度(要調整)")]
@@ -238,15 +246,94 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private Door door;
     GameObject gameObjectDoor;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeAudioSource();
+        if (Player.instance != null)
+        {
+            targetPoint = Player.instance.transform;
+        }
+        else
+        {
+            Debug.LogError($"[{gameObject.name}] Player.instanceが見つかりません。targetPointを設定できません。");
+            navMeshAgent.isStopped = true;
+        }
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        if (MusicController.Instance != null)
+        {
+            audioSourceSE = MusicController.Instance.GetAudioSource();
+            if (audioSourceSE != null)
+            {
+                audioSourceSE.playOnAwake = false;
+            }
+            else
+            {
+                Debug.LogError($"[{gameObject.name}] MusicControllerからAudioSourceを取得できませんでした。");
+            }
+        }
+        else
+        {
+            Debug.LogError($"[{gameObject.name}] MusicController.Instanceが見つかりません。");
+        }
+    }
+
     void Start()
     {
         PlayAnimator = GetComponent<Animator>();
-        audioSourceSE = MusicController.Instance.GetAudioSource();
+
+        //専用の新しいAudioSourceを取得
+        //(別の効果音が鳴っている間にド敵の効果音が鳴らないバグを防止する用)
+        audioSourceSE = GetComponent<AudioSource>();
+        if (audioSourceSE == null)
+        {
+            audioSourceSE = gameObject.AddComponent<AudioSource>();
+            audioSourceSE.playOnAwake = false;
+        }
 
         navMeshAgent = GetComponent<NavMeshAgent>();
         if (navMeshAgent == null)
         {
             Debug.LogError($"[{gameObject.name}] NavMeshAgentがアタッチされていません！");
+            return;
+        }
+
+        //targetPointをPlayer.instanceのTransformに設定
+        //(シーン遷移した後にプレイヤーのtransformがnullになるエラーを防止する用)
+        if (Player.instance != null)
+        {
+            targetPoint = Player.instance.transform;
+        }
+        else
+        {
+            Debug.LogError($"[{gameObject.name}] Player.instanceが見つかりません。targetPointを設定できません。");
+            navMeshAgent.isStopped = true;
             return;
         }
 
@@ -715,7 +802,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         // 効果音制御
-        currentSE = (currentState == EnemyState.Chase) ? runSE : walkSE;
+        currentSE = (currentState == EnemyState.Chase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
         // 距離に基づく音量計算
         float volume = CalculateVolumeBasedOnDistance(distance);
@@ -723,32 +810,42 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         if (IsMove && !wasMovingLastFrame)
         {
             // 走る音の場合、ピッチを調整
-            audioSourceSE.pitch = (currentSE == runSE) ? runSEPitch : 1.0f;
+            audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
 
-            MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
+            //MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
+            audioSourceSE.clip = currentSE;
+            audioSourceSE.loop = true;
 
             //音量を設定
             audioSourceSE.volume = volume;
+
+            audioSourceSE.Play();
         }
         else if (!IsMove && wasMovingLastFrame)
         {
-            MusicController.Instance.StopSE(audioSourceSE);
+            //MusicController.Instance.StopSE(audioSourceSE);
+            audioSourceSE.Stop();
 
             // 停止時にピッチをリセット
             audioSourceSE.pitch = 1.0f; 
         }
-        else if (IsMove && wasMovingLastFrame && MusicController.Instance.IsPlayingSE(audioSourceSE)
-                 && MusicController.Instance.GetCurrentSE(audioSourceSE) != currentSE)
+        else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
         {
+            
+
+            //MusicController.Instance.StopSE(audioSourceSE);
+            audioSourceSE.Stop();
+
             // 走る音の場合、ピッチを調整
-            audioSourceSE.pitch = (currentSE == runSE) ? runSEPitch : 1.0f;
-
-            MusicController.Instance.StopSE(audioSourceSE);
-            MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
-
+            audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
+            audioSourceSE.clip = currentSE;
+            audioSourceSE.loop = true;
             audioSourceSE.volume = volume;
+
+            //MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
+            audioSourceSE.Play();
         }
-        else if (IsMove && MusicController.Instance.IsPlayingSE(audioSourceSE))
+        else if (IsMove && audioSourceSE.isPlaying)
         {
             // 移動中に音量を継続的に更新
             audioSourceSE.volume = volume; 

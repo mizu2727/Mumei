@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Drawer : MonoBehaviour
 {
@@ -35,11 +36,52 @@ public class Drawer : MonoBehaviour
     [Header("BoxCollider")]
     [SerializeField] private BoxCollider boxCollider;
 
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
     // サウンド関連
     private AudioSource audioSourceSE;
-    [SerializeField] private AudioClip openSE;
-    [SerializeField] private AudioClip closeSE;
+    private readonly int openSEid = 11; // 引き出しを開けるSEのID
+    private readonly int closeSEid = 10; // 引き出しを閉めるSEのID
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時にAudioSourceを再設定
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        InitializeAudioSource();
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        audioSourceSE = GetComponent<AudioSource>();
+        if (audioSourceSE == null)
+        {
+            audioSourceSE = gameObject.AddComponent<AudioSource>();
+            audioSourceSE.playOnAwake = false;
+        }
+    }
 
     void Start()
     {
@@ -59,12 +101,11 @@ public class Drawer : MonoBehaviour
         targetPosition = closePosition;
 
 
-        audioSourceSE = GetComponent<AudioSource>();
-        audioSourceSE = MusicController.Instance.GetAudioSource();
+        InitializeAudioSource();
     }
 
 
-
+    
     public void SetItemTransform(Transform itemTransform)
     {
         if (itemPlacementPoint != null)
@@ -117,6 +158,9 @@ public class Drawer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 引き出しの開閉
+    /// </summary>
     public void DrawerSystem()
     {
         if (isOpenDrawer)
@@ -129,6 +173,9 @@ public class Drawer : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 引き出しを開ける
+    /// </summary>
     public void OpenDrawer()
     {
         targetPosition = openPosition;
@@ -137,6 +184,9 @@ public class Drawer : MonoBehaviour
         DrawerSE(true);
     }
 
+    /// <summary>
+    /// 引き出しを閉じる
+    /// </summary>
     public void CloseDrawer()
     {
         targetPosition = closePosition;
@@ -145,9 +195,13 @@ public class Drawer : MonoBehaviour
         DrawerSE(false);
     }
 
+    /// <summary>
+    /// 引き出し効果音
+    /// </summary>
+    /// <param name="opening"></param>
     void DrawerSE(bool opening)
     {
-        AudioClip currentSE = opening ? openSE : closeSE;
+        AudioClip currentSE = opening ? sO_SE.GetSEClip(openSEid) : sO_SE.GetSEClip(closeSEid);
         if (audioSourceSE != null && currentSE != null)
         {
             audioSourceSE.PlayOneShot(currentSE);

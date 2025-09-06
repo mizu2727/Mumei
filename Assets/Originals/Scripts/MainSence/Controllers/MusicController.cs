@@ -164,12 +164,12 @@ public class MusicController : MonoBehaviour
     // 新しいAudioSourceを取得または作成
     public AudioSource GetAudioSource()
     {
-        // 既存の有効なAudioSourceを探す
+        // 使用中でない有効なAudioSourceを探す
         foreach (var audioSource in audioSourceSEList)
         {
-            if (audioSource != null && audioSource.gameObject.activeInHierarchy)
+            if (audioSource != null && audioSource.gameObject.activeInHierarchy && !audioSource.isPlaying)
             {
-                Debug.Log($"既存の有効なAudioSourceを再利用: {audioSource.GetInstanceID()}");
+                Debug.Log($"既存の未使用AudioSourceを再利用: {audioSource.GetInstanceID()}");
                 return audioSource;
             }
         }
