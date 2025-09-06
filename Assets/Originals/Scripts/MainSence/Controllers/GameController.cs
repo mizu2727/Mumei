@@ -25,6 +25,9 @@ public class GameController : MonoBehaviour
     [Header("チュートリアル用アイテム親オブジェクト")]
     [SerializeField] public GameObject tutorialItems;
 
+    [Header("PlayerスタミナSlider(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Slider staminaSlider;
+
     //[Header("チュートリアル用ゴール")]
     //[SerializeField] public GameObject tutorialGoal;
 

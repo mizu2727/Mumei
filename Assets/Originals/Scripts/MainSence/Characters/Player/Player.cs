@@ -58,7 +58,7 @@ public class Player : MonoBehaviour, CharacterInterface
     [SerializeField] public Slider staminaSlider;
 
     [Header("スタミナ最大値")]
-    [SerializeField] float maxStamina = 100f;
+    [SerializeField] const  float maxStamina = 100f;
 
     //スタミナの現在値
     float stamina;
@@ -176,8 +176,6 @@ public class Player : MonoBehaviour, CharacterInterface
 
     [Header("サウンド関連")]
     public AudioSource audioSourceSE; // プレイヤー専用のAudioSource
-    //[SerializeField] private AudioClip walkSE;
-    //[SerializeField] private AudioClip runSE;
 
     // 効果音のID（SO_SE の seList に対応）
     private readonly int walkSEid = 0; // 歩行音のID
@@ -246,6 +244,17 @@ public class Player : MonoBehaviour, CharacterInterface
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InitializeAudioSource();
+
+        // GameController から staminaSlider を再取得
+        if (GameController.instance != null)
+        {
+            staminaSlider = GameController.instance.staminaSlider;
+            if (staminaSlider != null)
+            {
+                staminaSlider.maxValue = maxStamina;
+                staminaSlider.value = stamina;
+            }
+        }
     }
 
     private void Start()
@@ -273,11 +282,21 @@ public class Player : MonoBehaviour, CharacterInterface
         // AudioSourceの初期化
         InitializeAudioSource();
 
-        //スタミナ現在値の初期化
+        //スタミナ最大値の初期化
         stamina = maxStamina;
 
-        //スタミナSliderSliderの最大値を設定
-        if (staminaSlider) staminaSlider.maxValue = maxStamina;
+        // GameControllerからstaminaSliderを取得
+        if (GameController.instance != null)
+        {
+            staminaSlider = GameController.instance.staminaSlider;
+        }
+
+        // スタミナSliderの最大値を設定
+        if (staminaSlider)
+        {
+            staminaSlider.maxValue = maxStamina;
+            staminaSlider.value = stamina;
+        }
 
         isStamina = true;
 
