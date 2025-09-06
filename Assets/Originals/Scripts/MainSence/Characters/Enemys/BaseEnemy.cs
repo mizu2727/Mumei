@@ -742,7 +742,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.3));
 
-                    playerFoundPanel.SetActive(false);
+                    //プレイヤー死亡後に発生するエラーを防止する用にif文を追加
+                    if(GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) playerFoundPanel.SetActive(false);
                 }
                 break;
 
@@ -801,57 +802,54 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 break;
         }
 
-        // 効果音制御
-        currentSE = (currentState == EnemyState.Chase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
-
-        // 距離に基づく音量計算
-        float volume = CalculateVolumeBasedOnDistance(distance);
-
-        if (IsMove && !wasMovingLastFrame)
+        //プレイヤー死亡後に発生するエラーを防止する用にif文を追加
+        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
         {
-            // 走る音の場合、ピッチを調整
-            audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
+            // 効果音制御
+            currentSE = (currentState == EnemyState.Chase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
-            //MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
-            audioSourceSE.clip = currentSE;
-            audioSourceSE.loop = true;
+            // 距離に基づく音量計算
+            float volume = CalculateVolumeBasedOnDistance(distance);
 
-            //音量を設定
-            audioSourceSE.volume = volume;
+            if (IsMove && !wasMovingLastFrame)
+            {
+                // 走る音の場合、ピッチを調整
+                audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
 
-            audioSourceSE.Play();
-        }
-        else if (!IsMove && wasMovingLastFrame)
-        {
-            //MusicController.Instance.StopSE(audioSourceSE);
-            audioSourceSE.Stop();
+                audioSourceSE.clip = currentSE;
+                audioSourceSE.loop = true;
 
-            // 停止時にピッチをリセット
-            audioSourceSE.pitch = 1.0f; 
-        }
-        else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
-        {
-            
+                //音量を設定
+                audioSourceSE.volume = volume;
 
-            //MusicController.Instance.StopSE(audioSourceSE);
-            audioSourceSE.Stop();
+                audioSourceSE.Play();
+            }
+            else if (!IsMove && wasMovingLastFrame)
+            {
+                audioSourceSE.Stop();
 
-            // 走る音の場合、ピッチを調整
-            audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
-            audioSourceSE.clip = currentSE;
-            audioSourceSE.loop = true;
-            audioSourceSE.volume = volume;
+                // 停止時にピッチをリセット
+                audioSourceSE.pitch = 1.0f;
+            }
+            else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
+            {
+                audioSourceSE.Stop();
 
-            //MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
-            audioSourceSE.Play();
-        }
-        else if (IsMove && audioSourceSE.isPlaying)
-        {
-            // 移動中に音量を継続的に更新
-            audioSourceSE.volume = volume; 
-        }
+                // 走る音の場合、ピッチを調整
+                audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
+                audioSourceSE.clip = currentSE;
+                audioSourceSE.loop = true;
+                audioSourceSE.volume = volume;
+                audioSourceSE.Play();
+            }
+            else if (IsMove && audioSourceSE.isPlaying)
+            {
+                // 移動中に音量を継続的に更新
+                audioSourceSE.volume = volume;
+            }
 
-        wasMovingLastFrame = IsMove;
+            wasMovingLastFrame = IsMove;
+        }        
     }
 
 

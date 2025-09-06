@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static GameController;
 
 public class GameOverScene : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class GameOverScene : MonoBehaviour
 
     void Start()
     {
+        GameController.instance.gameModeStatus = GameModeStatus.GameOver;
         audioSourceSE = MusicController.Instance.GetAudioSource();
 
         gameOverCanvas.enabled = true;
@@ -27,6 +29,7 @@ public class GameOverScene : MonoBehaviour
 
     public void OnClickedRestartGameButton()
     {
+        GameController.instance.gameModeStatus = GameModeStatus.PlayInGame;
         SceneManager.LoadScene(SceneName);
     }
 

@@ -145,6 +145,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
     public void Dead()
     {
+        
         SceneManager.LoadScene("GameOverScene");
         //Destroy(gameObject);
     }
@@ -437,7 +438,6 @@ public class Player : MonoBehaviour, CharacterInterface
         if (IsMove && !wasMovingLastFrame)
         {
             // 移動開始時に効果音を再生
-            //MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
             audioSourceSE.clip = currentSE;
             audioSourceSE.loop = true;
             audioSourceSE.Play();
@@ -445,14 +445,11 @@ public class Player : MonoBehaviour, CharacterInterface
         else if (!IsMove && wasMovingLastFrame)
         {
             // 移動停止時に効果音を停止
-            //MusicController.Instance.StopSE(audioSourceSE);
             audioSourceSE.Stop();
         }
         else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
         {
             // 移動中に歩行/ダッシュが切り替わった場合、効果音を変更
-            //MusicController.Instance.StopSE(audioSourceSE);
-            //MusicController.Instance.LoopPlayAudioSE(audioSourceSE, currentSE);
             audioSourceSE.Stop();
             audioSourceSE.clip = currentSE;
             audioSourceSE.loop = true;
