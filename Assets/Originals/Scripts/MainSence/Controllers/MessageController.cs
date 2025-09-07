@@ -175,8 +175,6 @@ public class MessageController : MonoBehaviour
             return;
         }
 
-        Debug.Log("会話スタート");
-
         //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
         if (Time.timeScale == 1)
         {
