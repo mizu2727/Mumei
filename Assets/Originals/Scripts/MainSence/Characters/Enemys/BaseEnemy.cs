@@ -558,6 +558,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             gameObjectDoor = collider.gameObject;
             door = gameObjectDoor.GetComponent<Door>();
 
+            if (door == null)
+            {
+                Debug.LogError($"[{gameObject.name}] ドアオブジェクト({gameObjectDoor.name})にDoorコンポーネントが見つかりません！");
+                return;
+            }
+
             Debug.Log("敵がドアと衝突2");
             if (!door.isNeedKeyDoor && !door.isOpenDoor)
             {
