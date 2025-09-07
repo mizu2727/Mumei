@@ -27,6 +27,11 @@ public class GameController : MonoBehaviour
     [Header("PlayerスタミナSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider staminaSlider;
 
+    [Header("Playerの使用アイテムインベントリパネル関連(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public GameObject useItemPanel;//使用アイテム確認パネル
+    [SerializeField] public Text useItemCountText;//使用アイテム所持カウントテキスト
+    [SerializeField] public Image useItemImage;//使用アイテム画像
+
     //[Header("チュートリアル用ゴール")]
     //[SerializeField] public GameObject tutorialGoal;
 

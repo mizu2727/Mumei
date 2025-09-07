@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.EventSystems;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static SO_Item;
 
@@ -63,6 +65,39 @@ public class Inventory : MonoBehaviour
 
 
     private Player player;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時に使用アイテムパネル関連を再設定するためのイベント登録解除
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// シーン遷移時に使用アイテムパネル関連を再設定
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (GameController.instance.useItemPanel != null) useItemPanel = GameController.instance.useItemPanel;
+        else Debug.LogError("GameControllerのuseItemPanelが設定されていません");
+
+        if (GameController.instance.useItemCountText != null) useItemCountText = GameController.instance.useItemCountText;
+        else Debug.LogError("GameControllerのuseItemCountTextが設定されていません");
+
+        if (GameController.instance.useItemImage != null) useItemImage = GameController.instance.useItemImage;
+        else Debug.LogError("GameControllerのuseItemImageが設定されていません");
+    }
 
     private void Awake()
     {
