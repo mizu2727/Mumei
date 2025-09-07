@@ -83,7 +83,7 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// シーン遷移時に使用アイテムパネル関連を再設定
+    /// シーン遷移時に使用アイテムパネル関連を再設定及びリセット
     /// </summary>
     /// <param name="scene"></param>
     /// <param name="mode"></param>
@@ -97,6 +97,10 @@ public class Inventory : MonoBehaviour
 
         if (GameController.instance.useItemImage != null) useItemImage = GameController.instance.useItemImage;
         else Debug.LogError("GameControllerのuseItemImageが設定されていません");
+
+        ResetInventoryItem();
+        //アイテムDBをリセット
+        sO_Item.ResetItems();
     }
 
     private void Awake()
