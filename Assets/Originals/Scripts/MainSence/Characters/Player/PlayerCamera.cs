@@ -57,7 +57,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        if (Player.instance.isFallDown) return;
+        if (Player.instance == null || Player.instance.isFallDown) return;
 
         // マウス感度をスライダーから取得
         if (mouseSensitivitySlider)

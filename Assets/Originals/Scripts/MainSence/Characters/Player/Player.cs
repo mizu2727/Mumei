@@ -145,9 +145,29 @@ public class Player : MonoBehaviour, CharacterInterface
 
     public void Dead()
     {
-        
-        SceneManager.LoadScene("GameOverScene");
-        //Destroy(gameObject);
+        // 死亡フラグを立てる
+        IsDead = true;
+
+        // 移動方向をリセット
+        moveDirection = Vector3.zero;
+
+        // アニメーションを停止
+        if (animator != null)
+        {
+            animator.SetBool("isWalk", false);
+            animator.SetBool("isRun", false);
+        }
+
+        // 効果音を停止
+        if (audioSourceSE != null)
+        {
+            audioSourceSE.Stop();
+        }
+
+        GameController.instance.ViewGameOver();
+        //SceneManager.LoadScene("GameOverScene");
+        Debug.Log("Playerを削除します");
+        Destroy(gameObject);
     }
 
     public void Attack()
@@ -256,6 +276,29 @@ public class Player : MonoBehaviour, CharacterInterface
                 staminaSlider.value = stamina;
             }
         }
+
+        // Stage01Sceneに遷移した際に位置をリセット
+        if (scene.name == "Stage01Scene")
+        {
+            // CharacterControllerを一時的に無効にして位置をリセット
+            if (characterController != null)
+            {
+                characterController.enabled = false;
+            }
+            transform.position = playerStartPosition;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            moveDirection = Vector3.zero; // 移動方向もリセット
+            if (characterController != null)
+            {
+                characterController.enabled = true;
+            }
+
+            // プレイヤーの状態を初期化
+            IsDead = false;
+            playerHP = 1; // HPを初期値にリセット
+            stamina = maxStamina; // スタミナをリセット
+            isStamina = true;
+        }
     }
 
     private void Start()
@@ -335,7 +378,12 @@ public class Player : MonoBehaviour, CharacterInterface
 
         if (playerIsBackRotate && (GameController.instance.gameModeStatus == GameModeStatus.Story)) PlayerTurn();
 
-        if (playerIsDead  || Time.timeScale == 0 || isFallDown || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) return;
+        if (playerIsDead || Time.timeScale == 0 || isFallDown || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
+        {
+            //移動方向をリセット
+            moveDirection = Vector3.zero;
+            return;
+        } 
 
         //PauseControllerがないSceneでnullチェックエラーを回避するために、個別でわけている
         if (PauseController.instance.isPause) return;
@@ -464,6 +512,7 @@ public class Player : MonoBehaviour, CharacterInterface
         playerIsBackRotate = PlayerIsBackRotate();
 
     }
+
 
     //ダッシュ判定
     void PlayerDashOrWalk() 

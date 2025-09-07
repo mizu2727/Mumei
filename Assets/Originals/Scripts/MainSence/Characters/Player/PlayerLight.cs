@@ -66,11 +66,8 @@ public class PlayerLight : MonoBehaviour
 
     void Update()
     {
-        if (cameraTransform == null)
-        {
-            Debug.LogError("cameraTransform is null in Update!");
-            return;
-        }
+        //プレイヤー死亡時(プレイヤーオブジェクト削除時)にカメラの位置が参照できなくなるため、中断処理を追加
+        if (cameraTransform == null) return;
 
         //ゲームプレイモード以外の場合、強制的にライトをオフにする
         if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 

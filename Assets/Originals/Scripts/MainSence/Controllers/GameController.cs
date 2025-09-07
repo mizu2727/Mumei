@@ -14,7 +14,6 @@ public class GameController : MonoBehaviour
     [Header("ゲームモードのステータス")]
     public GameModeStatus gameModeStatus;
 
-
     [Header("チュートリアル用ドキュメント")]
     [SerializeField] public GameObject tutorialDocument;
 
@@ -34,8 +33,10 @@ public class GameController : MonoBehaviour
     [Header("セーブするプレイヤー名")]
     public static string playerName;
 
-    [Header("プレイ回数")]
+    [Header("セーブするプレイ回数")]
     public static int playCount = 0;
+
+    
 
 
     public enum  GameModeStatus
@@ -99,4 +100,16 @@ public class GameController : MonoBehaviour
     {
         saveLoad.ResetUserData();
     }
+
+    /// <summary>
+    /// ゲームオーバー画面へ遷移する
+    /// </summary>
+    public void ViewGameOver() 
+    {
+        if (Player.instance.IsDead) 
+        {
+            SceneManager.LoadScene("GameOverScene");
+        }
+    }
+
 }
