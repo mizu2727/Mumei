@@ -538,6 +538,19 @@ public class MessageController : MonoBehaviour
 
                     GameController.instance.SetGameModeStatus(GameModeStatus.Story);
 
+                    // カメラの角度をリセット
+                    if (Player.instance != null)
+                    {
+                        PlayerCamera playerCamera = Player.instance.GetComponent<PlayerCamera>();
+                        if (playerCamera != null)
+                        {
+                            // カメラの上下回転をリセット
+                            playerCamera.ResetCameraRotation();
+                            // プレイヤーの向きをカメラの正面に同期（必要に応じて）
+                            Player.instance.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
+                        }
+                    }
+
                     GameController.instance.tutorialItems.SetActive(false);
 
                     isBlackOutPanel = false;
