@@ -64,7 +64,7 @@ public class Player : MonoBehaviour, CharacterInterface
     float stamina;
 
     [Header("スタミナ消費値")]
-    [SerializeField] float staminaConsumeRatio = 50f;
+    [SerializeField] public float staminaConsumeRatio = 50f;
 
     [Header("スタミナ回復値")]
     [SerializeField] float staminaRecoveryRatio = 20f;

@@ -101,7 +101,8 @@ public class SO_Item : ScriptableObject
             itemList.Add(itemData);
             Debug.Log($"アイテムitem {newItem.id} を+ {newItem.count}新規追加");
 
-            Inventory.instance.GetItem(itemData.id, itemData.prefabPath, itemData.spawnPosition, itemData.spawnRotation, itemData.icon, itemData.itemName, itemData.count);
+            Inventory.instance.GetItem(itemData.id, itemData.prefabPath, itemData.spawnPosition, itemData.spawnRotation, 
+                itemData.icon, itemData.itemName, itemData.count, itemData.effectValue);
         }
         else 
         {
@@ -109,7 +110,8 @@ public class SO_Item : ScriptableObject
             var updateItem = itemList.Find(item => item.id == newItem.id);
             updateItem.count += newItem.count;
             Debug.Log($"アイテムitem {updateItem.id} の数を追加更新。所持数： {updateItem.count}");
-            Inventory.instance.GetItem(updateItem.id, updateItem.prefabPath, updateItem.spawnPosition, updateItem.spawnRotation, updateItem.icon, updateItem.itemName, updateItem.count);
+            Inventory.instance.GetItem(updateItem.id, updateItem.prefabPath, updateItem.spawnPosition, updateItem.spawnRotation, 
+                updateItem.icon, updateItem.itemName, updateItem.count, updateItem.effectValue);
         }
     }
 

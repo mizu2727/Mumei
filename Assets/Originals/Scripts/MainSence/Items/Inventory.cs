@@ -1,3 +1,5 @@
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -57,6 +59,12 @@ public class Inventory : MonoBehaviour
     private int keepItemCount;
 
     private const int minKeepItemCount = 0;
+
+    //アイテム効果値
+    private int keepItemEffectValue;
+
+    //アイテム効果値(デフォルト値)
+    private const int defaultKeepItemEffectValue = 0;
 
     //アイテムリストのインデックス番号
     int checkIndex;
@@ -149,7 +157,8 @@ public class Inventory : MonoBehaviour
     /// <param name="icon">アイテムの画像</param>
     /// <param name="itemName">アイテム名</param>
     /// <param name="count">アイテム個数</param>
-    public void GetItem(int id, string path, Vector3 position, Quaternion rotation, Sprite icon, string itemName, int count)
+    /// <param name="effectValue">アイテム効果値</param>
+    public void GetItem(int id, string path, Vector3 position, Quaternion rotation, Sprite icon, string itemName, int count, int effectValue)
     {
         //リストの中にアイテムが何番目に存在するのかを確認
         //存在しない場合は-1を返す
@@ -168,6 +177,7 @@ public class Inventory : MonoBehaviour
             keepItemSpawnPosition = position;
             keepItemSpawnRotation = rotation;
             useItemImage.sprite = icon;
+            keepItemEffectValue = effectValue;
             useItemImage.color = new Color(255, 255, 255, 1);
 
             //　アイテム所持数を設定
@@ -226,19 +236,33 @@ public class Inventory : MonoBehaviour
     /// 使用したアイテムのIDによって、それぞれの処理を行う
     /// </summary>
     /// <param name="keepItemId">アイテムID</param>
-    void ActivationUseItem(int keepItemId) 
+    async void ActivationUseItem(int keepItemId) 
     {
-        //テスト用使用アイテム①
-        if (keepItemId == 995) 
+        //使用するアイテムIDによって処理を分岐
+        switch (keepItemId) 
         {
-            // ローカル座標をワールド座標に変換
-            Vector3 worldPosition = Player.instance.transform.TransformPoint(keepItemSpawnPosition);
-            Quaternion worldRotation = Player.instance.transform.rotation * keepItemSpawnRotation;
+            //スタミナ増強剤
+            case 11:
+                Player.instance.staminaConsumeRatio = 25;
+                Color keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
+                Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = new Color(0, 1, 0, 1);
+                Debug.Log("スタミナ増強剤を使用した。スタミナ消費率が" + Player.instance.staminaConsumeRatio + "%になった");
+                await UniTask.Delay(TimeSpan.FromSeconds(keepItemEffectValue));
+                Player.instance.staminaConsumeRatio = 50;
+                Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = keepStaminaColor;
+                Debug.Log("スタミナ増強剤の効果が切れた。スタミナ消費率が" + Player.instance.staminaConsumeRatio + "%に戻った");
+                break;
 
-            // Addressablesを使用してプレハブをステージ上に非同期生成
-            Addressables.InstantiateAsync(keepItemPrefabPath, worldPosition, worldRotation);
+            //テスト用使用アイテム①
+            case 995:
+                // ローカル座標をワールド座標に変換
+                Vector3 worldPosition = Player.instance.transform.TransformPoint(keepItemSpawnPosition);
+                Quaternion worldRotation = Player.instance.transform.rotation * keepItemSpawnRotation;
+
+                // Addressablesを使用してプレハブをステージ上に非同期生成
+                await Addressables.InstantiateAsync(keepItemPrefabPath, worldPosition, worldRotation);
+                break;
         }
-
     }
 
     /// <summary>
@@ -248,6 +272,7 @@ public class Inventory : MonoBehaviour
     {
         keepItemId = noneItemId;
         keepItemCount = minKeepItemCount;
+        keepItemEffectValue = defaultKeepItemEffectValue;
         useItemCountText.text = keepItemCount.ToString();
         keepItemPrefabPath = noneItemPrefabPath;
         keepItemSpawnPosition = defaultItemSpawnPosition;
