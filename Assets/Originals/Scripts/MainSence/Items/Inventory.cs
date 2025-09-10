@@ -23,6 +23,9 @@ public class Inventory : MonoBehaviour
     [SerializeField] private GameObject useItemPanel;//使用アイテム確認パネル
     [SerializeField] private Text useItemCountText;//使用アイテム所持カウントテキスト
     [SerializeField] private Image useItemImage;//使用アイテム画像
+    [SerializeField] public GameObject useItemTextPanel;//使用アイテムテキスト確認パネル
+    [SerializeField] public Text useItemNameText;//使用アイテム名テキスト
+    [SerializeField] public Text useItemExplanationText;//使用アイテム説明テキスト
 
 
     //アイテムID管理(アイテムインベントリ複数枠分用)
@@ -69,10 +72,15 @@ public class Inventory : MonoBehaviour
     //アイテムリストのインデックス番号
     int checkIndex;
 
-
-
-
     private Player player;
+
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
+    [Header("サウンド関連")]
+    private AudioSource audioSourceInventorySE;//Inventory専用のAudioSource
+    private readonly int useStaminaEnhancerSEid = 12; // スタミナ増強剤SEのID
+
 
     /// <summary>
     /// 
@@ -97,6 +105,8 @@ public class Inventory : MonoBehaviour
     /// <param name="mode"></param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        InitializeAudioSource();
+
         if (GameController.instance.useItemPanel != null) useItemPanel = GameController.instance.useItemPanel;
         else Debug.LogError("GameControllerのuseItemPanelが設定されていません");
 
@@ -106,9 +116,43 @@ public class Inventory : MonoBehaviour
         if (GameController.instance.useItemImage != null) useItemImage = GameController.instance.useItemImage;
         else Debug.LogError("GameControllerのuseItemImageが設定されていません");
 
+        if (GameController.instance.useItemTextPanel != null) useItemTextPanel = GameController.instance.useItemTextPanel;
+        else Debug.LogError("GameControllerのuseItemTextPanelが設定されていません");
+
+        if (GameController.instance.useItemNameText != null) useItemNameText = GameController.instance.useItemNameText;
+        else Debug.LogError("GameControllerのuseItemNameTextが設定されていません");
+
+        if (GameController.instance.useItemExplanationText != null) useItemExplanationText = GameController.instance.useItemExplanationText;
+        else Debug.LogError("GameControllerのuseItemExplanationTextが設定されていません");
+
         ResetInventoryItem();
         //アイテムDBをリセット
         sO_Item.ResetItems();
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        // すべての AudioSource を取得
+        var audioSources = GetComponents<AudioSource>();
+        if (audioSources.Length < 3)
+        {
+            // 3つ目の AudioSource が不足している場合、追加
+            audioSourceInventorySE = gameObject.AddComponent<AudioSource>();
+            audioSourceInventorySE.playOnAwake = false;
+            audioSourceInventorySE.volume = 1.0f;
+        }
+        else
+        {
+            // 3番目の AudioSource をアイテム取得音用に割り当て
+            //(PlayerオブジェクトにこのスクリプトとPlayer.csをアタッチしている。
+            //移動音とアイテム取得音の競合を回避する用)
+            audioSourceInventorySE = audioSources[2];
+            audioSourceInventorySE.playOnAwake = false;
+            audioSourceInventorySE.volume = 1.0f;
+        }
     }
 
     private void Awake()
@@ -156,9 +200,10 @@ public class Inventory : MonoBehaviour
     /// <param name="rotation">アイテムの回転</param>
     /// <param name="icon">アイテムの画像</param>
     /// <param name="itemName">アイテム名</param>
+    /// <param name="description">アイテムの説明</param>
     /// <param name="count">アイテム個数</param>
     /// <param name="effectValue">アイテム効果値</param>
-    public void GetItem(int id, string path, Vector3 position, Quaternion rotation, Sprite icon, string itemName, int count, int effectValue)
+    public void GetItem(int id, string path, Vector3 position, Quaternion rotation, Sprite icon, string itemName, string description,int count, int effectValue)
     {
         //リストの中にアイテムが何番目に存在するのかを確認
         //存在しない場合は-1を返す
@@ -184,6 +229,10 @@ public class Inventory : MonoBehaviour
             countList.Add(count);
             keepItemCount = count;
             useItemCountText.text = count.ToString();
+
+            //　アイテム名と説明文を設定
+            useItemNameText.text = itemName;
+            useItemExplanationText.text = description;
 
             Debug.Log("id:" + id + "のアイテムitemを" + count + "個新規追加");
             Debug.Log("keepItemCount(使用アイテム):" + keepItemCount);
@@ -243,14 +292,22 @@ public class Inventory : MonoBehaviour
         {
             //スタミナ増強剤
             case 11:
+                //スタミナ増強剤SEを再生
+                audioSourceInventorySE.clip = sO_SE.GetSEClip(useStaminaEnhancerSEid);
+                audioSourceInventorySE.loop = false;
+                audioSourceInventorySE.Play();
+
+                //スタミナ消費率を25%に変更し、スタミナゲージの色を緑色に変更
                 Player.instance.staminaConsumeRatio = 25;
                 Color keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
                 Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = new Color(0, 1, 0, 1);
-                Debug.Log("スタミナ増強剤を使用した。スタミナ消費率が" + Player.instance.staminaConsumeRatio + "%になった");
+
+                //効果時間待機
                 await UniTask.Delay(TimeSpan.FromSeconds(keepItemEffectValue));
+
+                //スタミナ消費率を50%に戻して、スタミナゲージの色を元に戻す
                 Player.instance.staminaConsumeRatio = 50;
                 Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = keepStaminaColor;
-                Debug.Log("スタミナ増強剤の効果が切れた。スタミナ消費率が" + Player.instance.staminaConsumeRatio + "%に戻った");
                 break;
 
             //テスト用使用アイテム①
@@ -274,6 +331,8 @@ public class Inventory : MonoBehaviour
         keepItemCount = minKeepItemCount;
         keepItemEffectValue = defaultKeepItemEffectValue;
         useItemCountText.text = keepItemCount.ToString();
+        useItemNameText.text = "";
+        useItemExplanationText.text = "";
         keepItemPrefabPath = noneItemPrefabPath;
         keepItemSpawnPosition = defaultItemSpawnPosition;
         keepItemSpawnRotation = defaultItemSpawnRotation;

@@ -31,6 +31,9 @@ public class GameController : MonoBehaviour
     [SerializeField] public GameObject useItemPanel;//使用アイテム確認パネル
     [SerializeField] public Text useItemCountText;//使用アイテム所持カウントテキスト
     [SerializeField] public Image useItemImage;//使用アイテム画像
+    [SerializeField] public GameObject useItemTextPanel;//使用アイテムテキスト確認パネル
+    [SerializeField] public Text useItemNameText;//使用アイテム名テキスト
+    [SerializeField] public Text useItemExplanationText;//使用アイテム説明テキスト
 
     //[Header("チュートリアル用ゴール")]
     //[SerializeField] public GameObject tutorialGoal;
