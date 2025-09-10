@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using static GameController;
 using static UnityEngine.Rendering.DebugUI;
@@ -205,11 +206,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     [Header("サウンド関連")]
     public AudioSource audioSourceSE; 
-    //[SerializeField] private AudioClip walkSE;
     private readonly int walkSEid = 7; // 歩行音のID
-    //[SerializeField] private AudioClip runSE;
     private readonly int runSEid = 8;  // ダッシュ音のID
-    //[SerializeField] private AudioClip findPlayerSE;
+    public AudioSource audioSourceFindPlayerSE;
     private readonly int findPlayerSEid = 9;  // ダッシュ音のID
 
     [Header("現在再生中の効果音")]
@@ -302,6 +301,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         {
             Debug.LogError($"[{gameObject.name}] MusicController.Instanceが見つかりません。");
         }
+
+        audioSourceFindPlayerSE = gameObject.AddComponent<AudioSource>();
     }
 
     void Start()
@@ -309,7 +310,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         PlayAnimator = GetComponent<Animator>();
 
         //専用の新しいAudioSourceを取得
-        //(別の効果音が鳴っている間にド敵の効果音が鳴らないバグを防止する用)
+        //(別の効果音が鳴っている間に敵の効果音が鳴らないバグを防止する用)
         audioSourceSE = GetComponent<AudioSource>();
         if (audioSourceSE == null)
         {
@@ -641,6 +642,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 animator.SetBool("isWalk", IsMove);
                 navMeshAgent.speed = Speed;
 
+                //警戒音を停止
+                audioSourceFindPlayerSE.Stop();
+
                 //プレイヤーが視野内にいるかをチェック
                 if (distance <= alertRange)
                 {
@@ -686,6 +690,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                 Debug.Log("警戒圏内状態01_01");
 
+                //警戒音を再生
+                audioSourceFindPlayerSE.clip = sO_SE.GetSEClip(findPlayerSEid);
+                audioSourceFindPlayerSE.loop = true;
+                audioSourceFindPlayerSE.Play();
+
                 if (IsPlayerInFront())
                 {
                     Debug.Log("警戒圏内状態01_02");
@@ -729,6 +738,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         　　 //追従状態
             case EnemyState.Chase:
+                //警戒音を停止
+                audioSourceFindPlayerSE.Stop();
+
                 animator.SetBool("isRun", true);
                 animator.SetBool("isWalk", false);
                 navMeshAgent.speed = dashSpeed;
@@ -755,6 +767,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
             //調査状態
             case EnemyState.Investigate:
+                //警戒音を停止
+                audioSourceFindPlayerSE.Stop();
+
                 animator.SetBool("isRun", false);
                 animator.SetBool("isWalk", IsMove);
                 navMeshAgent.speed = Speed;
