@@ -14,6 +14,8 @@ public class MessageController : MonoBehaviour
     [Header("メッセージパネル関連(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject messagePanel;
     [SerializeField] private Text messageText;
+    [SerializeField] private GameObject CheckInputNamePanel;
+    [SerializeField] private Text CheckInputNameText;
 
     [Header("ブラックアウト(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject blackOutPanel;
@@ -76,7 +78,17 @@ public class MessageController : MonoBehaviour
             inputPlayerNameField = inputPlayerNameField.GetComponent<InputField>();
             inputPlayerNameField.gameObject.SetActive(false);
         }
-        
+
+        if (CheckInputNamePanel != null) 
+        {
+            CheckInputNamePanel.SetActive(false);
+        }
+
+        if (CheckInputNameText != null) 
+        {
+            CheckInputNameText.text = "";
+        }
+
 
         isBlackOutPanel = false;
     }
@@ -606,24 +618,52 @@ public class MessageController : MonoBehaviour
         ViewMessagePanel();
     }
 
-    //プレイヤーの名前の入力が完了した際に呼ばれる
+    /// <summary>
+    /// プレイヤーの名前の入力が完了した際に呼ばれる
+    /// </summary>
+    /// <param name="playerName">入力したプレイヤー名</param>
     public void SavePlayerName(string playerName)
     {
         if ((1 < playerName.Length) && (playerName.Length < 11)) 
         {
-            //名前を保存
+            //名前を一時的に保存
             inputPlayerNameField.text = playerName;
 
-            GameController.playerName = playerName;
+            //確認用テキストに入力した名前を表示
+            CheckInputNameText.text = inputPlayerNameField.text + " でよろしいですか？";
 
-            inputPlayerNameField.gameObject.SetActive(false);
+            //入力内容確認パネルを表示
+            CheckInputNamePanel.SetActive(true);
 
-            showSystemMessage.ShowGameSystemMessage(5);
+            inputPlayerNameField.gameObject.SetActive(false);       
         }
         else
         {
             inputPlayerNameField.gameObject.SetActive(false);
             showSystemMessage.ShowGameSystemMessage(4);
         }
-    }  
+    }
+
+    /// <summary>
+    /// 入力内容確認パネルで「はい」ボタンが押された際に呼ばれる
+    /// </summary>
+    public void OnClickedYesCheckInputNameButton() 
+    {
+        //名前を保存
+        GameController.playerName = inputPlayerNameField.text;
+
+        CheckInputNamePanel.SetActive(false);
+
+        //次のシステムメッセージを表示
+        showSystemMessage.ShowGameSystemMessage(5);
+    }
+
+    /// <summary>
+    /// 入力内容確認パネルで「いいえ」ボタンが押された際に呼ばれる
+    /// </summary>
+    public void OnClickedNoCheckInputNameButton() 
+    {
+        CheckInputNamePanel.SetActive(false);
+        inputPlayerNameField.gameObject.SetActive(true);
+    }
 }
