@@ -17,6 +17,13 @@ public class TitleController : MonoBehaviour
     [Header("ロードしたいScene名")]
     [SerializeField] private string SceneName;
 
+    [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_BGM sO_BGM;
+
+    [Header("サウンド関連")]
+    public AudioSource audioSourceBGM;
+    private readonly int titleBGMid = 0; // タイトルBGMのID
+
 
     private void Awake()
     {
@@ -27,9 +34,16 @@ public class TitleController : MonoBehaviour
         //マウスカーソルをウィンドウの外に出す
         Cursor.lockState = CursorLockMode.None;
 
-
         GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);
 
+        //全てのBGMの状態をStopに変更
+        sO_BGM.StopAllBGM();
+
+        //audioSourceBGMを設定TODO
+        //audioSourceBGM = MusicController.Instance.GetAudioSource();
+
+        //タイトルBGMを再生TODO
+        //MusicController.Instance.PlayBGM(titleBGMid);
     }
 
     public void OnStartButtonClicked()

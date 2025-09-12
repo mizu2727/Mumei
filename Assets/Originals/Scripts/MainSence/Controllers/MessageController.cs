@@ -362,6 +362,9 @@ public class MessageController : MonoBehaviour
                     isBlackOutPanel = false;
                     ViewBlackOutPanel();
 
+                    //不穏なBGMを流す
+                    //MusicController.Instance.PlayBGM();
+
                     await UniTask.Delay(TimeSpan.FromSeconds(1));
 
                     //スペースキー押下で次のメッセージを書く
@@ -372,6 +375,9 @@ public class MessageController : MonoBehaviour
                 case 86:
                     messageText.text = "";
                     number++;
+
+                    //不穏なBGMを止める
+                    //MusicController.Instance.StopBGM();
 
                     isBlackOutPanel = true;
                     ViewBlackOutPanel();

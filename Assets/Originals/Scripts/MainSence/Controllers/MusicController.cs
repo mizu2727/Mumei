@@ -16,6 +16,11 @@ public class MusicController : MonoBehaviour
     [Header("BGMクリップ")]
     [SerializeField] private AudioClip[] audioClipBGM;
 
+
+    [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_BGM sO_BGM;
+
+
     public int audioClipnum = 0;
 
     private int keepAudioClipnum = 999;
@@ -65,6 +70,8 @@ public class MusicController : MonoBehaviour
         // シーン遷移時に無効なAudioSourceをクリーンアップ
         audioSourceSEList.RemoveAll(audioSource => audioSource == null || !audioSource.gameObject.activeInHierarchy);
         Debug.Log($"シーン {scene.name} に遷移。audioSourceSEList の有効なAudioSource数: {audioSourceSEList.Count}");
+
+        sO_BGM.StopAllBGM();
     }
 
     void Start()
@@ -78,26 +85,48 @@ public class MusicController : MonoBehaviour
 
 
 
-    // BGM再生
+    // BGM再生(廃止予定)
     public void PlayBGM()
     {
 
 
         if (!isDebug)
         {
+            keepAudioClipnum = audioClipnum;
+            audioSourceBGM.clip = audioClipBGM[audioClipnum];
+            audioSourceBGM.loop = true;
+            audioSourceBGM.Play();
+            Debug.Log("keepAudioClipnum = " + keepAudioClipnum);
+
             //番号が同じBGMを連続で再生するのを阻止する
-            if (keepAudioClipnum != audioClipnum)
-            {
-                keepAudioClipnum = audioClipnum;
-                audioSourceBGM.clip = audioClipBGM[audioClipnum];
-                audioSourceBGM.loop = true;
-                audioSourceBGM.Play();
-                Debug.Log("keepAudioClipnum = " + keepAudioClipnum);
-            }
-            else 
-            {
-                Debug.LogWarning("番号が同じBGMを連続で再生しようとしています");
-            }
+            //if (keepAudioClipnum != audioClipnum)
+            //{
+            //    keepAudioClipnum = audioClipnum;
+            //    audioSourceBGM.clip = audioClipBGM[audioClipnum];
+            //    audioSourceBGM.loop = true;
+            //    audioSourceBGM.Play();
+            //    Debug.Log("keepAudioClipnum = " + keepAudioClipnum);
+            //}
+            //else 
+            //{
+            //    Debug.LogWarning("番号が同じBGMを連続で再生しようとしています");
+            //}
+        }
+    }
+
+
+    public void PlayBGM(int id) 
+    {
+        if (sO_BGM.bgmList[id].bgmState == BGMState.Stop)
+        {
+            audioSourceBGM.clip = sO_BGM.GetBGMClip(id);
+            audioSourceBGM.loop = true;
+            audioSourceBGM.Play();
+            sO_BGM.bgmList[id].bgmState = sO_BGM.ChangeFromStopToPlayBGM(id);
+        }
+        else 
+        {
+            Debug.LogWarning(sO_BGM.bgmList[id].bgmName + "を流せません");
         }
     }
 

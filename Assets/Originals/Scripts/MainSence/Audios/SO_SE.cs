@@ -32,6 +32,7 @@ public class SO_SE : ScriptableObject
         }
     }
 
+    //SEのリスト
     public List<SEData> seList = new ();
 
 
@@ -39,7 +40,7 @@ public class SO_SE : ScriptableObject
     /// 指定したIDに基づいてAudioClipを取得するメソッド
     /// </summary>
     /// <param name="seId">id</param>
-    /// <returns></returns>
+    /// <returns>AudioClip</returns>
     public AudioClip GetSEClip(int seId)
     {
         if (seList == null || seList.Count == 0)
