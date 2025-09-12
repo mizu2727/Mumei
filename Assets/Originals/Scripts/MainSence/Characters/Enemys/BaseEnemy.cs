@@ -665,7 +665,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         //MusicController.Instance.StopBGM();
                         //EnemyBGMController.Instance.PlayEnemyBGM();
 
-                        playerFoundPanel.SetActive(true);
+                        //playerFoundPanel.SetActive(true);
                     }
                     else
                     {
@@ -713,7 +713,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     //MusicController.Instance.StopBGM();
                     //EnemyBGMController.Instance.PlayEnemyBGM();
 
-                    playerFoundPanel.SetActive(true);
+                    //playerFoundPanel.SetActive(true);
                 }
                 else if (distance > alertRange)
                 {
@@ -761,7 +761,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     await UniTask.Delay(TimeSpan.FromSeconds(0.3));
 
                     //プレイヤー死亡後に発生するエラーを防止する用にif文を追加
-                    if(GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) playerFoundPanel.SetActive(false);
+                    //if(GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) playerFoundPanel.SetActive(false);
                 }
                 break;
 

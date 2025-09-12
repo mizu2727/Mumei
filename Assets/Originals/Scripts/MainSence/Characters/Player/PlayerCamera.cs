@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
 
@@ -38,7 +39,33 @@ public class PlayerCamera : MonoBehaviour
 
     private Transform playerTransform; // プレイヤーのTransform
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        //プレイヤーが後ろを振り向くとプレイヤーの頭で視界が邪魔になる不具合を防止する用
+        if (GameController.instance.mouseSensitivitySlider != null) mouseSensitivitySlider = GameController.instance.mouseSensitivitySlider;
+        else Debug.LogError("GameControllerのmouseSensitivitySliderが設定されていません");
+    }
 
     private void Start()
     {
