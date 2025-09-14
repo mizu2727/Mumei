@@ -47,7 +47,8 @@ public class GameController : MonoBehaviour
     [Header("セーブするプレイ回数")]
     public static int playCount = 0;
 
-    
+    [Header("チュートリアル用ゴールフラグ(編集禁止)")]
+    public bool isTutorialGoalFlag = false;
 
 
     public enum  GameModeStatus
@@ -69,6 +70,11 @@ public class GameController : MonoBehaviour
         else Destroy(this.gameObject);
 
         Time.timeScale = 1;
+    }
+
+    private void Start()
+    {
+        isTutorialGoalFlag = false;
     }
 
     private void Update()

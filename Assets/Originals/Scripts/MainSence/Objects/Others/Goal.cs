@@ -17,6 +17,9 @@ public class Goal : MonoBehaviour
     [Header("正解用のアイテムid")]
     [SerializeField] public int anserItemId;
 
+    [Header("正解用のチュートリアルアイテムid")]
+    [SerializeField] private int anserTutorialItemId;
+
     [Header("ゴールパネル(ヒエラルキー上のパネルをアタッチする必要がある)")]
     [SerializeField] private GameObject GoalPanel;
 
@@ -138,11 +141,7 @@ public class Goal : MonoBehaviour
 
         MessageController.instance.ResetMessage();
 
-        if (isTutorial) 
-        {
-            await MessageController.instance.ShowSystemMessage(14);
-        }
-        
+        if (GameController.instance.isTutorialGoalFlag) await MessageController.instance.ShowSystemMessage(14);
     }
 
 
@@ -179,9 +178,7 @@ public class Goal : MonoBehaviour
             int index = i;
             selectMysteryItemButton[i].onClick.RemoveAllListeners(); // 既存リスナーをクリア
             selectMysteryItemButton[i].onClick.AddListener(() => OnClickedselectMysteryItemButton(index));
-        }
-
-        
+        }       
     }
 
     public void OnClickedselectMysteryItemButton(int index)
@@ -192,21 +189,16 @@ public class Goal : MonoBehaviour
         {
             //正解のミステリーアイテムであるかを判定
             if (mysteryItems[index].id == anserItemId)
+            {           
+                //正解時の処理
+                SceneManager.LoadScene("GameClearScene");
+            }
+            //正解のミステリーアイテム(チュートリアル版)であるかを判定
+            else if (mysteryItems[index].id == anserTutorialItemId) 
             {
-                Debug.Log("isTutorial :000" + isTutorial);
-
-                if (isTutorial)
-                {
-                    Debug.Log("チュートリアルクリア");
-                    MessageController.instance.ShowGoalMessage(5);
-                }
-                else 
-                {
-                    Debug.Log("isTutorial :" + isTutorial);
-
-                    //正解時の処理
-                    SceneManager.LoadScene("GameClearScene");
-                }      
+                GameController.instance.isTutorialGoalFlag = true;
+                OnClickedReturnToInGameButton();
+                //MessageController.instance.ShowGoalMessage(5);
             }
             else
             {
@@ -250,17 +242,5 @@ public class Goal : MonoBehaviour
                 }
             }
         }
-    }
-
-    public void OnTutorial() 
-    {
-        isTutorial = true;
-        Debug.Log("isTutorial = " + isTutorial);
-    }
-
-    public void OffTutorial()
-    {
-        isTutorial = false;
-        Debug.Log("isTutorial は " + isTutorial);
     }
 }

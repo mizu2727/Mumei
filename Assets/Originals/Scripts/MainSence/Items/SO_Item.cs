@@ -90,7 +90,10 @@ public class SO_Item : ScriptableObject
     
 
 
-    //アイテム追加
+    /// <summary>
+    /// 使用アイテム追加
+    /// </summary>
+    /// <param name="newItem"></param>
     public void AddUseItem(Item newItem)
     {
         
@@ -116,7 +119,7 @@ public class SO_Item : ScriptableObject
     }
 
     /// <summary>
-    /// アイテムを削除する
+    /// 使用アイテムを削除する
     /// </summary>
     /// <param name="id">アイテムid</param>
     /// <param name="count">アイテムの個数</param>
@@ -137,7 +140,10 @@ public class SO_Item : ScriptableObject
         Debug.Log("ReduceUseItemの処理終了");
     }
 
-    //ドキュメント・ミステリーアイテム追加
+    /// <summary>
+    /// ドキュメント・ミステリーアイテム追加
+    /// </summary>
+    /// <param name="newItem">入手したアイテム</param>
     public void AddDocumentORMysteryItem(Item newItem)
     {
         if (newItem == null || newItem.gameObject == null)
@@ -154,12 +160,14 @@ public class SO_Item : ScriptableObject
 
             if (itemData.itemType == ItemType.Document)
             {
-                PauseController.instance.ChangeDocumentNameText(itemData.itemName);
+                //ドキュメント追加
+                PauseController.instance.ChangeDocumentNameText(itemData.id, itemData.itemName);
                 PauseController.instance.ChangeDocumentExplanationText(itemData.description);
             }
             else
             {
-                PauseController.instance.ChangeMysteryItemTexts(itemData.itemName ,itemData.description);
+                //ミステリーアイテム追加
+                PauseController.instance.ChangeMysteryItemTexts(itemData.id, itemData.itemName ,itemData.description);
 
             }
             Debug.Log($"アイテムを追加: {itemData.id}, 新しいitemList数: {itemList.Count}");

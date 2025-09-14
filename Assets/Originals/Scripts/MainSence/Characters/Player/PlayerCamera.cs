@@ -168,8 +168,6 @@ public class PlayerCamera : MonoBehaviour
         {
             xRotation = 0f; // 上下回転をリセット
             transform.localRotation = Quaternion.Euler(0f, 0f, 0f); // カメラのローカル回転を初期状態に
-            transform.rotation  = Quaternion.Euler(0f, 0f, 0f);// カメラのローカル回転を初期状態に
         }
-        
     }
 }

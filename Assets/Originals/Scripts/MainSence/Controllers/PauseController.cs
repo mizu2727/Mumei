@@ -55,10 +55,36 @@ public class PauseController : MonoBehaviour
     public bool isMysteryItemPanels = false;
     public bool isMysteryItemExplanationPanel = false;
 
+    [Header("チュートリアル用フラグ(編集禁止)")]
+    public bool isTutorialNextMessageFlag = false;
 
+    [Header("チュートリアル用ハンマー入手フラグ(編集禁止)")]
+    public bool isGetHammer_Tutorial = false;
+
+    [Header("チュートリアル用ロープ入手フラグ(編集禁止)")]
+    public bool isGetRope_Tutorial = false;
+
+    [Header("チュートリアル用ミステリーアイテム閲覧入手フラグ(編集禁止)")]
+    public bool isViewMysteryItem_Tutorial = false;
+
+    private List<int> mysteryItemIds = new(); // ミステリーアイテムIDのリスト
     private List<string> mysteryItemNames = new(); // ミステリーアイテム名のリスト
     private List<string> mysteryItemExplanations = new(); // ミステリーアイテム説明欄のリスト
 
+    // チュートリアル用ハンマーID
+    private const int hammer_TutorialID = 9;
+
+    // チュートリアル用ロープID
+    private const int rope_TutorialID = 10;
+
+    // チュートリアル用ドキュメントID
+    private const int documentBook_TutorialID = 7;
+
+    //初期化するのドキュメントID
+    private const int defaultDocumentBookID = 99999;
+
+    //ドキュメントID
+    private int keepDocumentBookID;
 
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
@@ -69,9 +95,7 @@ public class PauseController : MonoBehaviour
 
     [Header("サウンド関連")]
     private AudioSource audioSourceSE;
-    //public AudioClip documentNameButtonSE;
-    public readonly int documentNameButtonSEid = 3;//ドキュメント名称ボタンSE
-    //public AudioClip buttonSE;//
+    private readonly int documentNameButtonSEid = 3;//ドキュメント名称ボタンSE
     private readonly int buttonSEid = 4;//ボタンSEのID
     
 
@@ -134,6 +158,17 @@ public class PauseController : MonoBehaviour
         {
             Debug.LogWarning("Player instance is null in scene: " + scene.name);
         }
+
+
+        isTutorialNextMessageFlag = false;
+
+        isGetHammer_Tutorial = false;
+
+        isGetRope_Tutorial = false;
+
+        isViewMysteryItem_Tutorial = false;
+
+        keepDocumentBookID = defaultDocumentBookID;
     }
 
 
@@ -161,8 +196,19 @@ public class PauseController : MonoBehaviour
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
 
+        isTutorialNextMessageFlag = false;
+
+        isGetHammer_Tutorial = false;
+
+        isGetRope_Tutorial = false;
+
+        isViewMysteryItem_Tutorial = false;
+
         // ミステリーアイテムのボタンとテキストを初期化
         InitializeMysteryItemUI();
+
+        // ドキュメントIDを初期化
+        keepDocumentBookID = defaultDocumentBookID;
     }
 
 
@@ -383,13 +429,20 @@ public class PauseController : MonoBehaviour
         ChangeViewMysteryItemPanel();
     }
 
-
+    /// <summary>
+    /// ドキュメント名称ボタン押下時
+    /// </summary>
     public void OnClickedDocumentNameButton() 
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(documentNameButtonSEid));
 
         isDocumentExplanationPanel = true;
         ChangeViewDocumentExplanationPanel();
+
+        if (keepDocumentBookID == documentBook_TutorialID) 
+        {
+            isTutorialNextMessageFlag = true;
+        }
     }
 
 
@@ -480,9 +533,21 @@ public class PauseController : MonoBehaviour
     }
 
 
-    //DocumentNameTextの記載内容を変更
-    public void ChangeDocumentNameText(string documentName) 
+    /// <summary>
+    /// DocumentNameTextの記載内容を変更
+    /// </summary>
+    /// <param name="documentId">取得したid</param>
+    /// <param name="documentName">変更先の記載内容</param>
+    public void ChangeDocumentNameText(int documentId, string documentName) 
     {
+        // チュートリアル用ドキュメントの場合
+        if (documentId == documentBook_TutorialID) 
+        {
+            
+            isTutorialNextMessageFlag = true;
+            keepDocumentBookID = documentId;
+        }
+
         documentNameText = documentNameText.GetComponent<Text>();
         documentNameText.text = documentName;
     }
@@ -557,11 +622,18 @@ public class PauseController : MonoBehaviour
         }
     }
 
-
-
+    /// <summary>
+    /// ミステリーアイテム名称ボタン押下時
+    /// </summary>
+    /// <param name="index"></param>
     public void OnClickedMysteryItemNameButton(int index)
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        if (isGetHammer_Tutorial && isGetRope_Tutorial)
+        {
+            isViewMysteryItem_Tutorial = true;
+        }
 
         if (index < mysteryItemNames.Count)
         {
@@ -608,8 +680,25 @@ public class PauseController : MonoBehaviour
 
 
     // ミステリーアイテム名を追加し、UIに反映
-    public void ChangeMysteryItemTexts(string mysteryItemName, string mysteryItemDescription)
+    public void ChangeMysteryItemTexts(int mysteryItemID, string mysteryItemName, string mysteryItemDescription)
     {
+        mysteryItemIds.Add(mysteryItemID);
+
+        for (int i = 0; i < mysteryItemIds.Count; i++)
+        {
+            if (mysteryItemIds[i] == hammer_TutorialID) 
+            {
+                isGetHammer_Tutorial = true;
+                Debug.Log("isGetHammer_Tutorial" + isGetHammer_Tutorial);
+            }
+
+            if (mysteryItemIds[i] == rope_TutorialID)
+            {
+                isGetRope_Tutorial = true;
+                Debug.Log("rope_TutorialID" + rope_TutorialID);
+            }
+        }
+
         // アイテムリストから該当するアイテムを検索
         var item = sO_Item.itemList.Find(x => x.itemName == mysteryItemName && x.itemType == ItemType.MysteryItem);
         if (item != null && !mysteryItemNames.Contains(mysteryItemName))
