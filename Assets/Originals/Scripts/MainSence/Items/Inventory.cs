@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static GameController;
 using static SO_Item;
 
 
@@ -179,7 +180,7 @@ public class Inventory : MonoBehaviour
 
     void Update()
     {
-        if (UseInventoryItem()) UseItem();
+        if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) UseItem();
     }
 
     /// <summary>

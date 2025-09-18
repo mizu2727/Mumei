@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,7 +14,7 @@ public class MessageController : MonoBehaviour
 
     [Header("メッセージパネル関連(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject messagePanel;
-    [SerializeField] private Text messageText;
+    [SerializeField] public Text messageText;
     [SerializeField] private GameObject CheckInputNamePanel;
     [SerializeField] private Text CheckInputNameText;
 
@@ -65,6 +66,52 @@ public class MessageController : MonoBehaviour
     [SerializeField] private AudioClip noiseSE;
     private AudioSource audioSourceSE;
 
+    // 非同期タスクのキャンセル用(チュートリアル内のUniTask処理待機中にポーズ画面からタイトルへ戻る際のmessageTextでMissingReferenceExceptionエラーが起こるのを防止する用)
+    private CancellationTokenSource cts; 
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        // 非同期タスクをキャンセル
+        CancelAsyncTasks(); 
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (messageText == null)
+        {
+            Debug.LogWarning("MessageControllerのmessageTextがnullのため、messageText = messageTextを実行");
+            messageText = GameController.instance.messageText;
+        }
+
+        if (messageText != null) messageText = GameController.instance.messageText;
+        else Debug.LogError("GameControllerのmessageTextが設定されていません");
+
+        if (messageText == null)
+        {
+            Debug.LogError("MessageControllerのmessageTextがnull");
+        }
+    }
+
+    /// <summary>
+    /// トークンをキャンセルして非同期タスクを中断
+    /// </summary>
+    public void CancelAsyncTasks()
+    {
+        if (cts != null)
+        {
+            cts.Cancel();
+            cts.Dispose();
+            cts = new CancellationTokenSource();
+        }
+    }
+
     private void Awake()
     {
         if (instance == null)
@@ -74,8 +121,12 @@ public class MessageController : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);
+            DestroyController();
         }
+
+        // CancellationTokenSourceを初期化
+        cts = new CancellationTokenSource(); 
+
         ResetMessage();
 
         
@@ -104,6 +155,15 @@ public class MessageController : MonoBehaviour
         //MusicControllerのAwake関数の処理後に呼ばれるようにするため、
         //Start関数内でAudioSourceを取得する
         audioSourceSE = MusicController.Instance.GetAudioSource();
+
+        //if (messageText == null) 
+        //{
+        //    Debug.LogWarning("messageTextがnullのため、messageText = messageTextを実行");
+        //    messageText = messageText;
+        //} 
+
+        //if (messageText != null) messageText = messageText;
+        //else Debug.LogError("GameControllerのmessageTextが設定されていません");
     }
 
     //メッセージパネルの表示・非表示
@@ -383,7 +443,9 @@ public class MessageController : MonoBehaviour
                         number++;
 
                         //不穏なBGMを止める
-                        //MusicController.Instance.StopBGM();
+                        MusicController.Instance.StopBGM();
+
+
 
                         isBlackOutPanel = true;
                         ViewBlackOutPanel();
@@ -509,8 +571,8 @@ public class MessageController : MonoBehaviour
 
                 case 10:
                     //ドキュメント(チュートリアル版)入手したらメッセージを勧める
-                    await UniTask.WaitUntil(() => PauseController.instance.isTutorialNextMessageFlag);
-                    PauseController.instance.isTutorialNextMessageFlag = false;
+                    await UniTask.WaitUntil(() => GameController.instance.isTutorialNextMessageFlag);
+                    GameController.instance.isTutorialNextMessageFlag = false;
 
                     //左クリック…ドキュメント入手操作の説明
                     ResetMessage();
@@ -523,8 +585,8 @@ public class MessageController : MonoBehaviour
 
                 case 11:
                     //ドキュメント(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                    await UniTask.WaitUntil(() => PauseController.instance.isTutorialNextMessageFlag && !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel);
-                    PauseController.instance.isTutorialNextMessageFlag = false;
+                    await UniTask.WaitUntil(() => GameController.instance.isTutorialNextMessageFlag && !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel);
+                    GameController.instance.isTutorialNextMessageFlag = false;
 
                     ResetMessage();
 
@@ -562,8 +624,10 @@ public class MessageController : MonoBehaviour
                 //チュートリアル終了
                 case 14:
                     //チュートリアル用ゴールの閲覧終了したらメッセージを勧める
+                    Debug.Log("MessageControllerチュートリアル用ゴールの閲覧前");
                     await UniTask.WaitUntil(() => !PauseController.instance.isPause
                     && GameController.instance.isTutorialGoalFlag);
+                    Debug.Log("MessageControllerチュートリアル用ゴールの閲覧終了");
                     GameController.instance.isTutorialGoalFlag = false;
 
                     messageText.text = "";
@@ -702,5 +766,29 @@ public class MessageController : MonoBehaviour
     {
         CheckInputNamePanel.SetActive(false);
         inputPlayerNameField.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// このコントローラーを破棄する
+    /// </summary>
+    public void DestroyController()
+    {
+        CancelAsyncTasks();
+        messageText.text = "";
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// オブジェクトが破棄される際に呼ばれる
+    /// </summary>
+    private void OnDestroy()
+    {
+        // もしこのインスタンスがシングルトンインスタンス自身であれば、
+        // staticな参照をクリアする
+        if (instance == this)
+        {
+            instance = null;
+            Debug.Log("MessageController staticな参照をクリア");
+        }
     }
 }

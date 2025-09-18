@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -55,8 +56,8 @@ public class PauseController : MonoBehaviour
     public bool isMysteryItemPanels = false;
     public bool isMysteryItemExplanationPanel = false;
 
-    [Header("チュートリアル用フラグ(編集禁止)")]
-    public bool isTutorialNextMessageFlag = false;
+    //[Header("チュートリアル用フラグ(編集禁止)")]
+    //public bool isTutorialNextMessageFlag = false;
 
     [Header("チュートリアル用ハンマー入手フラグ(編集禁止)")]
     public bool isGetHammer_Tutorial = false;
@@ -102,6 +103,9 @@ public class PauseController : MonoBehaviour
     [Header("Input Actions")]
     public GameInput gameInput;
 
+    // 非同期タスクのキャンセル用(チュートリアル内のUniTask処理待機中にポーズ画面からタイトルへ戻る際のmessageTextでMissingReferenceExceptionエラーが起こるのを防止する用)
+    private CancellationTokenSource cts;
+
 
     private void Awake()
     {
@@ -113,8 +117,10 @@ public class PauseController : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject); // すでにインスタンスが存在する場合は破棄
+            DestroyController(); // すでにインスタンスが存在する場合は破棄
         }
+        // CancellationTokenSourceを初期化
+        cts = new CancellationTokenSource();
 
         gameInput = new GameInput();
 
@@ -141,6 +147,8 @@ public class PauseController : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         gameInput.Disable();
+        // 非同期タスクをキャンセル
+        CancelAsyncTasks();
     }
 
     /// <summary>
@@ -160,8 +168,6 @@ public class PauseController : MonoBehaviour
         }
 
 
-        isTutorialNextMessageFlag = false;
-
         isGetHammer_Tutorial = false;
 
         isGetRope_Tutorial = false;
@@ -171,7 +177,18 @@ public class PauseController : MonoBehaviour
         keepDocumentBookID = defaultDocumentBookID;
     }
 
-
+    /// <summary>
+    /// トークンをキャンセルして非同期タスクを中断
+    /// </summary>
+    public void CancelAsyncTasks()
+    {
+        if (cts != null)
+        {
+            cts.Cancel();
+            cts.Dispose();
+            cts = new CancellationTokenSource();
+        }
+    }
 
     private void Start()
     {
@@ -196,7 +213,6 @@ public class PauseController : MonoBehaviour
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
 
-        isTutorialNextMessageFlag = false;
 
         isGetHammer_Tutorial = false;
 
@@ -355,8 +371,7 @@ public class PauseController : MonoBehaviour
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
         MusicController.Instance.StopBGM();
-        //GameController.instance.ReturnToTitle();
-        SceneManager.LoadScene("TitleScene");
+        GameController.instance.ReturnToTitle();
     }
 
     //「いいえ」押下
@@ -441,7 +456,8 @@ public class PauseController : MonoBehaviour
 
         if (keepDocumentBookID == documentBook_TutorialID) 
         {
-            isTutorialNextMessageFlag = true;
+            GameController.instance.isTutorialNextMessageFlag = true;
+            Debug.Log("GameController.instance.isTutorialNextMessageFlag = " + GameController.instance.isTutorialNextMessageFlag);
         }
     }
 
@@ -543,9 +559,10 @@ public class PauseController : MonoBehaviour
         // チュートリアル用ドキュメントの場合
         if (documentId == documentBook_TutorialID) 
         {
-            
-            isTutorialNextMessageFlag = true;
+
+            GameController.instance.isTutorialNextMessageFlag = true;
             keepDocumentBookID = documentId;
+            Debug.Log("GameController.instance.isTutorialNextMessageFlag = " + GameController.instance.isTutorialNextMessageFlag);
         }
 
         documentNameText = documentNameText.GetComponent<Text>();
@@ -773,6 +790,34 @@ public class PauseController : MonoBehaviour
                     mysteryItemImage[i].enabled = false;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// このコントローラーを破棄する
+    /// </summary>
+    public void DestroyController() 
+    {
+        CancelAsyncTasks();
+        isPause = false;
+        ChangeViewPausePanel();
+
+        isViewItemsPanel = false;
+        ChangeViewItemsPanel();
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// オブジェクトが破棄される際に呼ばれる
+    /// </summary>
+    private void OnDestroy()
+    {
+        // もしこのインスタンスがシングルトンインスタンス自身であれば、
+        // staticな参照をクリアする
+        if (instance == this)
+        {
+            instance = null;
+            Debug.Log("PauseController staticな参照をクリア");
         }
     }
 }

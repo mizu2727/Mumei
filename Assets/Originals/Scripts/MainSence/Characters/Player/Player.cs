@@ -166,8 +166,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
         GameController.instance.ViewGameOver();
         //SceneManager.LoadScene("GameOverScene");
-        Debug.Log("Player‚ğíœ‚µ‚Ü‚·");
-        Destroy(gameObject);
+        DestroyPlayer();
     }
 
     public void Attack()
@@ -219,7 +218,7 @@ public class Player : MonoBehaviour, CharacterInterface
     {
         if (instance != null && instance != this)
         {
-            Destroy(gameObject);
+            DestroyPlayer();
             return;
         }
         instance = this;
@@ -616,5 +615,14 @@ public class Player : MonoBehaviour, CharacterInterface
         {
             characterController.enabled = true;
         }
+    }
+
+    /// <summary>
+    /// ƒvƒŒƒCƒ„[íœˆ—
+    /// </summary>
+    public void DestroyPlayer() 
+    {
+        Debug.Log("Player‚ğíœ‚µ‚Ü‚µ‚½");
+        Destroy(gameObject);
     }
 }

@@ -10,7 +10,7 @@ public class GameClearController : MonoBehaviour
     [SerializeField] public Canvas gameClearCanvas;
 
     [Header("アンケートURL")]
-    [SerializeField] private string questionnaireURL = "https://docs.google.com/forms/d/1xdBHlH7TKpKQc7KNpDPFqtSgjhFX4BW1OZQjSmdZVZA/viewform";
+    [SerializeField] private string questionnaireURL = "https://docs.google.com/forms/d/13qMmaottZOaX7lg4lu8kzzvfE5aXFS3kNgPPoCmxI6M/viewform";
 
     [Header("XのURL")]
     [SerializeField] private string X_URL = "https://x.com/Tomanegi0707";

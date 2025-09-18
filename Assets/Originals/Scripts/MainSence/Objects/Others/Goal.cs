@@ -189,7 +189,8 @@ public class Goal : MonoBehaviour
         {
             //正解のミステリーアイテムであるかを判定
             if (mysteryItems[index].id == anserItemId)
-            {           
+            {
+                Player.instance.DestroyPlayer();
                 //正解時の処理
                 SceneManager.LoadScene("GameClearScene");
             }

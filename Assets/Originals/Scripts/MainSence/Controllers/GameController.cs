@@ -14,6 +14,10 @@ public class GameController : MonoBehaviour
     [Header("ゲームモードのステータス")]
     public GameModeStatus gameModeStatus;
 
+    [Header("メッセージパネル関連(ヒエラルキー上からアタッチする必要がある)")]
+    //[SerializeField] public GameObject messagePanel;
+    [SerializeField] public Text messageText;
+
     [Header("チュートリアル用ドキュメント")]
     [SerializeField] public GameObject tutorialDocument;
 
@@ -23,6 +27,9 @@ public class GameController : MonoBehaviour
 
     [Header("チュートリアル用アイテム親オブジェクト")]
     [SerializeField] public GameObject tutorialItems;
+
+    [Header("チュートリアル用フラグ(編集禁止)")]
+    public bool isTutorialNextMessageFlag = false;
 
     [Header("PlayerスタミナSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider staminaSlider;
@@ -60,6 +67,34 @@ public class GameController : MonoBehaviour
         GameOver,
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ResetParams();
+    }
+
+    /// <summary>
+    /// パラメーターリセット
+    /// </summary>
+    public void ResetParams() 
+    {
+        Debug.Log("GameControllerのパラメーターをリセット");
+        isTutorialNextMessageFlag = false;
+        isTutorialGoalFlag = false;
+    }
+
     private void Awake()
     {
         if (instance == null)
@@ -74,7 +109,7 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        isTutorialGoalFlag = false;
+        ResetParams();
     }
 
     private void Update()
@@ -129,4 +164,33 @@ public class GameController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// タイトル画面へ戻る
+    /// </summary>
+    public void ReturnToTitle() 
+    {
+        // MessageControllerの非同期タスクをキャンセル
+        if (MessageController.instance != null)
+        {
+            MessageController.instance.CancelAsyncTasks();
+            MessageController.instance.DestroyController();
+        }
+
+
+        if (Player.instance != null)
+        {
+            Player.instance.DestroyPlayer();
+        }
+        SceneManager.LoadScene("TitleScene");
+        //MessageController.instance.DestroyController();
+        
+        //MessageController.instance.messageText = null;
+        //SceneManager.LoadScene("TitleScene");
+        //Player.instance.DestroyPlayer();
+        if (PauseController.instance != null)
+        {
+            PauseController.instance.DestroyController();
+        }
+
+    }
 }

@@ -10,9 +10,14 @@ public class HomeController : MonoBehaviour
     public AudioSource audioSourceBGM;
     private readonly int homeSceneBGMid = 1; // ホームシーンBGMのID
 
+
+    [Header("タイトルへ戻るボタン(ヒエラルキー上からアタッチすること(バグNo.Er001への一時的な措置))")]
+    [SerializeField] private GameObject returnToTitlePanel;
+
     void Awake()
     {
         GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+        GameController.instance.ResetParams();
 
         //全てのBGMの状態をStopに変更
         sO_BGM.StopAllBGM();
@@ -22,5 +27,8 @@ public class HomeController : MonoBehaviour
 
         //ホームシーンBGMを再生TODO
         //MusicController.Instance.PlayBGM(homeSceneBGMid);
+
+        //バグNo.Er001への一時的な措置
+        returnToTitlePanel.SetActive(false);
     }
 }
