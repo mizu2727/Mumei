@@ -82,6 +82,7 @@ public class HearingEnemy : BaseEnemy
                     {
                         currentState = EnemyState.Alert;
                         isInvestigatingSound = false;
+                        playerFoundPanel.SetActive(false);
                         Debug.Log($"[{gameObject.name}] 調査中にプレイヤーが近くにいる、警戒状態状態に移行");
                     }
                 }
