@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -73,6 +74,12 @@ public class Inventory : MonoBehaviour
     //アイテムリストのインデックス番号
     int checkIndex;
 
+    // スタミナ増強効果のタスクを管理するためのCancellationTokenSource
+    //private CancellationTokenSource staminaEffectCts;
+
+    //スタミナ増強剤を使用しているかを判定
+    private bool isUseStaminaItem;
+
     private Player player;
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -97,6 +104,8 @@ public class Inventory : MonoBehaviour
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //CancelStaminaEffect();
     }
 
     /// <summary>
@@ -260,19 +269,12 @@ public class Inventory : MonoBehaviour
     {
         if (minKeepItemCount < keepItemCount)
         {
-            Debug.Log("インベントリアイテムitemを使用");
-            --keepItemCount;
-            useItemCountText.text = keepItemCount.ToString();
-
             ActivationUseItem(keepItemId);
-
-            sO_Item.ReduceUseItem(keepItemId, keepItemCount);
-            
-
-            Debug.Log("id:" + keepItemId + "のkeepItemCount(使用アイテム(減少)):" + keepItemCount);
+            Debug.Log("id:" + keepItemId + "のkeepItemCount(使用アイテムの個数):" + keepItemCount);
 
             if (keepItemCount == minKeepItemCount)
             {
+                //アイテム数が0になった場合の処理
                 ResetInventoryItem();
             }
         }
@@ -293,6 +295,25 @@ public class Inventory : MonoBehaviour
         {
             //スタミナ増強剤
             case 11:
+                // スタミナ効果が適用中の場合
+                if (isUseStaminaItem)
+                {
+                    MessageController.instance.ShowInventoryMessage(3);
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+                    MessageController.instance.ResetMessage();
+                    return;
+                }
+
+                // アイテムカウントを減少
+                --keepItemCount;
+                useItemCountText.text = keepItemCount.ToString();
+                sO_Item.ReduceUseItem(keepItemId, keepItemCount);
+
+                // スタミナゲージの元の色を保持
+                Color keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
+
                 //スタミナ増強剤SEを再生
                 audioSourceInventorySE.clip = sO_SE.GetSEClip(useStaminaEnhancerSEid);
                 audioSourceInventorySE.loop = false;
@@ -300,8 +321,8 @@ public class Inventory : MonoBehaviour
 
                 //スタミナ消費率を25%に変更し、スタミナゲージの色を緑色に変更
                 Player.instance.staminaConsumeRatio = 25;
-                Color keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
                 Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = new Color(0, 1, 0, 1);
+                isUseStaminaItem = true;
 
                 //効果時間待機
                 await UniTask.Delay(TimeSpan.FromSeconds(keepItemEffectValue));
@@ -309,10 +330,16 @@ public class Inventory : MonoBehaviour
                 //スタミナ消費率を50%に戻して、スタミナゲージの色を元に戻す
                 Player.instance.staminaConsumeRatio = 50;
                 Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = keepStaminaColor;
+                isUseStaminaItem = false;
                 break;
 
             //テスト用使用アイテム①
             case 995:
+                // アイテムカウントを減少
+                --keepItemCount;
+                useItemCountText.text = keepItemCount.ToString();
+                sO_Item.ReduceUseItem(keepItemId, keepItemCount);
+
                 // ローカル座標をワールド座標に変換
                 Vector3 worldPosition = Player.instance.transform.TransformPoint(keepItemSpawnPosition);
                 Quaternion worldRotation = Player.instance.transform.rotation * keepItemSpawnRotation;
@@ -339,5 +366,6 @@ public class Inventory : MonoBehaviour
         keepItemSpawnRotation = defaultItemSpawnRotation;
         useItemImage.sprite = null;
         useItemImage.color = new Color(255, 255, 255, 0.05f);
+        isUseStaminaItem = false;
     }
 }
