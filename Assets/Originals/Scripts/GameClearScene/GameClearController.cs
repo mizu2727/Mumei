@@ -4,6 +4,9 @@ using static GameController;
 
 public class GameClearController : MonoBehaviour
 {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
     public static GameClearController instance;
 
     [Header("ゲームクリア画面のCanvas")]
@@ -17,6 +20,7 @@ public class GameClearController : MonoBehaviour
 
     private void Awake()
     {
+        //インスタンス生成
         if (instance == null)
         {
             instance = this;
@@ -29,12 +33,7 @@ public class GameClearController : MonoBehaviour
     void Start()
     {
         GameController.instance.SetGameModeStatus(GameModeStatus.Story);
-        gameClearCanvas.enabled = false;
-
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
-        //await MessageController.instance.ShowSystemMessage(70);
+        HiddenGameClearUI();
     }
 
     /// <summary>
@@ -45,12 +44,24 @@ public class GameClearController : MonoBehaviour
         SceneManager.LoadScene("TitleScene");
     }
 
-
+    /// <summary>
+    /// ゲームクリア時のUIを表示
+    /// </summary>
     public void ViewGameClearUI() 
     {
         gameClearCanvas.enabled = true;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+    }
+
+    /// <summary>
+    /// ゲームクリア時のUIを非表示
+    /// </summary>
+    void HiddenGameClearUI()
+    {
+        gameClearCanvas.enabled = false;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     /// <summary>

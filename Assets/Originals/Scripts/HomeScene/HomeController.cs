@@ -8,7 +8,11 @@ public class HomeController : MonoBehaviour
 
     [Header("サウンド関連")]
     public AudioSource audioSourceBGM;
-    private readonly int homeSceneBGMid = 1; // ホームシーンBGMのID
+
+    /// <summary>
+    /// HomeSceneBGMのID
+    /// </summary>
+    private readonly int homeSceneBGMid = 1;
 
 
     [Header("タイトルへ戻るボタン(ヒエラルキー上からアタッチすること(バグNo.Er001への一時的な措置))")]

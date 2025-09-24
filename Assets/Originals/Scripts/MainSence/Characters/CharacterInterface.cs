@@ -2,48 +2,78 @@ using UnityEngine;
 
 interface CharacterInterface
 {
-    //アニメーション再生
+    /// <summary>
+    /// アニメーション再生
+    /// </summary>
     Animator PlayAnimator { get; set; }
 
-    //名前
+    /// <summary>
+    /// キャラクター名
+    /// </summary>
     string CharacterName { get; set; }
 
-    //通常の移動速度
+    /// <summary>
+    /// 通常の移動速度
+    /// </summary>
     float NormalSpeed { get; set; }
 
-    //ダッシュ時の移動速度
+    /// <summary>
+    /// ダッシュ時の移動速度
+    /// </summary>
     float SprintSpeed { get; set; }
 
-    //キャラクター検出範囲
+    /// <summary>
+    /// キャラクター検出範囲
+    /// </summary>
     float DetectionRange { get; set; }
 
-    //重力
+    /// <summary>
+    /// 重力
+    /// </summary>
     float Gravity { get; set; }
-
-    //HP
+    
+    /// <summary>
+    /// HP
+    /// </summary>
     int HP { get; set; }
 
-    //死亡判定
+    /// <summary>
+    /// 死亡フラグ
+    /// </summary>
     bool IsDead { get; set; }
 
-    //死亡
+    /// <summary>
+    /// 死亡メソッド
+    /// </summary>
     void Dead();
 
-    //移動判定
+    /// <summary>
+    /// 移動判定
+    /// </summary>
     bool IsMove { get; set; }
 
-    //ダッシュ判定
+    /// <summary>
+    /// ダッシュ判定
+    /// </summary>
     bool IsDash { get; set; }
 
-    //後ろを向く判定医
+    /// <summary>
+    /// 後ろを向くフラグ
+    /// </summary>
     bool IsBackRotate { get; set; }
 
-    //ライトの切り替え
+    /// <summary>
+    /// ライトの切り替えフラグ
+    /// </summary>
     bool IsLight { get; set; }
 
-    //攻撃
+    /// <summary>
+    /// 攻撃するメソッド
+    /// </summary>
     void Attack();
 
-    //キャラクターの初期位置
+    /// <summary>
+    /// キャラクターの初期位置
+    /// </summary>
     Vector3 StartPosition { get; set; }
 }

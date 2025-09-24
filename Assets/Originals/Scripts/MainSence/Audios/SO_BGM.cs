@@ -22,7 +22,9 @@ public enum  BGMState
     Pause,  
 }
 
-
+/// <summary>
+/// BGMÇÃDB
+/// </summary>
 [CreateAssetMenu(fileName = "SO_BGM", menuName = "Scriptable Objects/SO_BGM")]
 public class SO_BGM : ScriptableObject
 {
@@ -46,6 +48,7 @@ public class SO_BGM : ScriptableObject
         [Header("BGMÇÃçƒê∂èÛë‘")]
         public BGMState bgmState;
 
+        
         public BGMData(int id, AudioClip bgmAudioClip, string bgmName, string description, BGMState bgmState)
         {
             this.id = id;

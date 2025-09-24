@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 public class BaseEnemy : MonoBehaviour, CharacterInterface
 {
-    [Header("敵のステータス")]
+    [Header("アニメーション")]
     public Animator animator;
     public Animator PlayAnimator
     {
@@ -18,7 +18,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => animator = value;
     }
 
-
+    [Header("名前")]
     [SerializeField] private string enemyName;
 
     [SerializeField]
@@ -28,7 +28,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyName = value;
     }
 
-
+    [Header("通常移動速度")]
     [SerializeField] private float Speed = 4f;
     [SerializeField]
     public float NormalSpeed
@@ -37,7 +37,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => Speed = value;
     }
 
-
+    [Header("ダッシュ時の移動速度")]
     [SerializeField] private float dashSpeed = 5f;
     [SerializeField]
     public float SprintSpeed
@@ -46,7 +46,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => dashSpeed = value;
     }
 
-    
+    [Header("検知範囲")]
+    [SerializeField] private float enemyDetectionRange = 100f;
     [SerializeField]
     public float DetectionRange
     {
@@ -54,6 +55,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyDetectionRange = value;
     }
 
+    [Header("重力")]
     [SerializeField] private float enemyGravity = 10f;
     [SerializeField]
     public float Gravity
@@ -62,6 +64,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyGravity = value;
     }
 
+    [Header("HP")]
     [SerializeField] private int enemyHP = 1;
     [SerializeField]
     public int HP
@@ -70,6 +73,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyHP = value;
     }
 
+    [Header("死亡フラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool enemyIsDead = false;
     [SerializeField]
     public bool IsDead
@@ -78,6 +82,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyIsDead = value;
     }
 
+    [Header("移動フラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool enemyIsMove = true;
     [SerializeField]
     public bool IsMove
@@ -86,6 +91,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyIsMove = value;
     }
 
+    [Header("ダッシュフラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool enemyIsDash = true;
     [SerializeField]
     public bool IsDash
@@ -94,6 +100,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyIsDash = value;
     }
 
+    [Header("振り返りフラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool enemyIsBackRotate = false;
     [SerializeField]
     public bool IsBackRotate
@@ -102,6 +109,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyIsBackRotate = value;
     }
 
+    [Header("照明フラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool enemyIsLight = true;
     [SerializeField]
     public bool IsLight
@@ -110,13 +118,18 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyIsLight = value;
     }
 
+    /// <summary>
+    /// 死亡メソッド
+    /// </summary>
     public void Dead()
     {
         Debug.Log("Enemy Dead");
     }
 
 
-    //攻撃
+    /// <summary>
+    /// プレイヤーを攻撃するメソッド
+    /// </summary>
     public void Attack()
     {
         if (Player.instance.IsDead) return;
@@ -127,7 +140,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     }
 
-
+    [Header("初期位置")]
     [SerializeField] private Vector3 enemyStartPosition;
     [SerializeField]
     public Vector3 StartPosition
@@ -136,10 +149,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyStartPosition = value;
     }
 
-
+    /// <summary>
+    /// 衝突地点を記録
+    /// </summary>
     private Vector3 lastCollisionPoint;
 
-   
+   /// <summary>
+   /// 移動時の状態
+   /// </summary>
     public enum EnemyState
     {
         Patrol,      // 通常徘徊
@@ -154,37 +171,41 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("プレイヤーの最後の既知の位置(ヒエラルキー上での編集禁止)")]
     public Vector3 lastKnownPlayerPosition;
 
-    private float investigateTimer = 0f; // 調査時間カウンター
-    private float investigateDuration = 5f; // 調査する時間（秒）
+    /// <summary>
+    /// 調査時間カウンター
+    /// </summary>
+    private float investigateTimer = 0f;
 
+    /// <summary>
+    /// 調査する時間（秒）
+    /// </summary>
+    private float investigateDuration = 5f;
 
-
-    [Header("NavMesh関連(ヒエラルキー上での編集禁止)")]
+    [Header("navMeshAgent(ヒエラルキー上での編集禁止)")]
     public NavMeshAgent navMeshAgent;
 
+    [Header("徘徊関連")]
     [Header("徘徊地点を見つける範囲(この値が狭すぎると徘徊地点が見つからず、広すぎるとNaveMeshの範囲外になるため、要調整が必要)")]
     [SerializeField] private float findPatrolPointRange = 10f;
-
-    [Header("敵の検知範囲")]
-    [SerializeField] private float enemyDetectionRange = 100f;
 
     [Header("警戒範囲(プレイヤーとの距離)")]
     [SerializeField] public float alertRange = 15f;
 
-
-    [Header("徘徊関連")]
-
-    [Header("(プレハブ化したオブジェクトをアタッチすること)")]
-    [SerializeField] private TestMap01 testMap01;
-
     [Header("徘徊地点のTransform配列")]
-    [SerializeField] public Transform[] patrolPoint;
+    [SerializeField] private Transform[] patrolPoint;
+
+    /// <summary>
+    /// 徘徊地点の要素番号
+    /// </summary>
     private int positionNumber = 0;
+
+    /// <summary>
+    /// 徘徊地点の最大要素番号
+    /// </summary>
     private int maxPositionNumber;
 
 
-    [Header("検知・視線関連")]
-    // 
+    [Header("検知・視線関連")] 
     [Header("追従したいオブジェクト(ヒエラルキー上のプレイヤーをアタッチすること)")]
     [SerializeField] public Transform targetPoint;
 
@@ -204,33 +225,58 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
-    [Header("サウンド関連")]
-    public AudioSource audioSourceSE; 
-    private readonly int walkSEid = 7; // 歩行音のID
-    private readonly int runSEid = 8;  // ダッシュ音のID
-    public AudioSource audioSourceFindPlayerSE;
-    private readonly int findPlayerSEid = 9;  // ダッシュ音のID
+    [Header("歩行音・ダッシュ音用のaudioSource(ヒエラルキー上での編集禁止)")]
+    public AudioSource audioSourceSE;
 
-    [Header("現在再生中の効果音")]
-    public AudioClip currentSE;//現在再生中の効果音
+    /// <summary>
+    /// 歩行音のID
+    /// </summary>
+    private readonly int walkSEid = 7;
+
+    /// <summary>
+    /// ダッシュ音のID
+    /// </summary>
+    private readonly int runSEid = 8;
+
+    /// <summary>
+    /// プレイヤーを探す音用のaudioSource
+    /// </summary>
+    private AudioSource audioSourceFindPlayerSE;
+
+    /// <summary>
+    /// プレイヤーを探す音のID
+    /// </summary>
+    private readonly int findPlayerSEid = 9;
+
+    [Header("現在再生中の効果音(ヒエラルキー上での編集禁止)")]
+    public AudioClip currentSE;
 
     [Header("走る音の再生速度(要調整)")]
     [SerializeField] private float runSEPitch = 2f;
 
+
     [Header("サウンドの距離関連(要調整)")]
-    [SerializeField] private float maxSoundDistance = 10f; // 音量が最大になる距離
-    [SerializeField] private float minSoundDistance = 20f; // 音量が最小になる距離
-    [SerializeField] private float maxVolume = 1.0f; // 最大音量
-    [SerializeField] private float minVolume = 0.0f; // 最小音量
+    [Header("音量が最大になる距離")]
+    [SerializeField] private float maxSoundDistance = 10f;
+
+    [Header("音量が最小になる距離")]
+    [SerializeField] private float minSoundDistance = 20f;
+
+    [Header("最大音量")]
+    [SerializeField] private float maxVolume = 1.0f;
+
+    [Header("最小音量")]
+    [SerializeField] private float minVolume = 0.0f;
 
 
     [Header("プレイヤー発見時のパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public GameObject playerFoundPanel;
 
 
-
-
-    private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
+    /// <summary>
+    /// 前フレームの移動状態フラグ
+    /// </summary>
+    private bool wasMovingLastFrame = false;
 
     [Header("プレイヤーが視野内にいるかを判定(ヒエラルキー上での編集禁止)")]
     public bool isAlertMode = false;
@@ -242,22 +288,28 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] string doorTag = "Door";
 
 
+    /// <summary>
+    /// ドア
+    /// </summary>
     private Door door;
+
+    /// <summary>
+    /// 対象の開閉したいドア
+    /// </summary>
     GameObject gameObjectDoor;
 
     /// <summary>
-    /// 
+    /// オブジェクトが生成されたタイミングで一回だけ呼ばれる関数。初期化しておきたい情報を書く
     /// </summary>
     private void OnEnable()
     {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    /// <summary>
-    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
-    /// </summary>
     private void OnDisable()
     {
+        //シーン遷移時にAudioSourceを再設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
