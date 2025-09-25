@@ -391,16 +391,25 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         // NavMeshAgentの初期化
-        navMeshAgent.isStopped = false;
-        navMeshAgent.updatePosition = true;
-        navMeshAgent.updateRotation = true; // 回転をNavMeshAgentに任せる
-        navMeshAgent.angularSpeed = 360f; // 回転速度を適切に設定
-        navMeshAgent.baseOffset = 0f; // モデルに合わせて調整
 
-        // モデルの回転を初期化（必要に応じて）
+        navMeshAgent.isStopped = false;
+
+        //位置をNavMeshAgentに任せる
+        navMeshAgent.updatePosition = true;
+
+        //回転をNavMeshAgentに任せる
+        navMeshAgent.updateRotation = true;
+
+        //回転速度を適切に設定すること
+        navMeshAgent.angularSpeed = 360f;
+
+        //モデルに合わせて調整すること
+        navMeshAgent.baseOffset = 0f; 
+
+        //モデルの回転を初期化
         transform.rotation = Quaternion.identity;
 
-        // NavMesh上に配置されているか確認
+        //NavMesh上に配置されているか確認
         if (!navMeshAgent.isOnNavMesh)
         {
             Debug.LogWarning($"[{gameObject.name}] NavMesh上にありません。位置を補正します。");
@@ -415,14 +424,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             }
         }
 
-        // 徘徊地点の初期化
+        //徘徊地点の初期化
         if ( patrolPoint == null || patrolPoint.Length == 0)
         {
             Debug.LogError($"[{gameObject.name}] testMap01またはpatrolPointが設定されていません！");
             return;
         }
 
-        // patrolPointの各要素を検証
+        //patrolPointの各要素をnullチェック
         for (int i = 0; i < patrolPoint.Length; i++)
         {
             if (patrolPoint[i] == null)
@@ -440,10 +449,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         Debug.Log($"[{gameObject.name}] 初期徘徊地点: {patrolPoint[positionNumber].position}");
     }
 
-    //プレイヤーが視野内にいるかをチェックする
+    /// <summary>
+    /// プレイヤーが視野内にいるかをチェックする
+    /// </summary>
+    /// <returns>プレイヤーオブジェクトのLayerがヒットするとtrue</returns>
     public bool IsPlayerInFront()
     {
-
+        //プレイヤーをnullチェック
         if (targetPoint == null)
         {
             Debug.LogWarning($"[{gameObject.name}] targetPointがnullです。");
@@ -459,7 +471,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         if (distanceToPlayer <= enemyDetectionRange && angle <= fieldOfViewAngle * 0.5f)
         {
             RaycastHit hit;
-            Vector3 rayOrigin = transform.position + Vector3.up * 1.5f; // 視線の開始位置
+
+            //視線の開始位置
+            Vector3 rayOrigin = transform.position + Vector3.up * 1.5f;
+
+            //Raycastでヒットしたオブジェクトのレイヤーをチェック
             if (Physics.SphereCast(rayOrigin, sphereCastRadius, directionToPlayer.normalized, out hit, enemyDetectionRange, detectionLayer))
             {
                 if (hit.collider.CompareTag(playerTag))
@@ -467,10 +483,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     // 障害物をチェック
                     if (!Physics.Linecast(rayOrigin, targetPoint.position + Vector3.up * 1.0f, obstacleLayer))
                     {
+                        //プレイヤーオブジェクトのLayerがヒット
                         return true;
                     }
                     else
                     {
+                        //それ以外のオブジェクトのLayerがヒット
                         return false;
                     }
                 }
@@ -479,9 +497,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         return false;
     }
 
-    //プレイヤーを追従する
+    /// <summary>
+    /// プレイヤーを追従する
+    /// </summary>
     void ChasePlayer()
     {
+        //プレイヤーをnullチェック
         if (targetPoint == null)
         {
             Debug.LogWarning($"[{gameObject.name}] tagetPointがnullです。");
@@ -491,13 +512,18 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         //プレイヤーの位置を取得
         navMeshAgent.SetDestination(targetPoint.position);
+
+        //ダッシュ
         navMeshAgent.speed = dashSpeed;
         navMeshAgent.isStopped = false;
     }
-
-    // 次の俳諧地点を決める
+ 
+    /// <summary>
+    /// 次の俳諧地点を決める
+    /// </summary>
     void NextPosition()
     {
+        //徘徊地点をnullチェック
         if (patrolPoint == null || patrolPoint.Length == 0)
         {
             Debug.LogError($"[{gameObject.name}] patrolPointが無効です！");
@@ -508,6 +534,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //ランダムな俳諧地点を選択
         positionNumber = Random.Range(0, maxPositionNumber);
         Vector3 targetPos = patrolPoint[positionNumber].position;
+
         NavMeshHit hit;
 
         //NavMesh上の位置を確認
@@ -543,10 +570,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
     }
 
-
+    /// <summary>
+    /// 移動しているかを判定する
+    /// </summary>
+    /// <returns>移動中ならtrue</returns>
     public bool IsEnemyMoving()
     {
-        // NavMeshAgentが有効で、経路が存在し、停止しておらず、速度がある場合に移動中と判定
+        //NavMeshAgentが有効で、経路が存在し、停止しておらず、速度がある場合に移動中と判定
         if (navMeshAgent != null && navMeshAgent.enabled)
         {
             return navMeshAgent.hasPath && !navMeshAgent.isStopped && navMeshAgent.velocity.magnitude > 0.1f;
@@ -554,78 +584,92 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         return false;
     }
 
-    // 衝突判定と処理を追加
+    /// <summary>
+    /// オブジェクトのコリジョンと衝突した場合の処理
+    /// </summary>
+    /// <param name="collision">衝突したオブジェクトのコリジョン</param>
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log($"[{gameObject.name}] 衝突検出: {collision.gameObject.name}, タグ: {collision.gameObject.tag}");
 
-        // 衝突したオブジェクトが "Wall" レイヤーまたは "Wall" タグを持っているか確認
+        //壁に触れた場合
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") || collision.gameObject.CompareTag(wallTag))
         {
-            navMeshAgent.velocity = Vector3.zero; // 速度を0に設定して停止させる
-            navMeshAgent.isStopped = true; // NavMeshAgentの移動を停止
-            animator.SetBool("isRun", false); // 停止アニメーションを再生
+            //速度を0に設定して停止させる
+            navMeshAgent.velocity = Vector3.zero;
+
+            //NavMeshAgentの移動を停止
+            navMeshAgent.isStopped = true;
+
+            //停止アニメーションを再生
+            animator.SetBool("isRun", false); 
             animator.SetBool("isWalk", false);
-            lastCollisionPoint = collision.contacts[0].point; // 衝突地点を記録
-            Invoke("ChangeDirection", 0.5f); // 0.5秒後に方向転換
+
+            //衝突地点を記録
+            lastCollisionPoint = collision.contacts[0].point;
+
+            //0.5秒後に方向転換
+            Invoke("ChangeDirection", 0.5f); 
         }
 
-
+        //プレイヤーに触れた場合
         if (collision.gameObject.CompareTag(playerTag))
         {
-            Debug.Log($"[{gameObject.name}] プレイヤーと衝突！ HP減少処理開始");
             if (Player.instance != null && !Player.instance.IsDead)
             {
+                //プレイヤーを攻撃
                 Attack();
             }
         }
 
+        //ドアに触れた場合
         if (collision.gameObject.CompareTag(doorTag))
         {
             gameObjectDoor = collision.gameObject;
             door = gameObjectDoor.GetComponent<Door>();
 
-            Debug.Log("敵がドアと衝突");
             if (!door.isNeedKeyDoor && !door.isOpenDoor)
             {
+                //ドアを開ける
                 door.OpenDoor();
             }
         }
     }
 
+    /// <summary>
+    /// オブジェクトのコライダーを貫通した場合の処理
+    /// </summary>
+    /// <param name="collider">貫通したオブジェクトのコライダー</param>
     private void OnTriggerEnter(Collider collider)
     {
-        Debug.Log($"[{gameObject.name}] 衝突検出: {collider.gameObject.name}, タグ: {collider.gameObject.tag},その2");
 
+        //プレイヤーに触れた場合
         if (collider.gameObject.CompareTag(playerTag))
         {
-            Debug.Log($"[{gameObject.name}] プレイヤーと衝突2！ HP減少処理開始");
             if (Player.instance != null && !Player.instance.IsDead)
             {
+                //プレイヤーを攻撃
                 Attack();
             }
         }
 
+        //ドアに触れた場合
         if (collider.gameObject.CompareTag(doorTag))
         {
             gameObjectDoor = collider.gameObject;
             door = gameObjectDoor.GetComponent<Door>();
 
-            if (door == null)
-            {
-                Debug.LogError($"[{gameObject.name}] ドアオブジェクト({gameObjectDoor.name})にDoorコンポーネントが見つかりません！");
-                return;
-            }
-
-            Debug.Log("敵がドアと衝突2");
             if (!door.isNeedKeyDoor && !door.isOpenDoor)
             {
+                //ドアを開ける
                 door.OpenDoor();
             }
         }
     }
 
-    //方向転換
+    /// <summary>
+    /// 方向転換
+    /// </summary>
     void ChangeDirection()
     {
         if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
