@@ -12,79 +12,167 @@ public class PlayerInteract : MonoBehaviour
 {
     [Header("インタラクトできる距離")]
     [SerializeField]  public float distance = 3f;
-    GameObject pickUpItem;//拾ったアイテム
-    GameObject interactDoor;//インタラクトするドア
-    GameObject interactStageLight;//インタラクトするステージライト
-    GameObject interactDrawer;//インタラクトする引き出し
+
+    /// <summary>
+    /// 拾ったアイテム
+    /// </summary>
+    GameObject pickUpItem;
+
+    /// <summary>
+    /// 開閉したいドア
+    /// </summary>
+    GameObject interactDoor;
+
+    /// <summary>
+    /// 点けたいステージライト
+    /// </summary>
+    GameObject interactStageLight;
+
+    /// <summary>
+    /// 開閉したい引き出し
+    /// </summary>
+    GameObject interactDrawer;
+
+    /// <summary>
+    /// インタラクトフラグ
+    /// </summary>
     public bool isInteract;
 
+    /// <summary>
+    /// Item.cs
+    /// </summary>
     private Item item;
+
+    /// <summary>
+    /// Door.cs
+    /// </summary>
+    private Door door;
+
+    /// <summary>
+    /// Goal.cs
+    /// </summary>
+    private Goal goal;
+
+    /// <summary>
+    /// StageLight.cs
+    /// </summary>
+    private StageLight stageLight;
+
+    /// <summary>
+    /// Drawer.cs
+    /// </summary>
+    private Drawer drawer;
 
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
-
-    private Door door;
-    private Goal goal;
-    private StageLight stageLight;
-    private Drawer drawer;
-
-
+    /// <summary>
+    /// アイテムタグ
+    /// </summary>
     private string itemTag = "Item";
+
+    /// <summary>
+    /// ドアタグ
+    /// </summary>
     private string doorTag = "Door";
+
+    /// <summary>
+    /// ゴールタグ
+    /// </summary>
     private string goalTag = "Goal";
+
+    /// <summary>
+    /// ステージライトタグ
+    /// </summary>
     private string stageLightTag = "StageLight";
+
+    /// <summary>
+    /// 引き出しタグ
+    /// </summary>
     private string drawerTag = "Drawer";
+
+    /// <summary>
+    /// アウトラインタグ
+    /// </summary>
     private string outlineTag = "Outline";
-    private string itemLayer = "Item"; // アイテムの元のレイヤー
-    private string doorLayer = "Door"; // ドアの元のレイヤー
-    private string goalLayer = "Goal"; // ゴールの元のレイヤー
-    private string stageLightLayer = "StageLight"; // ゴールの元のレイヤー
-    private string drawerLayer = "Drawer"; // 引き出しの元のレイヤー
+
+    /// <summary>
+    /// アイテムレイヤー
+    /// </summary>
+    private string itemLayer = "Item";
+
+    /// <summary>
+    /// ドアレイヤー
+    /// </summary>
+    private string doorLayer = "Door";
+
+    /// <summary>
+    /// ゴールレイヤー
+    /// </summary>
+    private string goalLayer = "Goal";
+
+    /// <summary>
+    /// ゴールレイヤー
+    /// </summary>
+    private string stageLightLayer = "StageLight";
+
+    /// <summary>
+    /// 引き出しレイヤー
+    /// </summary>
+    private string drawerLayer = "Drawer";
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
-    [Header("SE関係")]
-    //private AudioSource audioSourceSE;
-    private AudioSource audioSourceItemSE; // アイテム取得音専用
-    //[SerializeField] private AudioClip getItemSE;
-    private readonly int getItemSEid = 2;//アイテム取得時のSEのID
+    /// <summary>
+    /// アイテム取得音専用audioSource
+    /// </summary>
+    private AudioSource audioSourceItemSE;
+
+    /// <summary>
+    /// アイテム取得時のSEのID
+    /// </summary>
+    private readonly int getItemSEid = 2;
 
     [Header("アイテムリセット(デバッグ用)")]
     public bool isDebugResetItem = false;
 
-
-    // 現在照準が当たっているオブジェクトを追跡
+    /// <summary>
+    /// 現在照準が当たっているオブジェクトを追跡
+    /// </summary>
     private GameObject currentHighlightedObject;
-    // オブジェクトの元のレイヤーを保存
+
+    /// <summary>
+    /// オブジェクトの元のレイヤーを保存
+    /// </summary>
     private int originalLayer;
-    // 現在照準が当たっているオブジェクトのタグを保存
+
+    /// <summary>
+    /// 現在照準が当たっているオブジェクトのタグを保存
+    /// </summary>
     private string currentObjectTag;
 
     private void Start()
     {
         isInteract = false;
 
-        // AudioSourceの初期化
+        //AudioSourceの初期化
         InitializeAudioSource();
 
+        //アイテムデータをリセット(デバッグ時以外でもリセットを行うのかは要検討)
         if (isDebugResetItem) sO_Item.ResetItems();
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
+
     private void OnEnable()
     {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    /// <summary>
-    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
-    /// </summary>
     private void OnDisable()
     {
+        //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
@@ -103,37 +191,35 @@ public class PlayerInteract : MonoBehaviour
     /// </summary>
     private void InitializeAudioSource()
     {       
-        // すべての AudioSource を取得
+        //すべてのAudioSourceを取得
         var audioSources = GetComponents<AudioSource>();
         if (audioSources.Length < 2)
         {
-            // 2つ目の AudioSource が不足している場合、追加
+            //2つ目のAudioSourceが不足している場合、追加する
             audioSourceItemSE = gameObject.AddComponent<AudioSource>();
             audioSourceItemSE.playOnAwake = false;
             audioSourceItemSE.volume = 1.0f;
         }
         else
         {
-            // 2番目の AudioSource をアイテム取得音用に割り当て
+            //2番目のAudioSourceをアイテム取得音用に割り当て
             //(PlayerオブジェクトにこのスクリプトとPlayer.csをアタッチしている。
             //移動音とアイテム取得音の競合を回避する用)
             audioSourceItemSE = audioSources[1];
             audioSourceItemSE.playOnAwake = false;
             audioSourceItemSE.volume = 1.0f;
         }
-
-
     }
 
     private void Update()
     {
         //Rayを可視化
-        Debug.DrawRay(Camera.main.transform.position, 
-            Camera.main.transform.forward, Color.green, 3);
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward, Color.green, 3);
 
+        //インタラクト
         Interact();
 
-        // 強調処理を追加
+        //強調処理を追加
         HighlightObject(); 
     }
 
@@ -144,45 +230,54 @@ public class PlayerInteract : MonoBehaviour
     {
         RaycastHit raycastHit;
 
-        //CameraからRayを飛ばす
-        if (Physics.Raycast(Camera.main.transform.position, 
-            Camera.main.transform.forward, out raycastHit, distance) )
+        //Cameraから飛ばしているRayにオブジェクトが当たった場合
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out raycastHit, distance) )
         {
+            //Rayにオブジェクトが当たった状態でインタラクト操作を行う場合
             if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
             {
                 //アイテム
                 if (raycastHit.transform.tag == itemTag)
                 {
                     isInteract = true;
+
+                    //対象のアイテム
                     pickUpItem = raycastHit.transform.gameObject;
 
                     //Itemコンポーネントを取得
                     item = pickUpItem.GetComponent<Item>();
 
-                    //アイテムを拾う
+                    //対象のアイテムを拾う場合
                     if (item != null)
                     {
+
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
-                        Debug.Log($"拾ったアイテムのタイプ: {item.itemType}");
-
-                        if ((item.itemType == ItemType.Document) 
-                            || (item.itemType == ItemType.MysteryItem))
+                        //対象アイテムがドキュメントorミステリーアイテムの場合
+                        if ((item.itemType == ItemType.Document) || (item.itemType == ItemType.MysteryItem))
                         {
+                            //ポーズ画面内のアイテムのパネル内に追加する
                             sO_Item.AddDocumentORMysteryItem(item);
-                            Debug.Log("Player側SO_ItemのインスタンスID: " + sO_Item.GetInstanceID());
+                            
+                            //拾ったアイテムをステージ上から削除
                             DestroyItem(pickUpItem);
                         }
+                        //対象アイテムがプレイヤーが使用できるアイテムの場合
                         else if (item.itemType == ItemType.UseItem)
                         {
+                            //インベントリに空きがあるかを確認
                             if ((Inventory.instance.keepItemId == 99999) || (Inventory.instance.keepItemId == item.id))
                             {
+                                //インベントリに追加
                                 sO_Item.AddUseItem(item);
+
+                                //拾ったアイテムをステージ上から削除
                                 DestroyItem(pickUpItem);
                             }
-                            else 
+                            //インベントリのアイテムがいっぱいの場合の処理
+                            else
                             {
-                                //インベントリのアイテムがいっぱいの場合の処理
+                                //インベントリに空きがない旨のメッセージを表示
                                 MessageController.instance.ShowInventoryMessage(1);
 
                                 await UniTask.Delay(TimeSpan.FromSeconds(3));
@@ -203,10 +298,14 @@ public class PlayerInteract : MonoBehaviour
                 if (raycastHit.transform.tag == doorTag) 
                 {
                     isInteract = true;
+
+                    //対象のドア
                     interactDoor = raycastHit.transform.gameObject;
+
+                    //ドアのコンポーネント取得
                     door = interactDoor.GetComponent<Door>();
 
-                    //ドアの開閉
+                    //対象のドアを開閉
                     if (door != null) door.DoorSystem();                    
                 }
 
@@ -214,10 +313,14 @@ public class PlayerInteract : MonoBehaviour
                 if (raycastHit.transform.tag == stageLightTag)
                 {
                     isInteract = true;
+
+                    //対象のステージライト
                     interactStageLight = raycastHit.transform.gameObject;
+
+                    //ステージライトのコンポーネント取得
                     stageLight = interactStageLight.GetComponent<StageLight>();
 
-                    //ステージライトを点灯
+                    //対象のステージライトを点灯
                     if (stageLight != null) stageLight.LitStageLight();
                 }
 
@@ -225,10 +328,14 @@ public class PlayerInteract : MonoBehaviour
                 if (raycastHit.transform.tag == drawerTag)
                 {
                     isInteract = true;
+
+                    //対象の引き出し
                     interactDrawer = raycastHit.transform.gameObject;
+
+                    //引き出しのコンポーネントを取得
                     drawer = interactDrawer.GetComponent<Drawer>();
 
-                    //ドアの開閉
+                    //対象の引き出しを開閉
                     if (drawer != null) drawer.DrawerSystem();
                 }
 
@@ -236,11 +343,14 @@ public class PlayerInteract : MonoBehaviour
                 if (raycastHit.transform.tag == goalTag)
                 {
                     isInteract = true;
+
+                    //対象のゴール
                     goal = raycastHit.transform.gameObject.GetComponent<Goal>();
 
                     //ゴールチェック
                     if (!goal.isGoalPanel && goal != null) 
                     {
+                        //ゴールの処理
                         goal.GoalCheck();
 
                         //ゴールパネルを非表示にする際に、
@@ -255,7 +365,7 @@ public class PlayerInteract : MonoBehaviour
             isInteract = false;
             goal = null;
 
-            // Rayが何にも当たっていない場合もリセット
+            //Rayが何にも当たっていない場合もリセット
             ResetLayer(); 
         }
     }
@@ -285,7 +395,6 @@ public class PlayerInteract : MonoBehaviour
             return;
         }
         obj.layer = layer;
-        Debug.Log($"オブジェクト {obj.name} のレイヤーを {layerName} へ変更");
     }
  
     /// <summary>
@@ -296,7 +405,7 @@ public class PlayerInteract : MonoBehaviour
         if (currentHighlightedObject != null)
         {
             string targetLayer = "";
-            // タグに応じて元のレイヤーを決定
+            //タグに応じて元のレイヤーを決定
             if (currentObjectTag == itemTag)
             {
                 targetLayer = itemLayer;
@@ -324,7 +433,6 @@ public class PlayerInteract : MonoBehaviour
             }
 
             SwitchLayer(currentHighlightedObject, targetLayer);
-            Debug.Log($"オブジェクト {currentHighlightedObject.name} のレイヤーを {targetLayer} に戻しました");
             currentHighlightedObject = null;
             currentObjectTag = null;
         }
@@ -337,41 +445,47 @@ public class PlayerInteract : MonoBehaviour
     {
         RaycastHit raycastHit;
 
-        // Camera から Ray を飛ばす
+        //Cameraから飛ばしているRayにオブジェクトが当たった場合
         if (Physics.Raycast(Camera.main.transform.position,
             Camera.main.transform.forward, out raycastHit, distance))
         {
-            // アイテム、ドア、ゴールのいずれかに当たった場合
+            //インタラクト可能なオブジェクトのいずれかに当たった場合
             if (raycastHit.transform.tag == itemTag ||
                 raycastHit.transform.tag == doorTag ||
                 raycastHit.transform.tag == goalTag ||
                 raycastHit.transform.tag == stageLightTag ||
                 raycastHit.transform.tag == drawerTag)
             {
+                //Rayがヒットしたオブジェクト
                 GameObject hitObject = raycastHit.transform.gameObject;
 
-                // 現在の強調対象が異なる場合、前の強調を解除
+                //現在の強調対象が異なる場合、前の強調を解除
                 if (currentHighlightedObject != hitObject)
                 {
-                    ResetLayer(); // 前のオブジェクトのレイヤーを元に戻す
+                    //前のオブジェクトのレイヤーを元に戻す
+                    ResetLayer(); 
                     currentHighlightedObject = hitObject;
-                    // 現在のレイヤーを保存
+
+
+                    //現在のレイヤーを保存
                     originalLayer = currentHighlightedObject.layer;
-                    // 現在のオブジェクトのタグを保存
+
+                    //現在のオブジェクトのタグを保存
                     currentObjectTag = currentHighlightedObject.tag;
-                    // レイヤーを Outline に変更
+
+                    //レイヤーをOutlineに変更
                     SwitchLayer(currentHighlightedObject, outlineTag);
                 }
             }
             else
             {
-                // インタラクト可能なオブジェクト以外に当たった場合、強調を解除
+                //インタラクト可能なオブジェクト以外に当たった場合、強調を解除
                 ResetLayer();
             }
         }
         else
         {
-            // Ray が何にも当たっていない場合、強調を解除
+            //Rayが何にも当たっていない場合、強調を解除
             ResetLayer();
         }
     }
@@ -384,7 +498,7 @@ public class PlayerInteract : MonoBehaviour
     {
         if (audioSourceItemSE != null && sO_SE.GetSEClip(getItemSEid) != null)
         {
-            // アイテム取得時の効果音を再生
+            //アイテム取得時の効果音を再生
             audioSourceItemSE.clip = sO_SE.GetSEClip(getItemSEid);
             audioSourceItemSE.loop = false;
             audioSourceItemSE.Play();
@@ -394,9 +508,10 @@ public class PlayerInteract : MonoBehaviour
             Debug.LogWarning($"AudioSource or getItemSE is null in DestroyItem");
         }
 
+        //アイテムを削除
         Destroy(pickUpItem);
 
-        // アイテムを拾ったらレイヤーをリセット
+        //アイテムを拾ったらレイヤーをリセット
         ResetLayer();
     }
 }

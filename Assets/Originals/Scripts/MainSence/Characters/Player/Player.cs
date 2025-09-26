@@ -260,48 +260,54 @@ public class Player : MonoBehaviour, CharacterInterface
         instance = this;
     }
 
+    /// <summary>
+    /// 移動入力があるかどうかを判定
+    /// </summary>
+    /// <returns>移動しているならtrue</returns>
     public bool IsPlayerMoving()
     {
-        // 移動入力があるかどうかを判定
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
         return Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f;
     }
 
+    /// <summary>
+    /// オブジェクトが破壊された際に呼ばれる関数
+    /// </summary>
     void OnDestroy()
     {
+        //インスタンス破棄
         if (instance == this)
         {
             instance = null;
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
+
     private void OnEnable()
     {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    /// <summary>
-    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
-    /// </summary>
     private void OnDisable()
     {
+        //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     /// <summary>
-    /// シーン遷移時にAudioSourceを再設定
+    /// シーン遷移時に設定
     /// </summary>
     /// <param name="scene"></param>
     /// <param name="mode"></param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        //AudioSourceを設定
         InitializeAudioSource();
 
-        // GameController から staminaSlider を再取得
+        //GameController からstaminaSliderを取得
+        //画面遷移時にstaminaSliderの数値が変化しないバグを防ぐ用
         if (GameController.instance != null)
         {
             staminaSlider = GameController.instance.staminaSlider;
@@ -312,26 +318,26 @@ public class Player : MonoBehaviour, CharacterInterface
             }
         }
 
-        // Stage01Sceneに遷移した際に位置をリセット
+        //Stage01Sceneに遷移した際に位置をリセット
         if (scene.name == "Stage01Scene")
         {
-            // CharacterControllerを一時的に無効にして位置をリセット
+            //CharacterControllerを一時的に無効にして位置をリセット
             if (characterController != null)
             {
                 characterController.enabled = false;
             }
             transform.position = playerStartPosition;
             transform.rotation = Quaternion.Euler(0, 0, 0);
-            moveDirection = Vector3.zero; // 移動方向もリセット
+            moveDirection = Vector3.zero;
             if (characterController != null)
             {
                 characterController.enabled = true;
             }
 
-            // プレイヤーの状態を初期化
+            //プレイヤーの状態を初期化
             IsDead = false;
-            playerHP = 1; // HPを初期値にリセット
-            stamina = maxStamina; // スタミナをリセット
+            playerHP = 1;
+            stamina = maxStamina;
             isStamina = true;
         }
     }
@@ -347,7 +353,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
         if (capsuleCollider != null && characterController != null)
         {
-            // CharacterControllerのRadiusをCapsuleColliderのRadiusより小さく設定（例: 0.9倍）
+            //CharacterControllerのRadiusをCapsuleColliderのRadiusより小さく設定（例: 0.9倍）
             characterController.radius = capsuleCollider.radius * 0.9f;
         }
         else
@@ -358,19 +364,19 @@ public class Player : MonoBehaviour, CharacterInterface
         //プレイヤーの初期位置
         playerStartPosition = transform.position;
 
-        // AudioSourceの初期化
+        //AudioSourceの初期化
         InitializeAudioSource();
 
         //スタミナ最大値の初期化
         stamina = maxStamina;
 
-        // GameControllerからstaminaSliderを取得
+        //GameControllerからstaminaSliderを取得
         if (GameController.instance != null)
         {
             staminaSlider = GameController.instance.staminaSlider;
         }
 
-        // スタミナSliderの最大値を設定
+        //スタミナSliderの最大値を設定
         if (staminaSlider)
         {
             staminaSlider.maxValue = maxStamina;
@@ -387,8 +393,8 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     private void InitializeAudioSource()
     {
-        //専用の新しいAudioSourceを取得
-        //(別の効果音が鳴っている間にド敵の効果音が鳴らないバグを防止する用)
+        //AudioSourceを取得
+        //(別の効果音が鳴っている間に敵の効果音が鳴らないバグを防止する用)
         audioSourceSE = GetComponent<AudioSource>();
         if (audioSourceSE == null)
         {
@@ -399,20 +405,24 @@ public class Player : MonoBehaviour, CharacterInterface
 
     private void Update()
     {
+        //デバッグ時でQキー押下すると死亡する
         if (isDebug && Input.GetKeyDown(KeyCode.Q))
         {
             Debug.Log("プレイヤー死亡(デバッグモード)");
             Dead();
         }
 
+        //デバッグ時でCキー押下するとクリア画面へ遷移する
         if (isDebug && Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log("クリア(デバッグモード)");
             SceneManager.LoadScene("GameClearScene");
         }
 
+        //ストーリーモードでプレイヤーを回転させる
         if (playerIsBackRotate && (GameController.instance.gameModeStatus == GameModeStatus.Story)) PlayerTurn();
 
+        //通常のプレイ以外の場合、処理をスキップ
         if (playerIsDead || Time.timeScale == 0 || isFallDown || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
         {
             //移動方向をリセット
@@ -427,7 +437,7 @@ public class Player : MonoBehaviour, CharacterInterface
         //ダッシュ判定
         PlayerDashOrWalk();
 
-        // 前後左右の入力から、移動のためのベクトルを計算
+        //前後左右の入力から、移動のためのベクトルを計算
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
@@ -473,34 +483,34 @@ public class Player : MonoBehaviour, CharacterInterface
             moveDirection.y -= Gravity * Time.deltaTime;
         }
 
-        // Move は指定したベクトルだけ移動させる命令
+        //Moveは指定したベクトルだけ移動させる命令
         characterController.Move(moveDirection * Time.deltaTime);
 
-
+        //移動判定
         IsMove = IsPlayerMoving();
 
         //スタミナ管理
         PlayerStaminaManage();
 
 
-        // アニメーションの制御
+        //アニメーションの制御
         if (IsMove)
         {
-            // 移動中: LeftShiftに応じて走行または歩行
+            //移動中:Shiftに応じて走行または歩行する
             animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash"));
             animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash"));
 
         }
         else
         {
-            // 停止中: 両方のアニメーションをオフ
+            //停止中:両方のアニメーションをオフ
             animator.SetBool("isWalk", false);
             animator.SetBool("isRun", false);
 
         }
 
 
-        // audioSourceSEの状態を確認
+        //audioSourceSEの状態を確認
         if (audioSourceSE == null || !audioSourceSE)
         {
             Debug.LogWarning("audioSourceSEがnullまたはMissingです。再設定を試みます。");
@@ -513,33 +523,33 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
 
-        // 移動状態の変化を検知して効果音を制御
+        //移動状態の変化を検知して効果音を制御
         currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash") ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
 
 
         if (IsMove && !wasMovingLastFrame)
         {
-            // 移動開始時に効果音を再生
+            //移動開始時に効果音を再生
             audioSourceSE.clip = currentSE;
             audioSourceSE.loop = true;
             audioSourceSE.Play();
         }
         else if (!IsMove && wasMovingLastFrame)
         {
-            // 移動停止時に効果音を停止
+            //移動停止時に効果音を停止
             audioSourceSE.Stop();
         }
         else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
         {
-            // 移動中に歩行/ダッシュが切り替わった場合、効果音を変更
+            //移動中に歩行/ダッシュが切り替わった場合、効果音を変更
             audioSourceSE.Stop();
             audioSourceSE.clip = currentSE;
             audioSourceSE.loop = true;
             audioSourceSE.Play();
         }
 
-        // 現在の移動状態を記録
+        //現在の移動状態を記録
         wasMovingLastFrame = IsMove;
 
 
@@ -549,7 +559,9 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
 
-    //ダッシュ判定
+    /// <summary>
+    /// ダッシュ判定
+    /// </summary>
     void PlayerDashOrWalk() 
     {
         //Shiftキー・Xボタンを入力している間はダッシュ
@@ -571,7 +583,9 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
-    //スタミナ管理
+    /// <summary>
+    /// スタミナ管理
+    /// </summary>
     void PlayerStaminaManage() 
     {
         if (IsDash)
@@ -585,8 +599,7 @@ public class Player : MonoBehaviour, CharacterInterface
             {
                 IsDash = false;
 
-                // ここでスピードを落とす
-
+                //ここでスピードを落とす
                 //スタミナ切れでダッシュ不可
                 isStamina = false;
 
@@ -612,12 +625,18 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
-    //Ctrl操作切り替え
+    /// <summary>
+    /// 振り返り判定
+    /// </summary>
+    /// <returns>Ctrl押下でtrue</returns>
     public bool PlayerIsBackRotate() 
     {
         return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
     }
 
+    /// <summary>
+    /// プレイヤー回転
+    /// </summary>
     public void PlayerTurn() 
     {
         if (GameController.instance.gameModeStatus == GameModeStatus.Story)
@@ -636,17 +655,17 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <param name="z">Z座標</param>
     public void PlayerWarp(float x, float y, float z) 
     {
-        // CharacterControllerを一時的に無効にする
+        //CharacterControllerを一時的に無効にする
         if (characterController != null)
         {
             characterController.enabled = false;
         }
 
-        // transform.positionを直接設定してワープする場合、一時的にCharacterControllerを一時的に無効にする必要がある
+        //transform.positionを直接設定してワープする場合、一時的にCharacterControllerを一時的に無効にする必要がある
         transform.position = new Vector3(x, y, z);
         transform.rotation = Quaternion.Euler(0, 0, 0);
 
-        // CharacterControllerを再度有効にする
+        //CharacterControllerを再度有効にする
         if (characterController != null)
         {
             characterController.enabled = true;
@@ -658,7 +677,6 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     public void DestroyPlayer() 
     {
-        Debug.Log("Playerを削除しました");
         Destroy(gameObject);
     }
 }

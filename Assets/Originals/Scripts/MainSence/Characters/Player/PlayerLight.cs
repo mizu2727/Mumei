@@ -43,7 +43,7 @@ public class PlayerLight : MonoBehaviour
     /// </summary>
     void UpdateCameraReference()
     {
-        // プレイヤーの子オブジェクトからカメラを取得
+        //プレイヤーの子オブジェクトからカメラを取得
         Camera playerCamera = Player.instance.GetComponentInChildren<Camera>();
         if (playerCamera != null)
         {
@@ -60,7 +60,7 @@ public class PlayerLight : MonoBehaviour
         playerHasLight.SetActive(false);
         Player.instance.IsLight = false;
 
-        // シーン開始時にカメラを再取得
+        //シーン開始時にカメラを再取得
         UpdateCameraReference();
     }
 
@@ -76,8 +76,10 @@ public class PlayerLight : MonoBehaviour
             Player.instance.IsLight = false;
         }
 
+        //カメラの座標・角度を追従する
         TranceCamera();
 
+        //ライトを点灯/消灯する
         TurnOnAndOfLight();
 
 
@@ -101,6 +103,7 @@ public class PlayerLight : MonoBehaviour
     {
         //座標追従
         this.transform.position = cameraTransform.position;
+
         //角度追従
         this.transform.rotation = Quaternion.Slerp(this.transform.rotation, cameraTransform.rotation, 0.5f); 
     }
@@ -110,20 +113,21 @@ public class PlayerLight : MonoBehaviour
     /// </summary>
     void TurnOnAndOfLight() 
     {
-        // プレイヤーの子オブジェクトからカメラを取得
+        //プレイヤーの子オブジェクトからカメラを取得
         Camera playerCamera = Player.instance.GetComponentInChildren<Camera>();
 
+        //通常プレイモードの場合
         if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
         {
             if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.isPause && Time.timeScale != 0)
             {
-                // ライトをアクティブ状態にする・・・＞ライトが点く
+                //ライトが点く
                 playerHasLight.SetActive(true);
                 Player.instance.IsLight = true;
             }
             else if ((PlayerIsLight() && Player.instance.IsLight) && !PauseController.instance.isPause && Time.timeScale != 0)
             {
-                // ライトをノン・アクティブ状態にする・・・＞ライトが消える
+                //ライトが消える
                 playerHasLight.SetActive(false);
                 Player.instance.IsLight = false;
             }
