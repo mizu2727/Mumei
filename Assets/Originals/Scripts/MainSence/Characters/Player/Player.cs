@@ -9,10 +9,19 @@ using static GameController;
 
 public class Player : MonoBehaviour, CharacterInterface
 {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
     public static Player instance { get; private set; }
 
+    /// <summary>
+    /// キャラクターコントローラー
+    /// </summary>
     CharacterController characterController;
 
+    /// <summary>
+    /// アニメーション
+    /// </summary>
     private Animator animator;
     public Animator PlayAnimator
     {
@@ -20,8 +29,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => animator = value;
     }
 
-    [Header("名前")]
-    //[SerializeField] public string playerName;
+    [Header("名前(ヒエラルキー上での編集禁止)")]
 
     [SerializeField]
     public string CharacterName
@@ -29,8 +37,6 @@ public class Player : MonoBehaviour, CharacterInterface
         get => GameController.playerName; 
         set => GameController.playerName = value;
 
-        //get => playerName;
-        //set => playerName = value;
     }
 
     [Header("歩行速度")]
@@ -51,7 +57,9 @@ public class Player : MonoBehaviour, CharacterInterface
         set => dashSpeed = value;
     }
 
-    //移動速度の現在値
+    /// <summary>
+    /// 移動速度の現在値
+    /// </summary>
     float speed;
 
     [Header("スタミナSlider(ヒエラルキー上からアタッチすること)")]
@@ -60,7 +68,9 @@ public class Player : MonoBehaviour, CharacterInterface
     [Header("スタミナ最大値")]
     [SerializeField] const  float maxStamina = 100f;
 
-    //スタミナの現在値
+    /// <summary>
+    /// スタミナの現在値
+    /// </summary>
     float stamina;
 
     [Header("スタミナ消費値")]
@@ -69,9 +79,12 @@ public class Player : MonoBehaviour, CharacterInterface
     [Header("スタミナ回復値")]
     [SerializeField] float staminaRecoveryRatio = 20f;
 
-    //スタミナの使用が可能であるかを判定
+    /// <summary>
+    /// スタミナ使用可能フラグ
+    /// </summary>
     bool isStamina;
 
+    [Header("検知範囲")]
     [SerializeField] private float playerDetectionRange = 10f;
     [SerializeField]
     public float DetectionRange
@@ -98,7 +111,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerHP = value;
     }
 
-    [Header("死亡判定")]
+    [Header("死亡フラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool playerIsDead = false;
     [SerializeField]
     public bool IsDead
@@ -107,7 +120,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsDead = value;
     }
 
-    [Header("プレイヤーが動いているかを判定")]
+    [Header("プレイヤー移動フラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool playerIsMove = true;
     [SerializeField]
     public bool IsMove
@@ -116,7 +129,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsMove = value;
     }
 
-    [Header("プレイヤーがダッシュしているかを判定")]
+    [Header("プレイヤーダッシュフラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool playerIsDash = true;
     [SerializeField]
     public bool IsDash
@@ -125,7 +138,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsDash = value;
     }
 
-    [Header("プレイヤーが後ろを向いているかを判定")]
+    [Header("後ろを向くフラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] public bool playerIsBackRotate = false;
     [SerializeField]
     public bool IsBackRotate
@@ -134,7 +147,7 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsBackRotate = value;
     }
 
-    [Header("ライト切り替え")]
+    [Header("ライト切り替えフラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool playerIsLight = true;
     [SerializeField]
     public bool IsLight
@@ -143,37 +156,45 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsLight = value;
     }
 
+    /// <summary>
+    /// 死亡
+    /// </summary>
     public void Dead()
     {
-        // 死亡フラグを立てる
         IsDead = true;
 
-        // 移動方向をリセット
+        //移動方向をリセット
         moveDirection = Vector3.zero;
 
-        // アニメーションを停止
+        //アニメーションを停止
         if (animator != null)
         {
             animator.SetBool("isWalk", false);
             animator.SetBool("isRun", false);
         }
 
-        // 効果音を停止
+        //効果音を停止
         if (audioSourceSE != null)
         {
             audioSourceSE.Stop();
         }
 
+        //ゲームオーバー画面へ遷移
         GameController.instance.ViewGameOver();
-        //SceneManager.LoadScene("GameOverScene");
+
+        //プレイヤー削除
         DestroyPlayer();
     }
 
+    /// <summary>
+    /// 攻撃
+    /// </summary>
     public void Attack()
     {
         Debug.Log("Player Attack!");
     }
 
+    [Header("初期位置")]
     [SerializeField] private Vector3 playerStartPosition;
     [SerializeField]
     public Vector3 StartPosition
@@ -182,32 +203,46 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerStartPosition = value;
     }
 
-    [Header("仮の名前")]
+    /// <summary>
+    /// 仮の名前
+    /// </summary>
     [SerializeField] const string aliasName = "イフ";
 
-    [Header("鍵の所持の有無")]
+    [Header("鍵の所持フラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] public bool isHoldKey = false;
 
-    Vector3 moveDirection = Vector3.zero;//移動方向
+    /// <summary>
+    /// 移動方向
+    /// </summary>
+    Vector3 moveDirection = Vector3.zero;
 
     
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
-    [Header("サウンド関連")]
-    public AudioSource audioSourceSE; // プレイヤー専用のAudioSource
+    [Header("歩行音・ダッシュ音用のaudioSource(ヒエラルキー上での編集禁止)")]
+    public AudioSource audioSourceSE;
 
-    // 効果音のID（SO_SE の seList に対応）
-    private readonly int walkSEid = 0; // 歩行音のID
-    private readonly int runSEid = 1;  // ダッシュ音のID
+    /// <summary>
+    /// 歩行音のID
+    /// </summary>
+    private readonly int walkSEid = 0;
 
-    [Header("現在再生中の効果音")]
+    /// <summary>
+    /// ダッシュ音のID
+    /// </summary>
+    private readonly int runSEid = 1; 
+
+    [Header("現在再生中の効果音(ヒエラルキー上での編集禁止)")]
     public AudioClip currentSE;
 
-    private bool wasMovingLastFrame = false; // 前フレームの移動状態を保持
+    /// <summary>
+    /// 前フレームの移動状態フラグ
+    /// </summary>
+    private bool wasMovingLastFrame = false;
 
 
-    [Header("プレイヤーが倒れているかを判定")]
+    [Header("プレイヤーが倒れているフラグ(ヒエラルキー上での編集禁止)")]
     public bool isFallDown = false;
 
     [Header("デバッグモード")]
@@ -216,6 +251,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
     private void Awake()
     {
+        //インスタンス
         if (instance != null && instance != this)
         {
             DestroyPlayer();

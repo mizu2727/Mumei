@@ -446,7 +446,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         maxPositionNumber = patrolPoint.Length;
         positionNumber = Random.Range(0, maxPositionNumber);
         navMeshAgent.destination = patrolPoint[positionNumber].position;
-        Debug.Log($"[{gameObject.name}] 初期徘徊地点: {patrolPoint[positionNumber].position}");
     }
 
     /// <summary>
@@ -590,7 +589,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <param name="collision">衝突したオブジェクトのコリジョン</param>
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log($"[{gameObject.name}] 衝突検出: {collision.gameObject.name}, タグ: {collision.gameObject.tag}");
 
         //壁に触れた場合
         if (collision.gameObject.layer == LayerMask.NameToLayer("Wall") || collision.gameObject.CompareTag(wallTag))
@@ -672,12 +670,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     void ChangeDirection()
     {
+        //navMeshAgentが有効であるか
         if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
         {
-            // NavMeshAgentの停止を解除
+            //NavMeshAgentの停止を解除
             navMeshAgent.isStopped = false;
 
-            // 現在位置から少し離れたランダムな方向を試す
+            //現在位置から少し離れたランダムな方向を探す
             Vector3 randomDirection = Random.insideUnitSphere.normalized * 3f;
             Vector3 newTarget = transform.position + randomDirection;
 
@@ -689,19 +688,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             }
             else
             {
-                // それでも見つからなければ、現在の目的地を再設定してみる
+                //移動先が見つからない場合、現在の目的地を再設定する
                 if (navMeshAgent.path.corners.Length > 1)
                 {
                     navMeshAgent.SetDestination(navMeshAgent.path.corners[navMeshAgent.path.corners.Length - 1]);
-                    Debug.LogWarning($"[{gameObject.name}] ランダムな移動先が見つからず、現在の目的地を再設定");
+                    Debug.LogWarning($"[{gameObject.name}] ランダムな移動先が見つからないため、現在の目的地を再設定");
                 }
                 else
                 {
-                    // それもなければ、最も近い NavMesh の端を探す
+                    //移動先が見つからない場合、最も近いNavMeshの端を探す
                     if (NavMesh.FindClosestEdge(transform.position, out NavMeshHit edgeHit, NavMesh.AllAreas))
                     {
                         navMeshAgent.SetDestination(edgeHit.position);
-                        Debug.LogWarning($"[{gameObject.name}] 最寄りの NavMesh の端に移動");
+                        Debug.LogWarning($"[{gameObject.name}] 最寄りのNavMeshの端に移動");
                     }
                     else
                     {
@@ -714,8 +713,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     protected virtual async void Update()
     {
+        //通常プレイ以外のモードも場合、処理をスキップ
         if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) return;
 
+        //プレイヤーが死亡している場合、処理をスキップ
         if (Player.instance == null || Player.instance.IsDead  || targetPoint == null)
         {
             Debug.LogWarning($"[{gameObject.name}] Update処理をスキップ: Player={Player.instance}, tagetPoint={targetPoint}");
@@ -723,19 +724,22 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             return;
         }
 
-        // 移動中かどうかを判定
+        //移動中かどうかを判定
         IsMove = IsEnemyMoving();
 
-        // プレイヤーとの距離を測定
+        //プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, targetPoint.position);
 
-        // 状態遷移と処理
+        //状態遷移と処理
         switch (currentState)
         {
             //通常徘徊状態
             case EnemyState.Patrol:
+
+                //歩行アニメーションを再生
                 animator.SetBool("isRun", false);
                 animator.SetBool("isWalk", IsMove);
+
                 navMeshAgent.speed = Speed;
 
                 //警戒音を停止
@@ -758,9 +762,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         MusicController.Instance.audioClipnum = 1;
                         MusicController.Instance.PlayBGM();
 
-                        //MusicController.Instance.StopBGM();
-                        //EnemyBGMController.Instance.PlayEnemyBGM();
-
+                        //画面を赤く表示
                         playerFoundPanel.SetActive(true);
                     }
                     else
@@ -774,17 +776,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
                 {
+                    //次の徘徊先を設定
                     NextPosition();
                 }
                 break;
 
             //警戒圏内状態
             case EnemyState.Alert:
+
+                //歩行アニメーションを再生
                 animator.SetBool("isRun", false);
                 animator.SetBool("isWalk", IsMove);
-                navMeshAgent.speed = Speed;
 
-                Debug.Log("警戒圏内状態01_01");
+                navMeshAgent.speed = Speed;
 
                 //警戒音を再生
                 audioSourceFindPlayerSE.clip = sO_SE.GetSEClip(findPlayerSEid);
@@ -793,7 +797,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                 if (IsPlayerInFront())
                 {
-                    Debug.Log("警戒圏内状態01_02");
 
                     //プレイヤーが視野内にいる場合、追従状態に移行
                     //一瞬だけ実行したい処理もここに記載する
@@ -806,19 +809,17 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     MusicController.Instance.audioClipnum = 1;
                     MusicController.Instance.PlayBGM();
 
-                    //MusicController.Instance.StopBGM();
-                    //EnemyBGMController.Instance.PlayEnemyBGM();
-
+                    //画面を赤く表示
                     playerFoundPanel.SetActive(true);
                 }
                 else if (distance > alertRange)
                 {
-                    Debug.Log("警戒圏内状態01_03");
 
                     //プレイヤーが視野外の場合、通常徘徊状態に移行
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
 
+                    //画面の色を元に戻す
                     playerFoundPanel.SetActive(false);
 
                     //敵に追われている時のBGMを停止
@@ -829,7 +830,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
                 {
-                    Debug.Log("警戒圏内状態01_04");
+                    //次の徘徊先を設定
                     NextPosition();
                 }
                 break;
@@ -839,9 +840,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 //警戒音を停止
                 audioSourceFindPlayerSE.Stop();
 
+                //ダッシュアニメーションを再生
                 animator.SetBool("isRun", true);
                 animator.SetBool("isWalk", false);
+
                 navMeshAgent.speed = dashSpeed;
+
+                //プレイヤーを追従
                 ChasePlayer();
 
                 if (!IsPlayerInFront())
@@ -858,8 +863,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.3));
 
-                    //プレイヤー死亡後に発生するエラーを防止する用にif文を追加
-                    if(GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) playerFoundPanel.SetActive(false);
+                    //画面の色を元に戻す(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
+                    if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) playerFoundPanel.SetActive(false);
                 }
                 break;
 
@@ -868,16 +873,16 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 //警戒音を停止
                 audioSourceFindPlayerSE.Stop();
 
+                //歩行アニメーション再生
                 animator.SetBool("isRun", false);
                 animator.SetBool("isWalk", IsMove);
+
                 navMeshAgent.speed = Speed;
 
-                Debug.Log("調査状態01_01");
 
                 investigateTimer += Time.deltaTime;
                 if (IsPlayerInFront())
                 {
-                    Debug.Log("調査状態01_02");
                     //プレイヤーが視野内に戻った場合、追従状態へ移行
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
@@ -890,24 +895,20 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 }
                 else if (investigateTimer >= investigateDuration || (navMeshAgent.remainingDistance < 0.5f && !navMeshAgent.pathPending))
                 {
-                    Debug.Log("調査状態01_03");
                     //調査時間が経過した場合、通常徘徊状態へ移行
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
 
-                    //敵に追われている時のBGMを停止(ここの処理が流れない)
+                    //敵に追われている時のBGMを停止
                     MusicController.Instance.audioClipnum = 1;
                     MusicController.Instance.StopBGM();
                     MusicController.Instance.audioClipnum = 0;
                     MusicController.Instance.PlayBGM();
 
-                    //EnemyBGMController.Instance.StopEnemyBGM();
-                    //MusicController.Instance.PlayBGM();
 
                 }
                 else if (distance <= alertRange)
                 {
-                    Debug.Log("調査状態01_04");
 
                     //プレイヤーが視野内にいる場合、警戒圏内状態へ移行
                     currentState = EnemyState.Alert;
@@ -921,7 +922,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 break;
         }
 
-        //プレイヤー死亡後に発生するエラーを防止する用にif文を追加
+        //移動時の効果音処理(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
         if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
         {
             // 効果音制御
@@ -930,21 +931,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             // 距離に基づく音量計算
             float volume = CalculateVolumeBasedOnDistance(distance);
 
+            
             if (IsMove && !wasMovingLastFrame)
             {
-                // 走る音の場合、ピッチを調整
+                //移動音再生(走る音の場合、ピッチを調整)
                 audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
-
                 audioSourceSE.clip = currentSE;
                 audioSourceSE.loop = true;
-
-                //音量を設定
                 audioSourceSE.volume = volume;
-
                 audioSourceSE.Play();
             }
             else if (!IsMove && wasMovingLastFrame)
             {
+                //移動音停止
                 audioSourceSE.Stop();
 
                 // 停止時にピッチをリセット
@@ -952,9 +951,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             }
             else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
             {
+                //移動音停止
                 audioSourceSE.Stop();
 
-                // 走る音の場合、ピッチを調整
+                //移動音再生(走る音の場合、ピッチを調整)
                 audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
                 audioSourceSE.clip = currentSE;
                 audioSourceSE.loop = true;
@@ -971,10 +971,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }        
     }
 
-
+    /// <summary>
+    /// ギズモを描画
+    /// </summary>
     private void OnDrawGizmos()
     {
-        // 視野範囲の可視化
+        //視野範囲の可視化
         Gizmos.color = Color.green;
         float halfFOV = fieldOfViewAngle * 0.5f;
         Vector3 leftRay = Quaternion.Euler(0, -halfFOV, 0) * transform.forward * enemyDetectionRange;
@@ -982,7 +984,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         Gizmos.DrawRay(transform.position + Vector3.up * 1.5f, leftRay);
         Gizmos.DrawRay(transform.position + Vector3.up * 1.5f, rightRay);
 
-        // SphereCastの範囲
+        //SphereCastの範囲
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position + Vector3.up * 1.5f, sphereCastRadius);
         if (targetPoint != null)
@@ -991,20 +993,26 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
     }
 
-    // 距離に基づく音量を計算するメソッド
+    /// <summary>
+    /// 距離に基づく音量を計算するメソッド
+    /// </summary>
+    /// <param name="distance">プレイヤーとの距離</param>
+    /// <returns>音量</returns>
     private float CalculateVolumeBasedOnDistance(float distance)
     {
         if (distance <= maxSoundDistance)
         {
-            return maxVolume; // 最大音量
+            //最大音量
+            return maxVolume;
         }
         else if (distance >= minSoundDistance)
         {
-            return minVolume; // 最小音量
+            //最小音量
+            return minVolume; 
         }
         else
         {
-            // 距離に基づいて線形補間
+            //距離に基づいて音量を調整
             float t = (distance - maxSoundDistance) / (minSoundDistance - maxSoundDistance);
             return Mathf.Lerp(maxVolume, minVolume, t);
         }
