@@ -70,16 +70,40 @@ public class PauseController : MonoBehaviour
     [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject returnToTitlePanel;
 
-    [Header("フラグ(ヒエラルキー上からの編集禁止)")]
+    [Header("フラグ関連")]
+    [Header("ポーズフラグ(ヒエラルキー上からの編集禁止)")]
     public bool isPause = false;
-    public bool isViewItemsPanel = false;
-    public bool isOptionPanel = false;
-    public bool isReturnToTitlePanel = false;
-    public bool isDocumentPanels = false;
-    public bool isDocumentExplanationPanel = false;
-    public bool isMysteryItemPanels = false;
-    public bool isMysteryItemExplanationPanel = false;
 
+    [Header("アイテム確認パネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
+    public bool isViewItemsPanel = false;
+
+    /// <summary>
+    /// オプションパネル閲覧フラグ
+    /// </summary>
+    private bool isOptionPanel = false;
+
+    [Header("タイトルへ戻るパネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
+    public bool isReturnToTitlePanel = false;
+
+    /// <summary>
+    /// ドキュメントパネル閲覧フラグ
+    /// </summary>
+    private bool isDocumentPanel = false;
+
+    /// <summary>
+    /// ドキュメント説明欄パネル閲覧フラグ
+    /// </summary>
+    private bool isDocumentExplanationPanel = false;
+
+    /// <summary>
+    /// ミステリーアイテムパネル閲覧フラグ
+    /// </summary>
+    private bool isMysteryItemPanel = false;
+
+    /// <summary>
+    /// ミステリーアイテム説明欄パネル閲覧フラグ
+    /// </summary>
+    private bool isMysteryItemExplanationPanel = false;
 
     [Header("チュートリアル用ハンマー入手フラグ(編集禁止)")]
     public bool isGetHammer_Tutorial = false;
@@ -90,24 +114,47 @@ public class PauseController : MonoBehaviour
     [Header("チュートリアル用ミステリーアイテム閲覧入手フラグ(編集禁止)")]
     public bool isViewMysteryItem_Tutorial = false;
 
-    private List<int> mysteryItemIds = new(); // ミステリーアイテムIDのリスト
-    private List<string> mysteryItemNames = new(); // ミステリーアイテム名のリスト
-    private List<string> mysteryItemExplanations = new(); // ミステリーアイテム説明欄のリスト
 
-    // チュートリアル用ハンマーID
+    /// <summary>
+    /// ミステリーアイテムIDのリスト
+    /// </summary>
+    private List<int> mysteryItemIds = new();
+
+    /// <summary>
+    /// ミステリーアイテム名のリスト
+    /// </summary>
+    private List<string> mysteryItemNames = new();
+
+    /// <summary>
+    /// ミステリーアイテム説明欄のリスト
+    /// </summary>
+    private List<string> mysteryItemExplanations = new();
+
+    /// <summary>
+    /// チュートリアル用ハンマーID
+    /// </summary>
     private const int hammer_TutorialID = 9;
 
-    // チュートリアル用ロープID
+    /// <summary>
+    /// チュートリアル用ロープID
+    /// </summary>
     private const int rope_TutorialID = 10;
 
-    // チュートリアル用ドキュメントID
+    /// <summary>
+    /// チュートリアル用ドキュメントID
+    /// </summary>
     private const int documentBook_TutorialID = 7;
 
-    //初期化するのドキュメントID
+    /// <summary>
+    /// 初期化するのドキュメントID
+    /// </summary>
     private const int defaultDocumentBookID = 99999;
 
-    //ドキュメントID
+    /// <summary>
+    /// ドキュメントID
+    /// </summary>
     private int keepDocumentBookID;
+
 
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
@@ -116,72 +163,83 @@ public class PauseController : MonoBehaviour
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
-    [Header("サウンド関連")]
+    /// <summary>
+    /// SE用audioSource
+    /// </summary>
     private AudioSource audioSourceSE;
-    private readonly int documentNameButtonSEid = 3;//ドキュメント名称ボタンSE
-    private readonly int buttonSEid = 4;//ボタンSEのID
+
+    /// <summary>
+    /// ドキュメント名称ボタンSEのID
+    /// </summary>
+    private readonly int documentNameButtonSEid = 3;
+
+    /// <summary>
+    /// ボタンSEのID
+    /// </summary>
+    private readonly int buttonSEid = 4;
     
 
     [Header("Input Actions")]
     public GameInput gameInput;
 
-    // 非同期タスクのキャンセル用(チュートリアル内のUniTask処理待機中にポーズ画面からタイトルへ戻る際のmessageTextでMissingReferenceExceptionエラーが起こるのを防止する用)
+    /// <summary>
+    /// 非同期タスクのキャンセル
+    /// チュートリアル内のUniTask処理待機中にポーズ画面からタイトルへ戻る際のmessageTextでMissingReferenceExceptionエラーが起こるのを防止する用
+    /// </summary>
     private CancellationTokenSource cts;
 
 
     private void Awake()
     {
-        // シングルトンの設定
+        //シングルトンの設定
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // シーン遷移時に破棄されないようにする（必要に応じて）
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            DestroyController(); // すでにインスタンスが存在する場合は破棄
+            DestroyController();
         }
-        // CancellationTokenSourceを初期化
+
+        //CancellationTokenSourceを初期化
         cts = new CancellationTokenSource();
 
         gameInput = new GameInput();
 
-        // アクションにコールバックを登録
+        //アクションにコールバックを登録
         gameInput.Gameplay.PressPlusButton.performed += OnPlusButtonPressed;
 
-        // Input Systemを有効にする
+        //Input Systemを有効にする
         gameInput.Enable(); 
     }
 
-    /// <summary>
-    /// Playerの効果音が鳴らないバグを防止用。Input Systemを有効にする
-    /// </summary>
     private void OnEnable()
     {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //Input Systemを有効にする
         gameInput.Enable();
     }
 
-    /// <summary>
-    /// Playerの効果音が鳴らないバグを防止用。Input Systemとシーン遷移のコールバックを無効にする
-    /// </summary>
     private void OnDisable()
     {
+        //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //Input Systemを無効にする
         gameInput.Disable();
-        // 非同期タスクをキャンセル
+
+        //非同期タスクをキャンセル
         CancelAsyncTasks();
     }
 
-    /// <summary>
-    /// Playerの効果音が鳴らないバグを防止用。シーン遷移時にPlayer参照を更新する
-    /// </summary>
-    /// <param name="scene">シーン名</param>
-    /// <param name="mode">シーンモード</param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (Player.instance != null)
         {
+            //Playerの効果音が鳴らないバグを防止用。シーン遷移時にPlayer参照を更新する
             player = Player.instance;
         }
         else
@@ -189,13 +247,12 @@ public class PauseController : MonoBehaviour
             Debug.LogWarning("Player instance is null in scene: " + scene.name);
         }
 
-
+        //フラグ値を初期化
         isGetHammer_Tutorial = false;
-
         isGetRope_Tutorial = false;
-
         isViewMysteryItem_Tutorial = false;
 
+        //ドキュメントIDを初期化
         keepDocumentBookID = defaultDocumentBookID;
     }
 
@@ -216,17 +273,18 @@ public class PauseController : MonoBehaviour
     {
         audioSourceSE = MusicController.Instance.GetAudioSource();
 
-        // パネルを初期状態で非表示に
+        //パネルを初期状態で非表示にする
+        //フラグ値を初期化
         isPause = false;
         ChangeViewPausePanel();
 
         isViewItemsPanel = false;
         ChangeViewItemsPanel();
 
-        isDocumentPanels = false;
+        isDocumentPanel = false;
         ChangeViewDocumentPanel();
 
-        isMysteryItemPanels = false;
+        isMysteryItemPanel = false;
         ChangeViewMysteryItemPanel();
 
         isOptionPanel = false;
@@ -235,28 +293,29 @@ public class PauseController : MonoBehaviour
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
 
-
         isGetHammer_Tutorial = false;
-
         isGetRope_Tutorial = false;
-
         isViewMysteryItem_Tutorial = false;
 
-        // ミステリーアイテムのボタンとテキストを初期化
+        //ミステリーアイテムのボタンとテキストを初期化
         InitializeMysteryItemUI();
 
-        // ドキュメントIDを初期化
+        //ドキュメントIDを初期化
         keepDocumentBookID = defaultDocumentBookID;
     }
 
 
-    //PキーorZキーでポーズ/ポーズ解除
+    
     public void Update()
     {
+        //PキーorZキーでポーズ/ポーズ解除
         if ((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Z)) && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) TogglePause();
     }
 
-    //コントローラーの+ボタンでポーズ/ポーズ解除
+    /// <summary>
+    /// コントローラーの+ボタンでポーズ/ポーズ解除
+    /// </summary>
+    /// <param name="context"></param>
     private void OnPlusButtonPressed(InputAction.CallbackContext context)
     {
         TogglePause();
@@ -267,21 +326,23 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private void TogglePause()
     {
-        // ポーズを開く条件
+        //ポーズを開く条件
         if (!player.IsDead && !isPause && !isViewItemsPanel
-            && !isDocumentPanels && !isDocumentExplanationPanel && !isMysteryItemPanels
+            && !isDocumentPanel && !isDocumentExplanationPanel && !isMysteryItemPanel
             && !isMysteryItemExplanationPanel && !goal.isGoalPanel && Time.timeScale != 0)
         {
             ViewPausePanel();
         }
-        // ポーズを閉じる条件
+        //ポーズを閉じる条件
         else if (!player.IsDead && isPause)
         {
             OnClickedClosePauseButton();
         }
     }
 
-    //ポーズ
+    /// <summary>
+    /// ポーズ
+    /// </summary>
     public void ViewPausePanel() 
     {
         isPause = true;
@@ -291,8 +352,10 @@ public class PauseController : MonoBehaviour
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
+        //BGM一時停止
         MusicController.Instance.PauseBGM();
 
+        //再生中の効果音を全て一時停止し、ボタンSEを流す
         if (Player.instance != null && Player.instance.audioSourceSE != null)
         {
             MusicController.Instance.PauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
@@ -310,11 +373,12 @@ public class PauseController : MonoBehaviour
             }
         }
 
-        
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
     }
 
-    //ポーズ解除
+    /// <summary>
+    /// ポーズ解除
+    /// </summary>
     public void OnClickedClosePauseButton()
     {
         if (!viewItemsPanel.activeSelf) 
@@ -338,8 +402,9 @@ public class PauseController : MonoBehaviour
         
     }
 
-
-    //アイテム確認
+    /// <summary>
+    /// 「アイテム確認」ボタン押下
+    /// </summary>
     public void OnClickedViewItemButton()
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
@@ -353,7 +418,9 @@ public class PauseController : MonoBehaviour
         ChangeViewItemsPanel();
     }
 
-    //オプション設定
+    /// <summary>
+    /// 「オプション」ボタン押下
+    /// </summary>
     public void OnClickedOptionButton()
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
@@ -365,7 +432,10 @@ public class PauseController : MonoBehaviour
         ChangeViewPausePanel();
     }
 
-    //オプション設定からポーズ画面へ戻る
+    /// <summary>
+    /// 「戻る」ボタン押下
+    /// オプション設定からポーズ画面へ戻る
+    /// </summary>
     public void OnClickedFromOptionToPauseButton()
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
@@ -376,7 +446,9 @@ public class PauseController : MonoBehaviour
         ChangeOptionPanel();
     }
 
-    //タイトルへ戻る
+    /// <summary>
+    /// 「タイトルへ戻る」ボタン押下
+    /// </summary>
     public void OnClickedReturnToTitleButton()
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
@@ -388,7 +460,9 @@ public class PauseController : MonoBehaviour
         ChangeViewPausePanel();
     }
 
-    //「はい」押下
+    /// <summary>
+    /// 「はい」押下
+    /// </summary>
     public void OnClickedYesButton()
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
@@ -396,7 +470,9 @@ public class PauseController : MonoBehaviour
         GameController.instance.ReturnToTitle();
     }
 
-    //「いいえ」押下
+    /// <summary>
+    /// 「いいえ」押下
+    /// </summary>
     public void OnClickedNoButton()
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
@@ -408,17 +484,19 @@ public class PauseController : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// 「ドキュメント」ボタン押下
+    /// </summary>
     public void OnClickedViewDocumentButton() 
     {
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
-        // ドキュメントパネルを表示
-        isDocumentPanels = true;
+        //ドキュメントパネルを表示
+        isDocumentPanel = true;
         ChangeViewDocumentPanel();
 
-        // ミステリーアイテムパネルを非表示
-        isMysteryItemPanels = false;
+        //ミステリーアイテムパネルを非表示
+        isMysteryItemPanel = false;
         ChangeViewMysteryItemPanel();
     }
 
@@ -427,11 +505,11 @@ public class PauseController : MonoBehaviour
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         // ミステリーアイテムパネルを表示
-        isMysteryItemPanels = true;
+        isMysteryItemPanel = true;
         ChangeViewMysteryItemPanel();
 
         // ドキュメントパネルを非表示
-        isDocumentPanels = false;
+        isDocumentPanel = false;
         ChangeViewDocumentPanel();
 
         // 画像と説明テキストをクリア
@@ -459,10 +537,10 @@ public class PauseController : MonoBehaviour
         isViewItemsPanel = false;
         ChangeViewItemsPanel();
 
-        isDocumentPanels = false;
+        isDocumentPanel = false;
         ChangeViewDocumentPanel();
 
-        isMysteryItemPanels = false;
+        isMysteryItemPanel = false;
         ChangeViewMysteryItemPanel();
     }
 
@@ -541,7 +619,7 @@ public class PauseController : MonoBehaviour
     //ドキュメントアイテムパネルの表示/非表示
     void ChangeViewDocumentPanel() 
     {
-        if (isDocumentPanels)
+        if (isDocumentPanel)
         {
             documentInventoryPanel.transform.SetAsLastSibling();
             documentInventoryPanel.SetActive(true);
@@ -603,7 +681,7 @@ public class PauseController : MonoBehaviour
     //ミステリーアイテム確認パネルの表示/非表示
     void ChangeViewMysteryItemPanel()
     {
-        if (isMysteryItemPanels)
+        if (isMysteryItemPanel)
         {
             mysteryItemInventoryPanel.transform.SetAsLastSibling();
             mysteryItemInventoryPanel.SetActive(true);
