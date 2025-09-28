@@ -6,16 +6,18 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
     public static GameController instance;
 
     [Header("Prefab内のGameControllerの子オブジェクトをアタッチすること")]
     [SerializeField] private SaveLoad saveLoad;
 
-    [Header("ゲームモードのステータス")]
+    [Header("ゲームモードのステータス(ヒエラルキー上からの編集禁止)")]
     public GameModeStatus gameModeStatus;
 
-    [Header("メッセージパネル関連(ヒエラルキー上からアタッチする必要がある)")]
-    //[SerializeField] public GameObject messagePanel;
+    [Header("メッセージテキスト(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public Text messageText;
 
     [Header("チュートリアル用ドキュメント")]
@@ -28,8 +30,11 @@ public class GameController : MonoBehaviour
     [Header("チュートリアル用アイテム親オブジェクト")]
     [SerializeField] public GameObject tutorialItems;
 
-    [Header("チュートリアル用フラグ(編集禁止)")]
+    [Header("チュートリアル用フラグ(ヒエラルキー上からの編集禁止)")]
     public bool isTutorialNextMessageFlag = false;
+
+    [Header("チュートリアル用ゴールフラグ(ヒエラルキー上からの編集禁止)")]
+    public bool isTutorialGoalFlag = false;
 
     [Header("PlayerスタミナSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider staminaSlider;
@@ -37,51 +42,77 @@ public class GameController : MonoBehaviour
     [Header("PlayerCameraマウス/ゲームパッドの右スティックの旋回速度のSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider mouseSensitivitySlider;
 
-    [Header("Playerの使用アイテムインベントリパネル関連(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] public GameObject useItemPanel;//使用アイテム確認パネル
-    [SerializeField] public Text useItemCountText;//使用アイテム所持カウントテキスト
-    [SerializeField] public Image useItemImage;//使用アイテム画像
-    [SerializeField] public GameObject useItemTextPanel;//使用アイテムテキスト確認パネル
-    [SerializeField] public Text useItemNameText;//使用アイテム名テキスト
-    [SerializeField] public Text useItemExplanationText;//使用アイテム説明テキスト
 
-    //[Header("チュートリアル用ゴール")]
-    //[SerializeField] public GameObject tutorialGoal;
+    [Header("Playerの使用アイテムインベントリパネル関連")]
+    [Header("使用アイテムパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public GameObject useItemPanel;
 
+    [Header("使用アイテム所持カウントテキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Text useItemCountText;
+
+    [Header("使用アイテム画像(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Image useItemImage;
+
+    [Header("使用アイテムテキスト確認パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public GameObject useItemTextPanel;
+
+    [Header("使用アイテム名テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Text useItemNameText;
+
+    [Header("使用アイテム説明テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Text useItemExplanationText;
+
+
+    [Header("セーブ・ロードしたい変数関連")]
     [Header("セーブするプレイヤー名")]
     public static string playerName;
 
     [Header("セーブするプレイ回数")]
     public static int playCount = 0;
 
-    [Header("チュートリアル用ゴールフラグ(編集禁止)")]
-    public bool isTutorialGoalFlag = false;
 
 
+    /// <summary>
+    /// ゲームモードステータス
+    /// </summary>
     public enum  GameModeStatus
     {
+        /// <summary>
+        /// ストーリーモード
+        /// </summary>
         Story,
+
+        /// <summary>
+        /// 通常プレイモード
+        /// </summary>
         PlayInGame,
+
+        /// <summary>
+        /// プレイヤーを操作しないモード
+        /// </summary>
         StopInGame,
-        GoalGameMode,
+
+        /// <summary>
+        /// ゲームオーバーモード
+        /// </summary>
         GameOver,
     }
 
     private void OnEnable()
     {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
     private void OnDisable()
     {
+        //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        //パラメーターリセット
         ResetParams();
     }
 
@@ -90,13 +121,13 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void ResetParams() 
     {
-        Debug.Log("GameControllerのパラメーターをリセット");
         isTutorialNextMessageFlag = false;
         isTutorialGoalFlag = false;
     }
 
     private void Awake()
     {
+        //インスタンス生成
         if (instance == null)
         {
             instance = this;
@@ -104,24 +135,25 @@ public class GameController : MonoBehaviour
         }
         else Destroy(this.gameObject);
 
+
         Time.timeScale = 1;
     }
 
     private void Start()
     {
+        //パラメーターリセット
         ResetParams();
     }
 
-    private void Update()
-    {
-
-    }
-
-    //ゲームモードのステータスを設定
+    /// <summary>
+    /// ゲームモードのステータスを設定
+    /// </summary>
+    /// <param name="status">ゲームモードステータス</param>
     public void SetGameModeStatus(GameModeStatus status) 
     {
         gameModeStatus = status;
 
+        //ストーリーモードの場合
         if (gameModeStatus == GameModeStatus.Story) 
         {
             Cursor.visible = false;
@@ -130,7 +162,7 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
-    /// データを保存するメソッドを呼び出す(仮)
+    /// データを保存するメソッドを呼び出す(製品版で使用する)
     /// </summary>
     public void CallSaveUserDataMethod() 
     {
@@ -138,7 +170,7 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
-    /// データをロードするメソッドを呼び出す(仮)
+    /// データをロードするメソッドを呼び出す(製品版で使用する)
     /// </summary>
     public void CallLoadUserDataMethod() 
     {
@@ -146,7 +178,7 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
-    /// データを初期化するメソッドを呼び出す(仮)
+    /// データを初期化するメソッドを呼び出す(製品版で使用する)
     /// </summary>
     public void CallRestDataMethod() 
     {
@@ -169,24 +201,21 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void ReturnToTitle() 
     {
-        // MessageControllerの非同期タスクをキャンセル
+        //MessageControllerの非同期タスクをキャンセル
         if (MessageController.instance != null)
         {
             MessageController.instance.CancelAsyncTasks();
             MessageController.instance.DestroyController();
         }
 
-
+        //プレイヤー削除・タイトルシーンへ遷移
         if (Player.instance != null)
         {
             Player.instance.DestroyPlayer();
         }
         SceneManager.LoadScene("TitleScene");
-        //MessageController.instance.DestroyController();
-        
-        //MessageController.instance.messageText = null;
-        //SceneManager.LoadScene("TitleScene");
-        //Player.instance.DestroyPlayer();
+
+        //PauseControllerを削除
         if (PauseController.instance != null)
         {
             PauseController.instance.DestroyController();

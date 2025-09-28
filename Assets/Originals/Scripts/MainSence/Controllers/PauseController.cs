@@ -10,13 +10,16 @@ using static GameController;
 
 public class PauseController : MonoBehaviour
 {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
     public static PauseController instance;
 
-    [Header("プレイヤー")]
-    [SerializeField] private Player player;//プレイヤー
+    [Header("プレイヤー(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Player player;
 
     [Header("ゴール(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private Goal goal;//ゴール
+    [SerializeField] private Goal goal;
 
     [Header("敵(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private BaseEnemy[] baseEnemy;
@@ -27,19 +30,39 @@ public class PauseController : MonoBehaviour
     [Header("アイテム確認パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject viewItemsPanel;
 
-    [Header("ドキュメントパネル関連(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private GameObject documentInventoryPanel;//ドキュメント確認パネル
-    [SerializeField] private GameObject documentExplanationPanel;//ドキュメント説明欄パネル
-    [SerializeField] private Text documentNameText;//ドキュメント名称テキスト
-    [SerializeField] private Text documentExplanationText;//ドキュメント説明欄テキスト
+    [Header("ドキュメントパネル関連")]
+    [Header("ドキュメント確認パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject documentInventoryPanel;
 
-    [Header("ミステリーアイテムパネル関連(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private GameObject mysteryItemInventoryPanel;//ミステリーアイテム確認パネル
-    [SerializeField] private Button[] mysteryItemNameButton;//ミステリーアイテム名称ボタン
-    [SerializeField] private Text[] mysteryItemNameText;//ミステリーアイテム名称テキスト
-    [SerializeField] private Image[] mysteryItemImage;//ミステリーアイテム画像
-    [SerializeField] private Text[] mysteryItemExplanationText;//ミステリーアイテム説明欄テキスト
-    [SerializeField] private GameObject mysteryItemExplanationPanel;//ミステリーアイテム説明欄パネル
+    [Header("ドキュメント説明欄パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject documentExplanationPanel;
+
+    [Header("ドキュメント名称テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Text documentNameText;
+
+    [Header("ドキュメント説明欄テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Text documentExplanationText;
+
+
+    [Header("ミステリーアイテムパネル関連")]
+    [Header("ミステリーアイテム確認パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject mysteryItemInventoryPanel;
+
+    [Header("ミステリーアイテム名称ボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Button[] mysteryItemNameButton;
+
+    [Header("ミステリーアイテム名称テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Text[] mysteryItemNameText;
+
+    [Header("ミステリーアイテム画像(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Image[] mysteryItemImage;
+
+    [Header("ミステリーアイテム説明欄テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Text[] mysteryItemExplanationText;
+
+    [Header("ミステリーアイテム説明欄パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject mysteryItemExplanationPanel;
+
 
     [Header("オプションパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject optionPanel;
@@ -47,6 +70,7 @@ public class PauseController : MonoBehaviour
     [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject returnToTitlePanel;
 
+    [Header("フラグ(ヒエラルキー上からの編集禁止)")]
     public bool isPause = false;
     public bool isViewItemsPanel = false;
     public bool isOptionPanel = false;
@@ -56,8 +80,6 @@ public class PauseController : MonoBehaviour
     public bool isMysteryItemPanels = false;
     public bool isMysteryItemExplanationPanel = false;
 
-    //[Header("チュートリアル用フラグ(編集禁止)")]
-    //public bool isTutorialNextMessageFlag = false;
 
     [Header("チュートリアル用ハンマー入手フラグ(編集禁止)")]
     public bool isGetHammer_Tutorial = false;

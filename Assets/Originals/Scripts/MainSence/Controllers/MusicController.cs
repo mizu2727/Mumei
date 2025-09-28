@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class MusicController : MonoBehaviour
 {
+    //インスタンス
     private static MusicController _instance;
     public static MusicController Instance => _instance;
 
@@ -20,19 +21,23 @@ public class MusicController : MonoBehaviour
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
 
-
+    /// <summary>
+    /// audioClip番号
+    /// </summary>
     public int audioClipnum = 0;
 
+    /// <summary>
+    /// audioClip番号(保存用)
+    /// </summary>
     private int keepAudioClipnum = 999;
 
-    //[Header("敵に追われている時のBGM")]
-    //[SerializeField] private AudioSource audioSourceEnemyBGM;
 
-    //[SerializeField] private AudioClip audioClipEnemyBGM;
-
+    /// <summary>
+    /// SE用audioSourceのリスト
+    /// </summary>
     private readonly List<AudioSource> audioSourceSEList = new ();
 
-
+    [Header("デバッグフラグ")]
     [SerializeField] private bool isDebug;
 
     private void Awake()
@@ -54,14 +59,14 @@ public class MusicController : MonoBehaviour
             Debug.LogWarning("AudioSourceBGM not found, adding one.");
             audioSourceBGM = gameObject.AddComponent<AudioSource>();
         }
-        Debug.Log($"MusicController initialized. Instance: {_instance}, GameObject: {gameObject.name}");
 
-        // シーン遷移時のクリーンアップハンドラを登録
+        //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDestroy()
     {
+        //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
@@ -69,172 +74,115 @@ public class MusicController : MonoBehaviour
     {
         // シーン遷移時に無効なAudioSourceをクリーンアップ
         audioSourceSEList.RemoveAll(audioSource => audioSource == null || !audioSource.gameObject.activeInHierarchy);
-        Debug.Log($"シーン {scene.name} に遷移。audioSourceSEList の有効なAudioSource数: {audioSourceSEList.Count}");
 
+        //BGMを止める
         sO_BGM.StopAllBGM();
     }
 
     void Start()
     {
+        //デバッグモードの場合処理をスキップ
         if (isDebug) return;
 
         audioClipnum = 0;
         PlayBGM();
     }
 
-
-
-
-    // BGM再生(廃止予定)
+    /// <summary>
+    /// BGM再生
+    /// </summary>
     public void PlayBGM()
     {
-
-
         if (!isDebug)
         {
             keepAudioClipnum = audioClipnum;
             audioSourceBGM.clip = audioClipBGM[audioClipnum];
             audioSourceBGM.loop = true;
             audioSourceBGM.Play();
-            Debug.Log("keepAudioClipnum = " + keepAudioClipnum);
-
-            //番号が同じBGMを連続で再生するのを阻止する
-            //if (keepAudioClipnum != audioClipnum)
-            //{
-            //    keepAudioClipnum = audioClipnum;
-            //    audioSourceBGM.clip = audioClipBGM[audioClipnum];
-            //    audioSourceBGM.loop = true;
-            //    audioSourceBGM.Play();
-            //    Debug.Log("keepAudioClipnum = " + keepAudioClipnum);
-            //}
-            //else 
-            //{
-            //    Debug.LogWarning("番号が同じBGMを連続で再生しようとしています");
-            //}
         }
     }
 
-
-    public void PlayBGM(int id) 
-    {
-        if (sO_BGM.bgmList[id].bgmState == BGMState.Stop)
-        {
-            audioSourceBGM.clip = sO_BGM.GetBGMClip(id);
-            audioSourceBGM.loop = true;
-            audioSourceBGM.Play();
-            sO_BGM.bgmList[id].bgmState = sO_BGM.ChangeFromStopToPlayBGM(id);
-        }
-        else 
-        {
-            Debug.LogWarning(sO_BGM.bgmList[id].bgmName + "を流せません");
-        }
-    }
-
-    // BGM一時停止
+    /// <summary>
+    /// BGM一時停止
+    /// </summary>
     public void PauseBGM()
     {
         audioSourceBGM.clip = audioClipBGM[audioClipnum];
         audioSourceBGM.Pause();
     }
 
-    // BGM一時停止解除
+    /// <summary>
+    /// BGM一時停止解除
+    /// </summary>
     public void UnPauseBGM()
     {
         audioSourceBGM.clip = audioClipBGM[audioClipnum];
         audioSourceBGM.UnPause();
     }
 
-    // BGM停止
+    /// <summary>
+    /// BGM停止
+    /// </summary>
     public void StopBGM()
     {
         keepAudioClipnum = 999;
         audioSourceBGM.Stop();
     }
 
-    //// 敵に追われている時のBGMを再生
-    //public void PlayEnemyBGM()
-    //{
-    //    if (audioSourceEnemyBGM != null && !isDebug)
-    //    {
-    //        if (audioClipEnemyBGM != null)
-    //        {
-    //            audioSourceEnemyBGM.clip = audioClipEnemyBGM;
-    //            audioSourceEnemyBGM.loop = true;
-    //            audioSourceEnemyBGM.Play();
-    //        }
-    //        else
-    //        {
-    //            Debug.LogWarning("[MusicController] audioClipEnemyBGM が null です！");
-    //        }
-    //    }
-    //}
-
-    //// 敵に追われている時のBGM一時停止
-    //public void PauseEnemyBGM()
-    //{
-    //    audioSourceEnemyBGM.clip = audioClipEnemyBGM;
-    //    audioSourceEnemyBGM.Pause();
-    //}
-
-    //// 敵に追われている時のBGM一時停止解除
-    //public void UnPauseEnemyBGM()
-    //{
-    //    audioSourceEnemyBGM.clip = audioClipEnemyBGM;
-    //    audioSourceEnemyBGM.UnPause();
-    //}
-
-    //// 敵に追われている時のBGM停止
-    //public void StopEnemyBGM()
-    //{
-    //    audioSourceEnemyBGM.Stop();
-    //}
-
-
-    // 新しいAudioSourceを取得または作成
+    /// <summary>
+    ///  新しいAudioSourceを取得または作成
+    /// </summary>
+    /// <returns></returns>
     public AudioSource GetAudioSource()
     {
-        // 使用中でない有効なAudioSourceを探す
+        //使用していない有効なAudioSourceを探す
         foreach (var audioSource in audioSourceSEList)
         {
             if (audioSource != null && audioSource.gameObject.activeInHierarchy && !audioSource.isPlaying)
             {
-                Debug.Log($"既存の未使用AudioSourceを再利用: {audioSource.GetInstanceID()}");
                 return audioSource;
             }
         }
 
-        // 新しいAudioSourceを作成
+        //新しいAudioSourceを作成
         var audioSourceNew = gameObject.AddComponent<AudioSource>();
         audioSourceNew.playOnAwake = false;
         audioSourceSEList.Add(audioSourceNew);
-        Debug.Log($"新しいAudioSourceを作成: {audioSourceNew.GetInstanceID()}");
         return audioSourceNew;
     }
 
-    // SE再生
+    /// <summary>
+    /// SE再生
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <param name="audioClip"></param>
     public void PlayAudioSE(AudioSource audioSource, AudioClip audioClip)
     {
         if (audioSource != null && !isDebug)
         {
             if (audioClip != null)
             {
-                audioSource.clip = audioClip; // 効果音クリップを設定
-                audioSource.loop = false; // ループ再生を無効化
-                audioSource.Play(); // 効果音を再生
-                Debug.Log($"Playing SE: {audioClip.name} on AudioSource: {audioSource.GetInstanceID()}");
+                //効果音クリップを設定
+                audioSource.clip = audioClip;
+
+                //ループ再生を無効化
+                audioSource.loop = false;
+
+                //効果音を再生
+                audioSource.Play(); 
             }
             else
             {
                 Debug.LogWarning("[MusicController] audioClip が null です！");
             }
         }
-        else
-        {
-            Debug.LogWarning($"[MusicController] AudioSource is null or debug mode is enabled (isDebug: {isDebug})");
-        }
     }
 
-    // SEを一瞬のみ再生
+    /// <summary>
+    /// SEを一瞬だけ再生
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <param name="audioClip"></param>
     public async void PlayMomentAudioSE(AudioSource audioSource, AudioClip audioClip)
     {
         if (audioSource != null && !isDebug)
@@ -244,7 +192,6 @@ public class MusicController : MonoBehaviour
                 audioSource.clip = audioClip;
                 audioSource.loop = false;
                 audioSource.Play();
-                Debug.Log("SEを一瞬のみ再生スタート");
             }
             else
             {
@@ -255,10 +202,13 @@ public class MusicController : MonoBehaviour
         await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
         StopSE(audioSource);
-        Debug.Log("SEを一瞬のみ再生停止");
     }
 
-    // SEをループ再生
+    /// <summary>
+    /// SEをループ再生
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <param name="audioClip"></param>
     public void LoopPlayAudioSE(AudioSource audioSource, AudioClip audioClip)
     {
         if (audioSource != null && !isDebug)
@@ -276,7 +226,11 @@ public class MusicController : MonoBehaviour
         }
     }
 
-    // SEを一時停止
+    /// <summary>
+    /// SEを一時停止
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <param name="audioClip"></param>
     public void PauseSE(AudioSource audioSource, AudioClip audioClip)
     {
         if (audioSource == null)
@@ -292,10 +246,13 @@ public class MusicController : MonoBehaviour
         }
         audioSource.clip = audioClip;
         audioSource.Pause();
-        Debug.Log("SE一時停止");
     }
 
-    // SEの一時停止解除
+    /// <summary>
+    /// SEの一時停止解除
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <param name="audioClip"></param>
     public void UnPauseSE(AudioSource audioSource, AudioClip audioClip)
     {
         if (audioSource == null)
@@ -311,10 +268,12 @@ public class MusicController : MonoBehaviour
         }
         audioSource.clip = audioClip;
         audioSource.UnPause();
-        Debug.Log("SE一時停止解除");
     }
 
-    // SE停止
+    /// <summary>
+    /// SE停止
+    /// </summary>
+    /// <param name="audioSource"></param>
     public void StopSE(AudioSource audioSource)
     {
         if (audioSource != null)
@@ -325,13 +284,21 @@ public class MusicController : MonoBehaviour
         }
     }
 
-    // 指定されたAudioSourceが再生中か確認
+    /// <summary>
+    /// 指定されたAudioSourceが再生中か確認
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <returns></returns>
     public bool IsPlayingSE(AudioSource audioSource)
     {
         return audioSource != null && audioSource.isPlaying;
     }
 
-    // 現在のSEクリップを取得
+    /// <summary>
+    /// 現在のSEクリップを取得
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <returns></returns>
     public AudioClip GetCurrentSE(AudioSource audioSource)
     {
         return audioSource != null ? audioSource.clip : null;
