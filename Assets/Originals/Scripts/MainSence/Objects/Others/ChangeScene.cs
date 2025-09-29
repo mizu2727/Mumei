@@ -48,38 +48,9 @@ public class ChangeScene : MonoBehaviour
         }
         Debug.Log("[ChangeScene] SampleScene01 のロードが完了しました。");
 
-        // 3. TestMap01 のシングルトン参照を取得
-        TestMap01 testMap = null;
-        for (int i = 0; i < 50; i++)
-        {
-            testMap = TestMap01.instance;
-            if (testMap != null) break;
-            await UniTask.Delay(100);
-        }
-        if (testMap == null)
-        {
-            Debug.LogError("[ChangeScene] TestMap01.instance が見つかりません。SampleScene01 に TestMap01 スクリプトがアタッチされていることを確認してください。");
-            return;
-        }
-        Debug.Log("[ChangeScene] TestMap01.instance を取得しました。");
+        
 
-        // 4. マップ生成とNavMesh生成を待機（タイムアウト設定）
-        int maxWaitAttempts = 100; // 最大10秒待機
-        for (int i = 0; i < maxWaitAttempts; i++)
-        {
-            if (testMap.IsMapGenerated && testMap.IsNavMeshGenerated)
-            {
-                Debug.Log("[ChangeScene] マップおよびNavMesh生成が完了しました。");
-                break;
-            }
-            Debug.Log($"[ChangeScene] マップ生成待機中: IsMapGenerated={testMap.IsMapGenerated}, IsNavMeshGenerated={testMap.IsNavMeshGenerated}");
-            await UniTask.Delay(100);
-        }
-        if (!testMap.IsMapGenerated || !testMap.IsNavMeshGenerated)
-        {
-            Debug.LogError("[ChangeScene] マップまたはNavMesh生成がタイムアウトしました。");
-            return;
-        }
+        
 
         // 5. デバッグログを表示
         Debug.Log("[ChangeScene] スペースキーを押下してください。");
@@ -117,14 +88,7 @@ public class ChangeScene : MonoBehaviour
         SceneManager.MoveGameObjectToScene(Player.instance.gameObject, targetScene);
         Debug.Log($"[ChangeScene] プレイヤー移動後: 位置={Player.instance.transform.position}, シーン={Player.instance.gameObject.scene.name}");
 
-        // 8. プレイヤーをワープ
-        await testMap.SpawnPlayerAsync();
-        if (!testMap.hasPlayerSpawned)
-        {
-            Debug.LogError("[ChangeScene] プレイヤーのワープに失敗しました。");
-            return;
-        }
-        Debug.Log("[ChangeScene] プレイヤーのワープが完了しました。");
+        
 
         // 9. SampleScene02 をアンロード
         currentScene = SceneManager.GetSceneByName("SampleScene02");
@@ -142,13 +106,6 @@ public class ChangeScene : MonoBehaviour
         SceneManager.SetActiveScene(targetScene);
         Debug.Log("[ChangeScene] SampleScene01 をアクティブシーンに設定しました。");
 
-        // 11. 敵を生成
-        await testMap.SpawnEnemiesAsync();
-        if (!testMap.hasEnemiesSpawned)
-        {
-            Debug.LogError("[ChangeScene] 敵の生成に失敗しました。");
-            return;
-        }
-        Debug.Log("[ChangeScene] 敵の生成が完了しました。");
+        
     }
 }
