@@ -15,97 +15,126 @@ using static SO_Item;
 
 public class Inventory : MonoBehaviour
 {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
     public static Inventory instance;
 
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
 
-    [Header("使用アイテムパネル関連(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private GameObject useItemPanel;//使用アイテム確認パネル
-    [SerializeField] private Text useItemCountText;//使用アイテム所持カウントテキスト
-    [SerializeField] private Image useItemImage;//使用アイテム画像
-    [SerializeField] public GameObject useItemTextPanel;//使用アイテムテキスト確認パネル
-    [SerializeField] public Text useItemNameText;//使用アイテム名テキスト
-    [SerializeField] public Text useItemExplanationText;//使用アイテム説明テキスト
+    [Header("使用アイテムパネル関連")]
+    [Header("使用アイテムパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject useItemPanel;
 
+    [Header("使用アイテム所持カウントテキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Text useItemCountText;
 
-    //アイテムID管理(アイテムインベントリ複数枠分用)
-    private readonly List<int> idList = new();
+    [Header("使用アイテム画像(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Image useItemImage;
+
+    [Header("使用アイテムテキスト確認パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public GameObject useItemTextPanel;
+
+    [Header("使用アイテム名テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Text useItemNameText;
+
+    [Header("使用アイテム説明テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Text useItemExplanationText;
+
 
     [Header("アイテムID管理(アイテムインベントリ1枠分用。編集禁止)")]
     public int keepItemId;
 
-    //アイテム未所持時のID(アイテムインベントリ1枠分用)
+    /// <summary>
+    /// アイテム未所持時のID
+    /// </summary>
     private const int noneItemId = 99999;
 
-    //アイテムのプレハブのAddressables名
+    /// <summary>
+    /// アイテムのプレハブのAddressables名
+    /// </summary>
     private string keepItemPrefabPath;
 
-    //アイテムのプレハブのAddressables名(空白)
+    /// <summary>
+    /// アイテムのプレハブのAddressables名(空白)
+    /// </summary>
     private const string noneItemPrefabPath = "";
 
-    //アイテム生成位置
+    /// <summary>
+    /// アイテム生成位置
+    /// </summary>
     private Vector3 keepItemSpawnPosition;
 
-    //アイテム生成位置(デフォルト)
+    /// <summary>
+    /// アイテム生成位置(デフォルト)
+    /// </summary>
     private Vector3 defaultItemSpawnPosition = new Vector3(0, 0, 0);
 
-    //アイテムの回転数値
+    /// <summary>
+    /// アイテムの回転数値
+    /// </summary>
     private Quaternion keepItemSpawnRotation;
 
-    //アイテムの回転数値(デフォルト)
+    /// <summary>
+    /// アイテムの回転数値(デフォルト)
+    /// </summary>
     private Quaternion defaultItemSpawnRotation = Quaternion.identity;
 
-    //アイテム所持数管理(アイテムインベントリ複数枠分用)
-    private readonly List<int> countList = new();
-
-    //アイテム所持数管理(アイテムインベントリ1枠分用)
+    /// <summary>
+    /// アイテム所持数
+    /// </summary>
     private int keepItemCount;
 
+    /// <summary>
+    /// アイテム所持数(デフォルト)
+    /// </summary>
     private const int minKeepItemCount = 0;
 
-    //アイテム効果値
+    /// <summary>
+    /// アイテム効果値
+    /// </summary>
     private int keepItemEffectValue;
 
-    //アイテム効果値(デフォルト値)
+    /// <summary>
+    /// アイテム効果値(デフォルト値)
+    /// </summary>
     private const int defaultKeepItemEffectValue = 0;
 
-    //アイテムリストのインデックス番号
-    int checkIndex;
-
-    // スタミナ増強効果のタスクを管理するためのCancellationTokenSource
-    //private CancellationTokenSource staminaEffectCts;
-
-    //スタミナ増強剤を使用しているかを判定
+    /// <summary>
+    /// スタミナ増強剤使用フラグ
+    /// </summary>
     private bool isUseStaminaItem;
 
+    /// <summary>
+    /// Player.cs
+    /// </summary>
     private Player player;
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
-    [Header("サウンド関連")]
-    private AudioSource audioSourceInventorySE;//Inventory専用のAudioSource
-    private readonly int useStaminaEnhancerSEid = 12; // スタミナ増強剤SEのID
-
+    /// <summary>
+    /// Inventory専用のAudioSource
+    /// </summary>
+    private AudioSource audioSourceInventorySE;
 
     /// <summary>
-    /// 
+    /// スタミナ増強剤SEのID
     /// </summary>
+    private readonly int useStaminaEnhancerSEid = 12;
+
     private void OnEnable()
     {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    /// <summary>
-    /// シーン遷移時に使用アイテムパネル関連を再設定するためのイベント登録解除
-    /// </summary>
     private void OnDisable()
     {
+        //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
-
-        //CancelStaminaEffect();
     }
 
     /// <summary>
@@ -115,8 +144,10 @@ public class Inventory : MonoBehaviour
     /// <param name="mode"></param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        //AudioSourceの初期化
         InitializeAudioSource();
 
+        //GameController.csのUIを反映させる
         if (GameController.instance.useItemPanel != null) useItemPanel = GameController.instance.useItemPanel;
         else Debug.LogError("GameControllerのuseItemPanelが設定されていません");
 
@@ -135,7 +166,9 @@ public class Inventory : MonoBehaviour
         if (GameController.instance.useItemExplanationText != null) useItemExplanationText = GameController.instance.useItemExplanationText;
         else Debug.LogError("GameControllerのuseItemExplanationTextが設定されていません");
 
+        //インベントリをリセットする
         ResetInventoryItem();
+
         //アイテムDBをリセット
         sO_Item.ResetItems();
     }
@@ -145,18 +178,18 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private void InitializeAudioSource()
     {
-        // すべての AudioSource を取得
+        //すべてのAudioSourceを取得
         var audioSources = GetComponents<AudioSource>();
         if (audioSources.Length < 3)
         {
-            // 3つ目の AudioSource が不足している場合、追加
+            //3つ目のAudioSourceが不足している場合、追加する
             audioSourceInventorySE = gameObject.AddComponent<AudioSource>();
             audioSourceInventorySE.playOnAwake = false;
             audioSourceInventorySE.volume = 1.0f;
         }
         else
         {
-            // 3番目の AudioSource をアイテム取得音用に割り当て
+            //3番目のAudioSourceをアイテム使用音用に割り当て
             //(PlayerオブジェクトにこのスクリプトとPlayer.csをアタッチしている。
             //移動音とアイテム取得音の競合を回避する用)
             audioSourceInventorySE = audioSources[2];
@@ -167,35 +200,42 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        // シングルトンの設定
+        //シングルトンの設定
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // シーン遷移時に破棄されないようにする（必要に応じて）
+
+            //シーン遷移時に破棄されないようにする
+            DontDestroyOnLoad(gameObject); 
         }
         else
         {
-            Destroy(gameObject); // すでにインスタンスが存在する場合は破棄
+            //すでにインスタンスが存在する場合は破棄
+            Destroy(gameObject);
         }
     }
 
     void Start()
     {
         player = GetComponent<Player>();
+
         //Addressablesを初期化
         Addressables.InitializeAsync();
+
+        //インベントリをリセット
         ResetInventoryItem();
     }
 
     void Update()
     {
+        //インベントリアイテム使用
         if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) UseItem();
     }
 
     /// <summary>
     /// 右クリックでインベントリアイテム使用する関数
     /// </summary>
-    /// <returns>true / false</returns>
+    /// <returns>右クリックでtrue</returns>
     bool UseInventoryItem()
     {
         return Input.GetMouseButtonDown(1);
@@ -215,50 +255,44 @@ public class Inventory : MonoBehaviour
     /// <param name="effectValue">アイテム効果値</param>
     public void GetItem(int id, string path, Vector3 position, Quaternion rotation, Sprite icon, string itemName, string description,int count, int effectValue)
     {
-        //リストの中にアイテムが何番目に存在するのかを確認
-        //存在しない場合は-1を返す
-        //checkIndex = idList.IndexOf(id);
-
         //インベントリに新規追加する処理
-        //checkIndex == -1
         if (keepItemId == noneItemId)
         {
 
-            //　アイテムidを設定
-            idList.Add(id);
-
+            //アイテムidを設定
             keepItemId = id;
+
+            //アイテムプレハブのパスを設定
             keepItemPrefabPath = path;
+
+            //アイテムの座標を設定
             keepItemSpawnPosition = position;
+
+            //アイテムの回転値を設定
             keepItemSpawnRotation = rotation;
+
+            //アイテム画像を設定
             useItemImage.sprite = icon;
+
+            //アイテム効果値を設定
             keepItemEffectValue = effectValue;
+
+            //アイテム画像の不透明度を100%にする
             useItemImage.color = new Color(255, 255, 255, 1);
 
-            //　アイテム所持数を設定
-            countList.Add(count);
+            //アイテム所持数を設定
             keepItemCount = count;
             useItemCountText.text = count.ToString();
 
-            //　アイテム名と説明文を設定
+            //アイテム名と説明文を設定
             useItemNameText.text = itemName;
-            useItemExplanationText.text = description;
-
-            Debug.Log("id:" + id + "のアイテムitemを" + count + "個新規追加");
-            Debug.Log("keepItemCount(使用アイテム):" + keepItemCount);
-            
+            useItemExplanationText.text = description;          
         }
         else
         {
             //アイテム所持数を追加
-            countList[checkIndex] += count;
             keepItemCount = count;
             useItemCountText.text = count.ToString();
-
-
-            Debug.Log("id:" + id + "のアイテムitemを" + count + "個へ増加");
-
-            Debug.Log("keepItemCount(使用アイテム):" + keepItemCount);
         }
     }
 
@@ -267,14 +301,16 @@ public class Inventory : MonoBehaviour
     /// </summary>
     public void UseItem() 
     {
+        //アイテム所持数が0より大きい場合
         if (minKeepItemCount < keepItemCount)
         {
+            //アイテム使用時の効果を適用する
             ActivationUseItem(keepItemId);
-            Debug.Log("id:" + keepItemId + "のkeepItemCount(使用アイテムの個数):" + keepItemCount);
 
+            //アイテム数が0になった場合
             if (keepItemCount == minKeepItemCount)
             {
-                //アイテム数が0になった場合の処理
+                //インベントリをリセット
                 ResetInventoryItem();
             }
         }
@@ -295,9 +331,10 @@ public class Inventory : MonoBehaviour
         {
             //スタミナ増強剤
             case 11:
-                // スタミナ効果が適用中の場合
+                //スタミナ効果が適用中の場合
                 if (isUseStaminaItem)
                 {
+                    //スタミナ効果が適用中である旨のメッセージを表示
                     MessageController.instance.ShowInventoryMessage(3);
 
                     await UniTask.Delay(TimeSpan.FromSeconds(3));
@@ -306,12 +343,12 @@ public class Inventory : MonoBehaviour
                     return;
                 }
 
-                // アイテムカウントを減少
+                //アイテムカウントを減少
                 --keepItemCount;
                 useItemCountText.text = keepItemCount.ToString();
                 sO_Item.ReduceUseItem(keepItemId, keepItemCount);
 
-                // スタミナゲージの元の色を保持
+                //スタミナゲージの元の色を保存
                 Color keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
 
                 //スタミナ増強剤SEを再生
@@ -335,16 +372,16 @@ public class Inventory : MonoBehaviour
 
             //テスト用使用アイテム①
             case 995:
-                // アイテムカウントを減少
+                //アイテムカウントを減少
                 --keepItemCount;
                 useItemCountText.text = keepItemCount.ToString();
                 sO_Item.ReduceUseItem(keepItemId, keepItemCount);
 
-                // ローカル座標をワールド座標に変換
+                //ローカル座標をワールド座標に変換
                 Vector3 worldPosition = Player.instance.transform.TransformPoint(keepItemSpawnPosition);
                 Quaternion worldRotation = Player.instance.transform.rotation * keepItemSpawnRotation;
 
-                // Addressablesを使用してプレハブをステージ上に非同期生成
+                //Addressablesを使用してプレハブをステージ上に非同期生成
                 await Addressables.InstantiateAsync(keepItemPrefabPath, worldPosition, worldRotation);
                 break;
         }
@@ -355,6 +392,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     void ResetInventoryItem() 
     {
+        //それぞれの変数の値・フラグ値を初期化する
         keepItemId = noneItemId;
         keepItemCount = minKeepItemCount;
         keepItemEffectValue = defaultKeepItemEffectValue;

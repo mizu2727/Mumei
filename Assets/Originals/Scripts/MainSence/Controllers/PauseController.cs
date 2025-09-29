@@ -345,10 +345,19 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void ViewPausePanel() 
     {
+        //ポーズフラグをオン
         isPause = true;
+
+        //一時停止
         Time.timeScale = 0;
+
+        //UIのレイヤーを手前側にする
         pausePanel.transform.SetAsLastSibling();
+
+        //パネル表示
         ChangeViewPausePanel();
+
+        //マウスカーソルを表示し、固定を解除
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
 
@@ -383,12 +392,20 @@ public class PauseController : MonoBehaviour
     {
         if (!viewItemsPanel.activeSelf) 
         {
+            //一時停止開所
             Time.timeScale = 1;
+
+            //ポーズフラグをオフ
             isPause = false;
+
+            //パネル非表示
             ChangeViewPausePanel();
+
+            //マウスを非表示にし、固定する
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
 
+            //ボタンSEを流し、インゲーム内のBGM・SEの一時停止を全て解除する
             MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
             MusicController.Instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
 
@@ -407,11 +424,12 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void OnClickedViewItemButton()
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
+        //ポーズパネルを非表示にし、アイテム確認パネルを表示する
         isPause = false;
         ChangeViewPausePanel();
-
 
         viewItemsPanel.transform.SetAsLastSibling();
         isViewItemsPanel = true;
@@ -423,8 +441,10 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void OnClickedOptionButton()
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
+        //ポーズパネルを非表示にし、オプションパネルを表示する
         isOptionPanel = true;
         ChangeOptionPanel();
 
@@ -438,7 +458,10 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void OnClickedFromOptionToPauseButton()
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //ポーズパネルを表示にし、オプションパネルを非表示する
         isPause = true;
         ChangeViewPausePanel();
 
@@ -451,8 +474,10 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void OnClickedReturnToTitleButton()
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
+        //ポーズパネルを非表示にし、タイトルへ戻るパネルを表示する
         isReturnToTitlePanel = true;
         ChangeReturnToTitlePanel();
 
@@ -465,8 +490,13 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void OnClickedYesButton()
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //BGM停止
         MusicController.Instance.StopBGM();
+
+        //タイトル画面へ遷移
         GameController.instance.ReturnToTitle();
     }
 
@@ -475,7 +505,10 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void OnClickedNoButton()
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //ポーズパネルを表示にし、タイトルへ戻るパネルを非表示する
         isPause = true;
         ChangeViewPausePanel();
 
@@ -489,6 +522,7 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void OnClickedViewDocumentButton() 
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //ドキュメントパネルを表示
@@ -500,8 +534,12 @@ public class PauseController : MonoBehaviour
         ChangeViewMysteryItemPanel();
     }
 
+    /// <summary>
+    /// 「ミステリーアイテム」ボタン押下
+    /// </summary>
     public void OnClickedViewMysteryItemButton()
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         // ミステリーアイテムパネルを表示
@@ -512,7 +550,7 @@ public class PauseController : MonoBehaviour
         isDocumentPanel = false;
         ChangeViewDocumentPanel();
 
-        // 画像と説明テキストをクリア
+        //画像と説明テキストをクリア
         if (mysteryItemImage.Length > 0)
         {
             mysteryItemImage[0].sprite = null;
@@ -525,21 +563,29 @@ public class PauseController : MonoBehaviour
     }
 
 
-    //ポーズ画面へ戻る
+    /// <summary>
+    /// 「戻る」ボタン押下
+    /// ポーズ画面へ戻る
+    /// </summary>
     public void OnClickedReturnToPausePanel()
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
+        //ポーズ画面を表示
         pausePanel.transform.SetAsLastSibling();
         isPause = true;
         ChangeViewPausePanel();
 
+        //アイテム確認パネルを非表示
         isViewItemsPanel = false;
         ChangeViewItemsPanel();
 
+        //ドキュメントパネルを非表示
         isDocumentPanel = false;
         ChangeViewDocumentPanel();
 
+        //ミステリーアイテムパネルを非表示
         isMysteryItemPanel = false;
         ChangeViewMysteryItemPanel();
     }
@@ -549,101 +595,128 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public void OnClickedDocumentNameButton() 
     {
+        //ドキュメント名称ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(documentNameButtonSEid));
 
+        //ドキュメントの説明を表示
         isDocumentExplanationPanel = true;
         ChangeViewDocumentExplanationPanel();
 
+        //入手したドキュメントがチュートリアル用の場合
         if (keepDocumentBookID == documentBook_TutorialID) 
         {
+            //フラグ値をオン
             GameController.instance.isTutorialNextMessageFlag = true;
-            Debug.Log("GameController.instance.isTutorialNextMessageFlag = " + GameController.instance.isTutorialNextMessageFlag);
         }
     }
 
-
-    //ポーズパネルの表示/非表示
+    /// <summary>
+    /// ポーズパネルの表示/非表示
+    /// </summary>
     void ChangeViewPausePanel()
     {
         if (isPause)
         {
+            //表示
             pausePanel.SetActive(true);
         }
         else
         {
+            //非表示
             pausePanel.SetActive(false);
         }
     }
 
 
-    //アイテム系確認パネルの表示/非表示
+    /// <summary>
+    /// アイテム確認パネルの表示/非表示
+    /// </summary>
     void ChangeViewItemsPanel() 
     {
         if (isViewItemsPanel)
         {
+            //表示
             viewItemsPanel.SetActive(true);
         }
         else
         {
+            //非表示
             viewItemsPanel.SetActive(false);
         }
     }
 
-    //オプションパネルの表示/非表示
+    /// <summary>
+    /// オプションパネルの表示/非表示
+    /// </summary>
     void ChangeOptionPanel()
     {
         if (isOptionPanel)
         {
+            //表示
             optionPanel.SetActive(true);
         }
         else
         {
+            //非表示
             optionPanel.SetActive(false);
         }
     }
 
-    //タイトルへ戻るパネルの表示/非表示
+    /// <summary>
+    /// タイトルへ戻るパネルの表示/非表示
+    /// </summary>
     void ChangeReturnToTitlePanel()
     {
         if (isReturnToTitlePanel)
         {
+            //表示
             returnToTitlePanel.SetActive(true);
         }
         else
         {
+            //非表示
             returnToTitlePanel.SetActive(false);
         }
     }
 
-
-    //ドキュメントアイテムパネルの表示/非表示
+    /// <summary>
+    /// ドキュメントパネルの表示/非表示
+    /// </summary>
     void ChangeViewDocumentPanel() 
     {
         if (isDocumentPanel)
         {
+            //UIのレイヤーを手前側にする
             documentInventoryPanel.transform.SetAsLastSibling();
+
+            //表示
             documentInventoryPanel.SetActive(true);
 
         }
         else 
         {
+            //非表示
             documentInventoryPanel.SetActive(false);
 
+            //ドキュメント説明欄パネルを非表示
             isDocumentExplanationPanel = false;
-
             ChangeViewDocumentExplanationPanel();
         }
     }
 
-    //ドキュメント説明欄パネルの表示/非表示
+    /// <summary>
+    /// ドキュメント説明欄パネルの表示/非表示
+    /// </summary>
     void ChangeViewDocumentExplanationPanel()
     {
         if (isDocumentExplanationPanel)
         {
+            //表示
             documentExplanationPanel.SetActive(true);
         }
         else
         {
+            //非表示
             documentExplanationPanel.SetActive(false);
         }
     }
@@ -656,44 +729,55 @@ public class PauseController : MonoBehaviour
     /// <param name="documentName">変更先の記載内容</param>
     public void ChangeDocumentNameText(int documentId, string documentName) 
     {
-        // チュートリアル用ドキュメントの場合
+        //チュートリアル用ドキュメントの場合
         if (documentId == documentBook_TutorialID) 
         {
-
+            //フラグ値をオン
             GameController.instance.isTutorialNextMessageFlag = true;
+
+            //IDを保存
             keepDocumentBookID = documentId;
-            Debug.Log("GameController.instance.isTutorialNextMessageFlag = " + GameController.instance.isTutorialNextMessageFlag);
         }
 
+        //シーン内で取得したドキュメントオブジェクトの名前を保存
         documentNameText = documentNameText.GetComponent<Text>();
         documentNameText.text = documentName;
     }
 
-    //DocumentExplanationTextの記載内容を変更
+    /// <summary>
+    /// DocumentExplanationTextの記載内容を変更
+    /// </summary>
+    /// <param name="documentDescription"></param>
     public void ChangeDocumentExplanationText(string documentDescription)
     {
+        //シーン内で取得したドキュメントオブジェクトの説明を保存
         documentExplanationText = documentExplanationText.GetComponent<Text>();
         documentExplanationText.text = documentDescription;
-        Debug.Log("ドキュメント説明欄："+ documentExplanationText.text);
     }
 
-
-    //ミステリーアイテム確認パネルの表示/非表示
+    /// <summary>
+    /// ミステリーアイテム確認パネルの表示/非表示
+    /// </summary>
     void ChangeViewMysteryItemPanel()
     {
         if (isMysteryItemPanel)
         {
+            //UIのレイヤーを手前側にする
             mysteryItemInventoryPanel.transform.SetAsLastSibling();
+
+            //表示
             mysteryItemInventoryPanel.SetActive(true);
         }
         else
         {
+            //非表示
             mysteryItemInventoryPanel.SetActive(false);
 
+            //ミステリーアイテム説明欄を非表示
             isMysteryItemExplanationPanel = false;
             ChangeViewMysteryItemExplanationPanel();
 
-            // 画像と説明テキストをリセット
+            //画像と説明テキストをリセット
             if (mysteryItemImage.Length > 0)
             {
                 mysteryItemImage[0].sprite = null;
@@ -706,35 +790,45 @@ public class PauseController : MonoBehaviour
         }
     }
 
-
-    //ミステリーアイテム説明欄パネルの表示/非表示
+    /// <summary>
+    /// ミステリーアイテム説明欄パネルの表示/非表示
+    /// </summary>
     void ChangeViewMysteryItemExplanationPanel()
     {
         if (isMysteryItemExplanationPanel)
         {
+            //表示
             mysteryItemExplanationPanel.SetActive(true);
         }
         else
         {
+            //非表示
             mysteryItemExplanationPanel.SetActive(false);
         }
     }
 
-
-    // ミステリーアイテムのUIを初期化
+    /// <summary>
+    /// ミステリーアイテムのUIを初期化
+    /// </summary>
     private void InitializeMysteryItemUI()
     {
+        //nullチェック
         if (mysteryItemNameButton == null || mysteryItemNameText == null)
         {
             Debug.LogError("mysteryItemNameButton or mysteryItemNameText is not assigned!");
             return;
         }
 
-        // ボタンにクリックイベントを追加
+        //ボタンにクリックイベントを追加
         for (int i = 0; i < mysteryItemNameButton.Length; i++)
         {
-            int index = i; // ローカル変数でインデックスをキャプチャ
+            //ローカル変数でインデックスをキャプチャ
+            int index = i; 
+
+            //クリックイベントを追加
             mysteryItemNameButton[i].onClick.AddListener(() => OnClickedMysteryItemNameButton(index));
+
+            //入手していないアイテム名の初期表示を"?????????"にする
             mysteryItemNameText[i].text = "?????????";
         }
     }
@@ -742,51 +836,51 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// ミステリーアイテム名称ボタン押下時
     /// </summary>
-    /// <param name="index"></param>
+    /// <param name="index">インデックス番号</param>
     public void OnClickedMysteryItemNameButton(int index)
     {
+        //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
+        //チュートリアル用ミステリーアイテムを全て入手した場合
         if (isGetHammer_Tutorial && isGetRope_Tutorial)
         {
+            //フラグ値をオン
             isViewMysteryItem_Tutorial = true;
         }
 
         if (index < mysteryItemNames.Count)
         {
+            //入手したミステリーアイテムがリスト内に存在するかを確認
             string itemName = mysteryItemNames[index];
             var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
 
             if (item != null)
             {
-                // ミステリーアイテム説明パネルを表示
+                //ミステリーアイテム説明パネルを表示
                 isMysteryItemExplanationPanel = true;
                 ChangeViewMysteryItemExplanationPanel();
 
-                // ドキュメント説明パネルを非表示にする
+                //ドキュメント説明パネルを非表示にする
                 isDocumentExplanationPanel = false;
                 ChangeViewDocumentExplanationPanel();
 
-                // 説明テキストを更新
+                //説明テキストを更新
                 if (mysteryItemExplanationText.Length > 0)
                 {
                     mysteryItemExplanationText[0].text = item.description;
-                    Debug.Log($"Set explanation text to: {item.description}");
                 }
 
-                // 画像を更新
+                //画像を更新
                 if (mysteryItemImage.Length > 0)
                 {
                     mysteryItemImage[0].sprite = item.icon;
                     mysteryItemImage[0].enabled = (item.icon != null);
-                    Debug.Log($"Set image to: {(item.icon != null ? item.icon.name : "null")}");
                 }
                 else
                 {
                     Debug.LogWarning("mysteryItemImage が未設定です");
                 }
-
-                Debug.Log($"Clicked Mystery Item: {itemName}");
             }
             else
             {
@@ -795,33 +889,45 @@ public class PauseController : MonoBehaviour
         }
     }
 
-
-    // ミステリーアイテム名を追加し、UIに反映
+    /// <summary>
+    /// ミステリーアイテム名を追加し、UIに反映
+    /// </summary>
+    /// <param name="mysteryItemID">アイテムID</param>
+    /// <param name="mysteryItemName">アイテム名</param>
+    /// <param name="mysteryItemDescription">アイテム説明</param>
     public void ChangeMysteryItemTexts(int mysteryItemID, string mysteryItemName, string mysteryItemDescription)
     {
+        //IDリストに追加
         mysteryItemIds.Add(mysteryItemID);
 
         for (int i = 0; i < mysteryItemIds.Count; i++)
         {
+            //チュートリアル用ハンマーの場合
             if (mysteryItemIds[i] == hammer_TutorialID) 
             {
+                //フラグ値をオン
                 isGetHammer_Tutorial = true;
-                Debug.Log("isGetHammer_Tutorial" + isGetHammer_Tutorial);
             }
 
+            //チュートリアル用ロープの場合
             if (mysteryItemIds[i] == rope_TutorialID)
             {
+                //フラグ値をオン
                 isGetRope_Tutorial = true;
-                Debug.Log("rope_TutorialID" + rope_TutorialID);
             }
         }
 
-        // アイテムリストから該当するアイテムを検索
+        //アイテムリストから該当するアイテムを検索
         var item = sO_Item.itemList.Find(x => x.itemName == mysteryItemName && x.itemType == ItemType.MysteryItem);
         if (item != null && !mysteryItemNames.Contains(mysteryItemName))
         {
+            //アイテム名リストに追加
             mysteryItemNames.Add(mysteryItemName);
+
+            //アイテム説明リストに追加
             mysteryItemExplanations.Add(mysteryItemDescription);
+
+            //UIに反映させる
             UpdateMysteryItemUI();
         }
         else 
@@ -830,28 +936,36 @@ public class PauseController : MonoBehaviour
         }
     }
 
-    // ミステリーアイテムのUIを更新
+    /// <summary>
+    /// ミステリーアイテムのUIを更新
+    /// </summary>
     private void UpdateMysteryItemUI()
     {
         for (int i = 0; i < mysteryItemNameText.Length; i++)
         {
             if (i < mysteryItemNames.Count)
             {
+                //入手したミステリーアイテムがリスト内に存在するかを確認
                 string itemName = mysteryItemNames[i];
                 var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
 
                 if (item != null)
                 {
+                    //ボタンに表示されるテキストを"?????????"からミステリーアイテム名に変更する
                     mysteryItemNameText[i].text = itemName;
+
+                    //ボタンクリックを有効
                     mysteryItemNameButton[i].interactable = true;
 
                     if (i < mysteryItemExplanationText.Length)
                     {
+                        //説明欄テキストにミステリーアイテム説明を反映させる
                         mysteryItemExplanationText[i].text = mysteryItemExplanations[i];
                     }
 
                     if (i < mysteryItemImage.Length)
                     {
+                        //ミステリーアイテム画像を反映させる
                         mysteryItemImage[i].sprite = item.icon;
                         mysteryItemImage[i].enabled = (item.icon != null);
                     }
@@ -859,16 +973,22 @@ public class PauseController : MonoBehaviour
                 else
                 {
                     Debug.LogWarning($"アイテム '{itemName}' が見つかりません");
+
+                    //ボタンに表示されるテキストを"?????????"にする
                     mysteryItemNameText[i].text = "?????????";
+
+                    //ボタンクリックを無効
                     mysteryItemNameButton[i].interactable = false;
 
                     if (i < mysteryItemExplanationText.Length)
                     {
+                        //説明欄テキストを空にする
                         mysteryItemExplanationText[i].text = "";
                     }
 
                     if (i < mysteryItemImage.Length)
                     {
+                        //ミステリーアイテム画像をnullする
                         mysteryItemImage[i].sprite = null;
                         mysteryItemImage[i].enabled = false;
                     }
@@ -876,16 +996,21 @@ public class PauseController : MonoBehaviour
             }
             else
             {
+                //ボタンに表示されるテキストを"?????????"にする
                 mysteryItemNameText[i].text = "?????????";
+
+                //ボタンクリックを無効
                 mysteryItemNameButton[i].interactable = false;
 
                 if (i < mysteryItemExplanationText.Length)
                 {
+                    //説明欄テキストを空にする
                     mysteryItemExplanationText[i].text = "";
                 }
 
                 if (i < mysteryItemImage.Length)
                 {
+                    //ミステリーアイテム画像をnullする
                     mysteryItemImage[i].sprite = null;
                     mysteryItemImage[i].enabled = false;
                 }
@@ -912,12 +1037,10 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
-        // もしこのインスタンスがシングルトンインスタンス自身であれば、
-        // staticな参照をクリアする
+        //もしこのインスタンスがシングルトンインスタンス自身であれば、staticな参照をクリアする
         if (instance == this)
         {
             instance = null;
-            Debug.Log("PauseController staticな参照をクリア");
         }
     }
 }
