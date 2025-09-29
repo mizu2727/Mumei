@@ -8,10 +8,15 @@ public class ShowTalkMessage : MonoBehaviour
     [SerializeField] public int number = 1;
     async void Start()
     {
+        //メッセージを表示
         await UniTask.Delay(TimeSpan.FromSeconds(1));
         ShowGameTalkMessage(number);
     }
 
+    /// <summary>
+    /// 会話メッセージを表示
+    /// </summary>
+    /// <param name="number">メッセージ番号</param>
     public async void ShowGameTalkMessage(int number) 
     {
         await MessageController.instance.ShowTalkMessage(number);
