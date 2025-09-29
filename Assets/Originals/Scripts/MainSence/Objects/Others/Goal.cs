@@ -15,7 +15,7 @@ public class Goal : MonoBehaviour
     [SerializeField] public SO_Item sO_Item;
 
     [Header("正解用のアイテムid")]
-    [SerializeField] public int anserItemId;
+    [SerializeField] private int anserItemId;
 
     [Header("正解用のチュートリアルアイテムid")]
     [SerializeField] private int anserTutorialItemId;
@@ -29,82 +29,97 @@ public class Goal : MonoBehaviour
     [Header("ミステリーアイテム画像(ヒエラルキー上の画像をアタッチする必要がある)")]
     [SerializeField] private Image[] selectMysteryItemImage;
 
-    [Header("ゴール判定")]
+    [Header("ゴールフラグ")]
     public bool isGoalPanel;
 
-    [Header("チュートリアル判定(チュートリアルステージでオンになる)")]
+    [Header("チュートリアルフラグ(チュートリアルステージでオンになる)")]
     [SerializeField] public bool isTutorial;
 
 
 
     private void Start()
     {
+        //ゴールパネルを非表示
         isGoalPanel = false;
         ViewGoalPanel();
 
+        //ゴールパネル内のミステリーアイテムのUIを初期化
         InitializeSelectMysteryItemUI();
     }
 
+    /// <summary>
+    /// プレイヤーがゴールオブジェクトに触れた場合の処理
+    /// </summary>
     public async void GoalCheck()
     {
+        //アイテムのnullチェック
         sO_Item.CleanNullItems();
 
+        //ドキュメントを入手していない場合
         if (sO_Item.GetItemByType(ItemType.Document) == false)
         {
-
+            //ドキュメントが必要である旨のメッセージを表示し、処理をスキップ
             MessageController.instance.ShowGoalMessage(1);
 
             await UniTask.Delay(TimeSpan.FromSeconds(3));
 
             MessageController.instance.ResetMessage();
-
             return;
         }
 
-
+        //ミステリーアイテムを入手していない場合
         if (!sO_Item.GetItemByType(ItemType.MysteryItem))
         {
+            //ミステリーアイテムが必要である旨のメッセージを表示し、処理をスキップ
             MessageController.instance.ShowGoalMessage(2);
 
             await UniTask.Delay(TimeSpan.FromSeconds(3));
 
             MessageController.instance.ResetMessage();
-
             return;
         }
         else 
         {
+            //ミステリーアイテムを選択からの処理へ
             MysteryItemCheck();
         } 
     }
 
+    /// <summary>
+    /// ミステリーアイテムを選択からの処理
+    /// </summary>
     void MysteryItemCheck() 
     {
+        //ミステリーアイテムを選択する旨のメッセージを表示
         isGoalPanel = true;
         MessageController.instance.ShowGoalMessage(3);
 
-        // MysteryItemはUpdateSelectMysteryItemUIで処理するため、ここでは保持しない
+        //MysteryItemはUpdateSelectMysteryItemUIで処理するため、ここでは保持しない
         var mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
         
-        
+        //ゴールパネルを表示
         ViewGoalPanel();
 
     }
 
+    /// <summary>
+    /// ゴールパネルの表示/非表示
+    /// </summary>
     public void ViewGoalPanel()
     {
         if (isGoalPanel)
         {
-
-
+            //一時停止
             Time.timeScale = 0;
+
+            //マウスカーソルを有効にし、固定を解除
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.Confined;
+
+            //パネルを表示
             GoalPanel.SetActive(true);
 
-            Debug.Log("isGoalPanel = " + isGoalPanel);
-
-            // CanvasGroup の状態を確認
+            //CanvasGroupの状態を確認
             CanvasGroup canvasGroup = GoalPanel.GetComponent<CanvasGroup>();
             if (canvasGroup != null)
             {
@@ -112,16 +127,17 @@ public class Goal : MonoBehaviour
                 canvasGroup.blocksRaycasts = true;
             }
 
-            // 画像を更新
+            //画像を更新
             UpdateSelectMysteryItemUI();
         }
         else
         {
+            //マウスカーソルを非表示にし、固定する
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
             GoalPanel.SetActive(false);
 
-            // 画像を非表示にする（必要に応じて）
+            //画像を非表示にする
             for (int i = 0; i < selectMysteryItemImage.Length; i++)
             {
                 if (selectMysteryItemImage[i] != null)
@@ -133,33 +149,43 @@ public class Goal : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 「戻る」ボタン押下
+    /// </summary>
     public async void OnClickedReturnToInGameButton() 
     {
+        //一時停止解除
         Time.timeScale = 1;
+
+        //パネル非表示
         isGoalPanel = false;
         ViewGoalPanel();
 
+        //メッセージテキストを空にする
         MessageController.instance.ResetMessage();
 
+        //チュートリアルの場合、チュートリアル終了の旨のメッセージを表示する
         if (GameController.instance.isTutorialGoalFlag) await MessageController.instance.ShowSystemMessage(14);
     }
 
-
-    // ミステリーアイテムのUIを初期化
+    /// <summary>
+    /// ミステリーアイテムのUIを初期化
+    /// </summary>
     private void InitializeSelectMysteryItemUI()
     {
-        // Image 配列を動的に取得（ボタンの子要素から）
+        //Image配列を動的に取得（ボタンの子要素から）
         selectMysteryItemImage = new Image[selectMysteryItemButton.Length];
         for (int i = 0; i < selectMysteryItemButton.Length; i++)
         {
-            // ボタン自身の Image を確認
+            //ボタン自身のImageを確認
             Image buttonImage = selectMysteryItemButton[i].GetComponent<Image>();
             if (buttonImage != null)
             {
-                buttonImage.raycastTarget = true; // ボタンの raycast を有効化
+                //ボタンのraycastを有効化
+                buttonImage.raycastTarget = true;
             }
 
-            // 子要素の Image を取得
+            //子要素のImageを取得
             selectMysteryItemImage[i] = selectMysteryItemButton[i].GetComponentInChildren<Image>();
             if (selectMysteryItemImage[i] == null)
             {
@@ -167,20 +193,31 @@ public class Goal : MonoBehaviour
             }
             else
             {
-                selectMysteryItemImage[i].raycastTarget = false; // 画像のクリックを無効化
-                selectMysteryItemImage[i].enabled = false; // 初期状態で非表示
+                //画像のクリックを無効化
+                selectMysteryItemImage[i].raycastTarget = false;
+
+                //初期状態で非表示にする
+                selectMysteryItemImage[i].enabled = false; 
             }
 
-            // ボタンの状態を設定
+            //ボタンの状態を設定
             selectMysteryItemButton[i].interactable = false;
 
-            // クリックイベントを追加
+            //クリックイベントを追加
             int index = i;
-            selectMysteryItemButton[i].onClick.RemoveAllListeners(); // 既存リスナーをクリア
+
+            //既存リスナーをクリア
+            selectMysteryItemButton[i].onClick.RemoveAllListeners(); 
+
+            //新規リスナーを追加
             selectMysteryItemButton[i].onClick.AddListener(() => OnClickedselectMysteryItemButton(index));
         }       
     }
 
+    /// <summary>
+    /// ミステリーアイテム画像を押下した場合の処理
+    /// </summary>
+    /// <param name="index"></param>
     public void OnClickedselectMysteryItemButton(int index)
     {
         var mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
@@ -190,16 +227,20 @@ public class Goal : MonoBehaviour
             //正解のミステリーアイテムであるかを判定
             if (mysteryItems[index].id == anserItemId)
             {
-                Player.instance.DestroyPlayer();
                 //正解時の処理
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+                
+                //画面遷移
                 SceneManager.LoadScene("GameClearScene");
             }
             //正解のミステリーアイテム(チュートリアル版)であるかを判定
             else if (mysteryItems[index].id == anserTutorialItemId) 
             {
+                //チュートリアル終了後の会話を進める
                 GameController.instance.isTutorialGoalFlag = true;
                 OnClickedReturnToInGameButton();
-                //MessageController.instance.ShowGoalMessage(5);
             }
             else
             {
@@ -209,16 +250,19 @@ public class Goal : MonoBehaviour
         }
     }
 
-    // ミステリーアイテムのUIを更新
+    /// <summary>
+    /// ミステリーアイテムのUIを更新
+    /// </summary>
     private void UpdateSelectMysteryItemUI()
     {
-        // itemListからMysteryItemを取得
+        //itemListからMysteryItemを取得
         var mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
 
         for (int i = 0; i < selectMysteryItemButton.Length; i++)
         {
             if (i < mysteryItems.Count && mysteryItems[i] != null)
             {
+                //ボタンクリックを有効
                 selectMysteryItemButton[i].interactable = true;
                 Image buttonImage = selectMysteryItemButton[i].GetComponent<Image>();
                 if (buttonImage != null)
@@ -228,6 +272,7 @@ public class Goal : MonoBehaviour
 
                 if (i < selectMysteryItemImage.Length && selectMysteryItemImage[i] != null)
                 {
+                    //ミステリーアイテム画像を設定
                     selectMysteryItemImage[i].sprite = mysteryItems[i].icon;
                     selectMysteryItemImage[i].enabled = (mysteryItems[i].icon != null);
                     selectMysteryItemImage[i].color = Color.white;
@@ -235,9 +280,12 @@ public class Goal : MonoBehaviour
             }
             else
             {
+                //ボタンクリックを無効
                 selectMysteryItemButton[i].interactable = false;
+
                 if (i < selectMysteryItemImage.Length && selectMysteryItemImage[i] != null)
                 {
+                    //ミステリーアイテム画像をnullにする
                     selectMysteryItemImage[i].sprite = null;
                     selectMysteryItemImage[i].enabled = false;
                 }

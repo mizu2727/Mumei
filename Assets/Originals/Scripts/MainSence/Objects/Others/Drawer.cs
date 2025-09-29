@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class Drawer : MonoBehaviour
 {
-    [Header("引き出しの開閉の判定")]
+    [Header("引き出しの開閉フラグ")]
     [SerializeField] public bool isOpenDrawer = false;
 
     [Header("引き出しの戸のメッシュ部分")]
@@ -18,19 +18,22 @@ public class Drawer : MonoBehaviour
     [Header("引き出しを閉じた時の位置")]
     [SerializeField] private Vector3 closePosition;
 
-    // 新しいTransformを用意して、アイテムを格納する場所を明確にする
-    // このTransformをdrawerMeshTransformの子に配置し、アイテムの基準点とする
+    /// <summary>
+    /// 新しいTransformを用意して、アイテムを格納する場所を明確にする
+    /// このTransformをdrawerMeshTransformの子に配置し、アイテムの基準点とする
+    /// </summary>
     [Header("アイテム配置の基準点")]
     [SerializeField] private Transform itemPlacementPoint;
 
     [Header("引き出しを閉じた時のアイテムの位置")]
     [SerializeField] private Vector3 closeItemPosition;
 
-
-    [Header("移動速度")]
+    [Header("引き出しの移動速度")]
     [SerializeField] private float moveSpeed = 1.0f;
 
-    // 目標地点
+    /// <summary>
+    /// 引き出しの目標地点
+    /// </summary>
     private Vector3 targetPosition;
 
     [Header("BoxCollider")]
@@ -39,34 +42,36 @@ public class Drawer : MonoBehaviour
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
-    // サウンド関連
+    /// <summary>
+    /// audioSourceSE
+    /// </summary>
     private AudioSource audioSourceSE;
-    private readonly int openSEid = 11; // 引き出しを開けるSEのID
-    private readonly int closeSEid = 10; // 引き出しを閉めるSEのID
 
     /// <summary>
-    /// 
+    /// 引き出しを開けるSEのID
     /// </summary>
+    private readonly int openSEid = 11;
+
+    /// <summary>
+    /// 引き出しを閉めるSEのID
+    /// </summary>
+    private readonly int closeSEid = 10;
+
     private void OnEnable()
     {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    /// <summary>
-    /// シーン遷移時にAudioSourceを再設定するためのイベント登録解除
-    /// </summary>
     private void OnDisable()
     {
+        //シーン遷移時にAudioSourceを再設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    /// <summary>
-    /// シーン遷移時にAudioSourceを再設定
-    /// </summary>
-    /// <param name="scene"></param>
-    /// <param name="mode"></param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        //AudioSourceの初期化
         InitializeAudioSource();
     }
 
@@ -100,32 +105,28 @@ public class Drawer : MonoBehaviour
 
         targetPosition = closePosition;
 
-
+        //AudioSourceの初期化
         InitializeAudioSource();
     }
 
 
-    
+    /// <summary>
+    /// 引き出し内にアイテムを設定
+    /// </summary>
+    /// <param name="itemTransform">アイテムの位置</param>
     public void SetItemTransform(Transform itemTransform)
     {
+        //nullチェック
         if (itemPlacementPoint != null)
         {
             // アイテムの親をitemPlacementPointに設定
             itemTransform.SetParent(itemPlacementPoint);
+
             // itemPlacementPointの原点に配置
             itemTransform.localPosition = Vector3.zero;
-            // 必要に応じて、rotationやscaleをリセット
-            //itemTransform.localRotation = Quaternion.identity;
-
-            //アイテムのローカルスケールをリセット
-            //itemTransform.localScale = Vector3.one;
-
-            //引き出し本体の向きと同じにする
-            //itemTransform.localRotation = this.transform.localRotation;
 
             //アイテムのローカルポジション
             itemTransform.localPosition = new Vector3(0.15f, 0, -0.15f);
-
 
             // drawerItemTransformにアタッチ
             drawerItemTransform = itemTransform;
@@ -165,10 +166,12 @@ public class Drawer : MonoBehaviour
     {
         if (isOpenDrawer)
         {
+            //引き出しを閉じる
             CloseDrawer();
         }
         else
         {
+            //引き出しを開ける
             OpenDrawer();
         }
     }
