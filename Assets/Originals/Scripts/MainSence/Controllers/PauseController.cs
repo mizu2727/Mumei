@@ -77,10 +77,8 @@ public class PauseController : MonoBehaviour
     [Header("アイテム確認パネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
     public bool isViewItemsPanel = false;
 
-    /// <summary>
-    /// オプションパネル閲覧フラグ
-    /// </summary>
-    private bool isOptionPanel = false;
+    [Header("オプションパネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
+    public bool isOptionPanel = false;
 
     [Header("タイトルへ戻るパネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
     public bool isReturnToTitlePanel = false;
@@ -341,6 +339,24 @@ public class PauseController : MonoBehaviour
     }
 
     /// <summary>
+    /// マウスカーソルを表示し、固定を解除するメソッド
+    /// </summary>
+    void ViewMouseCorsor() 
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    /// <summary>
+    /// マウスを非表示にし、固定するメソッド
+    /// </summary>
+    void HideMouseCorsor() 
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    /// <summary>
     /// ポーズ
     /// </summary>
     public void ViewPausePanel() 
@@ -358,8 +374,7 @@ public class PauseController : MonoBehaviour
         ChangeViewPausePanel();
 
         //マウスカーソルを表示し、固定を解除
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        ViewMouseCorsor();
 
         //BGM一時停止
         MusicController.Instance.PauseBGM();
@@ -402,8 +417,7 @@ public class PauseController : MonoBehaviour
             ChangeViewPausePanel();
 
             //マウスを非表示にし、固定する
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            HideMouseCorsor();
 
             //ボタンSEを流し、インゲーム内のBGM・SEの一時停止を全て解除する
             MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));

@@ -161,6 +161,13 @@ public class Goal : MonoBehaviour
         isGoalPanel = false;
         ViewGoalPanel();
 
+        //チュートリアルの場合、ストーリーモードへ変更(ゴールオブジェクトへのインタラクト操作を高速で行うと、ゲーム進行不可になるバグを防ぐ用)
+        if (GameController.instance.isTutorialGoalFlag) 
+        {
+            //ストーリーモードへ変更
+            GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+        }
+            
         //メッセージテキストを空にする
         MessageController.instance.ResetMessage();
 

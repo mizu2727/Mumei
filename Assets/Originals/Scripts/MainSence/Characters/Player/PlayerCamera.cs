@@ -8,13 +8,15 @@ using static GameController;
 public class PlayerCamera : MonoBehaviour
 {
     [Header("マウス/ゲームパッドの右スティックの感度")]
-    [SerializeField]  public float lookSensitivity = 100f;
+    [SerializeField]  public float lookSensitivity = 500f;
 
     [Header("マウス/ゲームパッドの右スティックの旋回速度のSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider mouseSensitivitySlider;
 
-    [Header("マウス/ゲームパッドの右スティックの感度最大値")]
-    [SerializeField] float maxLookSensitivity = 500f;
+    /// <summary>
+    /// マウス/ゲームパッドの右スティックの感度最大値
+    /// </summary>
+    const float maxLookSensitivity = 1000f;
 
     /// <summary>
     /// マウスの横移動

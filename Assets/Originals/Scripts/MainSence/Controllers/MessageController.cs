@@ -608,7 +608,8 @@ public class MessageController : MonoBehaviour
 
                 case 11:
                     //ドキュメント(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                    await UniTask.WaitUntil(() => GameController.instance.isTutorialNextMessageFlag && !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel);
+                    await UniTask.WaitUntil(() => GameController.instance.isTutorialNextMessageFlag && !PauseController.instance.isPause 
+                        && !PauseController.instance.isViewItemsPanel && !PauseController.instance.isOptionPanel);
                     GameController.instance.isTutorialNextMessageFlag = false;
 
                     ResetMessage();
@@ -633,8 +634,8 @@ public class MessageController : MonoBehaviour
 
                 case 13:
                     //ミステリーアイテム(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                    await UniTask.WaitUntil(() =>  !PauseController.instance.isPause 
-                    && !PauseController.instance.isViewItemsPanel && PauseController.instance.isViewMysteryItem_Tutorial);
+                    await UniTask.WaitUntil(() => !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel 
+                        && PauseController.instance.isViewMysteryItem_Tutorial && !PauseController.instance.isOptionPanel);
                     PauseController.instance.isViewMysteryItem_Tutorial = false;
                     ResetMessage();
 
@@ -668,9 +669,6 @@ public class MessageController : MonoBehaviour
                     //プレイヤー・カナメをワープ
                     Kaname.instance.WarpPostion(1, 0.505f, 2);
                     Player.instance.PlayerWarp(1, 0.562f, 0);
-
-                    //ストーリーモードへ変更
-                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
 
                     //カメラの角度をリセット
                     if (Player.instance != null)
