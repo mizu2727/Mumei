@@ -22,11 +22,17 @@ public class SaveLoad : MonoBehaviour
         //ユーザーデータを保存するクラス
         userData = new UserData() 
         {
+            //入力したプレイヤー名を保存
             playerName = GameController.playerName,
+
+            //プレイ回数を保存
             playCount = GameController.playCount,
 
             //現在のシーン名を取得して保存
             sceneName = SceneManager.GetActiveScene().name,
+
+            //マウス/ゲームパッドの右スティックの感度を保存
+            sensitivityValue = GameController.lookSensitivity,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -58,10 +64,55 @@ public class SaveLoad : MonoBehaviour
             //各パラメーターにユーザーデータを設定
             GameController.playerName = userData.playerName;
             GameController.playCount = ++userData.playCount;
+            GameController.lookSensitivity = userData.sensitivityValue;
         }
         else
         {
             Debug.LogWarning("PlayerUserDataが存在しません");
+        }
+    }
+
+    /// <summary>
+    /// シーン遷移時用データを保存するメソッド
+    /// </summary>
+    public void SaveSceneTransitionUserData()
+    {
+ 
+        //ユーザーデータを保存するクラス
+        userData = new UserData()
+        {
+            //マウス/ゲームパッドの右スティックの感度を保存
+            sensitivityValue = GameController.lookSensitivity,
+        };
+
+        //ユーザーデータをJSON形式で保存
+        //UserDataオブジェクトをJSON文字列に変換
+        string json = JsonUtility.ToJson(userData, true);
+
+        //PlayerPrefsに保存
+        PlayerPrefs.SetString("SceneTransitionPlayerUserData", json);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
+    /// シーン遷移時用データをロードするメソッド
+    /// </summary>
+    public void LoadSceneTransitionUserData()
+    {
+        if (PlayerPrefs.HasKey("SceneTransitionPlayerUserData"))
+        {
+            //PlayerPrefsからJSON文字列を取得
+            string josn = PlayerPrefs.GetString("SceneTransitionPlayerUserData");
+
+            //JSON文字列をUserDataオブジェクトに変換
+            UserData userData = JsonUtility.FromJson<UserData>(josn);
+
+            //各パラメーターにユーザーデータを設定
+            GameController.lookSensitivity = userData.sensitivityValue;
+        }
+        else
+        {
+            Debug.LogWarning("SceneTransitionPlayerUserDataが存在しません");
         }
     }
 

@@ -444,6 +444,9 @@ public class MessageController : MonoBehaviour
                         ResetMessage();
                         GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
+                        //シーン遷移時用データを保存
+                        GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
                         //ステージ1へ移動
                         SceneManager.LoadScene("Stage01");
                         break;

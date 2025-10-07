@@ -8,15 +8,15 @@ using static GameController;
 public class PlayerCamera : MonoBehaviour
 {
     [Header("マウス/ゲームパッドの右スティックの感度")]
-    [SerializeField]  public float lookSensitivity = 500f;
+    //[SerializeField]  public float lookSensitivity = 500f;
 
     [Header("マウス/ゲームパッドの右スティックの旋回速度のSlider(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] public Slider mouseSensitivitySlider;
+    //[SerializeField] public Slider mouseSensitivitySlider;
 
     /// <summary>
     /// マウス/ゲームパッドの右スティックの感度最大値
     /// </summary>
-    const float maxLookSensitivity = 1000f;
+    //const float maxLookSensitivity = 1000f;
 
     /// <summary>
     /// マウスの横移動
@@ -76,8 +76,8 @@ public class PlayerCamera : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         //プレイヤーが後ろを振り向くとプレイヤーの頭で視界が邪魔になる不具合を防止する用
-        if (GameController.instance.mouseSensitivitySlider != null) mouseSensitivitySlider = GameController.instance.mouseSensitivitySlider;
-        else Debug.LogError("GameControllerのmouseSensitivitySliderが設定されていません");
+        //if (GameController.instance.mouseSensitivitySlider != null) mouseSensitivitySlider = GameController.instance.mouseSensitivitySlider;
+        //else Debug.LogError("GameControllerのmouseSensitivitySliderが設定されていません");
     }
 
     private void Start()
@@ -87,7 +87,7 @@ public class PlayerCamera : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
 
         //マウス旋回速度のSliderの最大値を設定
-        if (mouseSensitivitySlider) mouseSensitivitySlider.maxValue = maxLookSensitivity;
+        //if (GameController.instance.mouseSensitivitySlider) GameController.instance.mouseSensitivitySlider.maxValue = maxLookSensitivity;
 
         //プレイヤーのTransformを取得
         playerTransform = Player.instance.transform;
@@ -100,11 +100,11 @@ public class PlayerCamera : MonoBehaviour
         if (Player.instance == null || Player.instance.isFallDown) return;
 
         //マウス感度をスライダーから取得
-        if (mouseSensitivitySlider)
-        {
-            lookSensitivity = mouseSensitivitySlider.value;
-            if (lookSensitivity > maxLookSensitivity) lookSensitivity = maxLookSensitivity;
-        }
+        //if (GameController.instance.mouseSensitivitySlider)
+        //{
+        //    GameController.instance.lookSensitivity = GameController.instance.mouseSensitivitySlider.value;
+        //    if (GameController.instance.lookSensitivity > maxLookSensitivity) GameController.instance.lookSensitivity = maxLookSensitivity;
+        //}
 
 
         //Ctrl押下で視点が後ろを向く
@@ -120,9 +120,9 @@ public class PlayerCamera : MonoBehaviour
                 transform.rotation = Quaternion.LookRotation(-playerTransform.forward, Vector3.up);
 
                 // マウス入力を無効化
-                lookSensitivity = 0f; 
+                GameController.lookSensitivity = 0f; 
 
-                if (mouseSensitivitySlider) mouseSensitivitySlider.value = 0f;
+                if (GameController.instance.mouseSensitivitySlider) GameController.instance.mouseSensitivitySlider.value = 0f;
                 wasTrunLastFrame = true;
             }
         }
@@ -130,29 +130,29 @@ public class PlayerCamera : MonoBehaviour
         {
             // カメラをプレイヤーの前方に戻す
             transform.rotation = Quaternion.LookRotation(playerTransform.forward, Vector3.up);
-            if (mouseSensitivitySlider)
+            if (GameController.instance.mouseSensitivitySlider)
             {
                 //プレイヤーの頭で視界の邪魔になるのを防ぐためにカメラの位置を前方部分へ変更する
                 transform.localPosition = new Vector3(0, 1.5f, 0.1f);
 
-                mouseSensitivitySlider.value = maxLookSensitivity / 2f;
-                lookSensitivity = mouseSensitivitySlider.value;
+                GameController.instance.mouseSensitivitySlider.value = GameController.instance.maxLookSensitivity / 2f;
+                GameController.lookSensitivity = GameController.instance.mouseSensitivitySlider.value;
             }
             wasTrunLastFrame = false;
         }
 
-        if ( 0 < lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.PlayerIsBackRotate()) 
+        if ( 0 < GameController.lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.PlayerIsBackRotate()) 
         {
             //マウスの移動
-            lookX = Input.GetAxis("Mouse X") * lookSensitivity * Time.deltaTime;
-            lookY = Input.GetAxis("Mouse Y") * lookSensitivity * Time.deltaTime;
+            lookX = Input.GetAxis("Mouse X") * GameController.lookSensitivity * Time.deltaTime;
+            lookY = Input.GetAxis("Mouse Y") * GameController.lookSensitivity * Time.deltaTime;
 
             //ゲームパッドの右スティックの移動
             //Mouse X2…Axis欄で"4th axis (Joysticks)"を選択。コントローラーでは右スティックになる
-            lookX2 = Input.GetAxis("Mouse X2") * lookSensitivity * Time.deltaTime;
+            lookX2 = Input.GetAxis("Mouse X2") * GameController.lookSensitivity * Time.deltaTime;
 
             //Mouse Y2…Axis欄で"5th axis (Joysticks)"を選択。コントローラーでは右スティックになる
-            lookY2 = Input.GetAxis("Mouse Y2") * lookSensitivity * Time.deltaTime;
+            lookY2 = Input.GetAxis("Mouse Y2") * GameController.lookSensitivity * Time.deltaTime;
 
             xRotation -= (lookY + lookY2);
             xRotation = Mathf.Clamp(xRotation, -xRotationRange, xRotationRange);

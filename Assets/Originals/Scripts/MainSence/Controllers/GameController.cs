@@ -42,6 +42,9 @@ public class GameController : MonoBehaviour
     [Header("PlayerCameraマウス/ゲームパッドの右スティックの旋回速度のSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider mouseSensitivitySlider;
 
+    [Header("マウス/ゲームパッドの右スティックの感度最大値(ヒエラルキー上からの編集禁止)")]
+    public float maxLookSensitivity = 1000f;
+
 
     [Header("Playerの使用アイテムインベントリパネル関連")]
     [Header("使用アイテムパネル(ヒエラルキー上からアタッチすること)")]
@@ -64,13 +67,14 @@ public class GameController : MonoBehaviour
 
 
     [Header("セーブ・ロードしたい変数関連")]
-    [Header("セーブするプレイヤー名")]
+    [Header("セーブするプレイヤー名(ヒエラルキー上からの編集禁止)")]
     public static string playerName;
 
-    [Header("セーブするプレイ回数")]
+    [Header("セーブするプレイ回数(ヒエラルキー上からの編集禁止)")]
     public static int playCount = 0;
 
-
+    [Header("マウス/ゲームパッドの右スティックの感度")]
+    public static float lookSensitivity = 500;
 
     /// <summary>
     /// ゲームモードステータス
@@ -114,6 +118,20 @@ public class GameController : MonoBehaviour
     {
         //パラメーターリセット
         ResetParams();
+
+
+        Debug.Log("シーン遷移時にGameControllerで設定");
+
+        //ゲームモードが通常プレイモードの場合
+        if (gameModeStatus == GameModeStatus.PlayInGame) 
+        {
+            //シーン遷移時用データをロード
+            CallLoadSceneTransitionUserDataMethod();
+
+            //マウス感度を保存した値に設定
+            mouseSensitivitySlider.value = lookSensitivity;
+        }
+
     }
 
     /// <summary>
@@ -143,7 +161,21 @@ public class GameController : MonoBehaviour
     {
         //パラメーターリセット
         ResetParams();
+
+        //マウス旋回速度のSliderの最大値を設定
+        if (mouseSensitivitySlider) mouseSensitivitySlider.maxValue = maxLookSensitivity;
     }
+
+    private void Update()
+    {
+        //マウス感度をスライダーから取得
+        if (mouseSensitivitySlider)
+        {
+            lookSensitivity = mouseSensitivitySlider.value;
+            if (lookSensitivity > maxLookSensitivity) lookSensitivity = maxLookSensitivity;
+        }
+    }
+
 
     /// <summary>
     /// ゲームモードのステータスを設定
@@ -178,6 +210,22 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
+    /// シーン遷移時用データを保存するメソッドを呼び出す
+    /// </summary>
+    public void CallSaveSceneTransitionUserDataMethod()
+    {
+        saveLoad.SaveSceneTransitionUserData();
+    }
+
+    /// <summary>
+    /// シーン遷移時用データをロードするメソッドを呼び出す
+    /// </summary>
+    public void CallLoadSceneTransitionUserDataMethod()
+    {
+        saveLoad.LoadSceneTransitionUserData();
+    }
+
+    /// <summary>
     /// データを初期化するメソッドを呼び出す(製品版で使用する)
     /// </summary>
     public void CallRestDataMethod() 
@@ -192,6 +240,9 @@ public class GameController : MonoBehaviour
     {
         if (Player.instance.IsDead) 
         {
+            //シーン遷移時用データを保存
+            CallSaveSceneTransitionUserDataMethod();
+
             SceneManager.LoadScene("GameOverScene");
         }
     }
