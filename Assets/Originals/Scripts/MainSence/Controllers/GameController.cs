@@ -43,7 +43,7 @@ public class GameController : MonoBehaviour
     [SerializeField] public Slider mouseSensitivitySlider;
 
     [Header("マウス/ゲームパッドの右スティックの感度最大値(ヒエラルキー上からの編集禁止)")]
-    public float maxLookSensitivity = 1000f;
+    public float maxLookSensitivity = 5000f;
 
 
     [Header("Playerの使用アイテムインベントリパネル関連")]
@@ -74,7 +74,7 @@ public class GameController : MonoBehaviour
     public static int playCount = 0;
 
     [Header("マウス/ゲームパッドの右スティックの感度")]
-    public static float lookSensitivity = 500;
+    public static float lookSensitivity = 2500f;
 
     /// <summary>
     /// ゲームモードステータス
@@ -120,18 +120,11 @@ public class GameController : MonoBehaviour
         ResetParams();
 
 
-        Debug.Log("シーン遷移時にGameControllerで設定");
+        //シーン遷移時用データをロード
+        CallLoadSceneTransitionUserDataMethod();
 
-        //ゲームモードが通常プレイモードの場合
-        if (gameModeStatus == GameModeStatus.PlayInGame) 
-        {
-            //シーン遷移時用データをロード
-            CallLoadSceneTransitionUserDataMethod();
-
-            //マウス感度を保存した値に設定
-            mouseSensitivitySlider.value = lookSensitivity;
-        }
-
+        //マウス感度を保存した値に設定
+        mouseSensitivitySlider.value = lookSensitivity;
     }
 
     /// <summary>
