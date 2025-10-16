@@ -218,9 +218,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("検知対象のレイヤー（Playerを設定すること）")]
     [SerializeField] private LayerMask detectionLayer;
 
-    [Header("障害物のレイヤー（Wallなどを設定すること）")]
-    [SerializeField] private LayerMask obstacleLayer;
-
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -466,33 +463,54 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         float distanceToPlayer = directionToPlayer.magnitude;
         float angle = Vector3.Angle(transform.forward, directionToPlayer.normalized);
 
-        // プレイヤーが視野角内かつ検知範囲内にいるか
+        //プレイヤーが視野角内かつ検知範囲内にいるか
         if (distanceToPlayer <= enemyDetectionRange && angle <= fieldOfViewAngle * 0.5f)
         {
             RaycastHit hit;
 
-            //視線の開始位置
+            //視線の開始位置(敵の視線の高さ)
             Vector3 rayOrigin = transform.position + Vector3.up * 1.5f;
+
+            //プレイヤーの中心
+            Vector3 targetPosition = targetPoint.position + Vector3.up * 0.5f;
 
             //Raycastでヒットしたオブジェクトのレイヤーをチェック
             if (Physics.SphereCast(rayOrigin, sphereCastRadius, directionToPlayer.normalized, out hit, enemyDetectionRange, detectionLayer))
             {
                 if (hit.collider.CompareTag(playerTag))
                 {
-                    // 障害物をチェック
-                    if (!Physics.Linecast(rayOrigin, targetPoint.position + Vector3.up * 1.0f, obstacleLayer))
+                    //視線経路上のすべてのオブジェクトをチェック
+                    RaycastHit[] hits = Physics.RaycastAll(rayOrigin, directionToPlayer.normalized, distanceToPlayer);
+                    foreach (var rayHit in hits)
                     {
-                        //プレイヤーオブジェクトのLayerがヒット
-                        return true;
+                        //壁にヒットした場合
+                        if (rayHit.collider.CompareTag(wallTag))
+                        {
+                            //プレイヤーの視認失敗
+                            return false;
+                        }
+
+                        //ドアにヒットした場合
+                        if (rayHit.collider.CompareTag(doorTag))
+                        {
+                            Door door = rayHit.collider.GetComponent<Door>();
+
+                            //ドアが閉まっている場合
+                            if (door != null && !door.isOpenDoor)
+                            {
+                                //プレイヤーの視認失敗
+                                return false;
+                            }
+                        }
                     }
-                    else
-                    {
-                        //それ以外のオブジェクトのLayerがヒット
-                        return false;
-                    }
+
+                    //プレイヤーの視認成功
+                    return true;
                 }
             }
         }
+
+        //プレイヤーの視認失敗
         return false;
     }
 
@@ -990,6 +1008,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         if (targetPoint != null)
         {
             Gizmos.DrawWireSphere(targetPoint.position + Vector3.up * 1.0f, sphereCastRadius);
+
+            // Linecastの経路を可視化
+            Gizmos.color = Color.red;
+            Vector3 rayOrigin = transform.position + Vector3.up * 1.5f;
+            Vector3 targetPos = targetPoint.position + Vector3.up * 0.5f;
+            Gizmos.DrawLine(rayOrigin, targetPos);
         }
     }
 

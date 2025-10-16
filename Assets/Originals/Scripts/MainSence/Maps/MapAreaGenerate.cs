@@ -1,7 +1,10 @@
 
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 using Random = UnityEngine.Random;
+
 
 
 public class MapAreaGenerate : MonoBehaviour
@@ -25,6 +28,16 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("アイテム生成地点のTransform配列(ヒエラルキー上のDrawerスクリプトのdrawerItemTransformをアタッチすること)")]
     [SerializeField] private Transform[] itemPoint;
 
+    /// <summary>
+    /// 地面オブジェクト
+    /// </summary>
+    [SerializeField] private StageGround stageGround;
+
+    /// <summary>
+    /// navMeshSurface
+    /// </summary>
+    [SerializeField] private NavMeshSurface navMeshSurface;
+
     void Start()
     {
         //マップをランダムに配置
@@ -32,6 +45,9 @@ public class MapAreaGenerate : MonoBehaviour
 
         //アイテムをランダム配置
         ItemGenerate();
+
+
+        stageGround.Build(navMeshSurface);
     }
 
     /// <summary>

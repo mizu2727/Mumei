@@ -123,8 +123,11 @@ public class GameController : MonoBehaviour
         //シーン遷移時用データをロード
         CallLoadSceneTransitionUserDataMethod();
 
-        //マウス感度を保存した値に設定
-        mouseSensitivitySlider.value = lookSensitivity;
+        if (scene.name != "GameOverScene" && mouseSensitivitySlider != null)
+        {
+            //マウス感度を保存した値に設定
+            mouseSensitivitySlider.value = lookSensitivity;
+        }
     }
 
     /// <summary>
@@ -231,6 +234,12 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void ViewGameOver() 
     {
+        // シーン遷移前に非同期タスクをキャンセル
+        if (MessageController.instance != null)
+        {
+            MessageController.instance.CancelAsyncTasks();
+        }
+
         if (Player.instance.IsDead) 
         {
             //シーン遷移時用データを保存
