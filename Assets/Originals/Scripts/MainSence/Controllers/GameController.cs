@@ -43,7 +43,7 @@ public class GameController : MonoBehaviour
     [SerializeField] public Slider mouseSensitivitySlider;
 
     [Header("マウス/ゲームパッドの右スティックの感度最大値(ヒエラルキー上からの編集禁止)")]
-    public float maxLookSensitivity = 5000f;
+    public float maxLookSensitivity = 100f;
 
 
     [Header("Playerの使用アイテムインベントリパネル関連")]
@@ -74,7 +74,7 @@ public class GameController : MonoBehaviour
     public static int playCount = 0;
 
     [Header("マウス/ゲームパッドの右スティックの感度")]
-    public static float lookSensitivity = 2500f;
+    public static float lookSensitivity = 50f;
 
     /// <summary>
     /// ゲームモードステータス

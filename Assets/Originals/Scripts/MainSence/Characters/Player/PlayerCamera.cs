@@ -86,7 +86,7 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        if (Player.instance == null || Player.instance.isFallDown) return;
+        if (Player.instance == null || Player.instance.isFallDown || Time.timeScale == 0) return;
 
         //Ctrl押下で視点が後ろを向く
         if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.playerIsBackRotate) 
@@ -128,8 +128,8 @@ public class PlayerCamera : MonoBehaviour
         if ( 0 < GameController.lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.PlayerIsBackRotate()) 
         {
             //マウスの移動
-            lookX = Input.GetAxis("Mouse X") * GameController.lookSensitivity * Time.deltaTime;
-            lookY = Input.GetAxis("Mouse Y") * GameController.lookSensitivity * Time.deltaTime;
+            lookX = Input.GetAxis("Mouse X") * GameController.lookSensitivity;
+            lookY = Input.GetAxis("Mouse Y") * GameController.lookSensitivity;
 
             //ゲームパッドの右スティックの移動
             //Mouse X2…Axis欄で"4th axis (Joysticks)"を選択。コントローラーでは右スティックになる
