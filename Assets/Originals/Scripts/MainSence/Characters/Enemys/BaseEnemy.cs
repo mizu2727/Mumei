@@ -47,7 +47,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     }
 
     [Header("ŒŸ’m”ÍˆÍ")]
-    [SerializeField] private float enemyDetectionRange = 100f;
+    [SerializeField] private float enemyDetectionRange = 40f;
     [SerializeField]
     public float DetectionRange
     {
@@ -775,6 +775,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         lastKnownPlayerPosition = targetPoint.position;
 
                         //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğÄ¶
+                        //(Šù‚É“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğÄ¶‚µ‚Ä‚¢‚éê‡A‚±‚Ìˆ—‚ğƒXƒLƒbƒv‚µ‚½‚¢)
                         MusicController.Instance.audioClipnum = 0;
                         MusicController.Instance.StopBGM();
                         MusicController.Instance.audioClipnum = 1;
@@ -782,6 +783,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                         //‰æ–Ê‚ğÔ‚­•\¦
                         playerFoundPanel.SetActive(true);
+
+                        Debug.Log("’Êíœpœjó‘Ô‚©‚ç’Ç]ó‘Ô‚Ö");
                     }
                     else
                     {
@@ -789,7 +792,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         //ƒvƒŒƒCƒ„[‚ª‹–ì“à‚É‚¢‚é‚ª‹ü‚ª‚È‚¢ê‡AŒx‰úŒ—“àó‘Ô‚ÉˆÚs
                         currentState = EnemyState.Alert;
                         isAlertMode = true;
-                        
+
+                        Debug.Log("’Êíœpœjó‘Ô‚©‚çŒx‰úŒ—“àó‘Ô‚Ö");
                     }
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
@@ -822,6 +826,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     lastKnownPlayerPosition = targetPoint.position;
 
                     //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğÄ¶
+                    //(Šù‚É“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğÄ¶‚µ‚Ä‚¢‚éê‡A‚±‚Ìˆ—‚ğƒXƒLƒbƒv‚µ‚½‚¢)
                     MusicController.Instance.audioClipnum = 0;
                     MusicController.Instance.StopBGM();
                     MusicController.Instance.audioClipnum = 1;
@@ -829,6 +834,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                     //‰æ–Ê‚ğÔ‚­•\¦
                     playerFoundPanel.SetActive(true);
+
+                    Debug.Log("Œx‰úŒ—“àó‘Ô‚©‚ç’Ç]ó‘Ô‚Ö");
                 }
                 else if (distance > alertRange)
                 {
@@ -845,6 +852,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     MusicController.Instance.StopBGM();
                     MusicController.Instance.audioClipnum = 0;
                     MusicController.Instance.PlayBGM();
+
+                    Debug.Log("Œx‰úŒ—“àó‘Ô‚©‚ç’Êíœpœjó‘Ô‚Ö");
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
                 {
@@ -873,6 +882,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Investigate;
                     investigateTimer = 0f;
                     navMeshAgent.SetDestination(lastKnownPlayerPosition);
+
+                    Debug.Log("’Ç]ó‘Ô‚©‚ç’²¸ó‘Ô‚Ö");
                 }
                 else
                 {
@@ -888,6 +899,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
             //’²¸ó‘Ô
             case EnemyState.Investigate:
+
+                //‰æ–Ê‚ÌF‚ğŒ³‚É–ß‚·
+                playerFoundPanel.SetActive(false);
+
                 //Œx‰ú‰¹‚ğ’â~
                 audioSourceFindPlayerSE.Stop();
 
@@ -902,14 +917,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 if (IsPlayerInFront())
                 {
                     //ƒvƒŒƒCƒ„[‚ª‹–ì“à‚É–ß‚Á‚½ê‡A’Ç]ó‘Ô‚ÖˆÚs
+                    //(’²¸ó‘Ô‚©‚ç’Ç]ó‘Ô‚ÖØ‚è‘Ö‚¦‚éê‡‚ÍA“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚Í‚»‚Ì‚Ü‚Ü—¬‚·‚±‚Æ)
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
 
-                    //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğÄ¶
-                    MusicController.Instance.audioClipnum = 0;
-                    MusicController.Instance.StopBGM();
-                    MusicController.Instance.audioClipnum = 1;
-                    MusicController.Instance.PlayBGM();
+                    Debug.Log("’²¸ó‘Ô‚©‚ç’Ç]ó‘Ô‚Ö");
                 }
                 else if (investigateTimer >= investigateDuration || (navMeshAgent.remainingDistance < 0.5f && !navMeshAgent.pathPending))
                 {
@@ -923,19 +935,16 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     MusicController.Instance.audioClipnum = 0;
                     MusicController.Instance.PlayBGM();
 
-
+                    Debug.Log("’²¸ó‘Ô‚©‚ç’Êíœpœjó‘Ô‚Ö");
                 }
                 else if (distance <= alertRange)
                 {
 
                     //ƒvƒŒƒCƒ„[‚ª‹–ì“à‚É‚¢‚éê‡AŒx‰úŒ—“àó‘Ô‚ÖˆÚs
+                    //(’²¸ó‘Ô‚©‚çŒx‰úŒ—“àó‘Ô‚ÖØ‚è‘Ö‚¦‚éê‡‚ÍA“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚Í‚»‚Ì‚Ü‚Ü—¬‚·‚±‚Æ)
                     currentState = EnemyState.Alert;
 
-                    //“G‚É’Ç‚í‚ê‚Ä‚¢‚é‚ÌBGM‚ğ’â~
-                    MusicController.Instance.audioClipnum = 1;
-                    MusicController.Instance.StopBGM();
-                    MusicController.Instance.audioClipnum = 0;
-                    MusicController.Instance.PlayBGM();
+                    Debug.Log("’²¸ó‘Ô‚©‚çŒx‰úŒ—“àó‘Ô‚Ö");
                 }
                 break;
         }

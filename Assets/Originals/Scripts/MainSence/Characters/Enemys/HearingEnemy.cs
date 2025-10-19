@@ -64,6 +64,7 @@ public class HearingEnemy : BaseEnemy
                 base.Update();
                 break;
 
+            //’²¸ó‘Ô
             case EnemyState.Investigate:
 
                 //ƒ_ƒbƒVƒ…‰¹’²¸’†‚Ìê‡
@@ -88,6 +89,8 @@ public class HearingEnemy : BaseEnemy
 
                         //‰æ–Ê‚ðÔ‚­•\Ž¦
                         playerFoundPanel.SetActive(true);
+
+                        Debug.Log("’²¸ó‘Ô‚©‚ç’Ç]ó‘Ô‚Ö02");
                     }
                     //’²¸ŽžŠÔ‚ªŒo‰ßA‚Ü‚½‚Í–Ú“I’n‚É“ž’B‚µ‚½ê‡A’Êíœpœj‚É–ß‚é
                     else if (soundInvestigateTimer >= soundInvestigateDuration || (navMeshAgent.remainingDistance < 0.5f && !navMeshAgent.pathPending))
@@ -95,6 +98,8 @@ public class HearingEnemy : BaseEnemy
                         currentState = EnemyState.Patrol;
                         isInvestigatingSound = false;
                         isAlertMode = false;
+
+                        Debug.Log("’²¸ó‘Ô‚©‚ç’Êíœpœjó‘Ô‚Ö02");
                     }
                     //ƒvƒŒƒCƒ„[‚ª‹ß‚­‚É‚¢‚éê‡AŒx‰úó‘Ô‚ÉˆÚs
                     else if (distanceToPlayer <= alertRange)
@@ -104,6 +109,8 @@ public class HearingEnemy : BaseEnemy
 
                         //‰æ–Ê‚ðŒ³‚É–ß‚·
                         playerFoundPanel.SetActive(false);
+
+                        Debug.Log("’²¸ó‘Ô‚©‚çŒx‰úŒ—“àó‘Ô‚Ö02");
                     }
                 }
                 else
