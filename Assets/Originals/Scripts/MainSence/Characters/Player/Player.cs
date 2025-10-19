@@ -250,6 +250,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
     [Header("タグ・レイヤー関連")]
+    [SerializeField] string doorTag = "Door";
     [SerializeField] string doorPartsTag = "DoorParts";
 
 
@@ -701,18 +702,20 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <param name="collider">コライダー</param>
     private void OnTriggerEnter(Collider collider)
     {
-        //doorPartsTagのオブジェクトが触れた場合
-        if (collider.gameObject.CompareTag(doorPartsTag))
+        //DoorTagのオブジェクトが触れた場合
+        if (collider.gameObject.CompareTag(doorTag))
         {
             gameObjectDoor = collider.gameObject;
 
-            //コンポーネントを取得
-            ignoreObject = gameObjectDoor.GetComponent<IgnoreObject>();
+            //子オブジェクトのコンポーネントを取得
+            ignoreObject = gameObjectDoor.GetComponentInChildren<IgnoreObject>();
 
-
-            //コライダーを無効化
-            ignoreObject.GetMeshCollider().enabled = false;
-            Debug.Log("ignoreObject.GetMeshCollider().enabled = " + ignoreObject.GetMeshCollider().enabled);
+            //子オブジェクトのタグがdoorPartsTagの場合
+            if (ignoreObject.CompareTag(doorPartsTag)) 
+            {
+                //コライダーを無効化
+                ignoreObject.GetMeshCollider().enabled = false;
+            }
         }
     }
 
@@ -722,17 +725,20 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <param name="collider">コライダー</param>
     private void OnTriggerExit(Collider collider)
     {
-        //doorPartsTagのオブジェクトから離れた場合
-        if (collider.gameObject.CompareTag(doorPartsTag))
+        //DoorTagのオブジェクトから離れた場合
+        if (collider.gameObject.CompareTag(doorTag))
         {
             gameObjectDoor = collider.gameObject;
 
-            //コンポーネントを取得
-            ignoreObject = gameObjectDoor.GetComponent<IgnoreObject>();
+            //子オブジェクトのコンポーネントを取得
+            ignoreObject = gameObjectDoor.GetComponentInChildren<IgnoreObject>();
 
-            //コライダーを有効化
-            ignoreObject.GetMeshCollider().enabled = true;
-            Debug.Log("ignoreObject.GetMeshCollider().enabled = " + ignoreObject.GetMeshCollider().enabled);
+            //子オブジェクトのタグがdoorPartsTagの場合
+            if (ignoreObject.CompareTag(doorPartsTag))
+            {
+                //コライダーを有効化
+                ignoreObject.GetMeshCollider().enabled = true;
+            }
         }
     }
 }
