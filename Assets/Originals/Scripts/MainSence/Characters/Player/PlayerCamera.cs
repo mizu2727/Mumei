@@ -102,10 +102,6 @@ public class PlayerCamera : MonoBehaviour
                 //現在のマウス感度を保存
                 keepMouseSensitivitySlider = GameController.lookSensitivity;
 
-                //マウス感度を無効化
-                GameController.lookSensitivity = 0f; 
-
-                if (GameController.instance.mouseSensitivitySlider) GameController.instance.mouseSensitivitySlider.value = 0f;
                 wasTrunLastFrame = true;
             }
         }
@@ -117,10 +113,6 @@ public class PlayerCamera : MonoBehaviour
             {
                 //プレイヤーの頭で視界の邪魔になるのを防ぐためにカメラの位置を前方部分へ変更する
                 transform.localPosition = new Vector3(0, 1.5f, 0.1f);
-
-                //マウス感度を元に戻す
-                GameController.instance.mouseSensitivitySlider.value = keepMouseSensitivitySlider;
-                GameController.lookSensitivity = GameController.instance.mouseSensitivitySlider.value;
             }
             wasTrunLastFrame = false;
         }

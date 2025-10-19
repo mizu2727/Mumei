@@ -249,6 +249,20 @@ public class Player : MonoBehaviour, CharacterInterface
     public bool isDebug = false;
 
 
+    [Header("タグ・レイヤー関連")]
+    [SerializeField] string doorPartsTag = "DoorParts";
+
+
+    /// <summary>
+    /// IgnoreObject
+    /// </summary>
+    private IgnoreObject ignoreObject;
+
+    /// <summary>
+    /// 対象の開閉したいドア
+    /// </summary>
+    GameObject gameObjectDoor;
+
     private void Awake()
     {
         //インスタンス
@@ -678,5 +692,47 @@ public class Player : MonoBehaviour, CharacterInterface
     public void DestroyPlayer() 
     {
         Destroy(gameObject);
+    }
+
+
+    /// <summary>
+    /// オブジェクトのコライダーを貫通した場合の処理
+    /// </summary>
+    /// <param name="collider">コライダー</param>
+    private void OnTriggerEnter(Collider collider)
+    {
+        //doorPartsTagのオブジェクトが触れた場合
+        if (collider.gameObject.CompareTag(doorPartsTag))
+        {
+            gameObjectDoor = collider.gameObject;
+
+            //コンポーネントを取得
+            ignoreObject = gameObjectDoor.GetComponent<IgnoreObject>();
+
+
+            //コライダーを無効化
+            ignoreObject.GetMeshCollider().enabled = false;
+            Debug.Log("ignoreObject.GetMeshCollider().enabled = " + ignoreObject.GetMeshCollider().enabled);
+        }
+    }
+
+    /// <summary>
+    /// オブジェクトのコライダーから離れた場合の処理
+    /// </summary>
+    /// <param name="collider">コライダー</param>
+    private void OnTriggerExit(Collider collider)
+    {
+        //doorPartsTagのオブジェクトから離れた場合
+        if (collider.gameObject.CompareTag(doorPartsTag))
+        {
+            gameObjectDoor = collider.gameObject;
+
+            //コンポーネントを取得
+            ignoreObject = gameObjectDoor.GetComponent<IgnoreObject>();
+
+            //コライダーを有効化
+            ignoreObject.GetMeshCollider().enabled = true;
+            Debug.Log("ignoreObject.GetMeshCollider().enabled = " + ignoreObject.GetMeshCollider().enabled);
+        }
     }
 }

@@ -24,6 +24,7 @@ public class Door : MonoBehaviour
     /// </summary>
     private Player player;
 
+
     [Header("ドア間との距離を測定したいオブジェクトをアタッチ(ヒエラルキー上のプレイヤーをアタッチすること)")]
     [SerializeField] public Transform targetPoint;
 
