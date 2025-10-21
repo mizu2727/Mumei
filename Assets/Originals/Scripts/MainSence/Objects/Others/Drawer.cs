@@ -3,6 +3,16 @@ using UnityEngine.SceneManagement;
 
 public class Drawer : MonoBehaviour
 {
+    /// <summary>
+    /// 引き出しの外枠
+    /// </summary>
+    OutsideOfDrawer outsideOfDrawer;
+
+    /// <summary>
+    /// 引き出しの外枠(GameObject)
+    /// </summary>
+    GameObject outsideOfDrawerGameObject;
+
     [Header("引き出しの開閉フラグ")]
     [SerializeField] public bool isOpenDrawer = false;
 
@@ -36,7 +46,7 @@ public class Drawer : MonoBehaviour
     /// </summary>
     private Vector3 targetPosition;
 
-    [Header("BoxCollider")]
+    [Header("引き出しの戸のBoxCollider")]
     [SerializeField] private BoxCollider boxCollider;
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -107,6 +117,11 @@ public class Drawer : MonoBehaviour
 
         //AudioSourceの初期化
         InitializeAudioSource();
+
+
+        outsideOfDrawer = this.GetComponentInParent<OutsideOfDrawer>();
+
+        Debug.Log(outsideOfDrawer.GetWorldEulerAngles());
     }
 
 
