@@ -118,9 +118,8 @@ public class Drawer : MonoBehaviour
         //AudioSourceの初期化
         InitializeAudioSource();
 
-
+        //引き出しの外枠の角度を取得(確認用)
         outsideOfDrawer = this.GetComponentInParent<OutsideOfDrawer>();
-
         Debug.Log(outsideOfDrawer.GetWorldEulerAngles());
     }
 
