@@ -416,6 +416,10 @@ public class Player : MonoBehaviour, CharacterInterface
             audioSourceSE = gameObject.AddComponent<AudioSource>();
             audioSourceSE.playOnAwake = false;
         }
+
+        //AudioMixerGroupÇê›íË
+        audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+
     }
 
     private void Update()

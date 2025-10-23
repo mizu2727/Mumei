@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MusicController : MonoBehaviour
 {
@@ -16,6 +17,22 @@ public class MusicController : MonoBehaviour
 
     [Header("BGMクリップ")]
     [SerializeField] private AudioClip[] audioClipBGM;
+
+
+    [Header("AudioMixer")]
+    public AudioMixer audioMixer;
+
+    [Header("AudioMixerGroupBGM")]
+    public AudioMixerGroup audioMixerGroupBGM;
+
+    [Header("AudioMixerGroupSE")]
+    public AudioMixerGroup audioMixerGroupSE;
+
+    [Header("BGMSlider(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Slider bGMSlider;
+
+    [Header("SESlider(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Slider sESlider;
 
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -77,6 +94,56 @@ public class MusicController : MonoBehaviour
 
         //BGMを止める
         sO_BGM.StopAllBGM();
+
+
+        if (bGMSlider != null)
+        {
+            //BGMのボリュームをbgmSliderで調整できるようにする
+            bGMSlider.onValueChanged.AddListener(OnBGMVolumeChanged);
+        }
+        else 
+        {
+            Debug.LogError("bGMSlider がアタッチされていません！");
+        }
+
+        if (sESlider != null)
+        {
+            //SEのボリュームをseSliderで調整できるようにする
+            sESlider.onValueChanged.AddListener(OnSEVolumeChanged);
+        }
+        else
+        {
+            Debug.LogError("sESlider がアタッチされていません！");
+        }
+    }
+
+    /// <summary>
+    /// スライダーの値をdBに変換して、AudioMixerの「BGM」パラメータに反映させる
+    /// </summary>
+    /// <param name="value">スライダーの値</param>
+    private void OnBGMVolumeChanged(float value)
+    {
+        value = Mathf.Clamp01(value);
+        float decibel = 20f * Mathf.Log10(value);
+        decibel = Mathf.Clamp(decibel, -80f, 0f);
+
+        // "BGM"はAudioMixerで定義したパラメータ名をと一致している必要がある
+        //audioMixer.SetFloat("BGM", decibel);
+        audioMixerGroupBGM.audioMixer.SetFloat("BGM", decibel);
+    }
+
+    /// <summary>
+    /// スライダーの値をdBに変換して、AudioMixerの「SE」パラメータに反映させる
+    /// </summary>
+    /// <param name="value">スライダーの値</param>
+    private void OnSEVolumeChanged(float value)
+    {
+        value = Mathf.Clamp01(value);
+        float decibel = 20f * Mathf.Log10(value);
+        decibel = Mathf.Clamp(decibel, -80f, 0f);
+
+        // "SE"はAudioMixerで定義したパラメータ名をと一致している必要がある
+        audioMixerGroupSE.audioMixer.SetFloat("SE", decibel);
     }
 
     void Start()

@@ -67,6 +67,9 @@ public class PauseController : MonoBehaviour
     [Header("オプションパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject optionPanel;
 
+    [Header("旋回速度設定パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject mouseSensitivityPanel;
+
     [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject returnToTitlePanel;
 
@@ -79,6 +82,11 @@ public class PauseController : MonoBehaviour
 
     [Header("オプションパネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
     public bool isOptionPanel = false;
+
+    /// <summary>
+    /// 旋回速度設定パネル閲覧フラグ
+    /// </summary>
+    private bool isViewMouseSensitivityPanel = false;
 
     [Header("タイトルへ戻るパネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
     public bool isReturnToTitlePanel = false;
@@ -288,6 +296,9 @@ public class PauseController : MonoBehaviour
         isOptionPanel = false;
         ChangeOptionPanel();
 
+        isViewMouseSensitivityPanel = false;
+        ChangeMouseSensitivityPanel();
+
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
 
@@ -467,6 +478,22 @@ public class PauseController : MonoBehaviour
     }
 
     /// <summary>
+    /// 「旋回速度」ボタン押下
+    /// </summary>
+    public void OnClickedMouseSensitivityButton() 
+    {
+        //ボタンSE
+        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //他の設定パネルを非表示にする
+
+
+        //旋回速度設定パネルを表示
+        isViewMouseSensitivityPanel = true;
+        ChangeMouseSensitivityPanel();
+    }
+
+    /// <summary>
     /// 「戻る」ボタン押下
     /// オプション設定からポーズ画面へ戻る
     /// </summary>
@@ -475,10 +502,15 @@ public class PauseController : MonoBehaviour
         //ボタンSE
         MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
-        //ポーズパネルを表示にし、オプションパネルを非表示する
+        //ポーズパネルを表示
         isPause = true;
         ChangeViewPausePanel();
 
+        //旋回速度設定パネルを非表示
+        isViewMouseSensitivityPanel = false;
+        ChangeMouseSensitivityPanel();
+
+        //オプションパネルを非表示
         isOptionPanel = false;
         ChangeOptionPanel();
     }
@@ -673,6 +705,23 @@ public class PauseController : MonoBehaviour
         {
             //非表示
             optionPanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 旋回速度設定パネルの表示/非表示
+    /// </summary>
+    void ChangeMouseSensitivityPanel()
+    {
+        if (isViewMouseSensitivityPanel)
+        {
+            //表示
+            mouseSensitivityPanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            mouseSensitivityPanel.SetActive(false);
         }
     }
 
