@@ -168,12 +168,18 @@ public class PlayerInteract : MonoBehaviour
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
     {
         //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
     }
 
     /// <summary>
@@ -184,6 +190,18 @@ public class PlayerInteract : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         InitializeAudioSource();
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        if (audioSourceItemSE != null)
+        {
+            audioSourceItemSE.volume = volume;
+        }
     }
 
     /// <summary>
@@ -209,6 +227,9 @@ public class PlayerInteract : MonoBehaviour
             audioSourceItemSE.playOnAwake = false;
             audioSourceItemSE.volume = 1.0f;
         }
+
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
+        audioSourceItemSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
     }
 
     private void Update()

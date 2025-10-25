@@ -33,6 +33,12 @@ public class SaveLoad : MonoBehaviour
 
             //マウス/ゲームパッドの右スティックの感度を保存
             sensitivityValue = GameController.lookSensitivity,
+
+            //BGM音量を保存
+            bGMVolume = GameController.bGMVolume,
+
+            //SE音量を保存
+            sEVolume = GameController.sEVolume,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -65,6 +71,8 @@ public class SaveLoad : MonoBehaviour
             GameController.playerName = userData.playerName;
             GameController.playCount = ++userData.playCount;
             GameController.lookSensitivity = userData.sensitivityValue;
+            GameController.bGMVolume = userData.bGMVolume;
+            GameController.sEVolume = userData.sEVolume;
         }
         else
         {
@@ -83,6 +91,12 @@ public class SaveLoad : MonoBehaviour
         {
             //マウス/ゲームパッドの右スティックの感度を保存
             sensitivityValue = GameController.lookSensitivity,
+
+            //BGM音量を保存
+            bGMVolume = GameController.bGMVolume,
+
+            //SE音量を保存
+            sEVolume = GameController.sEVolume,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -109,6 +123,8 @@ public class SaveLoad : MonoBehaviour
 
             //各パラメーターにユーザーデータを設定
             GameController.lookSensitivity = userData.sensitivityValue;
+            GameController.bGMVolume = userData.bGMVolume;
+            GameController.sEVolume = userData.sEVolume;
         }
         else
         {

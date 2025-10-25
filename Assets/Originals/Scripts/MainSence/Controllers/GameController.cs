@@ -76,6 +76,12 @@ public class GameController : MonoBehaviour
     [Header("マウス/ゲームパッドの右スティックの感度")]
     public static float lookSensitivity = 50f;
 
+    [Header("セーブするBGM音量")]
+    public static float bGMVolume = 1;
+
+    [Header("セーブするSE音量")]
+    public static float sEVolume = 1;
+
     /// <summary>
     /// ゲームモードステータス
     /// </summary>
@@ -128,6 +134,18 @@ public class GameController : MonoBehaviour
             //マウス感度を保存した値に設定
             mouseSensitivitySlider.value = lookSensitivity;
         }
+
+        if (MusicController.Instance.bGMSlider != null)
+        {
+            //BGMを保存した値に設定
+            MusicController.Instance.bGMSlider.value = bGMVolume;
+        }
+
+        if (MusicController.Instance.sESlider != null)
+        {
+            //SEを保存した値に設定
+            MusicController.Instance.sESlider.value = sEVolume;
+        }
     }
 
     /// <summary>
@@ -160,6 +178,12 @@ public class GameController : MonoBehaviour
 
         //マウス旋回速度のSliderの最大値を設定
         if (mouseSensitivitySlider) mouseSensitivitySlider.maxValue = maxLookSensitivity;
+
+        //BGM音量のSliderの最大値を設定
+        if (MusicController.Instance.bGMSlider) MusicController.Instance.bGMSlider.maxValue = MusicController.Instance.GetMaxBGMSliderVolume();
+
+        //SE音量のSliderの最大値を設定
+        if (MusicController.Instance.sESlider) MusicController.Instance.sESlider.maxValue = MusicController.Instance.GetMaxSESliderVolume();
     }
 
     private void Update()
@@ -168,7 +192,33 @@ public class GameController : MonoBehaviour
         if (mouseSensitivitySlider)
         {
             lookSensitivity = mouseSensitivitySlider.value;
+
+            //最大値を超えないように制限
             if (lookSensitivity > maxLookSensitivity) lookSensitivity = maxLookSensitivity;
+        }
+
+        //セーブ用BGM音量をスライダーから取得
+        if (MusicController.Instance.bGMSlider)
+        {
+            bGMVolume = MusicController.Instance.bGMSlider.value;
+
+            //BGM音量が最大値を超えないように制限
+            if (bGMVolume > MusicController.Instance.GetMaxBGMSliderVolume()) bGMVolume = MusicController.Instance.GetMaxBGMSliderVolume();
+
+            //BGM音量が最小値未満にならないように制限
+            if (bGMVolume < MusicController.Instance.GetMinBGMSliderVolume()) bGMVolume = MusicController.Instance.GetMinBGMSliderVolume();
+        }
+
+        //セーブ用SE音量をスライダーから取得
+        if (MusicController.Instance.sESlider)
+        {
+            sEVolume = MusicController.Instance.sESlider.value;
+
+            //SE音量が最大値を超えないように制限
+            if (sEVolume > MusicController.Instance.GetMaxSESliderVolume()) sEVolume = MusicController.Instance.GetMaxSESliderVolume();
+
+            //SE音量が最小値未満にならないように制限
+            if (sEVolume < MusicController.Instance.GetMinSESliderVolume()) sEVolume = MusicController.Instance.GetMinSESliderVolume();
         }
     }
 

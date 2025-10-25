@@ -11,15 +11,15 @@ public class GameOverScene : MonoBehaviour
     [SerializeField] private string SceneName;
 
     [Header("サウンド関連")]
-    private AudioSource audioSourceSE;
-    [SerializeField] private AudioClip gameOverSE;
+    private AudioSource audioSourceBGM;
+    [SerializeField] private AudioClip gameOverBGM;
 
 
     void Start()
     {
         GameController.instance.gameModeStatus = GameModeStatus.GameOver;
-        audioSourceSE = MusicController.Instance.GetAudioSource();
-        MusicController.Instance.PlayAudioSE(audioSourceSE, gameOverSE);
+        audioSourceBGM = MusicController.Instance.GetAudioSource();
+        MusicController.Instance.PlayNoLoopBGM(audioSourceBGM, gameOverBGM);
         ViewGameOverUI();
     }
 

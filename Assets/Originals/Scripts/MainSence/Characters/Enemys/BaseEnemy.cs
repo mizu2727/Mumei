@@ -265,6 +265,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("最小音量")]
     [SerializeField] private float minVolume = 0.0f;
 
+    /// <summary>
+    /// マスター音量
+    /// </summary>
+    private float masterSEVolume = 1.0f;
+
 
     [Header("プレイヤー発見時のパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public GameObject playerFoundPanel;
@@ -302,12 +307,18 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
     {
         //シーン遷移時にAudioSourceを再設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
     }
 
     /// <summary>
@@ -352,6 +363,23 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         audioSourceFindPlayerSE = gameObject.AddComponent<AudioSource>();
+
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
+        audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+        audioSourceFindPlayerSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+
+        //マスター音量を同期
+        masterSEVolume = MusicController.Instance.sESlider.value;
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        masterSEVolume = volume;
+        audioSourceFindPlayerSE.volume = volume;
     }
 
     void Start()
@@ -955,9 +983,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             // 効果音制御
             currentSE = (currentState == EnemyState.Chase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
-            // 距離に基づく音量計算
-            float volume = CalculateVolumeBasedOnDistance(distance);
+            //距離ベースの相対音量（0～1）
+            float relativeVolume = CalculateVolumeBasedOnDistance(distance);
 
+            //最終音量 = マスターSE音量 × 相対音量
+            float finalVolume = masterSEVolume * relativeVolume;
             
             if (IsMove && !wasMovingLastFrame)
             {
@@ -965,7 +995,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
                 audioSourceSE.clip = currentSE;
                 audioSourceSE.loop = true;
-                audioSourceSE.volume = volume;
+                audioSourceSE.volume = finalVolume;
                 audioSourceSE.Play();
             }
             else if (!IsMove && wasMovingLastFrame)
@@ -985,13 +1015,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
                 audioSourceSE.clip = currentSE;
                 audioSourceSE.loop = true;
-                audioSourceSE.volume = volume;
+                audioSourceSE.volume = finalVolume;
                 audioSourceSE.Play();
             }
             else if (IsMove && audioSourceSE.isPlaying)
             {
-                // 移動中に音量を継続的に更新
-                audioSourceSE.volume = volume;
+                //移動中は最終音量を継続的に更新
+                audioSourceSE.volume = finalVolume;
             }
 
             wasMovingLastFrame = IsMove;

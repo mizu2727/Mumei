@@ -71,12 +71,30 @@ public class Drawer : MonoBehaviour
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
     {
         //シーン遷移時にAudioSourceを再設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        if (audioSourceSE != null)
+        {
+            audioSourceSE.volume = volume;
+        }
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -96,6 +114,9 @@ public class Drawer : MonoBehaviour
             audioSourceSE = gameObject.AddComponent<AudioSource>();
             audioSourceSE.playOnAwake = false;
         }
+
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
+        audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
     }
 
     void Start()

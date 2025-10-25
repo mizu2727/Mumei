@@ -76,13 +76,22 @@ public class MessageController : MonoBehaviour
     public bool isBlackOutPanel = false;
 
 
-    [Header("noiseSE(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] private AudioClip noiseSE;
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
+    //[Header("noiseSE(ヒエラルキー上からアタッチする必要がある)")]
+    //[SerializeField] private AudioClip noiseSE;
 
     /// <summary>
     /// noiseSE用audioSourceSE
     /// </summary>
     private AudioSource audioSourceSE;
+
+    /// <summary>
+    /// ノイズ音のID
+    /// </summary>
+    private readonly int noiseSEid = 9;
+
 
     /// <summary>
     /// 非同期タスクのキャンセル用変数
@@ -94,12 +103,18 @@ public class MessageController : MonoBehaviour
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
     {
         //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
 
         //非同期タスクをキャンセル
         CancelAsyncTasks(); 
@@ -121,6 +136,37 @@ public class MessageController : MonoBehaviour
         {
             Debug.LogError("MessageControllerのmessageTextがnull");
         }
+
+        //AudioSourceの初期化
+        InitializeAudioSource();
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        if (audioSourceSE != null)
+        {
+            audioSourceSE.volume = volume;
+        }
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        audioSourceSE = GetComponent<AudioSource>();
+        if (audioSourceSE == null)
+        {
+            audioSourceSE = gameObject.AddComponent<AudioSource>();
+            audioSourceSE.playOnAwake = false;
+        }
+
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
+        audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
     }
 
     /// <summary>
@@ -179,7 +225,10 @@ public class MessageController : MonoBehaviour
     {
         //MusicControllerのAwake関数の処理後に呼ばれるようにするため、
         //Start関数内でAudioSourceを取得する
-        audioSourceSE = MusicController.Instance.GetAudioSource();
+        //audioSourceSE = MusicController.Instance.GetAudioSource();
+
+        //AudioSourceの初期化
+        InitializeAudioSource();
     }
 
     /// <summary>
@@ -335,7 +384,8 @@ public class MessageController : MonoBehaviour
 
                         //BGMを一時停止してノイズを流す
                         MusicController.Instance.PauseBGM();
-                        MusicController.Instance.PlayMomentAudioSE(audioSourceSE, noiseSE);
+                        audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
+                        MusicController.Instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
                         //文字の色を赤色に設定
                         messageText.color = Color.red;
@@ -478,7 +528,8 @@ public class MessageController : MonoBehaviour
                         await UniTask.Delay(TimeSpan.FromSeconds(1));
 
                         //ノイズを流す
-                        MusicController.Instance.PlayMomentAudioSE(audioSourceSE, noiseSE);
+                        audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
+                        MusicController.Instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
                         //文字の色を赤色に設定
                         messageText.color = Color.red;
@@ -567,7 +618,8 @@ public class MessageController : MonoBehaviour
                     await UniTask.Delay(TimeSpan.FromSeconds(2));
 
                     //ノイズを流す
-                    MusicController.Instance.PlayMomentAudioSE(audioSourceSE, noiseSE);
+                    audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
+                    MusicController.Instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
                     //文字の色を赤色に設定
                     messageText.color = Color.red;

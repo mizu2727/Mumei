@@ -18,4 +18,10 @@ public class UserData
 
     [Header("マウス/ゲームパッドの右スティックの感度(ヒエラルキー上からの編集禁止)")]
     public float sensitivityValue;
+
+    [Header("セーブするBGM音量")]
+    public float bGMVolume;
+
+    [Header("セーブするSE音量")]
+    public float sEVolume;
 }

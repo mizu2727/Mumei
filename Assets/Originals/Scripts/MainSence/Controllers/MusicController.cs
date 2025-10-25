@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -31,8 +32,53 @@ public class MusicController : MonoBehaviour
     [Header("BGMSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider bGMSlider;
 
+    /// <summary>
+    /// BGM最小音量(Slider用)
+    /// </summary>
+    private const float minBGMSliderVolume = 0f;
+
+    /// <summary>
+    /// SE最大音量(Slider用)
+    /// </summary>
+    private const float maxBGMSliderVolume = 1f;
+
+    /// <summary>
+    /// BGM最小音量(dB)
+    /// </summary>
+    private const float minBGMVolume = -80f;
+
+    /// <summary>
+    /// BGM最大音量(dB)
+    /// </summary>
+    private const float maxBGMVolume = 0f;
+
     [Header("SESlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider sESlider;
+
+    /// <summary>
+    /// SE最小音量(Slider用)
+    /// </summary>
+    private const float minSESliderVolume = 0f;
+
+    /// <summary>
+    /// SE最大音量(Slider用)
+    /// </summary>
+    private const float maxSESliderVolume = 1f;
+
+    /// <summary>
+    /// OnSEVolumeChangedEvent
+    /// </summary>
+    public static event Action<float> OnSEVolumeChangedEvent;
+
+    /// <summary>
+    /// SE最小音量(dB)
+    /// </summary>
+    private const float minSEVolume = -80f;
+
+    /// <summary>
+    /// SE最大音量(dB)
+    /// </summary>
+    private const float maxSEVolume = 0f;
 
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -56,6 +102,42 @@ public class MusicController : MonoBehaviour
 
     [Header("デバッグフラグ")]
     [SerializeField] private bool isDebug;
+
+    /// <summary>
+    /// BGM最小音量取得(Slider用)
+    /// </summary>
+    /// <returns>BGM最小音量(Slider用)</returns>
+    public float GetMinBGMSliderVolume()
+    {
+        return minBGMSliderVolume;
+    }
+
+    /// <summary>
+    /// BGM最大音量取得(Slider用)
+    /// </summary>
+    /// <returns>BGM最大音量(Slider用)</returns>
+    public float GetMaxBGMSliderVolume()
+    {
+        return maxBGMSliderVolume;
+    }
+
+    /// <summary>
+    /// SE最小音量取得(Slider用)
+    /// </summary>
+    /// <returns>SE最小音量(Slider用)</returns>
+    public float GetMinSESliderVolume()
+    {
+        return minSESliderVolume;
+    }
+
+    /// <summary>
+    /// SE最大音量取得(Slider用)
+    /// </summary>
+    /// <returns>SE最大音量(Slider用)</returns>
+    public float GetMaxSESliderVolume()
+    {
+        return maxSESliderVolume;
+    }
 
     private void Awake()
     {
@@ -103,7 +185,7 @@ public class MusicController : MonoBehaviour
         }
         else 
         {
-            Debug.LogError("bGMSlider がアタッチされていません！");
+            Debug.LogWarning("bGMSlider がアタッチされていません！");
         }
 
         if (sESlider != null)
@@ -113,7 +195,7 @@ public class MusicController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("sESlider がアタッチされていません！");
+            Debug.LogWarning("sESlider がアタッチされていません！");
         }
     }
 
@@ -125,11 +207,10 @@ public class MusicController : MonoBehaviour
     {
         value = Mathf.Clamp01(value);
         float decibel = 20f * Mathf.Log10(value);
-        decibel = Mathf.Clamp(decibel, -80f, 0f);
+        decibel = Mathf.Clamp(decibel, minBGMVolume, maxBGMVolume);
 
-        // "BGM"はAudioMixerで定義したパラメータ名をと一致している必要がある
-        //audioMixer.SetFloat("BGM", decibel);
-        audioMixerGroupBGM.audioMixer.SetFloat("BGM", decibel);
+        //"BGMVolumeParam"はAudioMixerで定義したパラメータ名と一致している必要がある
+        audioMixer.SetFloat("BGMVolumeParam", decibel);
     }
 
     /// <summary>
@@ -140,10 +221,13 @@ public class MusicController : MonoBehaviour
     {
         value = Mathf.Clamp01(value);
         float decibel = 20f * Mathf.Log10(value);
-        decibel = Mathf.Clamp(decibel, -80f, 0f);
+        decibel = Mathf.Clamp(decibel, minSEVolume, maxSEVolume);
 
-        // "SE"はAudioMixerで定義したパラメータ名をと一致している必要がある
-        audioMixerGroupSE.audioMixer.SetFloat("SE", decibel);
+        //"SEVolumeParam"はAudioMixerで定義したパラメータ名と一致している必要がある
+        audioMixer.SetFloat("SEVolumeParam", decibel);
+
+        //値を0 ~ 1へ変換
+        OnSEVolumeChangedEvent?.Invoke(value);
     }
 
     void Start()
@@ -166,6 +250,29 @@ public class MusicController : MonoBehaviour
             audioSourceBGM.clip = audioClipBGM[audioClipnum];
             audioSourceBGM.loop = true;
             audioSourceBGM.Play();
+        }
+    }
+
+    /// <summary>
+    /// BGMをループなしで再生
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <param name="audioClip"></param>
+    public void PlayNoLoopBGM(AudioSource audioSource, AudioClip audioClip)
+    {
+        if (audioSource != null && !isDebug)
+        {
+            if (audioClip != null)
+            {
+                //クリップを設定
+                audioSource.clip = audioClip;
+
+                //ループ再生を有効
+                audioSource.loop = true;
+
+                //再生
+                audioSource.Play();
+            }
         }
     }
 

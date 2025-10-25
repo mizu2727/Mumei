@@ -129,12 +129,30 @@ public class Inventory : MonoBehaviour
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
     {
         //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        if (audioSourceInventorySE != null)
+        {
+            audioSourceInventorySE.volume = volume;
+        }
     }
 
     /// <summary>
@@ -196,6 +214,9 @@ public class Inventory : MonoBehaviour
             audioSourceInventorySE.playOnAwake = false;
             audioSourceInventorySE.volume = 1.0f;
         }
+
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
+        audioSourceInventorySE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
     }
 
     private void Awake()

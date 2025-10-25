@@ -303,12 +303,19 @@ public class Player : MonoBehaviour, CharacterInterface
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
+
     }
 
     private void OnDisable()
     {
         //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
     }
 
     /// <summary>
@@ -354,6 +361,18 @@ public class Player : MonoBehaviour, CharacterInterface
             playerHP = 1;
             stamina = maxStamina;
             isStamina = true;
+        }
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        if (audioSourceSE != null)
+        {
+            audioSourceSE.volume = volume;
         }
     }
 
@@ -417,9 +436,8 @@ public class Player : MonoBehaviour, CharacterInterface
             audioSourceSE.playOnAwake = false;
         }
 
-        //AudioMixerGroupを設定
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
         audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
-
     }
 
     private void Update()
