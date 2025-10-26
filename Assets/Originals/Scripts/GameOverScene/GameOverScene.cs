@@ -10,16 +10,29 @@ public class GameOverScene : MonoBehaviour
     [Header("ロードしたいScene名")]
     [SerializeField] private string SceneName;
 
-    [Header("サウンド関連")]
+    /// <summary>
+    /// AudioSource
+    /// </summary>
     private AudioSource audioSourceBGM;
-    [SerializeField] private AudioClip gameOverBGM;
 
+    [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_BGM sO_BGM;
+
+    /// <summary>
+    /// GameOverBGMのID
+    /// </summary>
+    private readonly int gameOverBGMId = 5;
 
     void Start()
     {
+        //ゲームオーバーステータスに変更
         GameController.instance.gameModeStatus = GameModeStatus.GameOver;
         audioSourceBGM = MusicController.Instance.GetAudioSource();
-        MusicController.Instance.PlayNoLoopBGM(audioSourceBGM, gameOverBGM);
+
+        //ゲームオーバーBGM再生
+        MusicController.Instance.PlayNoLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(gameOverBGMId));
+
+        //ゲームオーバーUI表示
         ViewGameOverUI();
     }
 

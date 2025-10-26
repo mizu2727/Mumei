@@ -703,8 +703,10 @@ public class MessageController : MonoBehaviour
                 //チュートリアル終了
                 case 14:
                     //チュートリアル用ゴールの閲覧終了したらメッセージを勧める
-                    await UniTask.WaitUntil(() => !PauseController.instance.isPause
+                    await UniTask.WaitUntil(() => Time.timeScale == 1
                     && GameController.instance.isTutorialGoalFlag);
+
+                    
                     GameController.instance.isTutorialGoalFlag = false;
 
                     messageText.text = "";

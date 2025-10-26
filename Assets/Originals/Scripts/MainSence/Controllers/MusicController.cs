@@ -267,8 +267,8 @@ public class MusicController : MonoBehaviour
                 //クリップを設定
                 audioSource.clip = audioClip;
 
-                //ループ再生を有効
-                audioSource.loop = true;
+                //ループ再生を無効化
+                audioSource.loop = false;
 
                 //再生
                 audioSource.Play();
