@@ -287,7 +287,7 @@ public class PlayerInteract : MonoBehaviour
                         else if (item.itemType == ItemType.UseItem)
                         {
                             //インベントリに空きがあるかを確認
-                            if ((Inventory.instance.keepItemId == 99999) || (Inventory.instance.keepItemId == item.id))
+                            if ((Inventory.instance.GetKeepItemId() == 99999) || (Inventory.instance.GetKeepItemId() == item.id))
                             {
                                 //インベントリに追加
                                 sO_Item.AddUseItem(item);

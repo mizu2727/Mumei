@@ -44,8 +44,10 @@ public class Inventory : MonoBehaviour
     [SerializeField] public Text useItemExplanationText;
 
 
-    [Header("アイテムID管理(アイテムインベントリ1枠分用。編集禁止)")]
-    public int keepItemId;
+    /// <summary>
+    /// アイテムID管理
+    /// </summary>
+    private int keepItemId;
 
     /// <summary>
     /// アイテム未所持時のID
@@ -124,6 +126,15 @@ public class Inventory : MonoBehaviour
     /// スタミナ増強剤SEのID
     /// </summary>
     private readonly int useStaminaEnhancerSEid = 12;
+
+    /// <summary>
+    /// アイテムID管理を取得
+    /// </summary>
+    /// <returns>アイテムID管理</returns>
+    public int GetKeepItemId() 
+    {
+        return keepItemId;
+    }
 
     private void OnEnable()
     {
