@@ -43,6 +43,11 @@ public class MusicController : MonoBehaviour
     private const float maxBGMSliderVolume = 1f;
 
     /// <summary>
+    /// OnBGMVolumeChangedEvent
+    /// </summary>
+    public static event Action<float> OnBGMVolumeChangedEvent;
+
+    /// <summary>
     /// BGM最小音量(dB)
     /// </summary>
     private const float minBGMVolume = -80f;
@@ -211,6 +216,9 @@ public class MusicController : MonoBehaviour
 
         //"BGMVolumeParam"はAudioMixerで定義したパラメータ名と一致している必要がある
         audioMixer.SetFloat("BGMVolumeParam", decibel);
+
+        //値を0 ~ 1へ変換
+        OnBGMVolumeChangedEvent?.Invoke(value);
     }
 
     /// <summary>
@@ -254,11 +262,37 @@ public class MusicController : MonoBehaviour
     }
 
     /// <summary>
+    /// BGMをループありで再生
+    /// </summary>
+    /// <param name="audioSource"></param>
+    /// <param name="audioClip"></param>
+    public void PlayLoopBGM(AudioSource audioSource, AudioClip audioClip, int bgmId)
+    {
+        if (audioSource != null && !isDebug)
+        {
+            if (audioClip != null)
+            {
+                //クリップを設定
+                audioSource.clip = audioClip;
+
+                //ループ再生を有効
+                audioSource.loop = true;
+
+                //再生
+                audioSource.Play();
+
+                //BGMの状態をPlayに変更
+                sO_BGM.ChangeFromStopToPlayBGM(bgmId);
+            }
+        }
+    }
+
+    /// <summary>
     /// BGMをループなしで再生
     /// </summary>
     /// <param name="audioSource"></param>
     /// <param name="audioClip"></param>
-    public void PlayNoLoopBGM(AudioSource audioSource, AudioClip audioClip)
+    public void PlayNoLoopBGM(AudioSource audioSource, AudioClip audioClip, int bgmId)
     {
         if (audioSource != null && !isDebug)
         {
@@ -272,6 +306,9 @@ public class MusicController : MonoBehaviour
 
                 //再生
                 audioSource.Play();
+
+                //BGMの状態をPlayに変更
+                sO_BGM.ChangeFromStopToPlayBGM(bgmId);
             }
         }
     }
