@@ -9,16 +9,20 @@ using UnityEngine.UI;
 
 public class MusicController : MonoBehaviour
 {
-    //インスタンス
-    private static MusicController _instance;
-    public static MusicController Instance => _instance;
+    /// <summary>
+    /// インスタンス
+    /// </summary>
+    public static MusicController instance;
 
-    [Header("BGM")]
-    [SerializeField] private AudioSource audioSourceBGM;
+    /// <summary>
+    /// StageBGM用AudioSource
+    /// </summary>
+    private AudioSource stageBGMAudioSource;
 
-    [Header("BGMクリップ")]
-    [SerializeField] private AudioClip[] audioClipBGM;
-
+    /// <summary>
+    /// chasePlayerBGM用AudioSource
+    /// </summary>
+    private AudioSource chasePlayerBGMAudioSource;
 
     [Header("AudioMixer")]
     public AudioMixer audioMixer;
@@ -89,16 +93,6 @@ public class MusicController : MonoBehaviour
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
 
-    /// <summary>
-    /// audioClip番号
-    /// </summary>
-    public int audioClipnum = 0;
-
-    /// <summary>
-    /// audioClip番号(保存用)
-    /// </summary>
-    private int keepAudioClipnum = 999;
-
 
     /// <summary>
     /// SE用audioSourceのリスト
@@ -107,6 +101,25 @@ public class MusicController : MonoBehaviour
 
     [Header("デバッグフラグ")]
     [SerializeField] private bool isDebug;
+
+
+    /// <summary>
+    /// ステージBGM専用のAudioSourceを取得するメソッド
+    /// </summary>
+    /// <returns>ステージBGM用AudioSource</returns>
+    public AudioSource GetStageBGMAudioSource()
+    {
+        return stageBGMAudioSource;
+    }
+
+    /// <summary>
+    /// 追跡BGM専用のAudioSourceを取得するメソッド
+    /// </summary>
+    /// <returns>追跡BGM用AudioSource</returns>
+    public AudioSource GetChasePlayerBGMAudioSource()
+    {
+        return chasePlayerBGMAudioSource;
+    }
 
     /// <summary>
     /// BGM最小音量取得(Slider用)
@@ -146,23 +159,14 @@ public class MusicController : MonoBehaviour
 
     private void Awake()
     {
-        if (_instance != null && _instance != this)
+        if (instance != null && instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        _instance = this;
+        instance = this;
         DontDestroyOnLoad(gameObject);
-
-        audioSourceBGM = GetComponent<AudioSource>();
-
-
-        if (audioSourceBGM == null)
-        {
-            Debug.LogWarning("AudioSourceBGM not found, adding one.");
-            audioSourceBGM = gameObject.AddComponent<AudioSource>();
-        }
 
         //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -174,10 +178,14 @@ public class MusicController : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // シーン遷移時に無効なAudioSourceをクリーンアップ
         audioSourceSEList.RemoveAll(audioSource => audioSource == null || !audioSource.gameObject.activeInHierarchy);
+
+        InitializeAudioSource();
 
         //BGMを止める
         sO_BGM.StopAllBGM();
@@ -201,6 +209,25 @@ public class MusicController : MonoBehaviour
         else
         {
             Debug.LogWarning("sESlider がアタッチされていません！");
+        }
+    }
+
+    private void InitializeAudioSource() 
+    {
+        if (stageBGMAudioSource == null)
+        {
+            stageBGMAudioSource = gameObject.AddComponent<AudioSource>();
+            stageBGMAudioSource.outputAudioMixerGroup = audioMixerGroupBGM;
+            stageBGMAudioSource.playOnAwake = false;
+            stageBGMAudioSource.loop = true; // 必要に応じて
+        }
+
+        if (chasePlayerBGMAudioSource == null)
+        {
+            chasePlayerBGMAudioSource = gameObject.AddComponent<AudioSource>();
+            chasePlayerBGMAudioSource.outputAudioMixerGroup = audioMixerGroupBGM;
+            chasePlayerBGMAudioSource.playOnAwake = false;
+            chasePlayerBGMAudioSource.loop = true;
         }
     }
 
@@ -242,23 +269,6 @@ public class MusicController : MonoBehaviour
     {
         //デバッグモードの場合処理をスキップ
         if (isDebug) return;
-
-        audioClipnum = 0;
-        PlayBGM();
-    }
-
-    /// <summary>
-    /// BGM再生
-    /// </summary>
-    public void PlayBGM()
-    {
-        if (!isDebug)
-        {
-            keepAudioClipnum = audioClipnum;
-            audioSourceBGM.clip = audioClipBGM[audioClipnum];
-            audioSourceBGM.loop = true;
-            audioSourceBGM.Play();
-        }
     }
 
     /// <summary>
@@ -316,28 +326,46 @@ public class MusicController : MonoBehaviour
     /// <summary>
     /// BGM一時停止
     /// </summary>
-    public void PauseBGM()
+    public void PauseBGM(AudioSource audioSource, AudioClip audioClip, int bgmId) 
     {
-        audioSourceBGM.clip = audioClipBGM[audioClipnum];
-        audioSourceBGM.Pause();
+        //クリップを設定
+        audioSource.clip = audioClip;
+
+        //中断
+        audioSource.Pause();
+
+        //BGMの状態をPauseに変更
+        sO_BGM.ChangeFromPlayToPauseBGM(bgmId);
     }
 
     /// <summary>
     /// BGM一時停止解除
     /// </summary>
-    public void UnPauseBGM()
+    public void UnPauseBGM(AudioSource audioSource, AudioClip audioClip, int bgmId)
     {
-        audioSourceBGM.clip = audioClipBGM[audioClipnum];
-        audioSourceBGM.UnPause();
+        //クリップを設定
+        audioSource.clip = audioClip;
+
+        //中断解除
+        audioSource.UnPause();
+
+        //BGMの状態をPlayに戻す
+        sO_BGM.ChangeFromPauseToPlayBGM(bgmId);
     }
 
     /// <summary>
     /// BGM停止
     /// </summary>
-    public void StopBGM()
+    public void StopBGM(AudioSource audioSource, AudioClip audioClip, int bgmId) 
     {
-        keepAudioClipnum = 999;
-        audioSourceBGM.Stop();
+        //クリップを設定
+        audioSource.clip = audioClip;
+
+        //中断解除
+        audioSource.Stop();
+
+        //BGMの状態をStopに変更
+        sO_BGM.ChangeFromPlayToStopBGM(bgmId);
     }
 
     /// <summary>

@@ -1,13 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static GameController;
 
-public class HomeController : MonoBehaviour
+public class Stage01Controller : MonoBehaviour
 {
     /// <summary>
     /// インスタンス
     /// </summary>
-    public static HomeController instance;
+    public static Stage01Controller instance;
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
@@ -18,46 +17,29 @@ public class HomeController : MonoBehaviour
     private AudioSource audioSourceBGM;
 
     /// <summary>
-    /// audioClipBGM
+    /// Stage01BGMのID
     /// </summary>
-    private AudioClip audioClipBGM;
-
-    /// <summary>
-    /// HomeSceneBGMのID
-    /// </summary>
-    private readonly int homeSceneBGMId = 1;
+    private readonly int stage01BGMId = 2;
 
 
-    [Header("タイトルへ戻るボタン(ヒエラルキー上からアタッチすること(バグNo.Er001への一時的な措置))")]
-    [SerializeField] private GameObject returnToTitlePanel;
 
     /// <summary>
     /// AudioSourceBGMを取得する
     /// </summary>
     /// <returns>AudioSourceBGM</returns>
-    public AudioSource GetAudioSourceBGM() 
+    public AudioSource GetAudioSourceBGM()
     {
         return audioSourceBGM;
     }
 
     /// <summary>
-    /// AudioClipBGMを取得する
+    /// Stage01BGMのIDを取得する
     /// </summary>
-    /// <returns>AudioClipBGM</returns>
-    public AudioClip GetAudioClipBGM() 
+    /// <returns>Stage01BGMのID</returns>
+    public int GetStage01BGMId()
     {
-        return audioClipBGM;
+        return stage01BGMId;
     }
-
-    /// <summary>
-    /// HomeSceneBGMのIDを取得する
-    /// </summary>
-    /// <returns>HomeSceneBGMのID</returns>
-    public int GetHomeSceneBGMId() 
-    {
-        return homeSceneBGMId;
-    }
-
 
     private void OnEnable()
     {
@@ -73,7 +55,7 @@ public class HomeController : MonoBehaviour
         //シーン遷移時に設定するための関数登録解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
 
-        //SE音量変更時のイベント登録解除
+        //BGM音量変更時のイベント登録解除
         MusicController.OnBGMVolumeChangedEvent -= UpdateBGMVolume;
     }
 
@@ -83,10 +65,14 @@ public class HomeController : MonoBehaviour
     /// <param name="volume">音量</param>
     private void UpdateBGMVolume(float volume)
     {
-        if (audioSourceBGM != null)
+        //NullReferenceExceptionを防ぐ用
+        if (audioSourceBGM == null)
         {
-            audioSourceBGM.volume = volume;
+            Debug.LogWarning("Stage01Controller: audioSourceBGM が未設定のため音量変更をスキップしました。");
+            return;
         }
+
+        audioSourceBGM.volume = volume;
     }
 
     /// <summary>
@@ -96,8 +82,7 @@ public class HomeController : MonoBehaviour
     /// <param name="mode"></param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //AudioSourceの初期化
-        InitializeAudioSource();
+        
     }
 
     /// <summary>
@@ -106,17 +91,13 @@ public class HomeController : MonoBehaviour
     private void InitializeAudioSource()
     {
         //audioSourceBGMを設定
-        audioSourceBGM = MusicController.instance.GetAudioSource();
-
-        //audioClipBGMを設定
-        audioClipBGM = sO_BGM.GetBGMClip(homeSceneBGMId);
+        audioSourceBGM = MusicController.instance.GetStageBGMAudioSource();
 
         //MusicControllerで設定されているBGM用のAudioMixerGroupを設定する
         audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
     }
 
-
-    void Awake()
+    private void Awake()
     {
         if (instance == null)
         {
@@ -126,20 +107,26 @@ public class HomeController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        GameController.instance.SetGameModeStatus(GameModeStatus.Story);
-        GameController.instance.ResetParams();
-
-        //全てのBGMの状態をStopに変更
-        sO_BGM.StopAllBGM();
-
-        //バグNo.Er001への一時的な措置
-        returnToTitlePanel.SetActive(false);
     }
 
-    private void Start()
+    void Start()
     {
-        //ホームシーンBGMを再生
-        MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(homeSceneBGMId), homeSceneBGMId);
+        //AudioSourceの初期化
+        InitializeAudioSource();
+
+        //Stage01BGMを流す。現在再生中のBGMを設定する。
+        PlayStage01BGM();
+    }
+
+    /// <summary>
+    /// Stage01BGMを流す。現在再生中のBGMを設定する。
+    /// </summary>
+    public void PlayStage01BGM() 
+    {
+        //Stage01BGMを再生
+        MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(stage01BGMId), stage01BGMId);
+
+        //現在再生中のBGMをStage01BGMに設定する
+        PauseController.instance.SetNowPlayBGMId(stage01BGMId);
     }
 }

@@ -116,7 +116,7 @@ public class Drawer : MonoBehaviour
         }
 
         //MusicController‚Åİ’è‚³‚ê‚Ä‚¢‚éSE—p‚ÌAudioMixerGroup‚ğİ’è‚·‚é
-        audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+        audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
     }
 
     void Start()

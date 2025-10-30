@@ -62,6 +62,14 @@ public class SO_BGM : ScriptableObject
     //BGMのリスト
     public List<BGMData> bgmList = new();
 
+
+    public BGMState CheckBGMState(int bgmId) 
+    {
+        BGMData bgmData = bgmList.Find(bgm => bgm.id == bgmId);
+
+        return bgmData.bgmState;
+    }
+
     /// <summary>
     /// 指定したIDに基づいてAudioClipを取得するメソッド
     /// </summary>
@@ -121,6 +129,7 @@ public class SO_BGM : ScriptableObject
         BGMData bgmData = bgmList.Find(bgm => bgm.id == bgmId);
         if (bgmData != null && bgmData.bgmState == BGMState.Stop)
         {
+            bgmData.bgmState = BGMState.Play;
             return BGMState.Play;
         }
         else
@@ -146,12 +155,42 @@ public class SO_BGM : ScriptableObject
         BGMData bgmData = bgmList.Find(bgm => bgm.id == bgmId);
         if (bgmData != null && bgmData.bgmState == BGMState.Play)
         {
+            bgmData.bgmState = BGMState.Pause;
             return BGMState.Pause;
         }
         else
         {
+            if (bgmData.bgmState == BGMState.Play) { Debug.LogWarning($"ID {bgmId} のBGMのBGMStateはPlayのままです"); }
+            if (bgmData != null) { Debug.LogWarning($"ID {bgmId} のBGMはnull"); }
+
             Debug.LogWarning($"ID {bgmId} のBGMが見つかりません。BGMStateをPlayの状態に維持します。(ChangeFromPlayToPauseBGM)");
             return BGMState.Play;
+        }
+    }
+
+    /// <summary>
+    /// BGMの状態をPauseからPlayに変更するメソッド
+    /// </summary>
+    /// <param name="bgmId">対象BGMのid</param>
+    /// <returns>trueならBGMStateをPlay / falseならBGMStateをPause</returns>
+    public BGMState ChangeFromPauseToPlayBGM(int bgmId)
+    {
+        if (bgmList == null || bgmList.Count == 0)
+        {
+            Debug.LogWarning("SO_BGM の bgmList が空またはnullです。BGMStateをPauseの状態に維持します。");
+            return BGMState.Pause;
+        }
+
+        BGMData bgmData = bgmList.Find(bgm => bgm.id == bgmId);
+        if (bgmData != null && bgmData.bgmState == BGMState.Pause)
+        {
+            bgmData.bgmState = BGMState.Play;
+            return BGMState.Play;
+        }
+        else
+        {
+            Debug.LogWarning($"ID {bgmId} のBGMが見つかりません。BGMStateをPauseの状態に維持します。");
+            return BGMState.Pause;
         }
     }
 
@@ -171,6 +210,7 @@ public class SO_BGM : ScriptableObject
         BGMData bgmData = bgmList.Find(bgm => bgm.id == bgmId);
         if (bgmData != null && bgmData.bgmState == BGMState.Play)
         {
+            bgmData.bgmState = BGMState.Stop;
             return BGMState.Stop;
         }
         else

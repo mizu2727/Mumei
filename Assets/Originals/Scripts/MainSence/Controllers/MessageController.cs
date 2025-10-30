@@ -75,12 +75,11 @@ public class MessageController : MonoBehaviour
     [Header("ブラックアウトフラグ(ヒエラルキー上からの編集禁止)")]
     public bool isBlackOutPanel = false;
 
+    [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_BGM sO_BGM;
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
-
-    //[Header("noiseSE(ヒエラルキー上からアタッチする必要がある)")]
-    //[SerializeField] private AudioClip noiseSE;
 
     /// <summary>
     /// noiseSE用audioSourceSE
@@ -166,7 +165,7 @@ public class MessageController : MonoBehaviour
         }
 
         //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
-        audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+        audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
     }
 
     /// <summary>
@@ -225,7 +224,6 @@ public class MessageController : MonoBehaviour
     {
         //MusicControllerのAwake関数の処理後に呼ばれるようにするため、
         //Start関数内でAudioSourceを取得する
-        //audioSourceSE = MusicController.Instance.GetAudioSource();
 
         //AudioSourceの初期化
         InitializeAudioSource();
@@ -383,9 +381,11 @@ public class MessageController : MonoBehaviour
                         await UniTask.Delay(TimeSpan.FromSeconds(1));
 
                         //BGMを一時停止してノイズを流す
-                        MusicController.Instance.PauseBGM();
+                        MusicController.instance.PauseBGM(HomeController.instance.GetAudioSourceBGM(),
+                            sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
+
                         audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
-                        MusicController.Instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
+                        MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
                         //文字の色を赤色に設定
                         messageText.color = Color.red;
@@ -397,9 +397,10 @@ public class MessageController : MonoBehaviour
                         await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
                         //BGMの一時停止を解除
-                        MusicController.Instance.UnPauseBGM();
+                        MusicController.instance.UnPauseBGM(HomeController.instance.GetAudioSourceBGM(),
+                            sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
 
-                        messageText.text = "";
+                    messageText.text = "";
                         number++;
 
                         showTalkMessage.ShowGameTalkMessage(number);
@@ -519,17 +520,18 @@ public class MessageController : MonoBehaviour
                         number++;
 
                         //BGMを止める
-                        MusicController.Instance.StopBGM();
+                        MusicController.instance.StopBGM(HomeController.instance.GetAudioSourceBGM(),
+                            sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
 
                         //画面ブラックアウト
                         isBlackOutPanel = true;
-                        ViewBlackOutPanel();
+                            ViewBlackOutPanel();
 
                         await UniTask.Delay(TimeSpan.FromSeconds(1));
 
                         //ノイズを流す
                         audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
-                        MusicController.Instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
+                        MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
                         //文字の色を赤色に設定
                         messageText.color = Color.red;
@@ -619,7 +621,7 @@ public class MessageController : MonoBehaviour
 
                     //ノイズを流す
                     audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
-                    MusicController.Instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
+                    MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
                     //文字の色を赤色に設定
                     messageText.color = Color.red;

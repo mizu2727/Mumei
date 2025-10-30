@@ -173,6 +173,24 @@ public class PauseController : MonoBehaviour
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
+    /// <summary>
+    /// HomeScene
+    /// </summary>
+    private const string homeScene = "HomeScene";
+
+    /// <summary>
+    /// Stage01
+    /// </summary>
+    private const string stage01 = "Stage01";
+
+
+    [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_BGM sO_BGM;
+
+    /// <summary>
+    /// 現在再生されているBGMのID
+    /// </summary>
+    private int nowPlayBGMId = 99999; 
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -202,6 +220,23 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private CancellationTokenSource cts;
 
+    /// <summary>
+    /// 現在再生されているBGMのIDを取得
+    /// </summary>
+    /// <returns>現在再生されているBGMのID</returns>
+    public int GetNowPlayBGMId() 
+    {
+        return nowPlayBGMId;
+    }
+
+    /// <summary>
+    /// 対象のBGMに設定する
+    /// </summary>
+    /// <param name="subjectPlayBGMId_">対象のBGM</param>
+    public void SetNowPlayBGMId(int subjectPlayBGMId_) 
+    {
+        nowPlayBGMId = subjectPlayBGMId_;
+    }
 
     private void Awake()
     {
@@ -303,10 +338,10 @@ public class PauseController : MonoBehaviour
 
     private void Start()
     {
-        audioSourceSE = MusicController.Instance.GetAudioSource();
+        audioSourceSE = MusicController.instance.GetAudioSource();
 
         //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
-        audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+        audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
 
         //パネルを初期状態で非表示にする
         //フラグ値を初期化
@@ -420,13 +455,45 @@ public class PauseController : MonoBehaviour
         //マウスカーソルを表示し、固定を解除
         ViewMouseCorsor();
 
+        //現在のシーン名を取得し、その名前によって一時停止するBGMを決める
+        switch (SceneManager.GetActiveScene().name) 
+        {
+            //HomeScene
+            case homeScene:
+                //HomeSceneBGMを一時停止
+                MusicController.instance.PauseBGM(HomeController.instance.GetAudioSourceBGM(),
+                    sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
+                break;
+
+            //Stage01
+            case stage01:
+                //現在流れているBGMがステージBGMなのか敵に追われているBGMなのかを判別する
+                if (nowPlayBGMId == EnemyBGMController.instance.GetChasePlayerBGMId())
+                {
+                    //プレイヤーが敵に追われる際のBGMを一時停止
+                    MusicController.instance.PauseBGM(EnemyBGMController.instance.GetAudioSourceBGM(),
+                        sO_BGM.GetBGMClip(EnemyBGMController.instance.GetChasePlayerBGMId()), EnemyBGMController.instance.GetChasePlayerBGMId());
+                }
+                else 
+                {
+                    //Stage01BGMを一時停止
+                    MusicController.instance.PauseBGM(Stage01Controller.instance.GetAudioSourceBGM(),
+                        sO_BGM.GetBGMClip(Stage01Controller.instance.GetStage01BGMId()), Stage01Controller.instance.GetStage01BGMId());
+                }
+                break;
+
+            default:
+                Debug.LogWarning("その他のシーン名");
+                break;
+        };
+
         //BGM一時停止
-        MusicController.Instance.PauseBGM();
+        //MusicController.instance.PauseBGM();
 
         //再生中の効果音を全て一時停止し、ボタンSEを流す
         if (Player.instance != null && Player.instance.audioSourceSE != null)
         {
-            MusicController.Instance.PauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
+            MusicController.instance.PauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
         }
         else
         {
@@ -437,11 +504,11 @@ public class PauseController : MonoBehaviour
         {
             if (baseEnemy[i] != null && baseEnemy[i].audioSourceSE != null)
             {
-                MusicController.Instance.PauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
+                MusicController.instance.PauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
             }
         }
 
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
     }
 
     /// <summary>
@@ -464,15 +531,48 @@ public class PauseController : MonoBehaviour
             HideMouseCorsor();
 
             //ボタンSEを流し、インゲーム内のBGM・SEの一時停止を全て解除する
-            MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
-            MusicController.Instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
+            MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+            MusicController.instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
 
             for (int i = 0; i < baseEnemy.Length; i++)
             {
-                if (baseEnemy[i] != null) MusicController.Instance.UnPauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
+                if (baseEnemy[i] != null) MusicController.instance.UnPauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
             }
 
-            MusicController.Instance.UnPauseBGM();
+
+            //現在のシーン名を取得し、その名前によって一時停止解除するBGMを決める
+            switch (SceneManager.GetActiveScene().name)
+            {
+                //HomeScene
+                case homeScene:
+                    //HomeSceneBGMを一時停止解除
+                    MusicController.instance.UnPauseBGM(HomeController.instance.GetAudioSourceBGM(),
+                        sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
+                    break;
+
+                //Stage01
+                case stage01:
+                    //現在一時停止しているBGMがステージBGMなのか敵に追われているBGMなのかを判別する
+                    if (nowPlayBGMId == EnemyBGMController.instance.GetChasePlayerBGMId())
+                    {
+                        //プレイヤーが敵に追われる際のBGMを一時停止解除
+                        MusicController.instance.UnPauseBGM(EnemyBGMController.instance.GetAudioSourceBGM(),
+                            sO_BGM.GetBGMClip(EnemyBGMController.instance.GetChasePlayerBGMId()), EnemyBGMController.instance.GetChasePlayerBGMId());
+                    }
+                    else
+                    {
+                        //Stage01BGMを一時停止解除
+                        MusicController.instance.UnPauseBGM(Stage01Controller.instance.GetAudioSourceBGM(),
+                            sO_BGM.GetBGMClip(Stage01Controller.instance.GetStage01BGMId()), Stage01Controller.instance.GetStage01BGMId());
+                    }
+                    break;
+
+                default:
+                    Debug.LogWarning("その他のシーン名(UnPauseBGM)");
+                    break;
+            };
+
+            //MusicController.instance.UnPauseBGM();
         }
         
     }
@@ -483,7 +583,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedViewItemButton()
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //ポーズパネルを非表示にし、アイテム確認パネルを表示する
         isPause = false;
@@ -500,7 +600,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedOptionButton()
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //ポーズパネルを非表示にし、オプションパネルを表示する
         isOptionPanel = true;
@@ -516,7 +616,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedMouseSensitivityButton() 
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //他の設定パネルを非表示にする
         //音量調整設定パネルを非表示
@@ -534,7 +634,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedAudioAdjustmentButton() 
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //他の設定パネルを非表示にする
         //旋回速度設定パネルを非表示にする
@@ -554,7 +654,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedFromOptionToPauseButton()
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //ポーズパネルを表示
         isPause = true;
@@ -579,7 +679,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedReturnToTitleButton()
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //ポーズパネルを非表示にし、タイトルへ戻るパネルを表示する
         isReturnToTitlePanel = true;
@@ -595,10 +695,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedYesButton()
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
-
-        //BGM停止
-        MusicController.Instance.StopBGM();
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //タイトル画面へ遷移
         GameController.instance.ReturnToTitle();
@@ -610,7 +707,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedNoButton()
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //ポーズパネルを表示にし、タイトルへ戻るパネルを非表示する
         isPause = true;
@@ -627,7 +724,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedViewDocumentButton() 
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //ドキュメントパネルを表示
         isDocumentPanel = true;
@@ -644,7 +741,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedViewMysteryItemButton()
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         // ミステリーアイテムパネルを表示
         isMysteryItemPanel = true;
@@ -674,7 +771,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedReturnToPausePanel()
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //ポーズ画面を表示
         pausePanel.transform.SetAsLastSibling();
@@ -700,7 +797,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedDocumentNameButton() 
     {
         //ドキュメント名称ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(documentNameButtonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(documentNameButtonSEid));
 
         //ドキュメントの説明を表示
         isDocumentExplanationPanel = true;
@@ -978,7 +1075,7 @@ public class PauseController : MonoBehaviour
     public void OnClickedMysteryItemNameButton(int index)
     {
         //ボタンSE
-        MusicController.Instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
         //チュートリアル用ミステリーアイテムを全て入手した場合
         if (isGetHammer_Tutorial && isGetRope_Tutorial)

@@ -28,7 +28,7 @@ public class TitleController : MonoBehaviour
     /// <summary>
     /// タイトルBGMのID
     /// </summary>
-    private readonly int titleBGMid = 0;
+    private readonly int titleBGMId = 0;
 
     private void OnEnable()
     {
@@ -77,10 +77,10 @@ public class TitleController : MonoBehaviour
     private void InitializeAudioSource()
     {
         //audioSourceBGMを設定
-        audioSourceBGM = MusicController.Instance.GetAudioSource();
+        audioSourceBGM = MusicController.instance.GetAudioSource();
 
         //MusicControllerで設定されているBGM用のAudioMixerGroupを設定する
-        audioSourceBGM.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupBGM;
+        audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
     }
 
     private void Awake()
@@ -101,7 +101,7 @@ public class TitleController : MonoBehaviour
     private void Start()
     {
         //タイトルBGMを再生
-        MusicController.Instance.PlayNoLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(titleBGMid), titleBGMid);
+        MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(titleBGMId), titleBGMId);
     }
 
     /// <summary>

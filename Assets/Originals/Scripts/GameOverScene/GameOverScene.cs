@@ -69,10 +69,10 @@ public class GameOverScene : MonoBehaviour
     /// </summary>
     private void InitializeAudioSource() 
     {
-        audioSourceBGM = MusicController.Instance.GetAudioSource();
+        audioSourceBGM = MusicController.instance.GetAudioSource();
 
         //MusicControllerで設定されているBGM用のAudioMixerGroupを設定する
-        audioSourceBGM.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupBGM;
+        audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
     }
 
 
@@ -82,7 +82,7 @@ public class GameOverScene : MonoBehaviour
         GameController.instance.gameModeStatus = GameModeStatus.GameOver;
 
         //ゲームオーバーBGM再生
-        MusicController.Instance.PlayNoLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(gameOverBGMId), gameOverBGMId);
+        MusicController.instance.PlayNoLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(gameOverBGMId), gameOverBGMId);
 
         //ゲームオーバーUI表示
         ViewGameOverUI();

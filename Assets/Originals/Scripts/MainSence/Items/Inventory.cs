@@ -227,7 +227,7 @@ public class Inventory : MonoBehaviour
         }
 
         //MusicController‚Åİ’è‚³‚ê‚Ä‚¢‚éSE—p‚ÌAudioMixerGroup‚ğİ’è‚·‚é
-        audioSourceInventorySE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+        audioSourceInventorySE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
     }
 
     private void Awake()

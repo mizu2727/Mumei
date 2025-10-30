@@ -229,7 +229,7 @@ public class PlayerInteract : MonoBehaviour
         }
 
         //MusicController‚Åİ’è‚³‚ê‚Ä‚¢‚éSE—p‚ÌAudioMixerGroup‚ğİ’è‚·‚é
-        audioSourceItemSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+        audioSourceItemSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
     }
 
     private void Update()

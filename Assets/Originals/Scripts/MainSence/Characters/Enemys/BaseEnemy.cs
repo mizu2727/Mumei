@@ -345,9 +345,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private void InitializeAudioSource()
     {
-        if (MusicController.Instance != null)
+        if (MusicController.instance != null)
         {
-            audioSourceSE = MusicController.Instance.GetAudioSource();
+            audioSourceSE = MusicController.instance.GetAudioSource();
             if (audioSourceSE != null)
             {
                 audioSourceSE.playOnAwake = false;
@@ -359,17 +359,17 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
         else
         {
-            Debug.LogError($"[{gameObject.name}] MusicController.Instanceが見つかりません。");
+            Debug.LogError($"[{gameObject.name}] MusicController.instanceが見つかりません。");
         }
 
         audioSourceFindPlayerSE = gameObject.AddComponent<AudioSource>();
 
         //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
-        audioSourceSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
-        audioSourceFindPlayerSE.outputAudioMixerGroup = MusicController.Instance.audioMixerGroupSE;
+        audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
+        audioSourceFindPlayerSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
 
         //マスター音量を同期
-        masterSEVolume = MusicController.Instance.sESlider.value;
+        masterSEVolume = MusicController.instance.sESlider.value;
     }
 
     /// <summary>
@@ -802,12 +802,18 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         isAlertMode = true;
                         lastKnownPlayerPosition = targetPoint.position;
 
-                        //敵に追われている時のBGMを再生
+                        //TODO:現在のシーン名を取得し、その名前によって停止するステージBGMを決め、
+                        //敵に追われている時のBGMを再生したい。
+                        //その後、PauseController.instance.nowPlayBGMIdを敵に追われている時のBGMIDにする
                         //(既に敵に追われている時のBGMを再生している場合、この処理をスキップしたい)
-                        MusicController.Instance.audioClipnum = 0;
-                        MusicController.Instance.StopBGM();
-                        MusicController.Instance.audioClipnum = 1;
-                        MusicController.Instance.PlayBGM();
+
+                        //MusicController.instance.audioClipnum = 0;
+                        //MusicController.instance.StopBGM();
+                        //MusicController.instance.audioClipnum = 1;
+                        //MusicController.instance.PlayBGM();
+
+                        //ステージBGMからプレイヤーを追従するBGMへ切り替える
+                        EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
 
                         //画面を赤く表示
                         playerFoundPanel.SetActive(true);
@@ -855,10 +861,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                     //敵に追われている時のBGMを再生
                     //(既に敵に追われている時のBGMを再生している場合、この処理をスキップしたい)
-                    MusicController.Instance.audioClipnum = 0;
-                    MusicController.Instance.StopBGM();
-                    MusicController.Instance.audioClipnum = 1;
-                    MusicController.Instance.PlayBGM();
+                    //MusicController.instance.audioClipnum = 0;
+                    //MusicController.instance.StopBGM();
+                    //MusicController.instance.audioClipnum = 1;
+                    //MusicController.instance.PlayBGM();
+
+                    //ステージBGMからプレイヤーを追従するBGMへ切り替える
+                    EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
 
                     //画面を赤く表示
                     playerFoundPanel.SetActive(true);
@@ -876,10 +885,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     playerFoundPanel.SetActive(false);
 
                     //敵に追われている時のBGMを停止
-                    MusicController.Instance.audioClipnum = 1;
-                    MusicController.Instance.StopBGM();
-                    MusicController.Instance.audioClipnum = 0;
-                    MusicController.Instance.PlayBGM();
+                    //MusicController.instance.audioClipnum = 1;
+                    //MusicController.instance.StopBGM();
+                    //MusicController.instance.audioClipnum = 0;
+                    //MusicController.instance.PlayBGM();
+
+                    //プレイヤーを追従するBGMからステージBGMへ切り替える
+                    EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
 
                     Debug.Log("警戒圏内状態から通常徘徊状態へ");
                 }
@@ -958,10 +970,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     isAlertMode = false;
 
                     //敵に追われている時のBGMを停止
-                    MusicController.Instance.audioClipnum = 1;
-                    MusicController.Instance.StopBGM();
-                    MusicController.Instance.audioClipnum = 0;
-                    MusicController.Instance.PlayBGM();
+                    //MusicController.instance.audioClipnum = 1;
+                    //MusicController.instance.StopBGM();
+                    //MusicController.instance.audioClipnum = 0;
+                    //MusicController.instance.PlayBGM();
+
+                    //プレイヤーを追従するBGMからステージBGMへ切り替える
+                    EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
 
                     Debug.Log("調査状態から通常徘徊状態へ");
                 }
