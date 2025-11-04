@@ -65,7 +65,7 @@ public class EnemyBGMController : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
 
         //BGM音量変更時のイベント登録
-        MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
+        //MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
     }
 
     private void OnDisable()
@@ -83,6 +83,7 @@ public class EnemyBGMController : MonoBehaviour
     /// <param name="volume">音量</param>
     private void UpdateBGMVolume(float volume)
     {
+        //NullReferenceExceptionを防ぐ用
         if (audioSourceBGM == null)
         {
             Debug.LogWarning("EnemyBGMController: audioSourceBGM が未設定のため音量変更をスキップしました。");
@@ -112,6 +113,9 @@ public class EnemyBGMController : MonoBehaviour
 
         //MusicControllerで設定されているBGM用のAudioMixerGroupを設定する
         audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
+
+        //BGM音量変更時のイベント登録
+        MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
     }
 
     private void Awake()

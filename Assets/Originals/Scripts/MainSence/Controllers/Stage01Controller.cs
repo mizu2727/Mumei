@@ -47,7 +47,7 @@ public class Stage01Controller : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
 
         //BGM音量変更時のイベント登録
-        MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
+        //MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
     }
 
     private void OnDisable()
@@ -95,6 +95,9 @@ public class Stage01Controller : MonoBehaviour
 
         //MusicControllerで設定されているBGM用のAudioMixerGroupを設定する
         audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
+
+        //BGM音量変更時のイベント登録
+        MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
     }
 
     private void Awake()
@@ -129,4 +132,5 @@ public class Stage01Controller : MonoBehaviour
         //現在再生中のBGMをStage01BGMに設定する
         PauseController.instance.SetNowPlayBGMId(stage01BGMId);
     }
+
 }
