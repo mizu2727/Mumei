@@ -802,16 +802,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         isAlertMode = true;
                         lastKnownPlayerPosition = targetPoint.position;
 
-                        //TODO:現在のシーン名を取得し、その名前によって停止するステージBGMを決め、
-                        //敵に追われている時のBGMを再生したい。
-                        //その後、PauseController.instance.nowPlayBGMIdを敵に追われている時のBGMIDにする
-                        //(既に敵に追われている時のBGMを再生している場合、この処理をスキップしたい)
-
-                        //MusicController.instance.audioClipnum = 0;
-                        //MusicController.instance.StopBGM();
-                        //MusicController.instance.audioClipnum = 1;
-                        //MusicController.instance.PlayBGM();
-
                         //ステージBGMからプレイヤーを追従するBGMへ切り替える
                         EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
 
@@ -859,13 +849,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
 
-                    //敵に追われている時のBGMを再生
-                    //(既に敵に追われている時のBGMを再生している場合、この処理をスキップしたい)
-                    //MusicController.instance.audioClipnum = 0;
-                    //MusicController.instance.StopBGM();
-                    //MusicController.instance.audioClipnum = 1;
-                    //MusicController.instance.PlayBGM();
-
                     //ステージBGMからプレイヤーを追従するBGMへ切り替える
                     EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
 
@@ -883,12 +866,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                     //画面の色を元に戻す
                     playerFoundPanel.SetActive(false);
-
-                    //敵に追われている時のBGMを停止
-                    //MusicController.instance.audioClipnum = 1;
-                    //MusicController.instance.StopBGM();
-                    //MusicController.instance.audioClipnum = 0;
-                    //MusicController.instance.PlayBGM();
 
                     //プレイヤーを追従するBGMからステージBGMへ切り替える
                     EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
@@ -968,12 +945,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     //調査時間が経過した場合、通常徘徊状態へ移行
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
-
-                    //敵に追われている時のBGMを停止
-                    //MusicController.instance.audioClipnum = 1;
-                    //MusicController.instance.StopBGM();
-                    //MusicController.instance.audioClipnum = 0;
-                    //MusicController.instance.PlayBGM();
 
                     //プレイヤーを追従するBGMからステージBGMへ切り替える
                     EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
