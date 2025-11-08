@@ -100,6 +100,9 @@ public class TitleController : MonoBehaviour
 
     private void Start()
     {
+        //AudioSource‚Ì‰Šú‰»
+        InitializeAudioSource();
+
         //ƒ^ƒCƒgƒ‹BGM‚ğÄ¶
         MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(titleBGMId), titleBGMId);
     }
