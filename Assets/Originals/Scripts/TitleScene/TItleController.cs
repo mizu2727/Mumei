@@ -11,6 +11,11 @@ using UnityEditor;
 
 public class TitleController : MonoBehaviour
 {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
+    public static TitleController instance;
+
     [Header("タイトル画面のCanvas")]
     [SerializeField] private Canvas titlesCanvas;
 
@@ -94,8 +99,6 @@ public class TitleController : MonoBehaviour
 
         //ゲームモードステータスをStopInGameに変更
         GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);
-
-        
     }
 
     private void Start()
