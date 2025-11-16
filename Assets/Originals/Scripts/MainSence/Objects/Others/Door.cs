@@ -125,7 +125,7 @@ public class Door : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Player.instanceが見つかりません。シーンにPlayerオブジェクトが存在することを確認してください。");
+            Debug.LogWarning("Player.instanceが見つかりません。シーンにPlayerオブジェクトが存在することを確認してください。");
         }
     }
 

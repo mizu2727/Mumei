@@ -519,12 +519,12 @@ public class MessageController : MonoBehaviour
                         messageText.text = "";
                         number++;
 
-                        //BGMを止める
-                        MusicController.instance.StopBGM(HomeController.instance.GetAudioSourceBGM(),
-                            sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
+                    //BGMを止める
+                    MusicController.instance.StopBGM(GameClearController.instance.GetAudioSourceBGM(),
+                        sO_BGM.GetBGMClip(GameClearController.instance.GetGameClearSceneBGMId()), GameClearController.instance.GetGameClearSceneBGMId());
 
-                        //画面ブラックアウト
-                        isBlackOutPanel = true;
+                    //画面ブラックアウト
+                    isBlackOutPanel = true;
                             ViewBlackOutPanel();
 
                         await UniTask.Delay(TimeSpan.FromSeconds(1));

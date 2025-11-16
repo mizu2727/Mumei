@@ -18,6 +18,24 @@ public class GameClearController : MonoBehaviour
     [Header("XのURL")]
     [SerializeField] private string X_URL = "https://x.com/Tomanegi0707";
 
+    [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_BGM sO_BGM;
+
+    /// <summary>
+    /// audioSourceBGM
+    /// </summary>
+    private AudioSource audioSourceBGM;
+
+    /// <summary>
+    /// audioClipBGM
+    /// </summary>
+    private AudioClip audioClipBGM;
+
+    /// <summary>
+    /// GameClearSceneBGMのID
+    /// </summary>
+    private readonly int gameClearSceneBGMId = 3;
+
     private void Awake()
     {
         //インスタンス生成
@@ -27,6 +45,92 @@ public class GameClearController : MonoBehaviour
             DontDestroyOnLoad(this.gameObject);
         }
         else Destroy(this.gameObject);
+
+        //全てのBGMの状態をStopに変更
+        sO_BGM.StopAllBGM();
+    }
+
+    /// <summary>
+    /// AudioSourceBGMを取得する
+    /// </summary>
+    /// <returns>AudioSourceBGM</returns>
+    public AudioSource GetAudioSourceBGM()
+    {
+        return audioSourceBGM;
+    }
+
+    /// <summary>
+    /// AudioClipBGMを取得する
+    /// </summary>
+    /// <returns>AudioClipBGM</returns>
+    public AudioClip GetAudioClipBGM()
+    {
+        return audioClipBGM;
+    }
+
+    /// <summary>
+    /// HomeSceneBGMのIDを取得する
+    /// </summary>
+    /// <returns>HomeSceneBGMのID</returns>
+    public int GetGameClearSceneBGMId()
+    {
+        return gameClearSceneBGMId;
+    }
+
+    private void OnEnable()
+    {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //BGM音量変更時のイベント登録
+        MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
+    }
+
+    private void OnDisable()
+    {
+        //シーン遷移時に設定するための関数登録解除
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnBGMVolumeChangedEvent -= UpdateBGMVolume;
+    }
+
+    /// <summary>
+    /// BGM音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateBGMVolume(float volume)
+    {
+        if (audioSourceBGM != null)
+        {
+            audioSourceBGM.volume = volume;
+        }
+    }
+
+    /// <summary>
+    /// シーン遷移時に処理を呼び出す関数
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="mode"></param>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        //AudioSourceの初期化
+        InitializeAudioSource();
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        //audioSourceBGMを設定
+        audioSourceBGM = MusicController.instance.GetAudioSource();
+
+        //audioClipBGMを設定
+        audioClipBGM = sO_BGM.GetBGMClip(gameClearSceneBGMId);
+
+        //MusicControllerで設定されているBGM用のAudioMixerGroupを設定する
+        audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
     }
 
 
@@ -34,6 +138,9 @@ public class GameClearController : MonoBehaviour
     {
         GameController.instance.SetGameModeStatus(GameModeStatus.Story);
         HiddenGameClearUI();
+
+        //ゲームクリアシーンBGMを再生
+        MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(gameClearSceneBGMId), gameClearSceneBGMId);
     }
 
     /// <summary>
