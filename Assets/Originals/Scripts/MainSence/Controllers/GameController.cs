@@ -66,6 +66,10 @@ public class GameController : MonoBehaviour
     [SerializeField] public Text useItemExplanationText;
 
 
+    [Header("ブラックアウト(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] public GameObject blackOutPanel;
+
+
     [Header("セーブ・ロードしたい変数関連")]
     [Header("セーブするプレイヤー名(ヒエラルキー上からの編集禁止)")]
     public static string playerName;

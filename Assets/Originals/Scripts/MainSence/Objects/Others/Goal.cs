@@ -172,7 +172,13 @@ public class Goal : MonoBehaviour
         MessageController.instance.ResetMessage();
 
         //チュートリアルの場合、チュートリアル終了の旨のメッセージを表示する
-        if (GameController.instance.isTutorialGoalFlag) await MessageController.instance.ShowSystemMessage(14);
+        if (GameController.instance.isTutorialGoalFlag)
+        {
+            Debug.Log("ShowSystemMessage(14)へ");
+            await MessageController.instance.ShowSystemMessage(14); 
+        }
+
+        Debug.Log("ゴールパネルを閉じた");
     }
 
     /// <summary>

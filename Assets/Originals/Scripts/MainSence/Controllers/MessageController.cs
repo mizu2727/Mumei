@@ -28,9 +28,6 @@ public class MessageController : MonoBehaviour
     [Header("名前確認テキスト(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private Text CheckInputNameText;
 
-    [Header("ブラックアウト(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] private GameObject blackOutPanel;
-
     [Header("メッセージを書くスピード。数値が小さいほど素早く書く")]
     [SerializeField] private float writeSpeed = 0;
 
@@ -254,12 +251,12 @@ public class MessageController : MonoBehaviour
         if (isBlackOutPanel)
         {
             //表示
-            blackOutPanel.SetActive(true);
+            GameController.instance.blackOutPanel.SetActive(true);
         }
         else
         {
             //非表示
-            blackOutPanel.SetActive(false);
+            GameController.instance.blackOutPanel.SetActive(false);
         }
     }
 
@@ -707,6 +704,8 @@ public class MessageController : MonoBehaviour
                     //チュートリアル用ゴールの閲覧終了したらメッセージを勧める
                     await UniTask.WaitUntil(() => Time.timeScale == 1
                     && GameController.instance.isTutorialGoalFlag);
+
+                    Debug.Log("ShowSystemMessage(14)から");
 
                     
                     GameController.instance.isTutorialGoalFlag = false;
