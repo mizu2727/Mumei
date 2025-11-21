@@ -31,6 +31,10 @@ public class HomeController : MonoBehaviour
     [Header("タイトルへ戻るボタン(ヒエラルキー上からアタッチすること(バグNo.Er001への一時的な措置))")]
     [SerializeField] private GameObject returnToTitlePanel;
 
+
+    [Header("wall_Tutorial(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] public GameObject wall_Tutorial;
+
     /// <summary>
     /// AudioSourceBGMを取得する
     /// </summary>

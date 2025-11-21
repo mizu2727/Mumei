@@ -7,7 +7,9 @@ using UnityEngine.UI;
 using static GameController;
 using static UnityEngine.Rendering.DebugUI;
 
-
+/// <summary>
+/// メッセージ管理クラス
+/// </summary>
 public class MessageController : MonoBehaviour
 {
     /// <summary>
@@ -60,8 +62,6 @@ public class MessageController : MonoBehaviour
     [Header("ゴール(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public Goal goal;
 
-    [Header("wall_Tutorial(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] private GameObject wall_Tutorial;
 
     [Header("インベントリメッセージ(Prefabをアタッチ)")]
     [SerializeField] private InventoryMessage inventoryMessage;
@@ -350,7 +350,7 @@ public class MessageController : MonoBehaviour
             Write(talkMessage.talkMessage[number].message);
 
             //チュートリアルの壁を消してゴールオブジェクトが見えるようにする
-            if (wall_Tutorial != null && number == 47) wall_Tutorial.SetActive(false);
+            if (HomeController.instance.wall_Tutorial != null && number == 47) HomeController.instance.wall_Tutorial.SetActive(false);
 
             await ShowNextMessage();
 
@@ -705,8 +705,6 @@ public class MessageController : MonoBehaviour
                     await UniTask.WaitUntil(() => Time.timeScale == 1
                     && GameController.instance.isTutorialGoalFlag);
 
-                    Debug.Log("ShowSystemMessage(14)から");
-
                     
                     GameController.instance.isTutorialGoalFlag = false;
 
@@ -722,7 +720,7 @@ public class MessageController : MonoBehaviour
                     await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
                     //壁を表示
-                    wall_Tutorial.SetActive(true);
+                    HomeController.instance.wall_Tutorial.SetActive(true);
 
                     //プレイヤー・カナメをワープ
                     Kaname.instance.WarpPostion(1, 0.505f, 2);
