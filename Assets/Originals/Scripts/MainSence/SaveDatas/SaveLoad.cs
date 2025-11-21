@@ -144,6 +144,13 @@ public class SaveLoad : MonoBehaviour
             Debug.Log("PlayerUserDataを初期化しました");
         }
 
+        // 特定のキーのデータを削除する場合
+        if (PlayerPrefs.HasKey("SceneTransitionPlayerUserData"))
+        {
+            PlayerPrefs.DeleteKey("SceneTransitionPlayerUserData");
+            Debug.Log("SceneTransitionPlayerUserDataを初期化しました");
+        }
+
         // 変更を保存する
         PlayerPrefs.Save();
     }

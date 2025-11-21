@@ -43,7 +43,7 @@ public class GameController : MonoBehaviour
     [SerializeField] public Slider mouseSensitivitySlider;
 
     [Header("マウス/ゲームパッドの右スティックの感度最大値(ヒエラルキー上からの編集禁止)")]
-    public float maxLookSensitivity = 100f;
+    public float maxLookSensitivity = 10f;
 
 
     [Header("Playerの使用アイテムインベントリパネル関連")]
@@ -78,7 +78,7 @@ public class GameController : MonoBehaviour
     public static int playCount = 0;
 
     [Header("マウス/ゲームパッドの右スティックの感度")]
-    public static float lookSensitivity = 50f;
+    public static float lookSensitivity = 5f;
 
     [Header("セーブするBGM音量")]
     public static float bGMVolume = 1;
@@ -188,6 +188,9 @@ public class GameController : MonoBehaviour
 
         //SE音量のSliderの最大値を設定
         if (MusicController.instance.sESlider) MusicController.instance.sESlider.maxValue = MusicController.instance.GetMaxSESliderVolume();
+
+        //リセット(デバッグ用)
+        //CallRestDataMethod();
     }
 
     private void Update()
