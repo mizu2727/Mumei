@@ -42,8 +42,10 @@ public class GameController : MonoBehaviour
     [Header("PlayerCameraマウス/ゲームパッドの右スティックの旋回速度のSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider mouseSensitivitySlider;
 
-    [Header("マウス/ゲームパッドの右スティックの感度最大値(ヒエラルキー上からの編集禁止)")]
-    public float maxLookSensitivity = 10f;
+    /// <summary>
+    /// マウス/ゲームパッドの右スティックの感度最大値
+    /// </summary>
+    private float maxLookSensitivity = 20f;
 
 
     [Header("Playerの使用アイテムインベントリパネル関連")]
@@ -78,7 +80,7 @@ public class GameController : MonoBehaviour
     public static int playCount = 0;
 
     [Header("マウス/ゲームパッドの右スティックの感度")]
-    public static float lookSensitivity = 5f;
+    public static float lookSensitivity = 10f;
 
     [Header("セーブするBGM音量")]
     public static float bGMVolume = 1;

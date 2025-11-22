@@ -4,8 +4,13 @@ using Cursor = UnityEngine.Cursor;
 [RequireComponent(typeof(CharacterController))]
 public class FirstPersonController : MonoBehaviour
 {
+    /// <summary>
+    /// 2025/11/22変更後の設定値：20f
+    /// ------------------------------
+    /// 初期設定値：100f
+    /// </summary>
     [SerializeField]
-    private float m_MouseSensitivity = 100f;
+    private float m_MouseSensitivity = 20f;
     [SerializeField]
     private float m_MovementSpeed = 5f;
     [SerializeField]
