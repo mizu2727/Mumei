@@ -252,18 +252,25 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] private float runSEPitch = 2f;
 
 
-    [Header("サウンドの距離関連(要調整)")]
-    [Header("音量が最大になる距離")]
-    [SerializeField] private float maxSoundDistance = 10f;
+    /// <summary>
+    /// 音量が最大になる距離
+    /// </summary>
+    private float maxSoundDistance = 10f;
 
-    [Header("音量が最小になる距離")]
-    [SerializeField] private float minSoundDistance = 20f;
+    /// <summary>
+    /// 音量が最小になる距離
+    /// </summary>
+    private float minSoundDistance = 50f;
 
-    [Header("最大音量")]
-    [SerializeField] private float maxVolume = 1.0f;
+    /// <summary>
+    /// 最大音量
+    /// </summary>
+    private const float maxVolume = 1.0f;
 
-    [Header("最小音量")]
-    [SerializeField] private float minVolume = 0.0f;
+    /// <summary>
+    /// 最小音量
+    /// </summary>
+    private const float minVolume = 0.0f;
 
     /// <summary>
     /// マスター音量
