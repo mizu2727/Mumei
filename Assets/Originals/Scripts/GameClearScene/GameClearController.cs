@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static GameController;
 
+/// <summary>
+/// GameClearSceneで使用する管理クラス
+/// </summary>
 public class GameClearController : MonoBehaviour
 {
     /// <summary>
@@ -35,6 +38,12 @@ public class GameClearController : MonoBehaviour
     /// GameClearSceneBGMのID
     /// </summary>
     private readonly int gameClearSceneBGMId = 3;
+
+
+    /// <summary>
+    /// TitleSceneのシーン名
+    /// </summary>
+    const string stringTitleScene = "TitleScene";
 
     private void Awake()
     {
@@ -136,6 +145,10 @@ public class GameClearController : MonoBehaviour
 
     void Start()
     {
+        //シーンステータスをkGameClearSceneに設定
+        GameController.instance.SetViewScene(ViewScene.kGameClearScene);
+
+        //ゲームモードステータスをStoryに変更
         GameController.instance.SetGameModeStatus(GameModeStatus.Story);
         HiddenGameClearUI();
 
@@ -148,7 +161,11 @@ public class GameClearController : MonoBehaviour
     /// </summary>
     public void OnClickedReturnToTitleButton()
     {
-        SceneManager.LoadScene("TitleScene");
+        //シーン遷移時用データを保存
+        GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+        //タイトルへ戻る
+        SceneManager.LoadScene(stringTitleScene);
     }
 
     /// <summary>

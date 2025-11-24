@@ -114,6 +114,81 @@ public class GameController : MonoBehaviour
         GameOver,
     }
 
+    /// <summary>
+    /// 表示するシーンステータスの列挙型
+    /// </summary>
+    public enum ViewScene 
+    {
+        /// <summary>
+        /// なし
+        /// </summary>
+        kNone,
+
+        /// <summary>
+        /// TitleScene
+        /// </summary>
+        kTitleScene,
+
+        /// <summary>
+        /// OpeningScene
+        /// </summary>
+        kOpeningScene,
+
+        /// <summary>
+        /// HomeScene
+        /// </summary>
+        kHomeScene,
+
+        /// <summary>
+        /// GameOverScene
+        /// </summary>
+        kGameOverScene,
+
+        /// <summary>
+        /// GameClearScene
+        /// </summary>
+        kGameClearScene,
+
+        /// <summary>
+        /// Stage01
+        /// </summary>
+        kStage01,
+    }
+
+    /// <summary>
+    /// 表示するシーンステータス
+    /// </summary>
+    private ViewScene viewScene;
+
+    /// <summary>
+    /// TitleSceneのシーン名
+    /// </summary>
+    const string stringTitleScene = "TitleScene";
+
+    /// <summary>
+    /// GameOverSceneのシーン名
+    /// </summary>
+    const string stringGameOverScene = "GameOverScene";
+
+    /// <summary>
+    /// 表示するシーンステータスを取得
+    /// </summary>
+    /// <returns>表示するシーンステータス</returns>
+    public ViewScene GetViewScene() 
+    {
+        return viewScene;
+    }
+
+    /// <summary>
+    /// 表示したいシーンステータスを設定
+    /// </summary>
+    /// <param name="targetScene">表示したいシーンステータス</param>
+    public void SetViewScene(ViewScene targetScene) 
+    {
+        viewScene = targetScene;
+    }
+
+
     private void OnEnable()
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
@@ -135,7 +210,8 @@ public class GameController : MonoBehaviour
         //シーン遷移時用データをロード
         CallLoadSceneTransitionUserDataMethod();
 
-        if (scene.name != "GameOverScene" && mouseSensitivitySlider != null)
+        //ゲームオーバーシーン以外&&マウス感度が存在する場合
+        if (scene.name != stringGameOverScene && mouseSensitivitySlider != null)
         {
             //マウス感度を保存した値に設定
             mouseSensitivitySlider.value = lookSensitivity;
@@ -304,7 +380,8 @@ public class GameController : MonoBehaviour
             //シーン遷移時用データを保存
             CallSaveSceneTransitionUserDataMethod();
 
-            SceneManager.LoadScene("GameOverScene");
+            //ゲームオーバーシーンをロードする
+            SceneManager.LoadScene(stringGameOverScene);
         }
     }
 
@@ -325,7 +402,7 @@ public class GameController : MonoBehaviour
         {
             Player.instance.DestroyPlayer();
         }
-        SceneManager.LoadScene("TitleScene");
+        SceneManager.LoadScene(stringTitleScene);
 
         //PauseControllerを削除
         if (PauseController.instance != null)

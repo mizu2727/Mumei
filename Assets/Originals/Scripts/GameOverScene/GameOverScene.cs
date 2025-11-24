@@ -2,13 +2,26 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static GameController;
 
+/// <summary>
+/// GameOverSceneで使用する管理クラス
+/// </summary>
 public class GameOverScene : MonoBehaviour
 {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
+    public static GameOverScene instance;
+
     [Header("ゲームオーバー画面のCanvas")]
     [SerializeField] private Canvas gameOverCanvas;
 
     [Header("ロードしたいScene名")]
     [SerializeField] private string SceneName;
+
+    /// <summary>
+    /// TitleSceneのシーン名
+    /// </summary>
+    const string stringTitleScene = "TitleScene";
 
     /// <summary>
     /// AudioSource
@@ -78,6 +91,9 @@ public class GameOverScene : MonoBehaviour
 
     void Start()
     {
+        //シーンステータスをkGameOverSceneに設定
+        GameController.instance.SetViewScene(ViewScene.kGameOverScene);
+
         //ゲームオーバーステータスに変更
         GameController.instance.gameModeStatus = GameModeStatus.GameOver;
 
@@ -104,7 +120,13 @@ public class GameOverScene : MonoBehaviour
     /// </summary>
     public void OnClickedRestartGameButton()
     {
+        //ゲームモードをPlayInGameへ変更
         GameController.instance.gameModeStatus = GameModeStatus.PlayInGame;
+
+        //シーン遷移時用データを保存
+        GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+        //ステージのシーンをロードする
         SceneManager.LoadScene(SceneName);
     }
 
@@ -113,6 +135,10 @@ public class GameOverScene : MonoBehaviour
     /// </summary>
     public void OnClickedReturnToTitleButton()
     {
-        SceneManager.LoadScene("TitleScene");
+        //シーン遷移時用データを保存
+        GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+        //TitleSceneをロードする
+        SceneManager.LoadScene(stringTitleScene);
     }
 }

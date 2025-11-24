@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static GameController;
 
+/// <summary>
+/// HomeSceneで使用する管理クラス
+/// </summary>
 public class HomeController : MonoBehaviour
 {
     /// <summary>
@@ -122,16 +125,25 @@ public class HomeController : MonoBehaviour
 
     void Awake()
     {
+        //インスタンスがnullの場合
         if (instance == null)
         {
+            //インスタンス生成
             instance = this;
         }
         else
         {
+            //ゲームオブジェクト破棄
             Destroy(gameObject);
         }
 
+        //シーンステータスをkHomeSceneに設定
+        GameController.instance.SetViewScene(ViewScene.kHomeScene);
+
+        //ゲームモードステータスをStoryに変更
         GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+        //パラメーターをリセット
         GameController.instance.ResetParams();
 
         //全てのBGMの状態をStopに変更

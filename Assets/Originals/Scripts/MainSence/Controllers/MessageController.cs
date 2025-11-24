@@ -633,6 +633,9 @@ public class MessageController : MonoBehaviour
 
                     await UniTask.Delay(TimeSpan.FromSeconds(3));
 
+                    //シーン遷移時用データを保存
+                    GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
                     //HomeSceneへ移動
                     SceneManager.LoadScene("HomeScene");
                     break;
@@ -663,7 +666,7 @@ public class MessageController : MonoBehaviour
                 case 11:
                     //ドキュメント(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
                     await UniTask.WaitUntil(() => GameController.instance.isTutorialNextMessageFlag && !PauseController.instance.isPause 
-                        && !PauseController.instance.isViewItemsPanel && !PauseController.instance.isOptionPanel);
+                        && !PauseController.instance.isViewItemsPanel && !OptionUIController.instance.GetIsOptionPanel());
                     GameController.instance.isTutorialNextMessageFlag = false;
 
                     ResetMessage();
@@ -689,7 +692,7 @@ public class MessageController : MonoBehaviour
                 case 13:
                     //ミステリーアイテム(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
                     await UniTask.WaitUntil(() => !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel 
-                        && PauseController.instance.isViewMysteryItem_Tutorial && !PauseController.instance.isOptionPanel);
+                        && PauseController.instance.isViewMysteryItem_Tutorial && !OptionUIController.instance.GetIsOptionPanel());
                     PauseController.instance.isViewMysteryItem_Tutorial = false;
                     ResetMessage();
 

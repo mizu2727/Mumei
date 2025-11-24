@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static GameController;
 
+/// <summary>
+/// Stage01で使用する管理クラス
+/// </summary>
 public class Stage01Controller : MonoBehaviour
 {
     /// <summary>
@@ -102,18 +106,24 @@ public class Stage01Controller : MonoBehaviour
 
     private void Awake()
     {
+        //インスタンスがnullの場合
         if (instance == null)
         {
+            //インスタンスを生成
             instance = this;
         }
         else
         {
+            //ゲームオブジェクトを破棄
             Destroy(gameObject);
         }
     }
 
     void Start()
     {
+        //シーンステータスをkStage01に設定
+        GameController.instance.SetViewScene(ViewScene.kStage01);
+
         //AudioSourceの初期化
         InitializeAudioSource();
 

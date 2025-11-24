@@ -8,6 +8,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
 
+/// <summary>
+/// ポーズ画面管理クラス
+/// </summary>
 public class PauseController : MonoBehaviour
 {
     /// <summary>
@@ -63,16 +66,6 @@ public class PauseController : MonoBehaviour
     [Header("ミステリーアイテム説明欄パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject mysteryItemExplanationPanel;
 
-
-    [Header("オプションパネル(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private GameObject optionPanel;
-
-    [Header("旋回速度設定パネル(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private GameObject mouseSensitivityPanel;
-
-    [Header("音量調整設定パネル(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private GameObject audioAdjustmentPanel;
-
     [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject returnToTitlePanel;
 
@@ -82,9 +75,6 @@ public class PauseController : MonoBehaviour
 
     [Header("アイテム確認パネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
     public bool isViewItemsPanel = false;
-
-    [Header("オプションパネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
-    public bool isOptionPanel = false;
 
     /// <summary>
     /// 旋回速度設定パネル閲覧フラグ
@@ -357,15 +347,6 @@ public class PauseController : MonoBehaviour
         isMysteryItemPanel = false;
         ChangeViewMysteryItemPanel();
 
-        isOptionPanel = false;
-        ChangeOptionPanel();
-
-        isViewMouseSensitivityPanel = false;
-        ChangeMouseSensitivityPanel();
-
-        isViewAudioAdjustmentPanel = false;
-        ChangeAudioAdjustmentPanel();
-
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
 
@@ -595,85 +576,6 @@ public class PauseController : MonoBehaviour
     }
 
     /// <summary>
-    /// 「オプション」ボタン押下
-    /// </summary>
-    public void OnClickedOptionButton()
-    {
-        //ボタンSE
-        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
-
-        //ポーズパネルを非表示にし、オプションパネルを表示する
-        isOptionPanel = true;
-        ChangeOptionPanel();
-
-        isPause = false;
-        ChangeViewPausePanel();
-    }
-
-    /// <summary>
-    /// 「旋回速度」ボタン押下
-    /// </summary>
-    public void OnClickedMouseSensitivityButton() 
-    {
-        //ボタンSE
-        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
-
-        //他の設定パネルを非表示にする
-        //音量調整設定パネルを非表示
-        isViewAudioAdjustmentPanel = false;
-        ChangeAudioAdjustmentPanel();
-
-        //旋回速度設定パネルを表示
-        isViewMouseSensitivityPanel = true;
-        ChangeMouseSensitivityPanel();
-    }
-
-    /// <summary>
-    /// 「音量調整」ボタン押下
-    /// </summary>
-    public void OnClickedAudioAdjustmentButton() 
-    {
-        //ボタンSE
-        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
-
-        //他の設定パネルを非表示にする
-        //旋回速度設定パネルを非表示にする
-        isViewMouseSensitivityPanel = false;
-        ChangeMouseSensitivityPanel();
-
-
-        //音量調整設定パネルを表示
-        isViewAudioAdjustmentPanel = true;
-        ChangeAudioAdjustmentPanel();
-    }
-
-    /// <summary>
-    /// 「戻る」ボタン押下
-    /// オプション設定からポーズ画面へ戻る
-    /// </summary>
-    public void OnClickedFromOptionToPauseButton()
-    {
-        //ボタンSE
-        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
-
-        //ポーズパネルを表示
-        isPause = true;
-        ChangeViewPausePanel();
-
-        //旋回速度設定パネルを非表示
-        isViewMouseSensitivityPanel = false;
-        ChangeMouseSensitivityPanel();
-
-        //音量調整設定パネルを非表示
-        isViewAudioAdjustmentPanel = false;
-        ChangeAudioAdjustmentPanel();
-
-        //オプションパネルを非表示
-        isOptionPanel = false;
-        ChangeOptionPanel();
-    }
-
-    /// <summary>
     /// 「タイトルへ戻る」ボタン押下
     /// </summary>
     public void OnClickedReturnToTitleButton()
@@ -814,8 +716,9 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// ポーズパネルの表示/非表示
     /// </summary>
-    void ChangeViewPausePanel()
+    public void ChangeViewPausePanel()
     {
+        //フラグ値がtrueの場合
         if (isPause)
         {
             //表示
@@ -843,57 +746,6 @@ public class PauseController : MonoBehaviour
         {
             //非表示
             viewItemsPanel.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// オプションパネルの表示/非表示
-    /// </summary>
-    void ChangeOptionPanel()
-    {
-        if (isOptionPanel)
-        {
-            //表示
-            optionPanel.SetActive(true);
-        }
-        else
-        {
-            //非表示
-            optionPanel.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// 旋回速度設定パネルの表示/非表示
-    /// </summary>
-    void ChangeMouseSensitivityPanel()
-    {
-        if (isViewMouseSensitivityPanel)
-        {
-            //表示
-            mouseSensitivityPanel.SetActive(true);
-        }
-        else
-        {
-            //非表示
-            mouseSensitivityPanel.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// 音量調整設定パネルの表示/非表示
-    /// </summary>
-    void ChangeAudioAdjustmentPanel()
-    {
-        if (isViewAudioAdjustmentPanel)
-        {
-            //表示
-            audioAdjustmentPanel.SetActive(true);
-        }
-        else
-        {
-            //非表示
-            audioAdjustmentPanel.SetActive(false);
         }
     }
 

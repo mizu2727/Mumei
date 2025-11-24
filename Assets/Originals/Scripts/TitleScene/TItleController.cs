@@ -19,6 +19,9 @@ public class TitleController : MonoBehaviour
     [Header("タイトル画面のCanvas")]
     [SerializeField] private Canvas titlesCanvas;
 
+    [Header("タイトルパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public GameObject titlePanel;
+
     [Header("ロードしたいScene名")]
     [SerializeField] private string SceneName;
 
@@ -90,6 +93,21 @@ public class TitleController : MonoBehaviour
 
     private void Awake()
     {
+        //インスタンスがnullの場合
+        if (instance == null)
+        {
+            //インスタンス生成
+            instance = this;
+        }
+        else
+        {
+            //インスタンスを破棄
+            Destroy(this.gameObject);
+        }
+
+        //シーンステータスをkTitleSceneに設定
+        GameController.instance.SetViewScene(ViewScene.kTitleScene);
+
         Time.timeScale = 1;
         titlesCanvas.enabled = true;
         Cursor.visible = true;
@@ -99,6 +117,7 @@ public class TitleController : MonoBehaviour
 
         //ゲームモードステータスをStopInGameに変更
         GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);
+
     }
 
     private void Start()
@@ -117,6 +136,11 @@ public class TitleController : MonoBehaviour
     {
         //GameController.instance.playCount++;
         GameController.playCount++;
+
+        //シーン遷移時用データを保存
+        GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+        //シーンをロードする
         SceneManager.LoadScene(SceneName);        
     }
 
@@ -125,6 +149,10 @@ public class TitleController : MonoBehaviour
     /// </summary>
     public void EndGame()
     {
+        //シーン遷移時用データを保存
+        GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+        //ゲーム終了
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else

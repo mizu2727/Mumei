@@ -35,7 +35,10 @@ public class Goal : MonoBehaviour
     [Header("チュートリアルフラグ(チュートリアルステージでオンになる)")]
     [SerializeField] public bool isTutorial;
 
-
+    /// <summary>
+    /// GameClearScene
+    /// </summary>
+    const string stringGameClearScene = "GameClearScene";
 
     private void Start()
     {
@@ -238,12 +241,14 @@ public class Goal : MonoBehaviour
             if (mysteryItems[index].id == anserItemId)
             {
                 //正解時の処理
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
                 //プレイヤーを削除
                 Player.instance.DestroyPlayer();
                 
                 //画面遷移
-                SceneManager.LoadScene("GameClearScene");
+                SceneManager.LoadScene(stringGameClearScene);
             }
             //正解のミステリーアイテム(チュートリアル版)であるかを判定
             else if (mysteryItems[index].id == anserTutorialItemId) 
