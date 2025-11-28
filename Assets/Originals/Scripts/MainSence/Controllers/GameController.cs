@@ -30,11 +30,15 @@ public class GameController : MonoBehaviour
     [Header("チュートリアル用アイテム親オブジェクト")]
     [SerializeField] public GameObject tutorialItems;
 
-    [Header("チュートリアル用フラグ(ヒエラルキー上からの編集禁止)")]
-    public bool isTutorialNextMessageFlag = false;
+    /// <summary>
+    /// チュートリアル用フラグ
+    /// </summary>
+    private bool isTutorialNextMessageFlag = false;
 
-    [Header("チュートリアル用ゴールフラグ(ヒエラルキー上からの編集禁止)")]
-    public bool isTutorialGoalFlag = false;
+    /// <summary>
+    /// チュートリアル用ゴールフラグ
+    /// </summary>
+    private bool isTutorialGoalFlag = false;
 
     [Header("PlayerスタミナSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider staminaSlider;
@@ -177,6 +181,42 @@ public class GameController : MonoBehaviour
     public ViewScene GetViewScene() 
     {
         return viewScene;
+    }
+
+    /// <summary>
+    /// チュートリアルフラグを取得
+    /// </summary>
+    /// <returns>チュートリアルフラグ</returns>
+    public bool GetIsTutorialNextMessageFlag() 
+    {
+        return isTutorialNextMessageFlag;
+    }
+
+    /// <summary>
+    /// チュートリアルフラグを設定
+    /// </summary>
+    /// <param name="subjectFlag">チュートリアルフラグ</param>
+    public void SetIsTutorialNextMessageFlag(bool subjectFlag) 
+    {
+        isTutorialNextMessageFlag = subjectFlag;
+    }
+
+    /// <summary>
+    /// チュートリアル用ゴールフラグを取得
+    /// </summary>
+    /// <returns>チュートリアル用ゴールフラグ</returns>
+    public bool GetIsTutorialGoalFlag() 
+    {
+        return isTutorialGoalFlag;
+    }
+
+    /// <summary>
+    /// チュートリアル用ゴールフラグを設定
+    /// </summary>
+    /// <param name="subjectFlag">チュートリアル用ゴールフラグ</param>
+    public void SetIsTutorialGoalFlag(bool subjectFlag) 
+    {
+        isTutorialGoalFlag = subjectFlag;
     }
 
     /// <summary>

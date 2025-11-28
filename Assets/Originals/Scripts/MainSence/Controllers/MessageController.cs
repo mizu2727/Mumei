@@ -651,8 +651,8 @@ public class MessageController : MonoBehaviour
 
                 case 10:
                     //ドキュメント(チュートリアル版)入手したらメッセージを勧める
-                    await UniTask.WaitUntil(() => GameController.instance.isTutorialNextMessageFlag);
-                    GameController.instance.isTutorialNextMessageFlag = false;
+                    await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag());
+                    GameController.instance.SetIsTutorialNextMessageFlag(false);
 
                     //左クリック…ドキュメント入手操作の説明
                     ResetMessage();
@@ -665,9 +665,9 @@ public class MessageController : MonoBehaviour
 
                 case 11:
                     //ドキュメント(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                    await UniTask.WaitUntil(() => GameController.instance.isTutorialNextMessageFlag && !PauseController.instance.isPause 
+                    await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag() && !PauseController.instance.isPause 
                         && !PauseController.instance.isViewItemsPanel && !OptionUIController.instance.GetIsOptionPanel());
-                    GameController.instance.isTutorialNextMessageFlag = false;
+                    GameController.instance.SetIsTutorialNextMessageFlag(false);
 
                     ResetMessage();
 
@@ -706,10 +706,10 @@ public class MessageController : MonoBehaviour
                 case 14:
                     //チュートリアル用ゴールの閲覧終了したらメッセージを勧める
                     await UniTask.WaitUntil(() => Time.timeScale == 1
-                    && GameController.instance.isTutorialGoalFlag);
+                    && GameController.instance.GetIsTutorialGoalFlag());
 
                     
-                    GameController.instance.isTutorialGoalFlag = false;
+                    GameController.instance.SetIsTutorialGoalFlag(false);
 
                     messageText.text = "";
                     number++;

@@ -22,8 +22,10 @@ public class TitleController : MonoBehaviour
     [Header("タイトルパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public GameObject titlePanel;
 
-    [Header("ロードしたいScene名")]
-    [SerializeField] private string SceneName;
+    /// <summary>
+    /// OpeningScene
+    /// </summary>
+    private string stringOpeningScene = "OpeningScene";
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
@@ -140,8 +142,8 @@ public class TitleController : MonoBehaviour
         //シーン遷移時用データを保存
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
-        //シーンをロードする
-        SceneManager.LoadScene(SceneName);        
+        //OpeningSceneをロードする
+        SceneManager.LoadScene(stringOpeningScene);        
     }
 
     /// <summary>

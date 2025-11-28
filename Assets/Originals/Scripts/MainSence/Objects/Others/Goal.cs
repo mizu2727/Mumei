@@ -165,7 +165,7 @@ public class Goal : MonoBehaviour
         ViewGoalPanel();
 
         //チュートリアルの場合、ストーリーモードへ変更(ゴールオブジェクトへのインタラクト操作を高速で行うと、ゲーム進行不可になるバグを防ぐ用)
-        if (GameController.instance.isTutorialGoalFlag) 
+        if (GameController.instance.GetIsTutorialGoalFlag()) 
         {
             //ストーリーモードへ変更
             GameController.instance.SetGameModeStatus(GameModeStatus.Story);
@@ -175,7 +175,7 @@ public class Goal : MonoBehaviour
         MessageController.instance.ResetMessage();
 
         //チュートリアルの場合、チュートリアル終了の旨のメッセージを表示する
-        if (GameController.instance.isTutorialGoalFlag)
+        if (GameController.instance.GetIsTutorialGoalFlag())
         {
             await MessageController.instance.ShowSystemMessage(14); 
         }
@@ -254,7 +254,7 @@ public class Goal : MonoBehaviour
             else if (mysteryItems[index].id == anserTutorialItemId) 
             {
                 //チュートリアル終了後の会話を進める
-                GameController.instance.isTutorialGoalFlag = true;
+                GameController.instance.SetIsTutorialGoalFlag(true);
                 OnClickedReturnToInGameButton();
             }
             else

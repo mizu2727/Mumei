@@ -709,7 +709,7 @@ public class PauseController : MonoBehaviour
         if (keepDocumentBookID == documentBook_TutorialID) 
         {
             //フラグ値をオン
-            GameController.instance.isTutorialNextMessageFlag = true;
+            GameController.instance.SetIsTutorialNextMessageFlag(true);
         }
     }
 
@@ -820,7 +820,7 @@ public class PauseController : MonoBehaviour
         if (documentId == documentBook_TutorialID) 
         {
             //フラグ値をオン
-            GameController.instance.isTutorialNextMessageFlag = true;
+            GameController.instance.SetIsTutorialNextMessageFlag(true);
 
             //IDを保存
             keepDocumentBookID = documentId;
