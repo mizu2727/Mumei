@@ -112,6 +112,9 @@ public class Goal : MonoBehaviour
     {
         if (isGoalPanel)
         {
+            //ƒvƒŒƒCƒ„[Œø‰Ê‰¹‚ğ’â~
+            MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
             //ˆê’â~
             Time.timeScale = 0;
 

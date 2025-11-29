@@ -474,7 +474,7 @@ public class PauseController : MonoBehaviour
         //再生中の効果音を全て一時停止し、ボタンSEを流す
         if (Player.instance != null && Player.instance.audioSourceSE != null)
         {
-            MusicController.instance.PauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
+            MusicController.instance.PauseSE(Player.instance.audioSourceSE, Player.instance.GetCurrentSE());
         }
         else
         {
@@ -513,7 +513,7 @@ public class PauseController : MonoBehaviour
 
             //ボタンSEを流し、インゲーム内のBGM・SEの一時停止を全て解除する
             MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
-            MusicController.instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.currentSE);
+            MusicController.instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.GetCurrentSE());
 
             for (int i = 0; i < baseEnemy.Length; i++)
             {

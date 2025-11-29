@@ -654,6 +654,9 @@ public class MessageController : MonoBehaviour
                     await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag());
                     GameController.instance.SetIsTutorialNextMessageFlag(false);
 
+                    //プレイヤー効果音を停止
+                    MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
                     //左クリック…ドキュメント入手操作の説明
                     ResetMessage();
 
@@ -681,7 +684,11 @@ public class MessageController : MonoBehaviour
                     //ミステリーアイテム(チュートリアル版)入手したらメッセージを勧める
                     await UniTask.WaitUntil(() => PauseController.instance.isGetHammer_Tutorial && PauseController.instance.isGetRope_Tutorial);
 
+                    //プレイヤー効果音を停止
+                    MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
                     ResetMessage();
+
 
                     //ストーリーモードへ変更
                     GameController.instance.SetGameModeStatus(GameModeStatus.Story);

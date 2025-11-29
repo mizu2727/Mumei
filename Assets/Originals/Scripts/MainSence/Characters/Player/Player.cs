@@ -231,10 +231,12 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <summary>
     /// ダッシュ音のID
     /// </summary>
-    private readonly int runSEid = 1; 
+    private readonly int runSEid = 1;
 
-    [Header("現在再生中の効果音(ヒエラルキー上での編集禁止)")]
-    public AudioClip currentSE;
+    /// <summary>
+    /// 現在再生中の効果音
+    /// </summary>
+    private AudioClip currentSE;
 
     /// <summary>
     /// 前フレームの移動状態フラグ
@@ -263,6 +265,16 @@ public class Player : MonoBehaviour, CharacterInterface
     /// 対象の開閉したいドア
     /// </summary>
     GameObject gameObjectDoor;
+
+
+    /// <summary>
+    /// 現在再生中の効果音を取得
+    /// </summary>
+    /// <returns>現在再生中の効果音</returns>
+    public AudioClip GetCurrentSE() 
+    {
+        return currentSE;
+    }
 
     private void Awake()
     {
@@ -575,7 +587,7 @@ public class Player : MonoBehaviour, CharacterInterface
         else if (!IsMove && wasMovingLastFrame)
         {
             //移動停止時に効果音を停止
-            audioSourceSE.Stop();
+            StopPlayerSE(audioSourceSE);
         }
         else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
         {
@@ -660,6 +672,15 @@ public class Player : MonoBehaviour, CharacterInterface
             //スライダーに値を反映
             staminaSlider.value = stamina;
         }
+    }
+
+    /// <summary>
+    /// SEを停止する
+    /// </summary>
+    /// <param name="subjectAudioSourceSE">対象のSE</param>
+    public void StopPlayerSE(AudioSource subjectAudioSourceSE) 
+    {
+        subjectAudioSourceSE.Stop();
     }
 
     /// <summary>
