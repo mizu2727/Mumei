@@ -179,6 +179,8 @@ public class Player : MonoBehaviour, CharacterInterface
             audioSourceSE.Stop();
         }
 
+        
+
         //ゲームオーバー画面へ遷移
         GameController.instance.ViewGameOver();
 

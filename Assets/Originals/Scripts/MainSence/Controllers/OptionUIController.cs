@@ -128,6 +128,8 @@ public class OptionUIController : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("OptionUIController");
+
         //インスタンスがnullの場合
         if (instance == null)
         {

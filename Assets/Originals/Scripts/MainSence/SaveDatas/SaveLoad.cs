@@ -7,11 +7,6 @@ public class SaveLoad : MonoBehaviour
     UserData userData;
 
 
-    private void Update()
-    {
-
-    }
-
     /// <summary>
     /// データを保存するメソッド
     /// </summary>

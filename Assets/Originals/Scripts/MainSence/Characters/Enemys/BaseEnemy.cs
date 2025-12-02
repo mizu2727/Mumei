@@ -136,7 +136,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         Player.instance.HP -= 1;
 
-        if (Player.instance.HP <= 0) Player.instance.Dead();
+        if (Player.instance.HP <= 0) 
+        {
+            //シーン遷移時用データを保存
+            GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+            //プレイヤー死亡
+            Player.instance.Dead();
+        } 
 
     }
 

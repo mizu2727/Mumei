@@ -250,8 +250,8 @@ public class GameController : MonoBehaviour
         //シーン遷移時用データをロード
         CallLoadSceneTransitionUserDataMethod();
 
-        //ゲームオーバーシーン以外&&マウス感度が存在する場合
-        if (scene.name != stringGameOverScene && mouseSensitivitySlider != null)
+        //マウス感度が存在する場合
+        if (mouseSensitivitySlider != null)
         {
             //マウス感度を保存した値に設定
             mouseSensitivitySlider.value = lookSensitivity;
@@ -281,6 +281,8 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log("GameController");
+
         //インスタンス生成
         if (instance == null)
         {

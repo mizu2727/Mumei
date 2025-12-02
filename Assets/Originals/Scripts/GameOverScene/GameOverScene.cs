@@ -89,6 +89,12 @@ public class GameOverScene : MonoBehaviour
     }
 
 
+    private void Awake()
+    {
+        Debug.Log("GameOverController");
+    }
+
+
     void Start()
     {
         //シーンステータスをkGameOverSceneに設定
@@ -116,7 +122,7 @@ public class GameOverScene : MonoBehaviour
 
 
     /// <summary>
-    /// リスタートボタン押下時の処理
+    /// リスタートボタン押下時の処理(GameOverSceneではシーン遷移時用データを保存しないこと)
     /// </summary>
     public void OnClickedRestartGameButton()
     {

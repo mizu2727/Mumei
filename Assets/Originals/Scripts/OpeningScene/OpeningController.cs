@@ -13,6 +13,8 @@ public class OpeningController : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log("OpningController");
+
         //シーンステータスをkOpeningSceneに設定
         GameController.instance.SetViewScene(ViewScene.kOpeningScene);
 
