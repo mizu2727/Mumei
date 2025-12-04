@@ -15,7 +15,7 @@ public class SaveLoad : MonoBehaviour
         //userData = GetComponent<UserData>();
 
         //ユーザーデータを保存するクラス
-        userData = new UserData() 
+        userData = new UserData()
         {
             //入力したプレイヤー名を保存
             playerName = GameController.playerName,
@@ -34,6 +34,9 @@ public class SaveLoad : MonoBehaviour
 
             //SE音量を保存
             sEVolume = GameController.sEVolume,
+
+            //明るさを保存
+            brightnessValue = GameController.brightnessValue,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -68,6 +71,7 @@ public class SaveLoad : MonoBehaviour
             GameController.lookSensitivity = userData.sensitivityValue;
             GameController.bGMVolume = userData.bGMVolume;
             GameController.sEVolume = userData.sEVolume;
+            GameController.brightnessValue = userData.brightnessValue;
         }
         else
         {
@@ -92,6 +96,9 @@ public class SaveLoad : MonoBehaviour
 
             //SE音量を保存
             sEVolume = GameController.sEVolume,
+
+            //明るさを保存
+            brightnessValue = GameController.brightnessValue,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -120,6 +127,7 @@ public class SaveLoad : MonoBehaviour
             GameController.lookSensitivity = userData.sensitivityValue;
             GameController.bGMVolume = userData.bGMVolume;
             GameController.sEVolume = userData.sEVolume;
+            GameController.brightnessValue = userData.brightnessValue;
         }
         else
         {

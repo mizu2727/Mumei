@@ -88,13 +88,6 @@ public class GameOverScene : MonoBehaviour
         audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
     }
 
-
-    private void Awake()
-    {
-        Debug.Log("GameOverController");
-    }
-
-
     void Start()
     {
         //シーンステータスをkGameOverSceneに設定

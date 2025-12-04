@@ -84,13 +84,16 @@ public class GameController : MonoBehaviour
     public static int playCount = 0;
 
     [Header("マウス/ゲームパッドの右スティックの感度")]
-    public static float lookSensitivity = 10f;
+    public static float lookSensitivity = 7.5f;
 
     [Header("セーブするBGM音量")]
     public static float bGMVolume = 1;
 
     [Header("セーブするSE音量")]
     public static float sEVolume = 1;
+
+    [Header("セーブする明るさの値")]
+    public static float brightnessValue = 0.075f;
 
     /// <summary>
     /// ゲームモードステータス
@@ -257,16 +260,25 @@ public class GameController : MonoBehaviour
             mouseSensitivitySlider.value = lookSensitivity;
         }
 
+        //BGMスライダーが存在する場合
         if (MusicController.instance.bGMSlider != null)
         {
             //BGMを保存した値に設定
             MusicController.instance.bGMSlider.value = bGMVolume;
         }
 
+        //SEスライダーが存在する場合
         if (MusicController.instance.sESlider != null)
         {
             //SEを保存した値に設定
             MusicController.instance.sESlider.value = sEVolume;
+        }
+
+        //明るさ調整スライダーが存在する場合
+        if (BrightnessAdjustmentController.instance.brightnessAdjustmentSlider != null) 
+        {
+            //明るさを保存した値に設定
+            BrightnessAdjustmentController.instance.brightnessAdjustmentSlider.value = brightnessValue;
         }
     }
 
@@ -281,8 +293,6 @@ public class GameController : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("GameController");
-
         //インスタンス生成
         if (instance == null)
         {
@@ -300,6 +310,8 @@ public class GameController : MonoBehaviour
         //パラメーターリセット
         ResetParams();
 
+
+
         //マウス旋回速度のSliderの最大値を設定
         if (mouseSensitivitySlider) mouseSensitivitySlider.maxValue = maxLookSensitivity;
 
@@ -308,6 +320,16 @@ public class GameController : MonoBehaviour
 
         //SE音量のSliderの最大値を設定
         if (MusicController.instance.sESlider) MusicController.instance.sESlider.maxValue = MusicController.instance.GetMaxSESliderVolume();
+
+        //Fog欄内・明るさスライダーの最大値と最小値を設定
+        if (BrightnessAdjustmentController.instance.brightnessAdjustmentSlider) 
+        {
+            //Environmentタブ内のOtherSettings内のFog欄内を設定
+            BrightnessAdjustmentController.instance.ApplyCustomFogSettings();
+
+            //明るさのスライダーに関する設定
+            BrightnessAdjustmentController.instance.ApplyBrightnessAdjustmentSlider();
+        }
 
         //リセット(デバッグ用)
         //CallRestDataMethod();

@@ -24,4 +24,7 @@ public class UserData
 
     [Header("セーブするSE音量")]
     public float sEVolume;
+
+    [Header("セーブする明るさの値")]
+    public float brightnessValue;
 }

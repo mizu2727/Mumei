@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -22,6 +23,9 @@ public class OptionUIController : MonoBehaviour
     [Header("音量調整設定パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject audioAdjustmentPanel;
 
+    [Header("明るさ調整設定パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject brightnessAdjustmentPanel;
+
 
     /// <summary>
     /// オプションパネル閲覧フラグ
@@ -29,14 +33,19 @@ public class OptionUIController : MonoBehaviour
     private bool isOptionPanel = false;
 
     /// <summary>
-    /// 旋回速度設定パネル閲覧フラグ
+    /// マウス感度設定パネル閲覧フラグ
     /// </summary>
     private bool isViewMouseSensitivityPanel = false;
 
     /// <summary>
-    /// 音量調整設定パネル説欄フラグ
+    /// 音量調整設定パネル閲覧フラグ
     /// </summary>
     private bool isViewAudioAdjustmentPanel = false;
+
+    /// <summary>
+    /// 明るさ調整設定パネル閲覧フラグ
+    /// </summary>
+    private bool isViewBrightnessAdjustmentPanel = false;
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -111,6 +120,10 @@ public class OptionUIController : MonoBehaviour
         isViewAudioAdjustmentPanel = false;
         ChangeAudioAdjustmentPanel();
 
+
+        //明るさ調整設定パネルを非表示
+        isViewBrightnessAdjustmentPanel = false;
+        ChangeBrightnessAdjustmentPanel();
     }
 
     /// <summary>
@@ -128,8 +141,6 @@ public class OptionUIController : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("OptionUIController");
-
         //インスタンスがnullの場合
         if (instance == null)
         {
@@ -191,6 +202,10 @@ public class OptionUIController : MonoBehaviour
         isViewAudioAdjustmentPanel = false;
         ChangeAudioAdjustmentPanel();
 
+        //明るさ調整設定パネルを非表示
+        isViewBrightnessAdjustmentPanel = false;
+        ChangeBrightnessAdjustmentPanel();
+
         //感度設定パネルを表示
         isViewMouseSensitivityPanel = true;
         ChangeMouseSensitivityPanel();
@@ -209,10 +224,37 @@ public class OptionUIController : MonoBehaviour
         isViewMouseSensitivityPanel = false;
         ChangeMouseSensitivityPanel();
 
+        //明るさ調整設定パネルを非表示
+        isViewBrightnessAdjustmentPanel = false;
+        ChangeBrightnessAdjustmentPanel();
+
 
         //音量調整設定パネルを表示
         isViewAudioAdjustmentPanel = true;
         ChangeAudioAdjustmentPanel();
+    }
+
+    /// <summary>
+    /// 「暗さ」ボタン押下
+    /// </summary>
+    public void OnClickedBrightnessAdjustmentButton() 
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //他の設定パネルを非表示にする
+        //感度設定パネルを非表示にする
+        isViewMouseSensitivityPanel = false;
+        ChangeMouseSensitivityPanel();
+
+        //音量調整設定パネルを非表示
+        isViewAudioAdjustmentPanel = false;
+        ChangeAudioAdjustmentPanel();
+
+
+        //明るさ調整設定パネルを表示
+        isViewBrightnessAdjustmentPanel = true;
+        ChangeBrightnessAdjustmentPanel();
     }
 
     /// <summary>
@@ -245,6 +287,10 @@ public class OptionUIController : MonoBehaviour
         //音量調整設定パネルを非表示
         isViewAudioAdjustmentPanel = false;
         ChangeAudioAdjustmentPanel();
+
+        //明るさ調整設定パネルを非表示
+        isViewBrightnessAdjustmentPanel = false;
+        ChangeBrightnessAdjustmentPanel();
 
         //オプションパネルを非表示
         isOptionPanel = false;
@@ -302,6 +348,25 @@ public class OptionUIController : MonoBehaviour
         {
             //非表示
             audioAdjustmentPanel.SetActive(false);
+        }
+    }
+
+
+    /// <summary>
+    /// 明るさ調整設定パネルの表示/非表示
+    /// </summary>
+    void ChangeBrightnessAdjustmentPanel()
+    {
+        //フラグ値がオンの場合
+        if (isViewBrightnessAdjustmentPanel)
+        {
+            //表示
+            brightnessAdjustmentPanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            brightnessAdjustmentPanel.SetActive(false);
         }
     }
 }
