@@ -52,7 +52,7 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// アイテム未所持時のID
     /// </summary>
-    private const int noneItemId = 99999;
+    private const int kNoneItemId = 99999;
 
     /// <summary>
     /// アイテムのプレハブのAddressables名
@@ -62,7 +62,7 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// アイテムのプレハブのAddressables名(空白)
     /// </summary>
-    private const string noneItemPrefabPath = "";
+    private const string kNoneItemPrefabPath = "";
 
     /// <summary>
     /// アイテム生成位置
@@ -92,7 +92,7 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// アイテム所持数(デフォルト)
     /// </summary>
-    private const int minKeepItemCount = 0;
+    private const int kMinKeepItemCount = 0;
 
     /// <summary>
     /// アイテム効果値
@@ -102,12 +102,17 @@ public class Inventory : MonoBehaviour
     /// <summary>
     /// アイテム効果値(デフォルト値)
     /// </summary>
-    private const int defaultKeepItemEffectValue = 0;
+    private const int kDefaultKeepItemEffectValue = 0;
 
     /// <summary>
     /// スタミナ増強剤使用フラグ
     /// </summary>
     private bool isUseStaminaItem;
+
+    /// <summary>
+    /// スタミナ増強剤適用時のスタミナ消費率
+    /// </summary>
+    private const float kSpecifiedStaminaConsumeRatio = 12.5f;
 
     /// <summary>
     /// Player.cs
@@ -123,9 +128,45 @@ public class Inventory : MonoBehaviour
     private AudioSource audioSourceInventorySE;
 
     /// <summary>
+    /// AudioSource3つ分
+    /// </summary>
+    private const int kAudioSourceLength03 = 3;
+
+    /// <summary>
+    /// デフォルトのAudioSourceのSE音量
+    /// </summary>
+    private const float kDefaultAudioSourceSEVolume = 1.0f;
+
+    /// <summary>
     /// スタミナ増強剤SEのID
     /// </summary>
     private readonly int useStaminaEnhancerSEid = 12;
+
+    /// <summary>
+    /// 不透明色
+    /// </summary>
+    private Color opaqueColor = new Color(255, 255, 255, 1);
+
+    /// <summary>
+    /// 緑色
+    /// </summary>
+    private Color greenColor = new Color32(0, 255, 0, 255);
+
+    /// <summary>
+    /// 使用アイテム画像の初期色
+    /// </summary>
+    private Color defaultUseItemImageColor = new Color(255, 255, 255, 0.05f);
+
+
+    /// <summary>
+    /// スタミナ増強剤使用中メッセージID
+    /// </summary>
+    private const int kUsingStaminaEnhancerMessageId = 3;
+
+    /// <summary>
+    /// メッセージ表示時間(秒)
+    /// </summary>
+    private const double kViewMessageSeconds = 3.0;
 
     /// <summary>
     /// アイテムID管理を取得
@@ -209,21 +250,21 @@ public class Inventory : MonoBehaviour
     {
         //すべてのAudioSourceを取得
         var audioSources = GetComponents<AudioSource>();
-        if (audioSources.Length < 3)
+        if (audioSources.Length < kAudioSourceLength03)
         {
             //3つ目のAudioSourceが不足している場合、追加する
             audioSourceInventorySE = gameObject.AddComponent<AudioSource>();
             audioSourceInventorySE.playOnAwake = false;
-            audioSourceInventorySE.volume = 1.0f;
+            audioSourceInventorySE.volume = kDefaultAudioSourceSEVolume;
         }
         else
         {
             //3番目のAudioSourceをアイテム使用音用に割り当て
             //(PlayerオブジェクトにこのスクリプトとPlayer.csをアタッチしている。
             //移動音とアイテム取得音の競合を回避する用)
-            audioSourceInventorySE = audioSources[2];
+            audioSourceInventorySE = audioSources[kAudioSourceLength03 - 1];
             audioSourceInventorySE.playOnAwake = false;
-            audioSourceInventorySE.volume = 1.0f;
+            audioSourceInventorySE.volume = kDefaultAudioSourceSEVolume;
         }
 
         //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
@@ -261,7 +302,8 @@ public class Inventory : MonoBehaviour
     void Update()
     {
         //インベントリアイテム使用
-        if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) UseItem();
+        if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0 
+            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) UseItem();
     }
 
     /// <summary>
@@ -288,7 +330,7 @@ public class Inventory : MonoBehaviour
     public void GetItem(int id, string path, Vector3 position, Quaternion rotation, Sprite icon, string itemName, string description,int count, int effectValue)
     {
         //インベントリに新規追加する処理
-        if (keepItemId == noneItemId)
+        if (keepItemId == kNoneItemId)
         {
 
             //アイテムidを設定
@@ -310,7 +352,7 @@ public class Inventory : MonoBehaviour
             keepItemEffectValue = effectValue;
 
             //アイテム画像の不透明度を100%にする
-            useItemImage.color = new Color(255, 255, 255, 1);
+            useItemImage.color = opaqueColor;
 
             //アイテム所持数を設定
             keepItemCount = count;
@@ -334,13 +376,13 @@ public class Inventory : MonoBehaviour
     public void UseItem() 
     {
         //アイテム所持数が0より大きい場合
-        if (minKeepItemCount < keepItemCount)
+        if (kMinKeepItemCount < keepItemCount)
         {
             //アイテム使用時の効果を適用する
             ActivationUseItem(keepItemId);
 
             //アイテム数が0になった場合
-            if (keepItemCount == minKeepItemCount)
+            if (keepItemCount == kMinKeepItemCount)
             {
                 //インベントリをリセット
                 ResetInventoryItem();
@@ -367,9 +409,9 @@ public class Inventory : MonoBehaviour
                 if (isUseStaminaItem)
                 {
                     //スタミナ効果が適用中である旨のメッセージを表示
-                    MessageController.instance.ShowInventoryMessage(3);
+                    MessageController.instance.ShowInventoryMessage(kUsingStaminaEnhancerMessageId);
 
-                    await UniTask.Delay(TimeSpan.FromSeconds(3));
+                    await UniTask.Delay(TimeSpan.FromSeconds(kViewMessageSeconds));
 
                     MessageController.instance.ResetMessage();
                     return;
@@ -388,16 +430,16 @@ public class Inventory : MonoBehaviour
                 audioSourceInventorySE.loop = false;
                 audioSourceInventorySE.Play();
 
-                //スタミナ消費率を25%に変更し、スタミナゲージの色を緑色に変更
-                Player.instance.staminaConsumeRatio = 25;
-                Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = new Color(0, 1, 0, 1);
+                //スタミナ消費率を12.5%に変更し、スタミナゲージの色を緑色に変更
+                Player.instance.SetStaminaConsumeRatio(kSpecifiedStaminaConsumeRatio);
+                Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = greenColor;
                 isUseStaminaItem = true;
 
                 //効果時間待機
                 await UniTask.Delay(TimeSpan.FromSeconds(keepItemEffectValue));
 
-                //スタミナ消費率を50%に戻して、スタミナゲージの色を元に戻す
-                Player.instance.staminaConsumeRatio = 50;
+                //スタミナ消費率を元に戻して、スタミナゲージの色を元に戻す
+                Player.instance.SetStaminaConsumeRatio(Player.instance.GetDefaultStaminaConsumeRatio());
                 Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = keepStaminaColor;
                 isUseStaminaItem = false;
                 break;
@@ -425,17 +467,17 @@ public class Inventory : MonoBehaviour
     void ResetInventoryItem() 
     {
         //それぞれの変数の値・フラグ値を初期化する
-        keepItemId = noneItemId;
-        keepItemCount = minKeepItemCount;
-        keepItemEffectValue = defaultKeepItemEffectValue;
+        keepItemId = kNoneItemId;
+        keepItemCount = kMinKeepItemCount;
+        keepItemEffectValue = kDefaultKeepItemEffectValue;
         useItemCountText.text = keepItemCount.ToString();
         useItemNameText.text = "";
         useItemExplanationText.text = "";
-        keepItemPrefabPath = noneItemPrefabPath;
+        keepItemPrefabPath = kNoneItemPrefabPath;
         keepItemSpawnPosition = defaultItemSpawnPosition;
         keepItemSpawnRotation = defaultItemSpawnRotation;
         useItemImage.sprite = null;
-        useItemImage.color = new Color(255, 255, 255, 0.05f);
+        useItemImage.color = defaultUseItemImageColor;
         isUseStaminaItem = false;
     }
 }

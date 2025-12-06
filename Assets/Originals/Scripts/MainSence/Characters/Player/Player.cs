@@ -65,24 +65,35 @@ public class Player : MonoBehaviour, CharacterInterface
     [Header("スタミナSlider(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Slider staminaSlider;
 
-    [Header("スタミナ最大値")]
-    [SerializeField] const  float maxStamina = 100f;
+    /// <summary>
+    /// スタミナ最大値
+    /// </summary>
+    private const float kMaxStamina = 100f;
 
     /// <summary>
     /// スタミナの現在値
     /// </summary>
-    float stamina;
+    private float stamina;
 
-    [Header("スタミナ消費値")]
-    [SerializeField] public float staminaConsumeRatio = 50f;
+    /// <summary>
+    /// デフォルトのスタミナ消費値
+    /// </summary>
+    private const float kDefaultStaminaConsumeRatio = 25.0f;
 
-    [Header("スタミナ回復値")]
-    [SerializeField] float staminaRecoveryRatio = 20f;
+    /// <summary>
+    /// スタミナ消費値
+    /// </summary>
+    private float staminaConsumeRatio = 25.0f;
+
+    /// <summary>
+    /// スタミナ回復値
+    /// </summary>
+    private const float kStaminaRecoveryRatio = 20f;
 
     /// <summary>
     /// スタミナ使用可能フラグ
     /// </summary>
-    bool isStamina;
+    private bool isStamina;
 
     [Header("検知範囲")]
     [SerializeField] private float playerDetectionRange = 10f;
@@ -101,6 +112,11 @@ public class Player : MonoBehaviour, CharacterInterface
         get => playerGravity;
         set => playerGravity = value;
     }
+
+    /// <summary>
+    /// デフォルトの体力
+    /// </summary>
+    private const int kDefaultHP = 1;
 
     [Header("体力")]
     [SerializeField] private int playerHP = 1;
@@ -218,7 +234,23 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     Vector3 moveDirection = Vector3.zero;
 
-    
+    /// <summary>
+    /// 移動境界値
+    /// </summary>
+    private const float kMovingBoundaryValue = 0.01f;
+
+
+    /// <summary>
+    /// 180度回転ベクトル
+    /// </summary>
+    private Vector3 rotate180 = new Vector3(0, 180f, 0);
+
+    /// <summary>
+    /// 回転速度倍率
+    /// </summary>
+    private const float kRotationSpeedMagnification = 0.5f;
+
+
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
@@ -270,6 +302,30 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
     /// <summary>
+    /// kCharacterControllerRadius(要調整)
+    /// </summary>
+    private const float kCharacterControllerRadius = 0.9f;
+
+
+    /// <summary>
+    /// デフォルトのスタミナ消費値を取得
+    /// </summary>
+    /// <returns>デフォルトのスタミナ消費値</returns>
+    public float GetDefaultStaminaConsumeRatio() 
+    {
+        return kDefaultStaminaConsumeRatio;
+    }
+
+    /// <summary>
+    /// スタミナ消費値を設定
+    /// </summary>
+    /// <param name="specifiedStaminaConsumeRatio">スタミナ消費値</param>
+    public void SetStaminaConsumeRatio(float specifiedStaminaConsumeRatio)
+    {
+        staminaConsumeRatio = specifiedStaminaConsumeRatio;
+    }
+
+    /// <summary>
     /// 現在再生中の効果音を取得
     /// </summary>
     /// <returns>現在再生中の効果音</returns>
@@ -297,7 +353,7 @@ public class Player : MonoBehaviour, CharacterInterface
     {
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
-        return Mathf.Abs(moveX) > 0.01f || Mathf.Abs(moveZ) > 0.01f;
+        return Mathf.Abs(moveX) > kMovingBoundaryValue || Mathf.Abs(moveZ) > kMovingBoundaryValue;
     }
 
     /// <summary>
@@ -349,7 +405,7 @@ public class Player : MonoBehaviour, CharacterInterface
             staminaSlider = GameController.instance.staminaSlider;
             if (staminaSlider != null)
             {
-                staminaSlider.maxValue = maxStamina;
+                staminaSlider.maxValue = kMaxStamina;
                 staminaSlider.value = stamina;
             }
         }
@@ -372,8 +428,8 @@ public class Player : MonoBehaviour, CharacterInterface
 
             //プレイヤーの状態を初期化
             IsDead = false;
-            playerHP = 1;
-            stamina = maxStamina;
+            playerHP = kDefaultHP;
+            stamina = kMaxStamina;
             isStamina = true;
         }
     }
@@ -402,7 +458,7 @@ public class Player : MonoBehaviour, CharacterInterface
         if (capsuleCollider != null && characterController != null)
         {
             //CharacterControllerのRadiusをCapsuleColliderのRadiusより小さく設定（例: 0.9倍）
-            characterController.radius = capsuleCollider.radius * 0.9f;
+            characterController.radius = capsuleCollider.radius * kCharacterControllerRadius;
         }
         else
         {
@@ -416,7 +472,7 @@ public class Player : MonoBehaviour, CharacterInterface
         InitializeAudioSource();
 
         //スタミナ最大値の初期化
-        stamina = maxStamina;
+        stamina = kMaxStamina;
 
         //GameControllerからstaminaSliderを取得
         if (GameController.instance != null)
@@ -427,7 +483,7 @@ public class Player : MonoBehaviour, CharacterInterface
         //スタミナSliderの最大値を設定
         if (staminaSlider)
         {
-            staminaSlider.maxValue = maxStamina;
+            staminaSlider.maxValue = kMaxStamina;
             staminaSlider.value = stamina;
         }
 
@@ -657,15 +713,15 @@ public class Player : MonoBehaviour, CharacterInterface
                 speed = NormalSpeed;
             }
         }
-        else if (stamina < maxStamina)
+        else if (stamina < kMaxStamina)
         {
             //ダッシュしていないときはスタミナを回復
-            stamina += staminaRecoveryRatio * Time.deltaTime;  
+            stamina += kStaminaRecoveryRatio * Time.deltaTime;  
         }
-        else if (maxStamina <= stamina)
+        else if (kMaxStamina <= stamina)
         {
             //スタミナ復活でダッシュ可能
-            stamina = maxStamina;
+            stamina = kMaxStamina;
             isStamina = true;
         }
 
@@ -702,7 +758,7 @@ public class Player : MonoBehaviour, CharacterInterface
         if (GameController.instance.gameModeStatus == GameModeStatus.Story)
         {
             //プレイヤーの向きを180度ゆっくり回転させる
-            if (transform.rotation.y < 0) transform.Rotate(new Vector3(0, 180f, 0) * (Time.deltaTime * 0.5f));
+            if (transform.rotation.y < 0) transform.Rotate(rotate180 * (Time.deltaTime * kRotationSpeedMagnification));
             else playerIsBackRotate = false;
         }
     }
