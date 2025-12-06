@@ -175,7 +175,7 @@ public class GameClearController : MonoBehaviour
     {
         gameClearCanvas.enabled = true;
         Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     /// <summary>
@@ -185,7 +185,7 @@ public class GameClearController : MonoBehaviour
     {
         gameClearCanvas.enabled = false;
         Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     /// <summary>

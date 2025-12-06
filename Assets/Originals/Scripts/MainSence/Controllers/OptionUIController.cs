@@ -26,6 +26,9 @@ public class OptionUIController : MonoBehaviour
     [Header("明るさ調整設定パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject brightnessAdjustmentPanel;
 
+    [Header("スクリーン調整設定パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject screenAdjustmentPanel;
+
 
     /// <summary>
     /// オプションパネル閲覧フラグ
@@ -46,6 +49,11 @@ public class OptionUIController : MonoBehaviour
     /// 明るさ調整設定パネル閲覧フラグ
     /// </summary>
     private bool isViewBrightnessAdjustmentPanel = false;
+
+    /// <summary>
+    /// スクリーン調整設定パネル閲覧フラグ
+    /// </summary>
+    private bool isViewScreenAdjustmentPanel = false;
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -114,16 +122,17 @@ public class OptionUIController : MonoBehaviour
         isViewMouseSensitivityPanel = false;
         ChangeMouseSensitivityPanel();
 
-        
-
         //音量調整設定パネルを非表示
         isViewAudioAdjustmentPanel = false;
         ChangeAudioAdjustmentPanel();
 
-
         //明るさ調整設定パネルを非表示
         isViewBrightnessAdjustmentPanel = false;
         ChangeBrightnessAdjustmentPanel();
+
+        //スクリーン調整設定パネルを非表示
+        isViewScreenAdjustmentPanel = false;
+        ChangeScreenAdjustmentPanel();
     }
 
     /// <summary>
@@ -206,6 +215,10 @@ public class OptionUIController : MonoBehaviour
         isViewBrightnessAdjustmentPanel = false;
         ChangeBrightnessAdjustmentPanel();
 
+        //スクリーン調整設定パネルを非表示
+        isViewScreenAdjustmentPanel = false;
+        ChangeScreenAdjustmentPanel();
+
         //感度設定パネルを表示
         isViewMouseSensitivityPanel = true;
         ChangeMouseSensitivityPanel();
@@ -227,6 +240,10 @@ public class OptionUIController : MonoBehaviour
         //明るさ調整設定パネルを非表示
         isViewBrightnessAdjustmentPanel = false;
         ChangeBrightnessAdjustmentPanel();
+
+        //スクリーン調整設定パネルを非表示
+        isViewScreenAdjustmentPanel = false;
+        ChangeScreenAdjustmentPanel();
 
 
         //音量調整設定パネルを表示
@@ -251,10 +268,41 @@ public class OptionUIController : MonoBehaviour
         isViewAudioAdjustmentPanel = false;
         ChangeAudioAdjustmentPanel();
 
+        //スクリーン調整設定パネルを非表示
+        isViewScreenAdjustmentPanel = false;
+        ChangeScreenAdjustmentPanel();
+
 
         //明るさ調整設定パネルを表示
         isViewBrightnessAdjustmentPanel = true;
         ChangeBrightnessAdjustmentPanel();
+    }
+
+    /// <summary>
+    /// 「画面」ボタン押下時の処理
+    /// </summary>
+    public void OnClickedScreenAdjustmentButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //他の設定パネルを非表示にする
+        //感度設定パネルを非表示にする
+        isViewMouseSensitivityPanel = false;
+        ChangeMouseSensitivityPanel();
+
+        //音量調整設定パネルを非表示
+        isViewAudioAdjustmentPanel = false;
+        ChangeAudioAdjustmentPanel();
+
+        //明るさ調整設定パネルを非表示
+        isViewBrightnessAdjustmentPanel = false;
+        ChangeBrightnessAdjustmentPanel();
+
+
+        //スクリーン調整設定パネルを表示
+        isViewScreenAdjustmentPanel = true;
+        ChangeScreenAdjustmentPanel();
     }
 
     /// <summary>
@@ -292,6 +340,10 @@ public class OptionUIController : MonoBehaviour
         isViewBrightnessAdjustmentPanel = false;
         ChangeBrightnessAdjustmentPanel();
 
+        //スクリーン調整設定パネルを非表示
+        isViewScreenAdjustmentPanel = false;
+        ChangeScreenAdjustmentPanel();
+
         //オプションパネルを非表示
         isOptionPanel = false;
         ChangeOptionPanel();
@@ -316,7 +368,7 @@ public class OptionUIController : MonoBehaviour
     }
 
     /// <summary>
-    /// 旋回速度設定パネルの表示/非表示
+    /// 感度設定パネルの表示/非表示
     /// </summary>
     void ChangeMouseSensitivityPanel()
     {
@@ -351,7 +403,6 @@ public class OptionUIController : MonoBehaviour
         }
     }
 
-
     /// <summary>
     /// 明るさ調整設定パネルの表示/非表示
     /// </summary>
@@ -367,6 +418,24 @@ public class OptionUIController : MonoBehaviour
         {
             //非表示
             brightnessAdjustmentPanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// スクリーン調整設定パネルの表示/非表示
+    /// </summary>
+    void ChangeScreenAdjustmentPanel()
+    {
+        //フラグ値がオンの場合
+        if (isViewScreenAdjustmentPanel)
+        {
+            //表示
+            screenAdjustmentPanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            screenAdjustmentPanel.SetActive(false);
         }
     }
 }

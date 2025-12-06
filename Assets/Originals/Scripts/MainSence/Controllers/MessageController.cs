@@ -595,7 +595,7 @@ public class MessageController : MonoBehaviour
                     ResetMessage();
 
                     Cursor.visible = true;
-                    Cursor.lockState = CursorLockMode.Confined;
+                    Cursor.lockState = CursorLockMode.None;
 
                     inputPlayerNameField.gameObject.SetActive(true);
                     break;

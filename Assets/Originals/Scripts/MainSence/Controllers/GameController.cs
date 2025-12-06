@@ -76,6 +76,10 @@ public class GameController : MonoBehaviour
     [SerializeField] public GameObject blackOutPanel;
 
 
+    [Header("画面解像度テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Text resolutionText;
+
+
     [Header("セーブ・ロードしたい変数関連")]
     [Header("セーブするプレイヤー名(ヒエラルキー上からの編集禁止)")]
     public static string playerName;
@@ -94,6 +98,12 @@ public class GameController : MonoBehaviour
 
     [Header("セーブする明るさの値")]
     public static float brightnessValue = 0.075f;
+
+    [Header("セーブするフルスクリーンフラグ値")]
+    public static bool isFullScreen = true;
+
+    [Header("セーブする画面解像度の配列インデックス番号")]
+    public static int resolutionArrayIndexNumber = 3;
 
     /// <summary>
     /// ゲームモードステータス
@@ -279,6 +289,16 @@ public class GameController : MonoBehaviour
         {
             //明るさを保存した値に設定
             BrightnessAdjustmentController.instance.brightnessAdjustmentSlider.value = brightnessValue;
+        }
+
+        //画面解像度テキストが存在する場合
+        if (resolutionText != null) 
+        {
+            //解像度の配列インデックス番号を保存した値に設定
+            ScreenAspect.instance.SetResolutionArrayIndex(resolutionArrayIndexNumber);
+
+            //ルスクリーンフラグ値を保存した値に設定
+            ScreenAspect.instance.SetFullScreenFlag(isFullScreen);
         }
     }
 

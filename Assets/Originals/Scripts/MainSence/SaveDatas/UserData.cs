@@ -27,4 +27,10 @@ public class UserData
 
     [Header("セーブする明るさの値")]
     public float brightnessValue;
+
+    [Header("セーブするフルスクリーンフラグ値")]
+    public bool isFullScreen;
+
+    [Header("セーブする画面解像度の配列インデックス番号")]
+    public int resolutionArrayIndexNumber;
 }

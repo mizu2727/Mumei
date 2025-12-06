@@ -120,7 +120,7 @@ public class Goal : MonoBehaviour
 
             //マウスカーソルを有効にし、固定を解除
             Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.lockState = CursorLockMode.None;
 
             //パネルを表示
             GoalPanel.SetActive(true);

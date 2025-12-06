@@ -37,6 +37,12 @@ public class SaveLoad : MonoBehaviour
 
             //明るさを保存
             brightnessValue = GameController.brightnessValue,
+
+            //フルスクリーンフラグを保存
+            isFullScreen = GameController.isFullScreen,
+
+            //画面解像度の配列インデックス番号を保存
+            resolutionArrayIndexNumber = GameController.resolutionArrayIndexNumber,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -72,6 +78,8 @@ public class SaveLoad : MonoBehaviour
             GameController.bGMVolume = userData.bGMVolume;
             GameController.sEVolume = userData.sEVolume;
             GameController.brightnessValue = userData.brightnessValue;
+            GameController.isFullScreen = userData.isFullScreen;
+            GameController.resolutionArrayIndexNumber = userData.resolutionArrayIndexNumber;
         }
         else
         {
@@ -99,6 +107,12 @@ public class SaveLoad : MonoBehaviour
 
             //明るさを保存
             brightnessValue = GameController.brightnessValue,
+
+            //フルスクリーンフラグを保存
+            isFullScreen = GameController.isFullScreen,
+
+            //画面解像度の配列インデックス番号を保存
+            resolutionArrayIndexNumber = GameController.resolutionArrayIndexNumber,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -123,11 +137,13 @@ public class SaveLoad : MonoBehaviour
             //JSON文字列をUserDataオブジェクトに変換
             UserData userData = JsonUtility.FromJson<UserData>(josn);
 
-            //各パラメーターにユーザーデータを設定
+            //各パラメーターにシーン遷移時用データを設定
             GameController.lookSensitivity = userData.sensitivityValue;
             GameController.bGMVolume = userData.bGMVolume;
             GameController.sEVolume = userData.sEVolume;
             GameController.brightnessValue = userData.brightnessValue;
+            GameController.isFullScreen = userData.isFullScreen;
+            GameController.resolutionArrayIndexNumber = userData.resolutionArrayIndexNumber;
         }
         else
         {
