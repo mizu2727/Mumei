@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using static GameController;
 using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 public class BaseEnemy : MonoBehaviour, CharacterInterface
 {
@@ -28,18 +29,20 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyName = value;
     }
 
-    [Header("通常移動速度")]
-    [SerializeField] private float Speed = 4f;
-    [SerializeField]
+    /// <summary>
+    /// 通常移動速度
+    /// </summary>
+    private float Speed = 3.0f;
     public float NormalSpeed
     {
         get => Speed;
         set => Speed = value;
     }
 
-    [Header("ダッシュ時の移動速度")]
-    [SerializeField] private float dashSpeed = 5f;
-    [SerializeField]
+    /// <summary>
+    /// ダッシュ時の移動速度
+    /// </summary>
+    private float dashSpeed = 5f;
     public float SprintSpeed
     {
         get => dashSpeed;
@@ -55,63 +58,70 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyDetectionRange = value;
     }
 
-    [Header("重力")]
-    [SerializeField] private float enemyGravity = 10f;
-    [SerializeField]
+    /// <summary>
+    /// 重力
+    /// </summary>
+    private float enemyGravity = 10f;
     public float Gravity
     {
         get => enemyGravity;
         set => enemyGravity = value;
     }
 
-    [Header("HP")]
-    [SerializeField] private int enemyHP = 1;
-    [SerializeField]
+    /// <summary>
+    /// HP
+    /// </summary>
+    private int enemyHP = 1;
     public int HP
     {
         get => enemyHP;
         set => enemyHP = value;
     }
 
-    [Header("死亡フラグ(ヒエラルキー上での編集禁止)")]
-    [SerializeField] private bool enemyIsDead = false;
-    [SerializeField]
+    /// <summary>
+    /// 死亡フラグ
+    /// </summary>
+    private bool enemyIsDead = false;
     public bool IsDead
     {
         get => enemyIsDead;
         set => enemyIsDead = value;
     }
 
-    [Header("移動フラグ(ヒエラルキー上での編集禁止)")]
-    [SerializeField] private bool enemyIsMove = true;
-    [SerializeField]
+    /// <summary>
+    /// 移動フラグ
+    /// </summary>
+    private bool enemyIsMove = true;
     public bool IsMove
     {
         get => enemyIsMove;
         set => enemyIsMove = value;
     }
 
-    [Header("ダッシュフラグ(ヒエラルキー上での編集禁止)")]
-    [SerializeField] private bool enemyIsDash = true;
-    [SerializeField]
+    /// <summary>
+    /// ダッシュフラグ
+    /// </summary>
+    private bool enemyIsDash = true;
     public bool IsDash
     {
         get => enemyIsDash;
         set => enemyIsDash = value;
     }
 
-    [Header("振り返りフラグ(ヒエラルキー上での編集禁止)")]
-    [SerializeField] private bool enemyIsBackRotate = false;
-    [SerializeField]
+    /// <summary>
+    /// 振り返りフラグ
+    /// </summary>
+    private bool enemyIsBackRotate = false;
     public bool IsBackRotate
     {
         get => enemyIsBackRotate;
         set => enemyIsBackRotate = value;
     }
 
-    [Header("照明フラグ(ヒエラルキー上での編集禁止)")]
-    [SerializeField] private bool enemyIsLight = true;
-    [SerializeField]
+    /// <summary>
+    /// 照明フラグ
+    /// </summary>
+    private bool enemyIsLight = true;
     public bool IsLight
     {
         get => enemyIsLight;
@@ -132,10 +142,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     public void Attack()
     {
+        //プレイヤーが既に死亡している場合は何もしない
         if (Player.instance.IsDead) return;
 
+        //プレイヤーのHPを1減らす
         Player.instance.HP -= 1;
 
+        //プレイヤーのHPが0以下の場合
         if (Player.instance.HP <= 0) 
         {
             //シーン遷移時用データを保存
@@ -147,9 +160,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     }
 
-    [Header("初期位置")]
-    [SerializeField] private Vector3 enemyStartPosition;
-    [SerializeField]
+    /// <summary>
+    /// 初期位置
+    /// </summary>
+    private Vector3 enemyStartPosition;
     public Vector3 StartPosition
     {
         get => enemyStartPosition;
@@ -172,11 +186,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         Investigate  // 調査（プレイヤーを見失った位置に向かう）
     }
 
-    [Header("EnemyState(ヒエラルキー上での編集禁止)")]
-    public EnemyState currentState = EnemyState.Patrol;
+    /// <summary>
+    /// EnemyState
+    /// </summary>
+    protected EnemyState currentState = EnemyState.Patrol;
 
-    [Header("プレイヤーの最後の既知の位置(ヒエラルキー上での編集禁止)")]
-    public Vector3 lastKnownPlayerPosition;
+    /// <summary>
+    /// プレイヤーの最後の既知の位置
+    /// </summary>
+    protected Vector3 lastKnownPlayerPosition;
 
     /// <summary>
     /// 調査時間カウンター
@@ -188,15 +206,17 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private float investigateDuration = 5f;
 
-    [Header("navMeshAgent(ヒエラルキー上での編集禁止)")]
-    public NavMeshAgent navMeshAgent;
+    /// <summary>
+    /// navMeshAgent
+    /// </summary>
+    protected NavMeshAgent navMeshAgent;
 
     [Header("徘徊関連")]
     [Header("徘徊地点を見つける範囲(この値が狭すぎると徘徊地点が見つからず、広すぎるとNaveMeshの範囲外になるため、要調整が必要)")]
     [SerializeField] private float findPatrolPointRange = 10f;
 
     [Header("警戒範囲(プレイヤーとの距離)")]
-    [SerializeField] public float alertRange = 15f;
+    [SerializeField] protected float alertRange = 15f;
 
     [Header("徘徊地点のTransform配列")]
     [SerializeField] private Transform[] patrolPoint;
@@ -289,10 +309,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] public GameObject playerFoundPanel;
 
 
+    [Header("音検知時のパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] protected GameObject noiseScreenPanel;
+
+
     /// <summary>
     /// 前フレームの移動状態フラグ
     /// </summary>
     private bool wasMovingLastFrame = false;
+
 
     [Header("プレイヤーが視野内にいるかを判定(ヒエラルキー上での編集禁止)")]
     public bool isAlertMode = false;
@@ -545,6 +570,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                             }
                         }
                     }
+
+                    //ステージBGMからプレイヤーを追従するBGMへ切り替える
+                    EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
 
                     //プレイヤーの視認成功
                     return true;
@@ -803,7 +831,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 navMeshAgent.speed = Speed;
 
                 //警戒音を停止
-                audioSourceFindPlayerSE.Stop();
+                StopFindPlayerSE();
 
                 //プレイヤーが視野内にいるかをチェック
                 if (distance <= alertRange)
@@ -816,8 +844,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         isAlertMode = true;
                         lastKnownPlayerPosition = targetPoint.position;
 
-                        //ステージBGMからプレイヤーを追従するBGMへ切り替える
-                        EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
 
                         //画面を赤く表示
                         playerFoundPanel.SetActive(true);
@@ -848,12 +874,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 animator.SetBool("isRun", false);
                 animator.SetBool("isWalk", IsMove);
 
+                //速度を設定
                 navMeshAgent.speed = Speed;
 
                 //警戒音を再生
-                audioSourceFindPlayerSE.clip = sO_SE.GetSEClip(findPlayerSEid);
-                audioSourceFindPlayerSE.loop = true;
-                audioSourceFindPlayerSE.Play();
+                PlayFindPlayerSE();
 
                 if (IsPlayerInFront())
                 {
@@ -863,8 +888,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
 
-                    //ステージBGMからプレイヤーを追従するBGMへ切り替える
-                    EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
 
                     //画面を赤く表示
                     playerFoundPanel.SetActive(true);
@@ -896,7 +919,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         　　 //追従状態
             case EnemyState.Chase:
                 //警戒音を停止
-                audioSourceFindPlayerSE.Stop();
+                StopFindPlayerSE();
 
                 //ダッシュアニメーションを再生
                 animator.SetBool("isRun", true);
@@ -935,7 +958,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 playerFoundPanel.SetActive(false);
 
                 //警戒音を停止
-                audioSourceFindPlayerSE.Stop();
+                StopFindPlayerSE();
 
                 //歩行アニメーション再生
                 animator.SetBool("isRun", false);
@@ -1079,5 +1102,24 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             float t = (distance - maxSoundDistance) / (minSoundDistance - maxSoundDistance);
             return Mathf.Lerp(maxVolume, minVolume, t);
         }
+    }
+
+    /// <summary>
+    /// 警戒音再生メソッド
+    /// </summary>
+    protected void PlayFindPlayerSE() 
+    {
+        //警戒音を再生
+        audioSourceFindPlayerSE.clip = sO_SE.GetSEClip(findPlayerSEid);
+        audioSourceFindPlayerSE.loop = true;
+        audioSourceFindPlayerSE.Play();
+    }
+
+    /// <summary>
+    /// 警戒音停止メソッド
+    /// </summary>
+    protected void StopFindPlayerSE() 
+    {
+        audioSourceFindPlayerSE.Stop();
     }
 }
