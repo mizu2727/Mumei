@@ -673,7 +673,8 @@ public class Player : MonoBehaviour, CharacterInterface
     {
         //Shiftキー・Xボタンを入力している間はダッシュ
         //Dash…"joystick button 4"を割り当て。コントローラーではLボタンになる
-        if (IsMove && isStamina && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash")))
+        if (IsMove && isStamina && Time.timeScale == 1 
+            && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash")))
         {
             //ダッシュ開始
             IsDash = true;
