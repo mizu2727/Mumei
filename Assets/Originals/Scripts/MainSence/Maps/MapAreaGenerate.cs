@@ -6,9 +6,16 @@ using UnityEngine.AI;
 using Random = UnityEngine.Random;
 
 
-
+/// <summary>
+/// マップエリアランダム配置クラス
+/// </summary>
 public class MapAreaGenerate : MonoBehaviour
 {
+    /// <summary>
+    /// インスタンス
+    /// </summary>
+    public static MapAreaGenerate instance;
+
     [Header("マップエリアを格納する(ヒエラルキー上のマップエリアをアタッチすること)")]
     [SerializeField] private List <GameObject> areaPrefabList;
 
@@ -37,6 +44,25 @@ public class MapAreaGenerate : MonoBehaviour
     /// navMeshSurface
     /// </summary>
     [SerializeField] private NavMeshSurface navMeshSurface;
+
+
+    [Header("敵の位置(ヒエラルキー上からアタッチすること。ステージライトとの距離測定で必要)")]
+    [SerializeField] public Transform[] baseEnemyTransformArray;
+
+    private void Awake()
+    {
+        //インスタンスが存在しない場合
+        if (instance == null)
+        {
+            //インスタンスを自身に設定
+            instance = this;
+        }
+        else
+        {
+            //インスタンスが既に存在する場合、自身を破棄
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
