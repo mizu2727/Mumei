@@ -55,15 +55,21 @@ public class StageLight : MonoBehaviour
         //ステージライト点滅時間を初期化
         blinkTimer = 0.0f;
 
-        //敵との距離配列を初期化
-        distanceArray = new float[MapAreaGenerate.instance.baseEnemyTransformArray.Length];
+        //MapAreaGenerateのインスタンスが存在する場合
+        if (MapAreaGenerate.instance != null) 
+        {
+            //敵との距離配列を初期化
+            distanceArray = new float[MapAreaGenerate.instance.baseEnemyTransformArray.Length];
+        }
+
+        
     }
 
 
     private void Update()
     {
-        //ポーズ中の場合
-        if (Time.timeScale == 0)
+        //ポーズ中||MapAreaGenerateのインスタンスが存在しない場合
+        if (Time.timeScale == 0 || MapAreaGenerate.instance == null)
         {
             //処理をスキップ
             return;
