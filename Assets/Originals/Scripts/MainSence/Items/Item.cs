@@ -30,6 +30,11 @@ public enum ItemType
     /// Œ®
     /// </summary>
     Key,
+
+    /// <summary>
+    /// ƒRƒ“ƒpƒX
+    /// </summary>
+    Compass,
 }
 
 

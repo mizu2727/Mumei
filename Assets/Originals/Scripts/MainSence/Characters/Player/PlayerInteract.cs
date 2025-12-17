@@ -274,8 +274,17 @@ public class PlayerInteract : MonoBehaviour
 
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
+                        //対象アイテムがコンパスの場合
+                        if (item.itemType == ItemType.Compass) 
+                        {
+                            //TODO:コンパスの針のUIを表示
+                            Compass.instance.ViewOrHiddenCompassArrowImage(true);
+
+                            //拾ったアイテムをステージ上から削除
+                            DestroyItem(pickUpItem);
+                        }
                         //対象アイテムがドキュメントorミステリーアイテムの場合
-                        if ((item.itemType == ItemType.Document) || (item.itemType == ItemType.MysteryItem))
+                        else if ((item.itemType == ItemType.Document) || (item.itemType == ItemType.MysteryItem))
                         {
                             //ポーズ画面内のアイテムのパネル内に追加する
                             sO_Item.AddDocumentORMysteryItem(item);

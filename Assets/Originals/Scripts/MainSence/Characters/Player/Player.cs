@@ -343,6 +343,9 @@ public class Player : MonoBehaviour, CharacterInterface
             return;
         }
         instance = this;
+
+
+        Debug.Log("Playerê∂ê¨");
     }
 
     /// <summary>

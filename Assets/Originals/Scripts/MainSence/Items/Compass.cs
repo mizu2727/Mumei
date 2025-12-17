@@ -13,8 +13,10 @@ public class Compass : MonoBehaviour
     [Header("コンパスの針の画像(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private Image compassArrowImage;
 
-    [Header("プレイヤー(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] private Transform player;
+    /// <summary>
+    /// プレイヤーの位置
+    /// </summary>
+    private Transform player;
 
     [Header("ゴール(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private Transform goal;
@@ -27,8 +29,20 @@ public class Compass : MonoBehaviour
     [Header("針のオフセット角度（度）(デフォルトでは北が0度)")]
     [SerializeField] private float needleOffsetAngle = 0f;
 
+    /// <summary>
+    /// コンパスの針の画像を表示・非表示にする
+    /// </summary>
+    /// <param name="isVisible">表示ならtrue</param>
+    public void ViewOrHiddenCompassArrowImage(bool isVisible)
+    {
+        compassArrowImage.enabled = isVisible;
+    }
+
     private void Awake()
     {
+        //コンパスの針の画像を非表示
+        ViewOrHiddenCompassArrowImage(false);
+
         //シングルトンの設定
         if (instance == null)
         {
@@ -39,10 +53,17 @@ public class Compass : MonoBehaviour
             //すでにインスタンスが存在する場合は破棄
             Destroy(gameObject);
         }
+
+
+        Debug.Log("Compass生成");
     }
 
     void Start()
     {
+        //プレイヤーのTransformを取得
+        player = Player.instance.transform;
+
+        //RectTransformを取得
         rectTransform_ = compassArrowImage.rectTransform;
     }
 
