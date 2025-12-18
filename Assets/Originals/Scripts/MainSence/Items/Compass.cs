@@ -53,9 +53,6 @@ public class Compass : MonoBehaviour
             //すでにインスタンスが存在する場合は破棄
             Destroy(gameObject);
         }
-
-
-        Debug.Log("Compass生成");
     }
 
     void Start()
