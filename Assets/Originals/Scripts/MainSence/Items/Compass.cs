@@ -13,6 +13,9 @@ public class Compass : MonoBehaviour
     [Header("コンパスの針の画像(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private Image compassArrowImage;
 
+    [Header("CompassTextPanel(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private GameObject compassTextPanel;
+
     /// <summary>
     /// プレイヤーの位置
     /// </summary>
@@ -36,6 +39,9 @@ public class Compass : MonoBehaviour
     public void ViewOrHiddenCompassArrowImage(bool isVisible)
     {
         compassArrowImage.enabled = isVisible;
+
+        //コンパステキストパネルの表示・非表示も連動させる
+        compassTextPanel.SetActive(isVisible);
     }
 
     private void Awake()

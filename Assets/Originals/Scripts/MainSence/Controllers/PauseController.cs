@@ -77,7 +77,7 @@ public class PauseController : MonoBehaviour
     public bool isViewItemsPanel = false;
 
     /// <summary>
-    /// 旋回速度設定パネル閲覧フラグ
+    /// 感度設定パネル閲覧フラグ
     /// </summary>
     private bool isViewMouseSensitivityPanel = false;
 
