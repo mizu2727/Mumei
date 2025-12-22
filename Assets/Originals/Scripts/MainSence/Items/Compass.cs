@@ -1,4 +1,3 @@
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +14,11 @@ public class Compass : MonoBehaviour
 
     [Header("CompassTextPanel(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject compassTextPanel;
+
+    /// <summary>
+    /// コンパス関係を表示・非表示するフラグ
+    /// </summary>
+    private bool isViewCompassArrowImage = false;
 
     /// <summary>
     /// プレイヤーの位置
@@ -38,16 +42,20 @@ public class Compass : MonoBehaviour
     /// <param name="isVisible">表示ならtrue</param>
     public void ViewOrHiddenCompassArrowImage(bool isVisible)
     {
-        compassArrowImage.enabled = isVisible;
+        //表示・非表示フラグを更新
+        isViewCompassArrowImage = isVisible;
 
-        //コンパステキストパネルの表示・非表示も連動させる
-        compassTextPanel.SetActive(isVisible);
+        //コンパスの針の画像の表示・非表示を切り替え
+        compassArrowImage.enabled = isVisible;
     }
 
     private void Awake()
     {
         //コンパスの針の画像を非表示
         ViewOrHiddenCompassArrowImage(false);
+
+        //コンパステキストパネルを非表示
+        compassTextPanel.SetActive(false);
 
         //シングルトンの設定
         if (instance == null)
@@ -97,5 +105,24 @@ public class Compass : MonoBehaviour
         //UI針を回転
         rectTransform_.rotation = Quaternion.Euler(0f, 0f, -relativeAngle + needleOffsetAngle);
 
+
+        //OperationExplanationControllerのインスタンスが存在しない場合
+        if (OperationExplanationController.instance == null) 
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //コンパス表示フラグがオン&&CompassTextPanel手動閲覧フラグがオンの場合
+        if (isViewCompassArrowImage && OperationExplanationController.instance.GetIsSelfViewCompassTextPanel()) 
+        {
+            //コンパステキストパネルを表示
+            compassTextPanel.SetActive(true);
+        }
+        else
+        {
+            //コンパステキストパネルを非表示
+            compassTextPanel.SetActive(false);
+        }
     }
 }

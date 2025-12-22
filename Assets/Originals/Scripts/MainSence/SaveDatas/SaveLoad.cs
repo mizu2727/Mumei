@@ -43,6 +43,15 @@ public class SaveLoad : MonoBehaviour
 
             //画面解像度の配列インデックス番号を保存
             resolutionArrayIndexNumber = GameController.resolutionArrayIndexNumber,
+
+            //OperationPanel手動閲覧フラグを保存
+            isSelfViewOperationPanel = GameController.isSaveSelfViewOperationPanel,
+
+            //UseItemTextPanel手動閲覧フラグを保存
+            isSelfViewUseItemTextPanel = GameController.isSaveSelfViewUseItemTextPanel,
+
+            //CompassTextPanel手動閲覧フラグを保存
+            isSelfViewCompassTextPanel = GameController.isSaveSelfViewCompassTextPanel,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -80,6 +89,9 @@ public class SaveLoad : MonoBehaviour
             GameController.brightnessValue = userData.brightnessValue;
             GameController.isFullScreen = userData.isFullScreen;
             GameController.resolutionArrayIndexNumber = userData.resolutionArrayIndexNumber;
+            GameController.isSaveSelfViewOperationPanel = userData.isSelfViewOperationPanel;
+            GameController.isSaveSelfViewUseItemTextPanel = userData.isSelfViewUseItemTextPanel;
+            GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
         }
         else
         {
@@ -113,6 +125,15 @@ public class SaveLoad : MonoBehaviour
 
             //画面解像度の配列インデックス番号を保存
             resolutionArrayIndexNumber = GameController.resolutionArrayIndexNumber,
+
+            //OperationPanel手動閲覧フラグを保存
+            isSelfViewOperationPanel = GameController.isSaveSelfViewOperationPanel,
+
+            //UseItemTextPanel手動閲覧フラグを保存
+            isSelfViewUseItemTextPanel = GameController.isSaveSelfViewUseItemTextPanel,
+
+            //CompassTextPanel手動閲覧フラグを保存
+            isSelfViewCompassTextPanel = GameController.isSaveSelfViewCompassTextPanel,
         };
 
         //ユーザーデータをJSON形式で保存
@@ -144,6 +165,9 @@ public class SaveLoad : MonoBehaviour
             GameController.brightnessValue = userData.brightnessValue;
             GameController.isFullScreen = userData.isFullScreen;
             GameController.resolutionArrayIndexNumber = userData.resolutionArrayIndexNumber;
+            GameController.isSaveSelfViewOperationPanel = userData.isSelfViewOperationPanel;
+            GameController.isSaveSelfViewUseItemTextPanel = userData.isSelfViewUseItemTextPanel;
+            GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
         }
         else
         {

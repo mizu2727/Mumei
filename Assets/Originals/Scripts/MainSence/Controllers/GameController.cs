@@ -105,6 +105,15 @@ public class GameController : MonoBehaviour
     [Header("セーブする画面解像度の配列インデックス番号")]
     public static int resolutionArrayIndexNumber = 3;
 
+    [Header("セーブするOperationPanel手動閲覧フラグ")]
+    public static bool isSaveSelfViewOperationPanel = true;
+
+    [Header("セーブするUseItemTextPanel手動閲覧フラグ")]
+    public static bool isSaveSelfViewUseItemTextPanel = true;
+
+    [Header("セーブするCompassTextPanel手動閲覧フラグ")]
+    public static bool isSaveSelfViewCompassTextPanel = true;
+
     /// <summary>
     /// ゲームモードステータス
     /// </summary>
@@ -300,6 +309,32 @@ public class GameController : MonoBehaviour
             //ルスクリーンフラグ値を保存した値に設定
             ScreenAspect.instance.SetFullScreenFlag(isFullScreen);
         }
+
+        //OperationExplanationControllerが存在する場合
+        if (OperationExplanationController.instance != null)
+        {
+            //OperationPanelが存在する場合
+            if (OperationExplanationController.instance.GetOperationPanel() != null)
+            {
+                //OperationPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewOperationPanel(isSaveSelfViewOperationPanel);
+            }
+
+            //UseItemTextPanelが存在する場合
+            if (OperationExplanationController.instance.GetUseItemTextPanel() != null)
+            {
+                //UseItemTextPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewUseItemTextPanel(isSaveSelfViewUseItemTextPanel);
+            }
+
+
+            //CompassTextPanelが存在する場合
+            if (OperationExplanationController.instance.GetCompassTextPanel() != null)
+            {
+                //CompassTextPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewCompassTextPanel(isSaveSelfViewCompassTextPanel);
+            }
+        }
     }
 
     /// <summary>
@@ -351,7 +386,7 @@ public class GameController : MonoBehaviour
             BrightnessAdjustmentController.instance.ApplyBrightnessAdjustmentSlider();
         }
 
-        //リセット(デバッグ用)
+        //リセット(デバッグ用。新しいシーン遷移時用データ用パラメータが追加された場合に一度実行すること)
         //CallRestDataMethod();
     }
 

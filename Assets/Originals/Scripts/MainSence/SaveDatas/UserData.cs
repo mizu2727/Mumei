@@ -33,4 +33,13 @@ public class UserData
 
     [Header("セーブする画面解像度の配列インデックス番号")]
     public int resolutionArrayIndexNumber;
+
+    [Header("セーブするOperationPanel手動閲覧フラグ")]
+    public bool isSelfViewOperationPanel;
+
+    [Header("セーブするUseItemTextPanel手動閲覧フラグ")]
+    public bool isSelfViewUseItemTextPanel;
+
+    [Header("セーブするCompassTextPanel手動閲覧フラグ")]
+    public bool isSelfViewCompassTextPanel;
 }

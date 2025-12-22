@@ -29,6 +29,13 @@ public class OptionUIController : MonoBehaviour
     [Header("スクリーン調整設定パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject screenAdjustmentPanel;
 
+    [Header("説明関係設定パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject explanationPanel;
+
+
+    [Header("説明関係ボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject explanationButton;
+
 
     /// <summary>
     /// オプションパネル閲覧フラグ
@@ -55,6 +62,11 @@ public class OptionUIController : MonoBehaviour
     /// </summary>
     private bool isViewScreenAdjustmentPanel = false;
 
+    /// <summary>
+    /// 説明関係設定パネル閲覧フラグ
+    /// </summary>
+    private bool isViewExplanationPanel = false;
+
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
@@ -71,7 +83,7 @@ public class OptionUIController : MonoBehaviour
     /// <summary>
     /// TitleSceneのシーン名
     /// </summary>
-    const string stringTitleScene = "TitleScene";
+    private const string stringTitleScene = "TitleScene";
 
     /// <summary>
     /// オプションパネル閲覧フラグを取得
@@ -133,6 +145,22 @@ public class OptionUIController : MonoBehaviour
         //スクリーン調整設定パネルを非表示
         isViewScreenAdjustmentPanel = false;
         ChangeScreenAdjustmentPanel();
+
+        //説明関係設定パネルを非表示
+        isViewExplanationPanel = false;
+        ChangeExplanationPanel();
+
+        //現在のシーン名がTitleSceneの場合
+        if (stringTitleScene == SceneManager.GetActiveScene().name)
+        {
+            //説明ボタンを非表示にする
+            explanationButton.SetActive(false);
+        }
+        else 
+        {
+            //説明ボタンを表示する
+            explanationButton.SetActive(true);
+        }
     }
 
     /// <summary>
@@ -219,6 +247,11 @@ public class OptionUIController : MonoBehaviour
         isViewScreenAdjustmentPanel = false;
         ChangeScreenAdjustmentPanel();
 
+        //説明関係設定パネルを非表示
+        isViewExplanationPanel = false;
+        ChangeExplanationPanel();
+
+
         //感度設定パネルを表示
         isViewMouseSensitivityPanel = true;
         ChangeMouseSensitivityPanel();
@@ -244,6 +277,10 @@ public class OptionUIController : MonoBehaviour
         //スクリーン調整設定パネルを非表示
         isViewScreenAdjustmentPanel = false;
         ChangeScreenAdjustmentPanel();
+
+        //説明関係設定パネルを非表示
+        isViewExplanationPanel = false;
+        ChangeExplanationPanel();
 
 
         //音量調整設定パネルを表示
@@ -272,6 +309,10 @@ public class OptionUIController : MonoBehaviour
         isViewScreenAdjustmentPanel = false;
         ChangeScreenAdjustmentPanel();
 
+        //説明関係設定パネルを非表示
+        isViewExplanationPanel = false;
+        ChangeExplanationPanel();
+
 
         //明るさ調整設定パネルを表示
         isViewBrightnessAdjustmentPanel = true;
@@ -299,10 +340,45 @@ public class OptionUIController : MonoBehaviour
         isViewBrightnessAdjustmentPanel = false;
         ChangeBrightnessAdjustmentPanel();
 
+        //説明関係設定パネルを非表示
+        isViewExplanationPanel = false;
+        ChangeExplanationPanel();
+
 
         //スクリーン調整設定パネルを表示
         isViewScreenAdjustmentPanel = true;
         ChangeScreenAdjustmentPanel();
+    }
+
+    /// <summary>
+    /// 「説明」ボタン押下時の処理
+    /// </summary>
+    public void OnClickedExplanationButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //他の設定パネルを非表示にする
+        //感度設定パネルを非表示にする
+        isViewMouseSensitivityPanel = false;
+        ChangeMouseSensitivityPanel();
+
+        //音量調整設定パネルを非表示
+        isViewAudioAdjustmentPanel = false;
+        ChangeAudioAdjustmentPanel();
+
+        //明るさ調整設定パネルを非表示
+        isViewBrightnessAdjustmentPanel = false;
+        ChangeBrightnessAdjustmentPanel();
+
+        //スクリーン調整設定パネルを非表示
+        isViewScreenAdjustmentPanel = false;
+        ChangeScreenAdjustmentPanel();
+
+
+        //説明関係設定パネルを表示
+        isViewExplanationPanel = true;
+        ChangeExplanationPanel();
     }
 
     /// <summary>
@@ -343,6 +419,10 @@ public class OptionUIController : MonoBehaviour
         //スクリーン調整設定パネルを非表示
         isViewScreenAdjustmentPanel = false;
         ChangeScreenAdjustmentPanel();
+
+        //説明関係設定パネルを非表示
+        isViewExplanationPanel = false;
+        ChangeExplanationPanel();
 
         //オプションパネルを非表示
         isOptionPanel = false;
@@ -436,6 +516,31 @@ public class OptionUIController : MonoBehaviour
         {
             //非表示
             screenAdjustmentPanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 説明関係設定パネルの表示/非表示
+    /// </summary>
+    private void ChangeExplanationPanel()
+    {
+        //現在のシーン名がTitleSceneの場合
+        if (stringTitleScene == SceneManager.GetActiveScene().name)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //フラグ値がオンの場合
+        if (isViewExplanationPanel)
+        {
+            //表示
+            explanationPanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            explanationPanel.SetActive(false);
         }
     }
 }
