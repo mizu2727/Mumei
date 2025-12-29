@@ -29,6 +29,21 @@ public class Player : MonoBehaviour, CharacterInterface
         set => animator = value;
     }
 
+    /// <summary>
+    /// "isWalk"
+    /// </summary>
+    private const string kIsWalkAnimatorParameter = "isWalk";
+
+    /// <summary>
+    /// "isRun"
+    /// </summary>
+    private const string kIsRunAnimatorParameter = "isRun";
+
+    /// <summary>
+    /// "isKneeling"
+    /// </summary>
+    private const string kIsKneelingAnimatorParameter = "isKneeling";
+
     [Header("名前(ヒエラルキー上での編集禁止)")]
 
     [SerializeField]
@@ -173,11 +188,19 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
     /// <summary>
+    /// 隠れるフラグ
+    /// </summary>
+    private bool isHidden = false;
+
+    /// <summary>
     /// 死亡
     /// </summary>
     public void Dead()
     {
         IsDead = true;
+
+        //隠れるフラグをオフ
+        isHidden = false;
 
         //移動方向をリセット
         moveDirection = Vector3.zero;
@@ -185,8 +208,8 @@ public class Player : MonoBehaviour, CharacterInterface
         //アニメーションを停止
         if (animator != null)
         {
-            animator.SetBool("isWalk", false);
-            animator.SetBool("isRun", false);
+            animator.SetBool(kIsWalkAnimatorParameter, false);
+            animator.SetBool(kIsRunAnimatorParameter, false);
         }
 
         //効果音を停止
@@ -277,9 +300,10 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     private bool wasMovingLastFrame = false;
 
-
-    [Header("プレイヤーが倒れているフラグ(ヒエラルキー上での編集禁止)")]
-    public bool isFallDown = false;
+    /// <summary>
+    /// プレイヤーが倒れているフラグ
+    /// </summary>
+    private bool isFallDown = false;
 
     [Header("デバッグモード")]
     public bool isDebug = false;
@@ -334,6 +358,33 @@ public class Player : MonoBehaviour, CharacterInterface
         return currentSE;
     }
 
+    /// <summary>
+    /// 隠れるフラグを取得
+    /// </summary>
+    /// <returns>隠れるフラグ</returns>
+    public bool GetIsPlayerHidden()
+    {
+        return isHidden;
+    }
+
+    /// <summary>
+    /// 隠れるフラグを設定
+    /// </summary>
+    /// <param name="isHiddenValue">隠れるフラグ</param>
+    public void SetIsPlayerHidden(bool isHiddenValue) 
+    {
+        isHidden = isHiddenValue;
+    }
+
+    /// <summary>
+    /// プレイヤーが倒れているフラグを取得
+    /// </summary>
+    /// <returns>プレイヤーが倒れているフラグ</returns>
+    public bool GetIsFallDown() 
+    {
+        return isFallDown;
+    }
+
     private void Awake()
     {
         //インスタンス
@@ -348,12 +399,27 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 移動入力があるかどうかを判定
     /// </summary>
-    /// <returns>移動しているならtrue</returns>
+    /// <returns>移動中&&オブジェクトに隠れていない場合はtrue</returns>
     public bool IsPlayerMoving()
     {
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
-        return Mathf.Abs(moveX) > kMovingBoundaryValue || Mathf.Abs(moveZ) > kMovingBoundaryValue;
+
+        //隠れている場合
+        if (isHidden) 
+        {
+            //移動時の数値をリセット
+            moveX = 0;
+            moveZ = 0;
+
+            //隠れるアニメーションを再生
+            PlayOrStopKneelingAnimation();
+
+            //移動していないと判定
+            return false;
+        }
+
+        return (Mathf.Abs(moveX) > kMovingBoundaryValue || Mathf.Abs(moveZ) > kMovingBoundaryValue);
     }
 
     /// <summary>
@@ -490,6 +556,9 @@ public class Player : MonoBehaviour, CharacterInterface
         isStamina = true;
 
         playerIsBackRotate = false;
+
+        //隠れるフラグを初期化
+        isHidden = false;
     }
 
     /// <summary>
@@ -530,16 +599,54 @@ public class Player : MonoBehaviour, CharacterInterface
         if (playerIsBackRotate && (GameController.instance.gameModeStatus == GameModeStatus.Story)) PlayerTurn();
 
         //通常のプレイ以外の場合、処理をスキップ
-        if (playerIsDead || Time.timeScale == 0 || isFallDown || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
+        if (playerIsDead || Time.timeScale == 0 || isFallDown 
+            || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
         {
             //移動方向をリセット
             moveDirection = Vector3.zero;
+
+            //スタミナ回復
+            RecoveryStamia();
+
+            //スライダーに値を反映
+            ReflectionStaminaSlider();
+
+            //処理をスキップ
             return;
         } 
 
         //PauseControllerがないSceneでnullチェックエラーを回避するために、個別でわけている
         if (PauseController.instance.isPause) return;
 
+
+        //隠れている場合の処理
+        if (isHidden)
+        {
+            //移動方向をリセット
+            moveDirection = Vector3.zero;
+
+            //移動フラグをオフ
+            IsMove = false;
+
+            //移動のアニメーションを停止
+            animator.SetBool(kIsWalkAnimatorParameter, false);
+            animator.SetBool(kIsRunAnimatorParameter, false);
+
+            //プレイヤーが隠れるアニメーションを再生
+            PlayOrStopKneelingAnimation();
+
+            //スタミナ回復
+            RecoveryStamia();
+
+            //スライダーに値を反映
+            ReflectionStaminaSlider();
+
+            //移動音を止める
+            if (audioSourceSE.isPlaying) StopPlayerSE(audioSourceSE);
+
+            //処理をスキップ
+            return;
+        }
 
         //ダッシュ判定
         PlayerDashOrWalk();
@@ -604,15 +711,16 @@ public class Player : MonoBehaviour, CharacterInterface
         if (IsMove)
         {
             //移動中:Shiftに応じて走行または歩行する
-            animator.SetBool("isRun", Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash"));
-            animator.SetBool("isWalk", !Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash"));
-
+            animator.SetBool(kIsRunAnimatorParameter, !isHidden && (Input.GetKey(KeyCode.LeftShift) 
+                || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash")));
+            animator.SetBool(kIsWalkAnimatorParameter, !isHidden && !Input.GetKey(KeyCode.LeftShift)
+                && !Input.GetKey(KeyCode.RightShift) && !Input.GetButton("Dash"));
         }
         else
         {
             //停止中:両方のアニメーションをオフ
-            animator.SetBool("isWalk", false);
-            animator.SetBool("isRun", false);
+            animator.SetBool(kIsWalkAnimatorParameter, false);
+            animator.SetBool(kIsRunAnimatorParameter, false);
 
         }
 
@@ -635,7 +743,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
 
-        if (IsMove && !wasMovingLastFrame)
+        if (IsMove && !wasMovingLastFrame && !isHidden)
         {
             //移動開始時に効果音を再生
             audioSourceSE.clip = currentSE;
@@ -647,7 +755,7 @@ public class Player : MonoBehaviour, CharacterInterface
             //移動停止時に効果音を停止
             StopPlayerSE(audioSourceSE);
         }
-        else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
+        else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE && !isHidden)
         {
             //移動中に歩行/ダッシュが切り替わった場合、効果音を変更
             audioSourceSE.Stop();
@@ -673,7 +781,7 @@ public class Player : MonoBehaviour, CharacterInterface
     {
         //Shiftキー・Xボタンを入力している間はダッシュ
         //Dash…"joystick button 4"を割り当て。コントローラーではLボタンになる
-        if (IsMove && isStamina && Time.timeScale == 1 
+        if (IsMove && isStamina && Time.timeScale == 1 && !isHidden
             && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash")))
         {
             //ダッシュ開始
@@ -717,7 +825,7 @@ public class Player : MonoBehaviour, CharacterInterface
         else if (stamina < kMaxStamina)
         {
             //ダッシュしていないときはスタミナを回復
-            stamina += kStaminaRecoveryRatio * Time.deltaTime;  
+            RecoveryStamia();  
         }
         else if (kMaxStamina <= stamina)
         {
@@ -729,8 +837,32 @@ public class Player : MonoBehaviour, CharacterInterface
         if (staminaSlider)
         {
             //スライダーに値を反映
-            staminaSlider.value = stamina;
+            ReflectionStaminaSlider();
         }
+    }
+
+    /// <summary>
+    /// スタミナ回復処理
+    /// </summary>
+    private void RecoveryStamia() 
+    {
+        stamina += kStaminaRecoveryRatio * Time.deltaTime;
+    }
+
+    /// <summary>
+    /// スライダーに値を反映する処理
+    /// </summary>
+    private void ReflectionStaminaSlider() 
+    {
+        //staminaSliderがnullの場合
+        if (staminaSlider == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //スライダーに値を反映
+        staminaSlider.value = stamina;
     }
 
     /// <summary>
@@ -749,6 +881,23 @@ public class Player : MonoBehaviour, CharacterInterface
     public bool PlayerIsBackRotate() 
     {
         return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+    }
+
+    /// <summary>
+    /// 隠れる時(膝立ち)のアニメーション再生・停止
+    /// </summary>
+    public void PlayOrStopKneelingAnimation()
+    {
+        //隠れている場合
+        if (isHidden)
+        {
+            //歩行・走行アニメーションを停止
+            animator.SetBool(kIsWalkAnimatorParameter, false);
+            animator.SetBool(kIsRunAnimatorParameter, false);
+        }
+
+        //膝立ちアニメーションの再生・停止
+        animator.SetBool(kIsKneelingAnimatorParameter, isHidden);
     }
 
     /// <summary>

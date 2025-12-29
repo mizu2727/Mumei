@@ -197,6 +197,16 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     protected Vector3 lastKnownPlayerPosition;
 
     /// <summary>
+    /// 調査ステートへの移行までの時間
+    /// </summary>
+    private float changeToInvestigateTimer;
+
+    /// <summary>
+    /// 指定の調査ステートへの移行までの時間
+    /// </summary>
+    private const float kChangeToInvestigateDuration = 3.0f;
+
+    /// <summary>
     /// 調査時間カウンター
     /// </summary>
     private float investigateTimer = 0f;
@@ -239,8 +249,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("視野角")]
     [SerializeField] private float fieldOfViewAngle = 60f;
 
-    [Header("SphereCastの球の半径")]
-    [SerializeField] private float sphereCastRadius = 0.5f;
+    /// <summary>
+    /// SphereCastの球の半径
+    /// </summary>
+    private const float kSphereCastRadius = 0.1f;
 
     [Header("検知対象のレイヤー（Playerを設定すること）")]
     [SerializeField] private LayerMask detectionLayer;
@@ -467,6 +479,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //回転速度を適切に設定すること
         navMeshAgent.angularSpeed = 360f;
 
+        //加速度を設定
+        navMeshAgent.acceleration = 20f;
+
+        //停止距離を設定
+        navMeshAgent.stoppingDistance = 0f;
+
         //モデルに合わせて調整すること
         navMeshAgent.baseOffset = 0f; 
 
@@ -525,12 +543,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             return false;
         }
 
-        //プレイヤーとの処理と角度を計算
+        //プレイヤーとの距離を計算
         Vector3 directionToPlayer = targetPoint.position - transform.position;
         float distanceToPlayer = directionToPlayer.magnitude;
+
+        //角度を計算
         float angle = Vector3.Angle(transform.forward, directionToPlayer.normalized);
 
-        //プレイヤーが視野角内かつ検知範囲内にいるか
+        //プレイヤーが視野角内にいる&&検知範囲内にいる場合
         if (distanceToPlayer <= enemyDetectionRange && angle <= fieldOfViewAngle * 0.5f)
         {
             RaycastHit hit;
@@ -542,7 +562,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             Vector3 targetPosition = targetPoint.position + Vector3.up * 0.5f;
 
             //Raycastでヒットしたオブジェクトのレイヤーをチェック
-            if (Physics.SphereCast(rayOrigin, sphereCastRadius, directionToPlayer.normalized, out hit, enemyDetectionRange, detectionLayer))
+            if (Physics.SphereCast(rayOrigin, kSphereCastRadius, directionToPlayer.normalized, out hit, enemyDetectionRange, detectionLayer))
             {
                 if (hit.collider.CompareTag(playerTag))
                 {
@@ -930,19 +950,41 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 //プレイヤーを追従
                 ChasePlayer();
 
+                //追従状態を続ける
+                lastKnownPlayerPosition = targetPoint.position;
+
+                //プレイヤーが視野外に出た場合
                 if (!IsPlayerInFront())
                 {
-                    //プレイヤーが視野外に出た場合、調査状態に移行
-                    currentState = EnemyState.Investigate;
-                    investigateTimer = 0f;
-                    navMeshAgent.SetDestination(lastKnownPlayerPosition);
+                    //プレイヤーが視野外にいる場合、タイマーを進める
+                    changeToInvestigateTimer += Time.deltaTime;
 
-                    Debug.Log("追従状態から調査状態へ");
+                    //調査ステートへの移行時間が一定時間を超えた場合
+                    if (changeToInvestigateTimer > kChangeToInvestigateDuration)
+                    {
+                        //画面の色を元に戻す
+                        playerFoundPanel.SetActive(false);
+
+                        //調査ステートへの移行時間をリセット
+                        changeToInvestigateTimer = 0f;
+
+                        //調査タイマーをリセット
+                        investigateTimer = 0f;
+
+                        //プレイヤーの最後の既知の位置に向かう
+                        navMeshAgent.SetDestination(lastKnownPlayerPosition);
+
+                        //調査状態に移行
+                        currentState = EnemyState.Investigate;
+                        
+                        Debug.Log("追従状態から調査状態へ");
+                    }
                 }
+                //プレイヤーが視野内にいる場合
                 else
                 {
-                    //プレイヤーが視野内にいる場合、追従状態を続ける
-                    lastKnownPlayerPosition = targetPoint.position;
+                    //調査ステートへの移行時間をリセット
+                    changeToInvestigateTimer = 0f;
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.3));
 
@@ -1066,10 +1108,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         //SphereCastの範囲
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position + Vector3.up * 1.5f, sphereCastRadius);
+        Gizmos.DrawWireSphere(transform.position + Vector3.up * 1.5f, kSphereCastRadius);
         if (targetPoint != null)
         {
-            Gizmos.DrawWireSphere(targetPoint.position + Vector3.up * 1.0f, sphereCastRadius);
+            Gizmos.DrawWireSphere(targetPoint.position + Vector3.up * 1.0f, kSphereCastRadius);
 
             // Linecastの経路を可視化
             Gizmos.color = Color.red;

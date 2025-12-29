@@ -34,9 +34,16 @@ public class PlayerInteract : MonoBehaviour
     GameObject interactDrawer;
 
     /// <summary>
+    /// 隠れたいオブジェクト
+    /// </summary>
+    GameObject targetHiddenObject;
+
+
+    /// <summary>
     /// インタラクトフラグ
     /// </summary>
     public bool isInteract;
+
 
     /// <summary>
     /// Item.cs
@@ -63,8 +70,20 @@ public class PlayerInteract : MonoBehaviour
     /// </summary>
     private Drawer drawer;
 
+    /// <summary>
+    /// HiddenObject.cs
+    /// </summary>
+    private HiddenObject hiddenObject;
+
+    /// <summary>
+    /// プレイヤーが隠れている状態で使用している該当の隠れる用オブジェクト
+    /// </summary>
+    private HiddenObject saveHiddenObject;
+
+
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
+
 
     /// <summary>
     /// アイテムタグ
@@ -92,9 +111,15 @@ public class PlayerInteract : MonoBehaviour
     private string drawerTag = "Drawer";
 
     /// <summary>
+    /// 隠れる用オブジェクトタグ
+    /// </summary>
+    private string hiddenObjectTag = "HiddenObject";
+
+    /// <summary>
     /// アウトラインタグ
     /// </summary>
     private string outlineTag = "Outline";
+
 
     /// <summary>
     /// アイテムレイヤー
@@ -120,6 +145,12 @@ public class PlayerInteract : MonoBehaviour
     /// 引き出しレイヤー
     /// </summary>
     private string drawerLayer = "Drawer";
+
+    /// <summary>
+    /// 隠れる用オブジェクトレイヤー
+    /// </summary>
+    private string hiddenObjectLayer = "HiddenObject";
+
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -249,14 +280,51 @@ public class PlayerInteract : MonoBehaviour
     /// </summary>
     async void Interact() 
     {
+        //プレイヤーが隠れている状態でインタラクト操作を行った場合
+        if (PlayInteract() && Player.instance.GetIsPlayerHidden())
+        {
+            //隠れている状態を解除系の処理
+            saveHiddenObject.ShowThePlayer();
+
+            //保存していた隠れる用オブジェクトをリセット
+            saveHiddenObject = null;
+
+            //脱出したらこのフレームの処理は終了
+            return; 
+        }
+
         RaycastHit raycastHit;
 
         //Cameraから飛ばしているRayにオブジェクトが当たった場合
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out raycastHit, distance) )
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out raycastHit, distance))
         {
-            //Rayにオブジェクトが当たった状態でインタラクト操作を行う場合
-            if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
+            //Rayにオブジェクトが当たった状態&&インタラクト操作を行う&&プレイヤーが隠れていない場合
+            if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0
+                && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
             {
+                //隠れる用オブジェクト
+                if (raycastHit.transform.tag == hiddenObjectTag) 
+                {
+                    isInteract = true;
+
+                    //対象の隠れる用オブジェクト
+                    targetHiddenObject = raycastHit.transform.gameObject;
+
+                    //HiddenObjectコンポーネントを取得
+                    hiddenObject = targetHiddenObject.GetComponent<HiddenObject>();
+
+                    //hiddenObjectが存在する場合
+                    if (hiddenObject != null) 
+                    {
+                        //現在使用している隠れる用オブジェクトを保存
+                        saveHiddenObject = hiddenObject;
+
+                        //プレイヤーが隠れる処理を実行
+                        hiddenObject.HiddenPlayer();
+                    }
+                }
+
+
                 //アイテム
                 if (raycastHit.transform.tag == itemTag)
                 {
@@ -275,9 +343,9 @@ public class PlayerInteract : MonoBehaviour
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
                         //対象アイテムがコンパスの場合
-                        if (item.itemType == ItemType.Compass) 
+                        if (item.itemType == ItemType.Compass)
                         {
-                            //TODO:コンパスの針のUIを表示
+                            //コンパスの針のUIを表示
                             Compass.instance.ViewOrHiddenCompassArrowImage(true);
 
                             //拾ったアイテムをステージ上から削除
@@ -288,7 +356,7 @@ public class PlayerInteract : MonoBehaviour
                         {
                             //ポーズ画面内のアイテムのパネル内に追加する
                             sO_Item.AddDocumentORMysteryItem(item);
-                            
+
                             //拾ったアイテムをステージ上から削除
                             DestroyItem(pickUpItem);
                         }
@@ -317,15 +385,15 @@ public class PlayerInteract : MonoBehaviour
                         }
 
                     }
-                    else 
+                    else
                     {
                         Debug.LogError("Itemコンポーネントがアタッチされていません: " + pickUpItem.name);
                     }
-                    
+
                 }
 
                 //ドア
-                if (raycastHit.transform.tag == doorTag) 
+                if (raycastHit.transform.tag == doorTag)
                 {
                     isInteract = true;
 
@@ -336,7 +404,7 @@ public class PlayerInteract : MonoBehaviour
                     door = interactDoor.GetComponent<Door>();
 
                     //対象のドアを開閉
-                    if (door != null) door.DoorSystem();                    
+                    if (door != null) door.DoorSystem();
                 }
 
                 //ステージライト
@@ -378,7 +446,7 @@ public class PlayerInteract : MonoBehaviour
                     goal = raycastHit.transform.gameObject.GetComponent<Goal>();
 
                     //ゴールチェック
-                    if (!goal.isGoalPanel && goal != null) 
+                    if (!goal.isGoalPanel && goal != null)
                     {
                         //ゴールの処理
                         goal.GoalCheck();
@@ -386,9 +454,9 @@ public class PlayerInteract : MonoBehaviour
                         //ゴールパネルを非表示にする際に、
                         //goal.isGoalPanelがtrueのままになってしまうバグを防ぐ
                         goal.isGoalPanel = false;
-                    } 
+                    }
                 }
-            }   
+            }
         }
         else
         {
@@ -396,7 +464,7 @@ public class PlayerInteract : MonoBehaviour
             goal = null;
 
             //Rayが何にも当たっていない場合もリセット
-            ResetLayer(); 
+            ResetLayer();
         }
     }
 
@@ -456,6 +524,10 @@ public class PlayerInteract : MonoBehaviour
             {
                 targetLayer = drawerLayer;
             }
+            else if (currentObjectTag == hiddenObjectTag)
+            {
+                targetLayer = hiddenObjectLayer;
+            }
             else
             {
                 Debug.LogWarning($"オブジェクト {currentHighlightedObject.name} のタグ {currentObjectTag} は認識されません。'Default' にフォールバックします。");
@@ -484,7 +556,8 @@ public class PlayerInteract : MonoBehaviour
                 raycastHit.transform.tag == doorTag ||
                 raycastHit.transform.tag == goalTag ||
                 raycastHit.transform.tag == stageLightTag ||
-                raycastHit.transform.tag == drawerTag)
+                raycastHit.transform.tag == drawerTag ||
+                raycastHit.transform.tag == hiddenObjectTag)
             {
                 //Rayがヒットしたオブジェクト
                 GameObject hitObject = raycastHit.transform.gameObject;

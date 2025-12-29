@@ -86,10 +86,26 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        if (Player.instance == null || Player.instance.isFallDown || Time.timeScale == 0) return;
+        //通常のプレイ以外の場合
+        if (Player.instance == null || Player.instance.GetIsFallDown()
+            || Time.timeScale == 0) 
+        {
+            //処理をスキップ
+            return; 
+        }
+
+        //プレイヤーが隠れている場合
+        if (Player.instance.GetIsPlayerHidden())
+        {
+            //マウスカーソルを非表示にし、位置を固定
+            //(ポーズ解除後隠れている最中にマウスカーソルが表示されてしまうバグを防ぐため)
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
 
         //Ctrl押下で視点が後ろを向く
-        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.playerIsBackRotate) 
+        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame 
+            && Player.instance.playerIsBackRotate && !Player.instance.GetIsPlayerHidden()) 
         {
             if (!wasTrunLastFrame)
             {
@@ -105,7 +121,8 @@ public class PlayerCamera : MonoBehaviour
                 wasTrunLastFrame = true;
             }
         }
-        else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.playerIsBackRotate && wasTrunLastFrame)
+        else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame 
+            && !Player.instance.playerIsBackRotate && wasTrunLastFrame)
         {
             // カメラをプレイヤーの前方に戻す
             transform.rotation = Quaternion.LookRotation(playerTransform.forward, Vector3.up);
@@ -117,7 +134,8 @@ public class PlayerCamera : MonoBehaviour
             wasTrunLastFrame = false;
         }
 
-        if ( 0 < GameController.lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.PlayerIsBackRotate()) 
+        if ( 0 < GameController.lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame 
+            && !Player.instance.PlayerIsBackRotate()) 
         {
             //マウスの移動
             lookX = Input.GetAxis("Mouse X") * GameController.lookSensitivity;
