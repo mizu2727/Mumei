@@ -328,6 +328,13 @@ public class MusicController : MonoBehaviour
     /// </summary>
     public void PauseBGM(AudioSource audioSource, AudioClip audioClip, int bgmId) 
     {
+        //BGMステートがPlay以外の場合
+        if (sO_BGM.CheckBGMState(bgmId) != BGMState.Play)
+        {
+            //処理をスキップ
+            return;
+        }
+
         //クリップを設定
         audioSource.clip = audioClip;
 
@@ -343,6 +350,13 @@ public class MusicController : MonoBehaviour
     /// </summary>
     public void UnPauseBGM(AudioSource audioSource, AudioClip audioClip, int bgmId)
     {
+        //BGMステートがPause以外の場合
+        if (sO_BGM.CheckBGMState(bgmId) != BGMState.Pause)
+        {
+            //処理をスキップ
+            return;
+        }
+
         //クリップを設定
         audioSource.clip = audioClip;
 

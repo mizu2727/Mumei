@@ -42,7 +42,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// ダッシュ時の移動速度
     /// </summary>
-    private float dashSpeed = 5f;
+    private float dashSpeed = 5.0f;
     public float SprintSpeed
     {
         get => dashSpeed;
