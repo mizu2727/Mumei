@@ -54,18 +54,20 @@ public class Player : MonoBehaviour, CharacterInterface
 
     }
 
-    [Header("歩行速度")]
-    [SerializeField] private float walkSpeed = 3f;
-    [SerializeField]
+    /// <summary>
+    /// 歩行速度
+    /// </summary>
+    private float walkSpeed = 3.0f;
     public float NormalSpeed
     {
         get => walkSpeed;
         set => walkSpeed = value;
     }
 
-    [Header("ダッシュ速度")]
-    [SerializeField] private float dashSpeed = 5f;
-    [SerializeField]
+    /// <summary>
+    /// ダッシュ速度
+    /// </summary>
+    private float dashSpeed = 5.0f;
     public float SprintSpeed
     {
         get => dashSpeed;

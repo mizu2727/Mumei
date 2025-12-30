@@ -19,6 +19,17 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => animator = value;
     }
 
+    /// <summary>
+    /// "isWalk"
+    /// </summary>
+    private const string kIsWalkAnimatorParameter = "isWalk";
+
+    /// <summary>
+    /// "isRun"
+    /// </summary>
+    private const string kIsRunAnimatorParameter = "isRun";
+
+
     [Header("名前")]
     [SerializeField] private string enemyName;
 
@@ -42,7 +53,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// ダッシュ時の移動速度
     /// </summary>
-    private float dashSpeed = 5.0f;
+    private float dashSpeed = 4.5f;
     public float SprintSpeed
     {
         get => dashSpeed;
@@ -638,6 +649,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             return;
         }
 
+        //通常プレイモード&&パネルがnull以外の場合
+        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+        {
+            //赤い画面を非表示
+            playerFoundPanel.SetActive(false);
+        }
+
         //ランダムな俳諧地点を選択
         positionNumber = Random.Range(0, maxPositionNumber);
         Vector3 targetPos = patrolPoint[positionNumber].position;
@@ -708,8 +726,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             navMeshAgent.isStopped = true;
 
             //停止アニメーションを再生
-            animator.SetBool("isRun", false); 
-            animator.SetBool("isWalk", false);
+            animator.SetBool(kIsRunAnimatorParameter, false); 
+            animator.SetBool(kIsWalkAnimatorParameter, false);
 
             //衝突地点を記録
             lastCollisionPoint = collision.contacts[0].point;
@@ -845,8 +863,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             case EnemyState.Patrol:
 
                 //歩行アニメーションを再生
-                animator.SetBool("isRun", false);
-                animator.SetBool("isWalk", IsMove);
+                animator.SetBool(kIsRunAnimatorParameter, false);
+                animator.SetBool(kIsWalkAnimatorParameter, IsMove);
 
                 navMeshAgent.speed = Speed;
 
@@ -865,8 +883,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         lastKnownPlayerPosition = targetPoint.position;
 
 
-                        //画面を赤く表示
-                        playerFoundPanel.SetActive(true);
+                        //通常プレイモード&&パネルがnull以外の場合
+                        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null) 
+                        {
+                            //画面を赤く表示
+                            playerFoundPanel.SetActive(true);
+                        }
+                        
 
                         Debug.Log("通常徘徊状態から追従状態へ");
                     }
@@ -891,8 +914,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             case EnemyState.Alert:
 
                 //歩行アニメーションを再生
-                animator.SetBool("isRun", false);
-                animator.SetBool("isWalk", IsMove);
+                animator.SetBool(kIsRunAnimatorParameter, false);
+                animator.SetBool(kIsWalkAnimatorParameter, IsMove);
 
                 //速度を設定
                 navMeshAgent.speed = Speed;
@@ -908,9 +931,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
 
-
-                    //画面を赤く表示
-                    playerFoundPanel.SetActive(true);
+                    //通常プレイモード&&パネルがnull以外の場合
+                    if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                    {
+                        //画面を赤く表示
+                        playerFoundPanel.SetActive(true);
+                    }
 
                     Debug.Log("警戒圏内状態から追従状態へ");
                 }
@@ -921,8 +947,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
 
-                    //画面の色を元に戻す
-                    playerFoundPanel.SetActive(false);
+                    //通常プレイモード&&パネルがnull以外の場合
+                    if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                    {
+                        //赤い画面を非表示
+                        playerFoundPanel.SetActive(false);
+                    }
 
                     //プレイヤーを追従するBGMからステージBGMへ切り替える
                     EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
@@ -942,8 +972,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 StopFindPlayerSE();
 
                 //ダッシュアニメーションを再生
-                animator.SetBool("isRun", true);
-                animator.SetBool("isWalk", false);
+                animator.SetBool(kIsRunAnimatorParameter, true);
+                animator.SetBool(kIsWalkAnimatorParameter, false);
 
                 navMeshAgent.speed = dashSpeed;
 
@@ -989,7 +1019,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     await UniTask.Delay(TimeSpan.FromSeconds(0.3));
 
                     //画面の色を元に戻す(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
-                    if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) playerFoundPanel.SetActive(false);
+                    //通常プレイモード&&パネルがnull以外の場合
+                    if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                    {
+                        playerFoundPanel.SetActive(false);
+                    }
                 }
                 break;
 
@@ -1003,8 +1037,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 StopFindPlayerSE();
 
                 //歩行アニメーション再生
-                animator.SetBool("isRun", false);
-                animator.SetBool("isWalk", IsMove);
+                animator.SetBool(kIsRunAnimatorParameter, false);
+                animator.SetBool(kIsWalkAnimatorParameter, IsMove);
 
                 navMeshAgent.speed = Speed;
 
