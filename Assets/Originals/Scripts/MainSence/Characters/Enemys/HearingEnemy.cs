@@ -44,7 +44,7 @@ public class HearingEnemy : BaseEnemy
         float distanceToPlayer = Vector3.Distance(transform.position, targetPoint.position);
 
         //プレイヤーのダッシュ音を検知
-        if (!isInvestigatingSound && Player.instance.IsDash 
+        if (!isInvestigatingSound && Player.instance.IsDash && !Player.instance.GetIsPlayerHidden()
             && distanceToPlayer <= soundDetectionRange)
         {
             //追従モード以外の場合

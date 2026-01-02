@@ -272,8 +272,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
-    [Header("歩行音・ダッシュ音用のaudioSource(ヒエラルキー上での編集禁止)")]
-    public AudioSource audioSourceSE;
+    /// <summary>
+    /// 歩行音・ダッシュ音用のaudioSource
+    /// </summary>
+    private AudioSource audioSourceSE;
 
     /// <summary>
     /// 歩行音のID
@@ -295,8 +297,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private readonly int findPlayerSEid = 9;
 
-    [Header("現在再生中の効果音(ヒエラルキー上での編集禁止)")]
-    public AudioClip currentSE;
+    /// <summary>
+    /// 現在再生中の効果音
+    /// </summary>
+    private AudioClip currentSE;
 
     [Header("走る音の再生速度(要調整)")]
     [SerializeField] private float runSEPitch = 2f;
@@ -345,6 +349,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("プレイヤーが視野内にいるかを判定(ヒエラルキー上での編集禁止)")]
     public bool isAlertMode = false;
 
+    /// <summary>
+    /// プレイヤーを探すSE再生中フラグ
+    /// </summary>
+    private bool isPlayFindPlayerSE;
 
     [Header("タグ・レイヤー関連")]
     [SerializeField] string playerTag = "Player";
@@ -361,6 +369,52 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// 対象の開閉したいドア
     /// </summary>
     GameObject gameObjectDoor;
+
+    /// <summary>
+    /// 歩行音・ダッシュ音用のaudioSourceを取得
+    /// </summary>
+    /// <returns>歩行音・ダッシュ音用のaudioSource</returns>
+    public AudioSource GetAudioSourceSE() 
+    { 
+        return audioSourceSE;
+    }
+
+    /// <summary>
+    /// 現在再生中の効果音を取得
+    /// </summary>
+    /// <returns>現在再生中の効果音</returns>
+    public AudioClip GetCurrentSE()
+    {
+        return currentSE;
+    }
+
+    /// <summary>
+    /// プレイヤーを探す音用のaudioSourceを取得
+    /// </summary>
+    /// <returns>プレイヤーを探す音用のaudioSource</returns>
+    public AudioSource GetAudioSourceFindPlayerSE()
+    {
+        return audioSourceFindPlayerSE;
+    }
+
+    /// <summary>
+    /// プレイヤーを探す音のIDを取得
+    /// </summary>
+    /// <returns>プレイヤーを探す音のID</returns>
+    public int GetFindPlayerSEid() 
+    {
+        return findPlayerSEid;
+    }
+
+    /// <summary>
+    /// プレイヤーを探すSE再生中フラグを取得
+    /// </summary>
+    /// <returns>プレイヤーを探すSE再生中フラグ</returns>
+    public bool GetIsPlayFindPlayerSE()
+    {
+        return isPlayFindPlayerSE;
+    }
+
 
     /// <summary>
     /// オブジェクトが生成されたタイミングで一回だけ呼ばれる関数。初期化しておきたい情報を書く
@@ -539,6 +593,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         maxPositionNumber = patrolPoint.Length;
         positionNumber = Random.Range(0, maxPositionNumber);
         navMeshAgent.destination = patrolPoint[positionNumber].position;
+
+
+        //プレイヤーを探すSE再生中フラグの初期化
+        isPlayFindPlayerSE = false;
     }
 
     /// <summary>
@@ -600,6 +658,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                                 return false;
                             }
                         }
+                    }
+
+                    //プレイヤーが隠れている場合の処理
+                    if (Player.instance.GetIsPlayerHidden()) 
+                    {
+                        //プレイヤーの視認失敗
+                        return false;
                     }
 
                     //ステージBGMからプレイヤーを追従するBGMへ切り替える
@@ -1185,6 +1250,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     protected void PlayFindPlayerSE() 
     {
+        //プレイヤーを探すSE再生中フラグをtrue
+        isPlayFindPlayerSE = true;
+
         //警戒音を再生
         audioSourceFindPlayerSE.clip = sO_SE.GetSEClip(findPlayerSEid);
         audioSourceFindPlayerSE.loop = true;
@@ -1196,6 +1264,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     protected void StopFindPlayerSE() 
     {
+        //プレイヤーを探すSE再生中フラグをfalse
+        isPlayFindPlayerSE = false;
+
         audioSourceFindPlayerSE.Stop();
     }
 }

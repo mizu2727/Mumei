@@ -472,6 +472,7 @@ public class PauseController : MonoBehaviour
         //MusicController.instance.PauseBGM();
 
         //再生中の効果音を全て一時停止し、ボタンSEを流す
+        //PlayerのSE一時停止
         if (Player.instance != null && Player.instance.audioSourceSE != null)
         {
             MusicController.instance.PauseSE(Player.instance.audioSourceSE, Player.instance.GetCurrentSE());
@@ -481,14 +482,23 @@ public class PauseController : MonoBehaviour
             Debug.LogWarning("Player or AudioSource is null in ViewPausePanel");
         }
 
+        //敵のSE一時停止
         for (int i = 0; i < baseEnemy.Length; i++) 
         {
-            if (baseEnemy[i] != null && baseEnemy[i].audioSourceSE != null)
+            if (baseEnemy[i] != null && baseEnemy[i].GetAudioSourceSE() != null 
+                && baseEnemy[i].GetAudioSourceFindPlayerSE() != null)
             {
-                MusicController.instance.PauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
+                MusicController.instance.PauseSE(baseEnemy[i].GetAudioSourceSE(), baseEnemy[i].GetCurrentSE());
+
+                //プレイヤーを探すSE再生中フラグがオンの場合のみ一時停止
+                if (baseEnemy[i].GetAudioSourceFindPlayerSE().isPlaying) 
+                {
+                    MusicController.instance.PauseSE(baseEnemy[i].GetAudioSourceFindPlayerSE(), baseEnemy[i].GetAudioSourceFindPlayerSE().clip);
+                } 
             }
         }
 
+        //ボタンSEを流す
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
     }
 
@@ -515,9 +525,20 @@ public class PauseController : MonoBehaviour
             MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
             MusicController.instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.GetCurrentSE());
 
+            //敵のSE一時停止解除
             for (int i = 0; i < baseEnemy.Length; i++)
             {
-                if (baseEnemy[i] != null) MusicController.instance.UnPauseSE(baseEnemy[i].audioSourceSE, baseEnemy[i].currentSE);
+                if (baseEnemy[i] != null && baseEnemy[i].GetAudioSourceSE() != null
+                    && baseEnemy[i].GetAudioSourceFindPlayerSE() != null) 
+                { 
+                    MusicController.instance.UnPauseSE(baseEnemy[i].GetAudioSourceSE(), baseEnemy[i].GetCurrentSE());
+
+                    //プレイヤーを探すSE再生中フラグがオンの場合のみ一時停止解除
+                    if (baseEnemy[i].GetAudioSourceFindPlayerSE().isPlaying) 
+                    {
+                        MusicController.instance.UnPauseSE(baseEnemy[i].GetAudioSourceFindPlayerSE(), baseEnemy[i].GetAudioSourceFindPlayerSE().clip);
+                    }            
+                }
             }
 
 
