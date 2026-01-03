@@ -32,11 +32,30 @@ public class PlayerCamera : MonoBehaviour
     /// </summary>
     float lookY2;
 
-    [Header("カメラのX軸回転角度")]
-    private float xRotation = 0f;
+    /// <summary>
+    /// カメラのX軸回転角度
+    /// </summary>
+    private float xRotation = 0.0f;
 
-    [Header("カメラのX軸回転範囲")]
-    [SerializeField] private float xRotationRange = 45f ;
+    /// <summary>
+    /// カメラのX軸回転範囲(上側)
+    /// </summary>
+    private const float kXRotationUpRange = 45.0f;
+
+    /// <summary>
+    /// 現在のカメラのX軸回転範囲(下側)
+    /// </summary>
+    private float currentXRotationDownRange;
+
+    /// <summary>
+    /// 通常時のカメラのX軸回転範囲(下側)
+    /// </summary>
+    private const float kXRotationDownRange = 80.0f;
+
+    /// <summary>
+    /// 隠れている時のカメラのX軸回転範囲(下側)
+    /// </summary>
+    private const float kHiddenXRotationDownRange = 45.0f;
 
     /// <summary>
     /// 前フレームの後ろを向くフラグ
@@ -82,6 +101,9 @@ public class PlayerCamera : MonoBehaviour
         playerTransform = Player.instance.transform;
 
         wasTrunLastFrame = false;
+
+        //カメラの下回転範囲を通常に戻す
+        currentXRotationDownRange = kXRotationDownRange;
     }
 
     private void Update()
@@ -148,13 +170,25 @@ public class PlayerCamera : MonoBehaviour
             //Mouse Y2…Axis欄で"5th axis (Joysticks)"を選択。コントローラーでは右スティックになる
             lookY2 = Input.GetAxis("Mouse Y2") * GameController.lookSensitivity * Time.deltaTime;
 
-            xRotation -= (lookY + lookY2);
-            xRotation = Mathf.Clamp(xRotation, -xRotationRange, xRotationRange);
+            //プレイヤーが隠れている場合
+            if (Player.instance.GetIsPlayerHidden())
+            {
+                //カメラの下回転範囲を狭くする
+                currentXRotationDownRange = kHiddenXRotationDownRange;
+            }
+            else 
+            {
+                //カメラの下回転範囲を通常に戻す
+                currentXRotationDownRange = kXRotationDownRange;
+            }
 
-            // カメラの上下回転
+            xRotation -= (lookY + lookY2);
+            xRotation = Mathf.Clamp(xRotation, -kXRotationUpRange, currentXRotationDownRange);
+
+            //カメラの上下回転
             transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
-            // プレイヤーの左右回転（カメラの親オブジェクト）
+            //プレイヤーの左右回転（カメラの親オブジェクト）
             playerTransform.Rotate(Vector3.up * (lookX + lookX2));
         }
     }
