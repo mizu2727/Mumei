@@ -9,15 +9,12 @@ public class Drawer : MonoBehaviour
     OutsideOfDrawer outsideOfDrawer;
 
     /// <summary>
-    /// 引き出しの外枠(GameObject)
+    /// 引き出しの開閉フラグ
     /// </summary>
-    GameObject outsideOfDrawerGameObject;
-
-    [Header("引き出しの開閉フラグ")]
-    [SerializeField] public bool isOpenDrawer = false;
+    private bool isOpenDrawer = false;
 
     [Header("引き出しの戸のメッシュ部分")]
-    [SerializeField] public Transform drawerMeshTransform;
+    [SerializeField] private Transform drawerMeshTransform;
 
     [Header("引き出しに入れるアイテム")]
     [SerializeField] public Transform drawerItemTransform;
@@ -38,8 +35,10 @@ public class Drawer : MonoBehaviour
     [Header("引き出しを閉じた時のアイテムの位置")]
     [SerializeField] private Vector3 closeItemPosition;
 
-    [Header("引き出しの移動速度")]
-    [SerializeField] private float moveSpeed = 1.0f;
+    /// <summary>
+    /// 引き出しの移動速度
+    /// </summary>
+    private const float kMoveSpeed = 1.0f;
 
     /// <summary>
     /// 引き出しの目標地点
@@ -48,6 +47,13 @@ public class Drawer : MonoBehaviour
 
     [Header("引き出しの戸のBoxCollider")]
     [SerializeField] private BoxCollider boxCollider;
+
+
+    /// <summary>
+    /// タグ："Untagged"
+    /// </summary>
+    private const string stringUntaggedTag = "Untagged";
+
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -62,10 +68,6 @@ public class Drawer : MonoBehaviour
     /// </summary>
     private readonly int openSEid = 11;
 
-    /// <summary>
-    /// 引き出しを閉めるSEのID
-    /// </summary>
-    private readonly int closeSEid = 10;
 
     private void OnEnable()
     {
@@ -177,7 +179,7 @@ public class Drawer : MonoBehaviour
         //drawerMeshTransformのlocalPositionを移動させる
         if (drawerMeshTransform != null)
         {
-            drawerMeshTransform.localPosition = Vector3.MoveTowards(drawerMeshTransform.localPosition, targetPosition, moveSpeed * Time.deltaTime);
+            drawerMeshTransform.localPosition = Vector3.MoveTowards(drawerMeshTransform.localPosition, targetPosition, kMoveSpeed * Time.deltaTime);
 
             //drawerMeshTransformのlocalPositionで到着判定を行う
             if (Vector3.Distance(drawerMeshTransform.localPosition, targetPosition) < 0.01f)
@@ -199,12 +201,7 @@ public class Drawer : MonoBehaviour
     /// </summary>
     public void DrawerSystem()
     {
-        if (isOpenDrawer)
-        {
-            //引き出しを閉じる
-            CloseDrawer();
-        }
-        else
+        if (!isOpenDrawer)
         {
             //引き出しを開ける
             OpenDrawer();
@@ -220,17 +217,9 @@ public class Drawer : MonoBehaviour
         isOpenDrawer = true;
         boxCollider.enabled = false;
         DrawerSE(true);
-    }
 
-    /// <summary>
-    /// 引き出しを閉じる
-    /// </summary>
-    public void CloseDrawer()
-    {
-        targetPosition = closePosition;
-        isOpenDrawer = false;
-        boxCollider.enabled = true;
-        DrawerSE(false);
+        //タグをUntaggedに変更(開けた引き出しのoutlineを非表示にするため)
+        this.gameObject.tag = stringUntaggedTag;
     }
 
     /// <summary>
@@ -239,10 +228,11 @@ public class Drawer : MonoBehaviour
     /// <param name="opening"></param>
     void DrawerSE(bool opening)
     {
-        AudioClip currentSE = opening ? sO_SE.GetSEClip(openSEid) : sO_SE.GetSEClip(closeSEid);
-        if (audioSourceSE != null && currentSE != null)
+        //audioSourceSEが存在する&&引き出しを開けるSEが存在する場合
+        if (audioSourceSE != null && sO_SE.GetSEClip(openSEid) != null)
         {
-            audioSourceSE.PlayOneShot(currentSE);
+            //引き出しを開けるSEを再生
+            audioSourceSE.PlayOneShot(sO_SE.GetSEClip(openSEid));
         }
     }
 }
