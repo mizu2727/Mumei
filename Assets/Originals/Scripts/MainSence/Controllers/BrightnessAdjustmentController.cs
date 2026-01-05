@@ -88,11 +88,11 @@ public class BrightnessAdjustmentController : MonoBehaviour
     /// </summary>
     public void ApplyBrightnessAdjustmentSlider()
     {
-        //一番暗い時の数値をスライダーの最大値として設定
-        brightnessAdjustmentSlider.maxValue = kTheDarkestValue;
+        //一番明るい時の数値をスライダーの最大値として設定
+        brightnessAdjustmentSlider.maxValue = kTheBrightestValue;
 
-        //一番明るい時の数値をスライダーの最小値として設定
-        brightnessAdjustmentSlider.minValue = kTheBrightestValue;
+        //一番暗い時の数値をスライダーの最小値として設定
+        brightnessAdjustmentSlider.minValue = -kTheDarkestValue;
     }
 
 
