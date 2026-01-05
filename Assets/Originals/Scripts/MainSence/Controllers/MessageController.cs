@@ -47,6 +47,16 @@ public class MessageController : MonoBehaviour
     [Header("会話メッセージ(Prefabをアタッチ)")]
     [SerializeField] private TalkMessage talkMessage;
 
+    /// <summary>
+    /// 2番目のメッセージ番号
+    /// </summary>
+    private const int kTakeMessageNumber2 = 2;
+
+    /// <summary>
+    /// "カナメ"
+    /// </summary>
+    private const string kSpeakerNameKanane = "カナメ";
+
     [Header("会話メッセージ表示機能(Prefabをアタッチ)")]
     [SerializeField] private ShowTalkMessage showTalkMessage;
 
@@ -342,9 +352,18 @@ public class MessageController : MonoBehaviour
             isMessagePanel = true;
             ViewMessagePanel();
 
-            //話している人がカナメの場合、文章の色をシアン色に設定
-            if (talkMessage.talkMessage[number].speakerName == "カナメ") messageText.color = Color.cyan;
-            else messageText.color = Color.white;
+            //話している人がカナメの場合||talkMessageの番号が2の場合
+            if (talkMessage.talkMessage[number].speakerName == kSpeakerNameKanane 
+                || talkMessage.talkMessage[number].number == kTakeMessageNumber2)
+            {
+                //文章の色をシアン色に設定
+                messageText.color = Color.cyan;
+            }
+            else 
+            {
+                //文章の色を白色に設定
+                messageText.color = Color.white; 
+            }
             
             //エクセルデータ型.リスト型[番号].カラム名
             Write(talkMessage.talkMessage[number].message);
