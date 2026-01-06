@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -23,6 +24,14 @@ public class MessageController : MonoBehaviour
 
     [Header("メッセージテキスト(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public Text messageText;
+
+
+    [Header("会話している人の名前を表示するパネル(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private GameObject speakerNamePanel;
+
+    [Header("会話している人の名前を表示するテキスト(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private Text speakerNameText;
+
 
     [Header("名前確認パネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject CheckInputNamePanel;
@@ -78,6 +87,16 @@ public class MessageController : MonoBehaviour
 
     [Header("メッセージパネルフラグ(ヒエラルキー上からの編集禁止)")]
     public bool isMessagePanel = false;
+
+    /// <summary>
+    /// 会話している人の名前を表示するフラグ
+    /// </summary>
+    private bool isViewSpeakerNamePanel = false;
+
+    /// <summary>
+    /// メッセージテキストの色を赤色に変更するフラグ
+    /// </summary>
+    private bool isChangeMessageTextColorRed = false;
 
     [Header("ブラックアウトフラグ(ヒエラルキー上からの編集禁止)")]
     public bool isBlackOutPanel = false;
@@ -202,8 +221,9 @@ public class MessageController : MonoBehaviour
         }
 
         //CancellationTokenSourceを初期化
-        cts = new CancellationTokenSource(); 
+        cts = new CancellationTokenSource();
 
+        //メッセージリセット
         ResetMessage();
 
         
@@ -223,7 +243,10 @@ public class MessageController : MonoBehaviour
             CheckInputNameText.text = "";
         }
 
+        //メッセージテキストの色を赤色に変更するフラグを初期化
+        isChangeMessageTextColorRed = false;
 
+        //ブラックアウトパネル非表示
         isBlackOutPanel = false;
     }
 
@@ -254,6 +277,30 @@ public class MessageController : MonoBehaviour
     }
 
     /// <summary>
+    /// 会話している人の名前を表示するパネルの表示・非表示
+    /// </summary>
+    public void ViewSpeakerNamePanel()
+    {
+        //speakerNamePanelがnullの場合
+        if (speakerNamePanel == null) 
+        {
+            //処理をスキップ
+            return;
+        }
+
+        if (isViewSpeakerNamePanel)
+        {
+            //表示
+            speakerNamePanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            speakerNamePanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
     /// ブラックアウトパネルの表示・非表示
     /// </summary>
     public void ViewBlackOutPanel()
@@ -275,10 +322,26 @@ public class MessageController : MonoBehaviour
     /// </summary>
     public void ResetMessage()
     {
+        //メッセージテキストをリセット
         messageText.color = Color.white;
         messageText.text = "";
+
+        //メッセージパネルを非表示
         isMessagePanel = false;
         ViewMessagePanel();
+
+
+        //speakerNameTextが存在する場合
+        if (speakerNameText != null)
+        {
+            //会話している人の名前をリセット
+            speakerNameText.color = Color.white;
+            speakerNameText.text = "";
+        }
+
+        //会話している人の名前パネルを非表示
+        isViewSpeakerNamePanel = false;
+        ViewSpeakerNamePanel();
     }
 
     /// <summary>
@@ -329,6 +392,46 @@ public class MessageController : MonoBehaviour
         }     
     }
 
+    /// <summary>
+    /// メッセージ系の色を変更する
+    /// </summary>
+    private void ChangeTextColor(int num) 
+    {
+        //話している人がカナメの場合||talkMessageの番号が2の場合
+        if (talkMessage.talkMessage[num].speakerName == kSpeakerNameKanane
+            || talkMessage.talkMessage[num].number == kTakeMessageNumber2)
+        {
+            //メッセージテキストの色を赤色に変更するフラグがfalseの場合
+            if (!isChangeMessageTextColorRed) 
+            {
+                //文章の色をシアン色に設定
+                messageText.color = Color.cyan;
+            }
+
+            //speakerNameTextが存在する場合
+            if (speakerNameText != null)
+            {
+                //会話している人の名前の表示をシアン色に設定
+                speakerNameText.color = Color.cyan;
+            }
+        }
+        else
+        {
+            //メッセージテキストの色を赤色に変更するフラグがfalseの場合
+            if (!isChangeMessageTextColorRed)
+            {
+                //文章の色を白色に設定
+                messageText.color = Color.white;
+            }
+
+            //speakerNameTextが存在する場合
+            if (speakerNameText != null)
+            {
+                //会話している人の名前の表示を白色に設定
+                speakerNameText.color = Color.white;
+            }
+        }
+    }
 
 
     /// <summary>
@@ -349,25 +452,28 @@ public class MessageController : MonoBehaviour
         //前のメッセージが書いてる途中であるかを判断。書き途中ならtrue
         if (Time.timeScale == 1)
         {
+            //メッセージパネルを表示
             isMessagePanel = true;
             ViewMessagePanel();
 
-            //話している人がカナメの場合||talkMessageの番号が2の場合
-            if (talkMessage.talkMessage[number].speakerName == kSpeakerNameKanane 
-                || talkMessage.talkMessage[number].number == kTakeMessageNumber2)
-            {
-                //文章の色をシアン色に設定
-                messageText.color = Color.cyan;
-            }
-            else 
-            {
-                //文章の色を白色に設定
-                messageText.color = Color.white; 
-            }
-            
+            //メッセージ系のテキストの色を変更
+            ChangeTextColor(number);
+
             //エクセルデータ型.リスト型[番号].カラム名
             Write(talkMessage.talkMessage[number].message);
 
+
+            //会話している人の名前を表示
+            isViewSpeakerNamePanel = true;
+            ViewSpeakerNamePanel();
+
+            //speakerNameTextが存在する場合
+            if (speakerNameText != null) 
+            {
+                //会話している人の名前を設定
+                speakerNameText.text = talkMessage.talkMessage[number].speakerName;
+            }
+            
             //チュートリアルの壁を消してゴールオブジェクトが見えるようにする
             if (HomeController.instance.wall_Tutorial != null && number == 47) HomeController.instance.wall_Tutorial.SetActive(false);
 
@@ -376,7 +482,11 @@ public class MessageController : MonoBehaviour
                 switch (number)
                 {
                     case 2:
+                        //メッセージテキストと会話している人の名前テキストをリセット
                         messageText.text = "";
+                        speakerNameText.text = "";
+
+                        //次のメッセージ番号へ
                         number++;
 
                         //後ろを振り返る
@@ -392,6 +502,7 @@ public class MessageController : MonoBehaviour
                     case 19:
                     case 60:
                         messageText.text = "";
+                        speakerNameText.text = "";
                         number++;
 
                         await UniTask.Delay(TimeSpan.FromSeconds(1));
@@ -403,10 +514,23 @@ public class MessageController : MonoBehaviour
                         audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
                         MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
+                        //メッセージテキストの色を赤色に変更するフラグをtrueに設定
+                        isChangeMessageTextColorRed = true;
+
                         //文字の色を赤色に設定
                         messageText.color = Color.red;
 
+                        //メッセージ系のテキストの色を変更
+                        ChangeTextColor(number);
+
                         Write(talkMessage.talkMessage[number].message);
+
+                        //speakerNameTextが存在する場合
+                        if (speakerNameText != null)
+                        {
+                            //会話している人の名前を設定
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerName;
+                        }
 
                         await ShowNextMessage();
 
@@ -416,7 +540,12 @@ public class MessageController : MonoBehaviour
                         MusicController.instance.UnPauseBGM(HomeController.instance.GetAudioSourceBGM(),
                             sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
 
-                    messageText.text = "";
+
+                        //メッセージテキストの色を赤色に変更するフラグをfalseに設定
+                        isChangeMessageTextColorRed = false;
+
+                        messageText.text = "";
+                        speakerNameText.text = "";
                         number++;
 
                         showTalkMessage.ShowGameTalkMessage(number);
