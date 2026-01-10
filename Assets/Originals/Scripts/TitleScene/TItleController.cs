@@ -4,7 +4,6 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using static GameController;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

@@ -1,8 +1,9 @@
 using Cysharp.Threading.Tasks;
 using System;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -284,6 +285,12 @@ public class GameController : MonoBehaviour
         {
             //BGMを保存した値に設定
             MusicController.instance.bGMSlider.value = bGMVolume;
+
+            //現在のシーン名がTitleSceneの場合(ステージ系シーンへ遷移した際に発生するエラーを防ぐためにこのif分を追加)
+            if (SceneManager.GetActiveScene().name == stringTitleScene) 
+            {
+                MusicController.instance.OnBGMVolumeChanged(bGMVolume);
+            }
         }
 
         //SEスライダーが存在する場合
@@ -291,6 +298,12 @@ public class GameController : MonoBehaviour
         {
             //SEを保存した値に設定
             MusicController.instance.sESlider.value = sEVolume;
+
+            //現在のシーン名がTitleSceneの場合(ステージ系シーンへ遷移した際に発生するエラーを防ぐためにこのif分を追加)
+            if (SceneManager.GetActiveScene().name == stringTitleScene)
+            {
+                MusicController.instance.OnSEVolumeChanged(sEVolume);
+            } 
         }
 
         //明るさ調整スライダーが存在する場合
@@ -298,6 +311,7 @@ public class GameController : MonoBehaviour
         {
             //明るさを保存した値に設定
             BrightnessAdjustmentController.instance.brightnessAdjustmentSlider.value = brightnessValue;
+            Debug.Log("ロードした明るさの値:" + brightnessValue);
         }
 
         //画面解像度テキストが存在する場合
@@ -306,7 +320,7 @@ public class GameController : MonoBehaviour
             //解像度の配列インデックス番号を保存した値に設定
             ScreenAspect.instance.SetResolutionArrayIndex(resolutionArrayIndexNumber);
 
-            //ルスクリーンフラグ値を保存した値に設定
+            //フルスクリーンフラグ値を保存した値に設定
             ScreenAspect.instance.SetFullScreenFlag(isFullScreen);
         }
 
@@ -318,6 +332,7 @@ public class GameController : MonoBehaviour
             {
                 //OperationPanel手動閲覧フラグを保存した値に設定
                 OperationExplanationController.instance.SetIsSelfViewOperationPanel(isSaveSelfViewOperationPanel);
+                Debug.Log("ロードしたOperationPanel手動閲覧フラグ:" + isSaveSelfViewOperationPanel);
             }
 
             //UseItemTextPanelが存在する場合
@@ -325,6 +340,7 @@ public class GameController : MonoBehaviour
             {
                 //UseItemTextPanel手動閲覧フラグを保存した値に設定
                 OperationExplanationController.instance.SetIsSelfViewUseItemTextPanel(isSaveSelfViewUseItemTextPanel);
+                Debug.Log("ロードしたUseItemTextPanel手動閲覧フラグ:" + isSaveSelfViewUseItemTextPanel);
             }
 
 
@@ -333,6 +349,7 @@ public class GameController : MonoBehaviour
             {
                 //CompassTextPanel手動閲覧フラグを保存した値に設定
                 OperationExplanationController.instance.SetIsSelfViewCompassTextPanel(isSaveSelfViewCompassTextPanel);
+                Debug.Log("ロードしたCompassTextPanel手動閲覧フラグ:" + isSaveSelfViewCompassTextPanel);
             }
         }
     }

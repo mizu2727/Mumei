@@ -6,7 +6,6 @@ public class SaveLoad : MonoBehaviour
 {
     UserData userData;
 
-
     /// <summary>
     /// データを保存するメソッド
     /// </summary>
@@ -135,6 +134,8 @@ public class SaveLoad : MonoBehaviour
             //CompassTextPanel手動閲覧フラグを保存
             isSelfViewCompassTextPanel = GameController.isSaveSelfViewCompassTextPanel,
         };
+
+        Debug.Log("シーン遷移用Json形式でデータを保存した内容:" + JsonUtility.ToJson(userData, true));
 
         //ユーザーデータをJSON形式で保存
         //UserDataオブジェクトをJSON文字列に変換

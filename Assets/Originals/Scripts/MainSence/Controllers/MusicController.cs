@@ -253,7 +253,7 @@ public class MusicController : MonoBehaviour
     /// スライダーの値をdBに変換して、AudioMixerの「BGM」パラメータに反映させる
     /// </summary>
     /// <param name="value">スライダーの値</param>
-    private void OnBGMVolumeChanged(float value)
+    public void OnBGMVolumeChanged(float value)
     {
         value = Mathf.Clamp01(value);
         float decibel = 20f * Mathf.Log10(value);
@@ -270,7 +270,7 @@ public class MusicController : MonoBehaviour
     /// スライダーの値をdBに変換して、AudioMixerの「SE」パラメータに反映させる
     /// </summary>
     /// <param name="value">スライダーの値</param>
-    private void OnSEVolumeChanged(float value)
+    public void OnSEVolumeChanged(float value)
     {
         value = Mathf.Clamp01(value);
         float decibel = 20f * Mathf.Log10(value);

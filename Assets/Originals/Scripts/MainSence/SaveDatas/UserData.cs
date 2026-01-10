@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 /// <summary>
 /// ユーザーデータを保存するためのクラス
 /// </summary>
