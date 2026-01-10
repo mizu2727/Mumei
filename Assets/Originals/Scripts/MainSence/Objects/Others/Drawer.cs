@@ -32,8 +32,27 @@ public class Drawer : MonoBehaviour
     [Header("アイテム配置の基準点")]
     [SerializeField] private Transform itemPlacementPoint;
 
-    [Header("引き出しを閉じた時のアイテムの位置")]
-    [SerializeField] private Vector3 closeItemPosition;
+    /// <summary>
+    /// 引き出しを閉じた時のアイテムのローカルポジション
+    /// </summary>
+    private Vector3 closeItemPosition = new Vector3(-0.03f, 0.0f, -0.23f);
+
+
+    /// <summary>
+    /// 回転角度90度
+    /// </summary>
+    private const float rotation90 = 90.0f;
+
+    /// <summary>
+    /// 回転角度180度
+    /// </summary>
+    private const float rotation180 = 180.0f;
+
+    /// <summary>
+    /// 回転角度270度
+    /// </summary>
+    private const float rotation270 = 270.0f;
+
 
     /// <summary>
     /// 引き出しの移動速度
@@ -126,6 +145,7 @@ public class Drawer : MonoBehaviour
         isOpenDrawer = false;
         boxCollider.enabled = true;
 
+
         //メッシュ部分のTransformのlocalPositionを初期化
         if (drawerMeshTransform != null)
         {
@@ -140,10 +160,6 @@ public class Drawer : MonoBehaviour
 
         //AudioSourceの初期化
         InitializeAudioSource();
-
-        //引き出しの外枠の角度を取得(確認用)
-        outsideOfDrawer = this.GetComponentInParent<OutsideOfDrawer>();
-        Debug.Log(outsideOfDrawer.GetWorldEulerAngles());
     }
 
 
@@ -163,10 +179,39 @@ public class Drawer : MonoBehaviour
             itemTransform.localPosition = Vector3.zero;
 
             //アイテムのローカルポジション
-            itemTransform.localPosition = new Vector3(0.15f, 0, -0.15f);
+            itemTransform.localPosition = closeItemPosition;
 
             // drawerItemTransformにアタッチ
             drawerItemTransform = itemTransform;
+
+
+            //引き出し本体(外側部分)を取得
+            Transform parentTransform = transform.parent;            
+
+            //引き出しの外枠が90度か270度の場合
+            if (parentTransform.eulerAngles.y == rotation90 || parentTransform.eulerAngles.y == rotation270)
+            {
+                //アイテムのY軸角度が0度か180度以外の場合
+                if (drawerItemTransform.eulerAngles.y != 0 || drawerItemTransform.eulerAngles.y != rotation180)
+                {
+                    //X軸のローカル回転角度が0度以外の場合||X軸のローカル回転角度が180度以外の場合
+                    if (drawerItemTransform.eulerAngles.x != 0 || drawerItemTransform.eulerAngles.x != rotation180)
+                    {
+                        //処理をスキップ
+                        return;
+                    }
+
+                    //Z軸のローカル回転角度が0度以外の場合||X軸のローカル回転角度が180度以外の場合
+                    if (drawerItemTransform.eulerAngles.z != 0 || drawerItemTransform.eulerAngles.z != rotation180)
+                    {
+                        //処理をスキップ
+                        return;
+                    }
+
+                    //Y軸のローカル回転角度を0度に設定
+                    drawerItemTransform.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                }
+            }
         }
         else
         {
@@ -216,6 +261,7 @@ public class Drawer : MonoBehaviour
         targetPosition = openPosition;
         isOpenDrawer = true;
         boxCollider.enabled = false;
+
         DrawerSE(true);
 
         //タグをUntaggedに変更(開けた引き出しのoutlineを非表示にするため)

@@ -143,6 +143,7 @@ public class EnemyBGMController : MonoBehaviour
     {
         //BGMを再生
         MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(chasePlayerBGMId), chasePlayerBGMId);
+        //MusicController.instance.PlayLoopBGMList(audioSourceBGM, sO_BGM.GetBGMClip(chasePlayerBGMId), chasePlayerBGMId, 1);
 
         //現在再生中のBGMをChasePlayerBGMに設定する
         PauseController.instance.SetNowPlayBGMId(chasePlayerBGMId);
@@ -172,6 +173,7 @@ public class EnemyBGMController : MonoBehaviour
 
         //ステージBGMを一時停止
         MusicController.instance.PauseBGM(keepAudioSourceBGM,keepAudioClipBGM, keepAudioBGMId);
+        //MusicController.instance.PauseBGMList(keepAudioSourceBGM, keepAudioClipBGM, keepAudioBGMId, 0);
 
         //プレイヤーを追従するBGMのBGMステートがPlay以外の場合
         if (sO_BGM.CheckBGMState(chasePlayerBGMId) != BGMState.Play)
@@ -188,9 +190,11 @@ public class EnemyBGMController : MonoBehaviour
     {
         //プレイヤーを追従するBGMを停止
         MusicController.instance.StopBGM(audioSourceBGM, sO_BGM.GetBGMClip(chasePlayerBGMId), chasePlayerBGMId);
+        //MusicController.instance.StopBGMList(audioSourceBGM, sO_BGM.GetBGMClip(chasePlayerBGMId), chasePlayerBGMId, 1);
 
         //ステージBGMを一時停止解除
         MusicController.instance.UnPauseBGM(keepAudioSourceBGM, keepAudioClipBGM, keepAudioBGMId);
+        //MusicController.instance.UnPauseBGMList(keepAudioSourceBGM, keepAudioClipBGM, keepAudioBGMId, 0);
 
         //現在再生中のBGMを設定する
         PauseController.instance.SetNowPlayBGMId(keepAudioBGMId);
