@@ -89,7 +89,7 @@ public class GameController : MonoBehaviour
     public static int playCount = 0;
 
     [Header("マウス/ゲームパッドの右スティックの感度")]
-    public static float lookSensitivity = 7.5f;
+    public static float lookSensitivity = 3.0f;
 
     [Header("セーブするBGM音量")]
     public static float bGMVolume = 1;
