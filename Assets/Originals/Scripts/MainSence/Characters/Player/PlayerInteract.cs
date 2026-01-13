@@ -86,6 +86,12 @@ public class PlayerInteract : MonoBehaviour
 
 
     /// <summary>
+    /// "Interact"
+    /// </summary>
+    private const string stringInteract = "Interact";
+
+
+    /// <summary>
     /// アイテムタグ
     /// </summary>
     private string itemTag = "Item";
@@ -120,6 +126,11 @@ public class PlayerInteract : MonoBehaviour
     /// </summary>
     private string outlineTag = "Outline";
 
+
+    /// <summary>
+    /// デフォルトレイヤー
+    /// </summary>
+    private string defaultLayer = "Default";
 
     /// <summary>
     /// アイテムレイヤー
@@ -281,7 +292,7 @@ public class PlayerInteract : MonoBehaviour
     async void Interact() 
     {
         //プレイヤーが隠れている状態でインタラクト操作を行った場合
-        if (PlayInteract() && Player.instance.GetIsPlayerHidden())
+        if (PlayInteract() && Player.instance.GetIsPlayerHidden() && Time.timeScale != 0)
         {
             //隠れている状態を解除系の処理
             saveHiddenObject.ShowThePlayer();
@@ -475,7 +486,7 @@ public class PlayerInteract : MonoBehaviour
     /// <returns>ボタン押下でtrue</returns>
     bool PlayInteract() 
     {
-        return Input.GetMouseButtonDown(0) || Input.GetButtonDown("Interact");
+        return Input.GetMouseButtonDown(0) || Input.GetButtonDown(stringInteract);
     }
 
 
@@ -531,7 +542,7 @@ public class PlayerInteract : MonoBehaviour
             else
             {
                 Debug.LogWarning($"オブジェクト {currentHighlightedObject.name} のタグ {currentObjectTag} は認識されません。'Default' にフォールバックします。");
-                targetLayer = "Default";
+                targetLayer = defaultLayer;
             }
 
             SwitchLayer(currentHighlightedObject, targetLayer);

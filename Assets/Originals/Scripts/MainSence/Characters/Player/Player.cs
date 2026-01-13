@@ -1,6 +1,7 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -249,7 +250,7 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 仮の名前
     /// </summary>
-    [SerializeField] const string aliasName = "イフ";
+    private const string aliasName = "イフ";
 
     [Header("鍵の所持フラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] public bool isHoldKey = false;
@@ -274,6 +275,22 @@ public class Player : MonoBehaviour, CharacterInterface
     /// 回転速度倍率
     /// </summary>
     private const float kRotationSpeedMagnification = 0.5f;
+
+
+    /// <summary>
+    /// "Horizontal"
+    /// </summary>
+    private const string stringHorizontal = "Horizontal";
+
+    /// <summary>
+    /// "Vertical"
+    /// </summary>
+    private const string stringVertical = "Vertical";
+
+    /// <summary>
+    /// "Dash"
+    /// </summary>
+    private const string stringDash = "Dash";
 
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -404,8 +421,8 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <returns>移動中&&オブジェクトに隠れていない場合はtrue</returns>
     public bool IsPlayerMoving()
     {
-        float moveX = Input.GetAxis("Horizontal");
-        float moveZ = Input.GetAxis("Vertical");
+        float moveX = Input.GetAxis(stringHorizontal);
+        float moveZ = Input.GetAxis(stringVertical);
 
         //隠れている場合
         if (isHidden) 
@@ -654,8 +671,8 @@ public class Player : MonoBehaviour, CharacterInterface
         PlayerDashOrWalk();
 
         //前後左右の入力から、移動のためのベクトルを計算
-        float moveX = Input.GetAxis("Horizontal");
-        float moveZ = Input.GetAxis("Vertical");
+        float moveX = Input.GetAxis(stringHorizontal);
+        float moveZ = Input.GetAxis(stringVertical);
 
         // カメラのTransformを取得
         Transform cameraTransform = Camera.main.transform;
@@ -714,9 +731,9 @@ public class Player : MonoBehaviour, CharacterInterface
         {
             //移動中:Shiftに応じて走行または歩行する
             animator.SetBool(kIsRunAnimatorParameter, !isHidden && (Input.GetKey(KeyCode.LeftShift) 
-                || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash")));
+                || Input.GetKey(KeyCode.RightShift) || Input.GetButton(stringDash)));
             animator.SetBool(kIsWalkAnimatorParameter, !isHidden && !Input.GetKey(KeyCode.LeftShift)
-                && !Input.GetKey(KeyCode.RightShift) && !Input.GetButton("Dash"));
+                && !Input.GetKey(KeyCode.RightShift) && !Input.GetButton(stringDash));
         }
         else
         {
@@ -741,7 +758,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         //移動状態の変化を検知して効果音を制御
-        currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash") ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
+        currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton(stringDash) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
 
 
@@ -784,7 +801,7 @@ public class Player : MonoBehaviour, CharacterInterface
         //Shiftキー・Xボタンを入力している間はダッシュ
         //Dash…"joystick button 4"を割り当て。コントローラーではLボタンになる
         if (IsMove && isStamina && Time.timeScale == 1 && !isHidden
-            && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton("Dash")))
+            && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton(stringDash)))
         {
             //ダッシュ開始
             IsDash = true;
