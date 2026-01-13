@@ -115,9 +115,16 @@ public class Inventory : MonoBehaviour
     private const float kSpecifiedStaminaConsumeRatio = 12.5f;
 
     /// <summary>
+    /// スタミナ増強剤適用時のスタミナ回復値
+    /// </summary>
+    private const float kSpecifiedStaminaRecoveryRatio = 30.0f;
+
+
+    /// <summary>
     /// Player.cs
     /// </summary>
     private Player player;
+
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -411,9 +418,13 @@ public class Inventory : MonoBehaviour
                     //スタミナ効果が適用中である旨のメッセージを表示
                     MessageController.instance.ShowInventoryMessage(kUsingStaminaEnhancerMessageId);
 
+                    //メッセージ表示時間待機
                     await UniTask.Delay(TimeSpan.FromSeconds(kViewMessageSeconds));
 
+                    //メッセージをリセット
                     MessageController.instance.ResetMessage();
+
+                    //処理をスキップ
                     return;
                 }
 
@@ -430,17 +441,31 @@ public class Inventory : MonoBehaviour
                 audioSourceInventorySE.loop = false;
                 audioSourceInventorySE.Play();
 
-                //スタミナ消費率を12.5%に変更し、スタミナゲージの色を緑色に変更
+                //スタミナ消費率を12.5%に変更
                 Player.instance.SetStaminaConsumeRatio(kSpecifiedStaminaConsumeRatio);
+
+                //スタミナ回復値を30.0に変更
+                Player.instance.SetStaminaRecoveryRatio(kSpecifiedStaminaRecoveryRatio);
+
+                //スタミナゲージの色を緑色に変更
                 Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = greenColor;
+
+                //スタミナ増強剤使用フラグをtrueに設定
                 isUseStaminaItem = true;
 
                 //効果時間待機
                 await UniTask.Delay(TimeSpan.FromSeconds(keepItemEffectValue));
 
-                //スタミナ消費率を元に戻して、スタミナゲージの色を元に戻す
+                //スタミナ消費率を元に戻す
                 Player.instance.SetStaminaConsumeRatio(Player.instance.GetDefaultStaminaConsumeRatio());
+
+                //スタミナ回復値を元に戻す
+                Player.instance.SetStaminaRecoveryRatio(Player.instance.GetStaminaRecoveryRatio());
+
+                //スタミナゲージの色を元に戻す
                 Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = keepStaminaColor;
+
+                //スタミナ増強剤使用フラグをfalseに設定
                 isUseStaminaItem = false;
                 break;
 

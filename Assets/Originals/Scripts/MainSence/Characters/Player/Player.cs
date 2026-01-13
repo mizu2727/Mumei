@@ -104,9 +104,14 @@ public class Player : MonoBehaviour, CharacterInterface
     private float staminaConsumeRatio = 25.0f;
 
     /// <summary>
+    /// デフォルトのスタミナ回復値
+    /// </summary>
+    private const float kDefaultStaminaRecoveryRatio = 20.0f;
+
+    /// <summary>
     /// スタミナ回復値
     /// </summary>
-    private const float kStaminaRecoveryRatio = 20f;
+    private float staminaRecoveryRatio = 20.0f;
 
     /// <summary>
     /// スタミナ使用可能フラグ
@@ -114,7 +119,7 @@ public class Player : MonoBehaviour, CharacterInterface
     private bool isStamina;
 
     [Header("検知範囲")]
-    [SerializeField] private float playerDetectionRange = 10f;
+    [SerializeField] private float playerDetectionRange = 10.0f;
     [SerializeField]
     public float DetectionRange
     {
@@ -366,6 +371,24 @@ public class Player : MonoBehaviour, CharacterInterface
     public void SetStaminaConsumeRatio(float specifiedStaminaConsumeRatio)
     {
         staminaConsumeRatio = specifiedStaminaConsumeRatio;
+    }
+
+    /// <summary>
+    /// デフォルトのスタミナ回復値を取得
+    /// </summary>
+    /// <returns>デフォルトのスタミナ回復値</returns>
+    public float GetStaminaRecoveryRatio()
+    {
+        return kDefaultStaminaRecoveryRatio;
+    }
+
+    /// <summary>
+    /// スタミナ回復値を設定する
+    /// </summary>
+    /// <param name="specifiedStaminaRecoveryRatio">スタミナ回復値</param>
+    public void SetStaminaRecoveryRatio(float specifiedStaminaRecoveryRatio)
+    {
+        staminaRecoveryRatio = specifiedStaminaRecoveryRatio;
     }
 
     /// <summary>
@@ -865,7 +888,7 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     private void RecoveryStamia() 
     {
-        stamina += kStaminaRecoveryRatio * Time.deltaTime;
+        stamina += staminaRecoveryRatio * Time.deltaTime;
     }
 
     /// <summary>
