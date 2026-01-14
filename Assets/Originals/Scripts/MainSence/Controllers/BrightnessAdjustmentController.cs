@@ -106,7 +106,8 @@ public class BrightnessAdjustmentController : MonoBehaviour
             RenderSettings.fogDensity = brightnessAdjustmentSlider.value;
 
             //セーブ用明るさの値をスライダーから取得
-            brightnessValue = RenderSettings.fogDensity;
+            SaveBrightnessValue();
+            //brightnessValue = RenderSettings.fogDensity;
 
             //値が最大値を超えないように制限
             if (brightnessValue > brightnessAdjustmentSlider.maxValue) 
@@ -120,5 +121,14 @@ public class BrightnessAdjustmentController : MonoBehaviour
                 brightnessValue = brightnessAdjustmentSlider.minValue;
             }
         }
+    }
+
+    /// <summary>
+    /// セーブ用明るさの値をスライダーから取得
+    /// </summary>
+    public void SaveBrightnessValue() 
+    {
+        //セーブ用明るさの値をスライダーから取得
+        brightnessValue = RenderSettings.fogDensity;
     }
 }

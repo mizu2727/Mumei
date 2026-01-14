@@ -150,6 +150,9 @@ public class TitleController : MonoBehaviour
     /// </summary>
     public void EndGame()
     {
+        //明るさ設定を保存
+        BrightnessAdjustmentController.instance.SaveBrightnessValue();
+
         //シーン遷移時用データを保存
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 

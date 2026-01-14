@@ -239,6 +239,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("警戒範囲(プレイヤーとの距離)")]
     [SerializeField] protected float alertRange = 15f;
 
+    /// <summary>
+    /// プレイヤーの現在地との距離
+    /// </summary>
+    private float distanceToPlayer;
+
     [Header("徘徊地点のTransform配列")]
     [SerializeField] private Transform[] patrolPoint;
 
@@ -614,7 +619,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         //プレイヤーとの距離を計算
         Vector3 directionToPlayer = targetPoint.position - transform.position;
-        float distanceToPlayer = directionToPlayer.magnitude;
+        distanceToPlayer = directionToPlayer.magnitude;
 
         //角度を計算
         float angle = Vector3.Angle(transform.forward, directionToPlayer.normalized);
@@ -921,6 +926,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, targetPoint.position);
 
+
         //状態遷移と処理
         switch (currentState)
         {
@@ -970,6 +976,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
                 {
+                    //プレイヤーを追従するBGMからステージBGMへ切り替える
+                    EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+
                     //次の徘徊先を設定
                     NextPosition();
                 }
