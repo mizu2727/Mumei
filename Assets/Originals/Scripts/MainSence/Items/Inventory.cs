@@ -310,7 +310,7 @@ public class Inventory : MonoBehaviour
     {
         //インベントリアイテム使用
         if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0 
-            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) UseItem();
+            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden()) UseItem();
     }
 
     /// <summary>
