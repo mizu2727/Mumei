@@ -18,6 +18,13 @@ public class MessageController : MonoBehaviour
     /// </summary>
     public static MessageController instance;
 
+
+    /// <summary>
+    /// "Interact"
+    /// </summary>
+    private const string stringInteract = "Interact";
+
+
     [Header("メッセージパネル関連")]
     [Header("メッセージパネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject messagePanel;
@@ -375,12 +382,14 @@ public class MessageController : MonoBehaviour
 
 
     /// <summary>
-    /// スペースキー押下で次のメッセージを表示
+    /// スペースキー・Enterキー・左クリック・Rボタン押下で次のメッセージを表示
+    /// Interact…"joystick button 5"を割り当てている。コントローラーではRボタンになる
     /// </summary>
     /// <returns></returns>
     async UniTask ShowNextMessage() 
     {
-        await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+        await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) 
+            || Input.GetMouseButtonDown(0) || Input.GetButtonDown(stringInteract));
 
         //ポーズパネル・ゴールパネルを開いている間は、次のメッセージを進めない
         if (goal != null && PauseController.instance != null) 
