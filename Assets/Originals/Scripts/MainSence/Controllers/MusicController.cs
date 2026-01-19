@@ -356,44 +356,6 @@ public class MusicController : MonoBehaviour
     }
 
     /// <summary>
-    /// BGMListをループありで再生
-    /// </summary>
-    /// <param name="audioSource">audioSource</param>
-    /// <param name="audioClip">audioClip</param>
-    /// <param name="bgmId">BGM番号</param>
-    /// <param name="listNumber">リスト番号</param>
-    //public void PlayLoopBGMList(AudioSource audioSource, AudioClip audioClip, int bgmId, int listNumber)
-    //{
-    //    //BGMステートがPlayの場合
-    //    if (sO_BGM.CheckBGMState(bgmId) == BGMState.Play)
-    //    {
-    //        //処理をスキップ
-    //        return;
-    //    }
-
-    //    if (audioSource != null && !isDebug)
-    //    {
-    //        if (audioClip != null)
-    //        {
-    //            //リストにAudioSourceを格納
-    //            audioSourceBGMList[listNumber] = audioSource;
-
-    //            //リストにclipを設定
-    //            audioSourceBGMList[listNumber].clip = audioClip;
-
-    //            //ループ再生を有効
-    //            audioSourceBGMList[listNumber].loop = true;
-
-    //            //再生
-    //            audioSourceBGMList[listNumber].Play();
-
-    //            //BGMの状態をPlayに変更
-    //            sO_BGM.ChangeFromStopToPlayBGM(bgmId);
-    //        }
-    //    }
-    //}
-
-    /// <summary>
     /// BGM一時停止
     /// </summary>
     public void PauseBGM(AudioSource audioSource, AudioClip audioClip, int bgmId) 
@@ -414,35 +376,6 @@ public class MusicController : MonoBehaviour
         //BGMの状態をPauseに変更
         sO_BGM.ChangeFromPlayToPauseBGM(bgmId);
     }
-
-    /// <summary>
-    /// BGMList一時停止
-    /// </summary>
-    /// <param name="audioSource">audioSource</param>
-    /// <param name="audioClip">audioClip</param>
-    /// <param name="bgmId">BGM番号</param>
-    /// <param name="listNumber">リスト番号</param>
-    //public void PauseBGMList(AudioSource audioSource, AudioClip audioClip, int bgmId, int listNumber)
-    //{
-    //    //BGMステートがPlay以外の場合
-    //    if (sO_BGM.CheckBGMState(bgmId) != BGMState.Play)
-    //    {
-    //        //処理をスキップ
-    //        return;
-    //    }
-
-    //    //リストにAudioSourceを格納
-    //    audioSourceBGMList[listNumber] = audioSource;
-
-    //    //クリップを設定
-    //    audioSourceBGMList[listNumber].clip = audioClip;
-
-    //    //中断
-    //    audioSourceBGMList[listNumber].Pause();
-
-    //    //BGMの状態をPauseに変更
-    //    sO_BGM.ChangeFromPlayToPauseBGM(bgmId);
-    //}
 
     /// <summary>
     /// BGM一時停止解除
@@ -467,35 +400,6 @@ public class MusicController : MonoBehaviour
     }
 
     /// <summary>
-    /// BGMList一時停止解除
-    /// </summary>
-    /// <param name="audioSource">audioSource</param>
-    /// <param name="audioClip">audioClip</param>
-    /// <param name="bgmId">BGM番号</param>
-    /// <param name="listNumber">リスト番号</param>
-    //public void UnPauseBGMList(AudioSource audioSource, AudioClip audioClip, int bgmId, int listNumber)
-    //{
-    //    //BGMステートがPause以外の場合
-    //    if (sO_BGM.CheckBGMState(bgmId) != BGMState.Pause)
-    //    {
-    //        //処理をスキップ
-    //        return;
-    //    }
-
-    //    //リストにAudioSourceを格納
-    //    audioSourceBGMList[listNumber] = audioSource;
-
-    //    //クリップを設定
-    //    audioSourceBGMList[listNumber].clip = audioClip;
-
-    //    //中断解除
-    //    audioSourceBGMList[listNumber].UnPause();
-
-    //    //BGMの状態をPlayに戻す
-    //    sO_BGM.ChangeFromPauseToPlayBGM(bgmId);
-    //}
-
-    /// <summary>
     /// BGM停止
     /// </summary>
     public void StopBGM(AudioSource audioSource, AudioClip audioClip, int bgmId) 
@@ -516,35 +420,6 @@ public class MusicController : MonoBehaviour
         //BGMの状態をStopに変更
         sO_BGM.ChangeFromPlayToStopBGM(bgmId);
     }
-
-    /// <summary>
-    /// BGMList停止
-    /// </summary>
-    /// <param name="audioSource">audioSource</param>
-    /// <param name="audioClip">audioClip</param>
-    /// <param name="bgmId">BGM番号</param>
-    /// <param name="listNumber">リスト番号</param>
-    //public void StopBGMList(AudioSource audioSource, AudioClip audioClip, int bgmId, int listNumber)
-    //{
-    //    //BGMステートがPlay以外の場合
-    //    if (sO_BGM.CheckBGMState(bgmId) != BGMState.Play)
-    //    {
-    //        //処理をスキップ
-    //        return;
-    //    }
-
-    //    //リストにAudioSourceを格納
-    //    audioSourceBGMList[listNumber] = audioSource;
-
-    //    //クリップを設定
-    //    audioSourceBGMList[listNumber].clip = audioClip;
-
-    //    //BGM停止
-    //    audioSourceBGMList[listNumber].Stop();
-
-    //    //BGMの状態をStopに変更
-    //    sO_BGM.ChangeFromPlayToStopBGM(bgmId);
-    //}
 
     /// <summary>
     ///  新しいAudioSourceを取得または作成
