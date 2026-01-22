@@ -210,6 +210,17 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private CancellationTokenSource cts;
 
+
+    /// <summary>
+    /// pausePanelを取得
+    /// </summary>
+    /// <returns>pausePanel</returns>
+    public GameObject GetPausePanel()
+    {
+        return pausePanel;
+    }
+
+
     /// <summary>
     /// 現在再生されているBGMのIDを取得
     /// </summary>
@@ -395,6 +406,29 @@ public class PauseController : MonoBehaviour
         else if (!player.IsDead && isPause)
         {
             OnClickedClosePauseButton();
+        }
+        //アイテム確認パネルを開いている場合||タイトルへ戻るパネルを開いている場合||オプションパネルを開いている場合||
+        else if (isViewItemsPanel || isReturnToTitlePanel || OptionUIController.instance.GetIsOptionPanel()) 
+        {
+            //各パネルを閉じる
+            //アイテム確認パネルを非表示
+            isViewItemsPanel = false;
+            ChangeViewItemsPanel();
+
+            //ドキュメントパネルを非表示
+            isDocumentPanel = false;
+            ChangeViewDocumentPanel();
+
+            //ミステリーアイテムパネルを非表示
+            isMysteryItemPanel = false;
+            ChangeViewMysteryItemPanel();
+
+            //タイトルへ戻るパネルを非表示
+            isReturnToTitlePanel = false;
+            ChangeReturnToTitlePanel();
+
+            //オプションパネルが表示されている場合は閉じる
+            OptionUIController.instance.OnClickedCloseOptionButton();
         }
     }
 

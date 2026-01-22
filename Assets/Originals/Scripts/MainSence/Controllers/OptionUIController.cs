@@ -400,6 +400,7 @@ public class OptionUIController : MonoBehaviour
         else
         {
             //ポーズパネルを表示
+            PauseController.instance.GetPausePanel().transform.SetAsLastSibling();
             PauseController.instance.isPause = true;
             PauseController.instance.ChangeViewPausePanel();
         }
