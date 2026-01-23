@@ -83,6 +83,11 @@ public class Drawer : MonoBehaviour
     private AudioSource audioSourceSE;
 
     /// <summary>
+    /// SEの音量倍率
+    /// </summary>
+    private const float magnificationSeVolume = 0.5f;
+
+    /// <summary>
     /// 引き出しを開けるSEのID
     /// </summary>
     private readonly int openSEid = 11;
@@ -277,6 +282,9 @@ public class Drawer : MonoBehaviour
         //audioSourceSEが存在する&&引き出しを開けるSEが存在する場合
         if (audioSourceSE != null && sO_SE.GetSEClip(openSEid) != null)
         {
+            //SEの音量に倍率をかけて設定
+            audioSourceSE.volume *= magnificationSeVolume;
+
             //引き出しを開けるSEを再生
             audioSourceSE.PlayOneShot(sO_SE.GetSEClip(openSEid));
         }
