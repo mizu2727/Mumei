@@ -85,6 +85,11 @@ public class MessageController : MonoBehaviour
     [Header("プレイヤーカメラ(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private PlayerCamera playerCamera;
 
+    /// <summary>
+    /// プレイヤーカメラのTransform保存用
+    /// </summary>
+    private Quaternion savePlayerCameraQuaternion;
+
     [Header("ゴール(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public Goal goal;
 
@@ -503,6 +508,9 @@ public class MessageController : MonoBehaviour
 
                         await UniTask.Delay(TimeSpan.FromSeconds(3));
 
+                        //プレイヤーカメラの回転を保存
+                        savePlayerCameraQuaternion = playerCamera.transform.rotation;
+
                         //スペースキー押下で次のメッセージを書く
                         showTalkMessage.ShowGameTalkMessage(number);
                         break;
@@ -647,6 +655,12 @@ public class MessageController : MonoBehaviour
 
                     case 68:
                         ResetMessage();
+
+                        //プレイヤーカメラの回転を元に戻す
+                        playerCamera.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                        playerCamera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+
+                        
                         GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
                         //シーン遷移時用データを保存
@@ -896,17 +910,19 @@ public class MessageController : MonoBehaviour
                     //カメラの角度をリセット
                     if (Player.instance != null)
                     {
+                        //プレイヤーカメラが存在する場合
                         if (playerCamera != null)
                         {
                             // カメラの上下回転をリセット
                             playerCamera.ResetCameraRotation();
+
+                            //プレイヤーカメラのtransform.ratationの値を保存していた値に戻す
+                            playerCamera.transform.rotation = savePlayerCameraQuaternion;
+
                             // プレイヤーの向きをカメラの正面に同期（必要に応じて）
                             Player.instance.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
                         }
                     }
-
-                    Debug.Log("プレイヤーのtransform.ratation =" + Player.instance.transform.rotation);
-                    Debug.Log("プレイヤーのtransform.localRotation =" + Player.instance.transform.localRotation);
 
                     //チュートリアル用アイテムを非表示
                     GameController.instance.tutorialItems.SetActive(false);
