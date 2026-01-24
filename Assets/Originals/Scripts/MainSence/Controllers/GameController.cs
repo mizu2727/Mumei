@@ -526,6 +526,9 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void ReturnToTitle() 
     {
+        //シーン遷移時用データを保存
+        CallSaveSceneTransitionUserDataMethod();
+
         //MessageControllerの非同期タスクをキャンセル
         if (MessageController.instance != null)
         {

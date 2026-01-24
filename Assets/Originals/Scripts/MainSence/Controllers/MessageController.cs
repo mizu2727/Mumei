@@ -905,6 +905,9 @@ public class MessageController : MonoBehaviour
                         }
                     }
 
+                    Debug.Log("プレイヤーのtransform.ratation =" + Player.instance.transform.rotation);
+                    Debug.Log("プレイヤーのtransform.localRotation =" + Player.instance.transform.localRotation);
+
                     //チュートリアル用アイテムを非表示
                     GameController.instance.tutorialItems.SetActive(false);
 
