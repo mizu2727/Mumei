@@ -1048,6 +1048,21 @@ public class MessageController : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
+        //名前入力フィールドが存在する場合
+        if (inputPlayerNameField != null) 
+        {
+            //名前入力フィールドをnullにする(メモリリークを防ぐため)
+            inputPlayerNameField = null;
+        }
+
+        //チュートリアル用のゴールオブジェクトが存在する場合
+        if (goal != null) 
+        {
+            //チュートリアル用のゴールオブジェクトをnullにする(メモリリークを防ぐため)
+            goal = null;
+        }
+            
+
         //もしこのインスタンスがシングルトンインスタンス自身であれば、staticな参照をクリアする
         if (instance == this)
         {

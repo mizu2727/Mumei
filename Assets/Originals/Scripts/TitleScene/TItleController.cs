@@ -163,4 +163,17 @@ public class TitleController : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy()
+    {
+        //インスタンスが存在する場合
+        if (instance == this)
+        {
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
+        }
+    }
 }

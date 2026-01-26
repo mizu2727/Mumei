@@ -158,4 +158,17 @@ public class HomeController : MonoBehaviour
         //ホームシーンBGMを再生
         MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(homeSceneBGMId), homeSceneBGMId);
     }
+
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy()
+    {
+        //インスタンスが存在する場合
+        if (instance == this)
+        {
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
+        }
+    }
 }
