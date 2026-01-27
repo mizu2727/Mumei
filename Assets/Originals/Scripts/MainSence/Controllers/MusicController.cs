@@ -187,6 +187,42 @@ public class MusicController : MonoBehaviour
     {
         //ƒV[ƒ“‘JˆÚ‚Éİ’è‚·‚é‚½‚ß‚ÌŠÖ”“o˜^‰ğœ
         SceneManager.sceneLoaded -= OnSceneLoaded;
+
+
+        //AudioMixer‚ª‘¶İ‚·‚éê‡
+        if (audioMixer != null) 
+        {
+            //audioMixer‚ğnull‚É‚·‚é
+            audioMixer = null;
+        }
+
+        //AudioMixerGroupBGM‚ª‘¶İ‚·‚éê‡
+        if (audioMixerGroupBGM != null) 
+        { 
+            //audioMixerGroupBGM‚ğnull‚É‚·‚é
+            audioMixerGroupBGM = null;
+        }
+
+        //AudioMixerGroupSE‚ª‘¶İ‚·‚éê‡
+        if (audioMixerGroupSE != null) 
+        { 
+            //audioMixerGroupSE‚ğnull‚É‚·‚é
+            audioMixerGroupSE = null;
+        }
+
+        //bGMSlider‚ª‘¶İ‚·‚éê‡
+        if (bGMSlider != null) 
+        {
+            //bGMSlider‚ğnull‚É‚·‚é
+            bGMSlider = null;
+        }
+
+        //sESlider‚ª‘¶İ‚·‚éê‡
+        if (sESlider != null) 
+        {
+            //sESlider‚ğnull‚É‚·‚é
+            sESlider = null;
+        }
     }
 
 

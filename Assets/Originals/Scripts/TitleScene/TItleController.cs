@@ -169,6 +169,20 @@ public class TitleController : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
+        //titlesCanvasが存在する場合
+        if (titlesCanvas != null) 
+        {
+            //titlesCanvasをnullにする
+            titlesCanvas = null;
+        }
+
+        //titlePanelが存在する場合
+        if (titlePanel != null) 
+        {
+            //titlePanelをnullにする
+            titlePanel = null;
+        }
+
         //インスタンスが存在する場合
         if (instance == this)
         {

@@ -164,6 +164,20 @@ public class HomeController : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
+        //returnToTitlePanelが存在する場合
+        if (returnToTitlePanel != null)
+        {
+            //returnToTitlePanelをnull
+            returnToTitlePanel = null;
+        }
+
+        //wall_Tutorialが存在する場合
+        if (wall_Tutorial != null) 
+        {
+            //wall_Tutorialをnullにする
+            wall_Tutorial = null;
+        }
+
         //インスタンスが存在する場合
         if (instance == this)
         {

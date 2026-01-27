@@ -3,19 +3,19 @@ using UnityEngine;
 public class ScrollObject : MonoBehaviour
 {
     [Header("スクロール開始地点")]
-    public float startPosition;
+    [SerializeField] private float startPosition;
 
     [Header("スクロール終了地点")]
-    public float endPosition;
+    [SerializeField] private float endPosition;
 
     [Header("スクロール速度")]
-    public float speed;
+    [SerializeField] private float speed;
 
     [Header("スクロールの向きの判定(isDirectionがtrueなら右向き、falseなら左向き)")]
-    public bool isDirection;
+    [SerializeField] private bool isDirection;
 
     //スクロールの向きの決定
-    private float direction = 1;
+    private float direction = 1.0f;
 
     private void Start()
     {
