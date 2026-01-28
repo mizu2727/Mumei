@@ -177,6 +177,54 @@ public class OperationExplanationController : MonoBehaviour
     }
 
     /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy() 
+    {
+        //operationPanelが存在する場合
+        if (operationPanel != null)
+        {
+            //operationPanelをnullに設定
+            operationPanel = null;
+        }
+
+        //useItemTextPanelが存在する場合
+        if (useItemTextPanel != null)
+        {
+            //useItemTextPanelをnullに設定
+            useItemTextPanel = null;
+        }
+
+        //compassTextが存在する場合
+        if (compassText != null)
+        {
+            //compassTextをnullに設定
+            compassText = null;
+        }
+
+        //selfViewCompassTextPanelButtonが存在する場合
+        if (selfViewCompassTextPanelButton != null)
+        {
+            //selfViewCompassTextPanelButtonをnullに設定
+            selfViewCompassTextPanelButton = null;
+        }
+
+        //selfHiddenCompassTextPanelButtonが存在する場合
+        if (selfHiddenCompassTextPanelButton != null)
+        {
+            //selfHiddenCompassTextPanelButtonをnullに設定
+            selfHiddenCompassTextPanelButton = null;
+        }
+
+        //compassTextPanelが存在する場合
+        if (compassTextPanel != null)
+        {
+            //compassTextPanelをnullに設定
+            compassTextPanel = null;
+        }
+    }
+
+    /// <summary>
     /// SE音量を0～1へ変更
     /// </summary>
     /// <param name="volume">音量</param>

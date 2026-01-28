@@ -1048,6 +1048,48 @@ public class MessageController : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
+        //メッセージテキストが存在する場合
+        if (messageText != null) 
+        {
+            //メッセージテキストをnullにする(メモリリークを防ぐため)
+            messageText = null;
+        }
+
+        //メッセージパネルが存在する場合
+        if (messagePanel != null) 
+        {
+            //メッセージパネルをnullにする(メモリリークを防ぐため)
+            messagePanel = null; 
+        }
+
+        //会話している人の名前パネルが存在する場合
+        if (speakerNameText != null) 
+        {
+            //会話している人の名前テキストをnullにする(メモリリークを防ぐため)
+            speakerNameText = null;
+        }
+
+        //会話している人の名前パネルが存在する場合
+        if (speakerNamePanel != null) 
+        {
+            //会話している人の名前パネルをnullにする(メモリリークを防ぐため)
+            speakerNamePanel = null;
+        }
+
+        //名前入力確認パネルが存在する場合
+        if (CheckInputNameText != null) 
+        {
+            //確認用テキストをnullにする(メモリリークを防ぐため)
+            CheckInputNameText = null;
+        }
+
+        //名前入力確認パネルが存在する場合
+        if (CheckInputNamePanel != null) 
+        {
+            //名前入力確認パネルをnullにする(メモリリークを防ぐため)
+            CheckInputNamePanel = null;
+        }
+
         //名前入力フィールドが存在する場合
         if (inputPlayerNameField != null) 
         {

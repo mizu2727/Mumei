@@ -113,6 +113,61 @@ public class OptionUIController : MonoBehaviour
     }
 
     /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy() 
+    {
+        //optionPanelが存在する場合
+        if (optionPanel != null)
+        {
+            //optionPanelをnullに設定
+            optionPanel = null;
+        }
+
+        //mouseSensitivityPanelが存在する場合
+        if (mouseSensitivityPanel != null)
+        {
+            //mouseSensitivityPanelをnullに設定
+            mouseSensitivityPanel = null;
+        }
+
+        //audioAdjustmentPanelが存在する場合
+        if (audioAdjustmentPanel != null)
+        {
+            //audioAdjustmentPanelをnullに設定
+            audioAdjustmentPanel = null;
+        }
+
+        //brightnessAdjustmentPanelが存在する場合
+        if (brightnessAdjustmentPanel != null)
+        {
+            //brightnessAdjustmentPanelをnullに設定
+            brightnessAdjustmentPanel = null;
+        }
+
+        //screenAdjustmentPanelが存在する場合
+        if (screenAdjustmentPanel != null)
+        {
+            //screenAdjustmentPanelをnullに設定
+            screenAdjustmentPanel = null;
+        }
+
+        //explanationPanelが存在する場合
+        if (explanationPanel != null)
+        {
+            //explanationPanelをnullに設定
+            explanationPanel = null;
+        }
+
+        //explanationButtonが存在する場合
+        if (explanationButton != null)
+        {
+            //explanationButtonをnullに設定
+            explanationButton = null;
+        }
+    }
+
+    /// <summary>
     /// SE音量を0～1へ変更
     /// </summary>
     /// <param name="volume">音量</param>

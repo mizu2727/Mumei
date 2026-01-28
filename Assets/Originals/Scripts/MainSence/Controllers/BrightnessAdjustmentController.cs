@@ -49,6 +49,19 @@ public class BrightnessAdjustmentController : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy() 
+    {
+        //brightnessAdjustmentSliderが存在する場合
+        if (brightnessAdjustmentSlider != null)
+        {
+            //brightnessAdjustmentSliderをnullに設定
+            brightnessAdjustmentSlider = null;
+        }
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
         
