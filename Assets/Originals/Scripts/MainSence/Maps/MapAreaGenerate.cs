@@ -19,7 +19,7 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("マップエリアを格納する(ヒエラルキー上のマップエリアをアタッチすること)")]
     [SerializeField] private List <GameObject> areaPrefabList;
 
-    [Header("ランダムに選ばれたマップエリアが格納される(ヒエラルキー上からのアタッチ禁止)")]
+    [Header("ランダムに選ばれたマップエリアが格納される(ヒエラルキー上からのアタッチ禁止。シャッフルされたマップ確認用)")]
     public List<GameObject> useMapAreaList = new ();
 
     [Header("マップエリア生成地点のTransform配列(ヒエラルキー上のマップエリア生成地点をアタッチすること)")]
@@ -29,7 +29,7 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("アイテムを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
     [SerializeField] private List<GameObject> itemPrefabList;
 
-    [Header("ランダムに選ばれたアイテムが格納される(ヒエラルキー上からのアタッチ禁止)")]
+    [Header("ランダムに選ばれたアイテムが格納される(ヒエラルキー上からのアタッチ禁止。シャッフルされたアイテム確認用)")]
     public List<GameObject> useItemList = new();
 
     [Header("アイテム生成地点のTransform配列(ヒエラルキー上のDrawerスクリプトのdrawerItemTransformをアタッチすること)")]
@@ -48,6 +48,89 @@ public class MapAreaGenerate : MonoBehaviour
 
     [Header("敵の位置(ヒエラルキー上からアタッチすること。ステージライトとの距離測定で必要)")]
     [SerializeField] public Transform[] baseEnemyTransformArray;
+
+    /// <summary>
+    /// オブジェクトが破壊された際に呼ばれる関数
+    /// </summary>
+    void OnDestroy()
+    {
+        for(int i = 0; i < areaPrefabList.Count; i++)
+        {
+            //マップエリアが存在する場合
+            if (areaPrefabList[i] != null)
+            {
+                //マップエリアをnullに設定
+                areaPrefabList[i] = null;
+            }
+        }
+
+        for(int i = 0; i < useMapAreaList.Count; i++)
+        {
+            //シャッフルされたマップエリアが存在する場合
+            if (useMapAreaList[i] != null)
+            {
+                //シャッフルされたマップエリアをnullに設定
+                useMapAreaList[i] = null;
+            }
+        }
+
+        for(int i = 0; i < mapAreaPoint.Length; i++)
+        {
+            //マップエリア生成地点が存在する場合
+            if (mapAreaPoint[i] != null)
+            {
+                //マップエリア生成地点をnullに設定
+                mapAreaPoint[i] = null;
+            }
+        }
+
+        for(int i = 0; i < itemPrefabList.Count; i++)
+        {
+            //アイテムが存在する場合
+            if (itemPrefabList[i] != null)
+            {
+                //アイテムをnullに設定
+                itemPrefabList[i] = null;
+            }
+        }
+
+        for(int i = 0; i < useItemList.Count; i++)
+        {
+            //シャッフルされたアイテムが存在する場合
+            if (useItemList[i] != null)
+            {
+                //シャッフルされたアイテムをnullに設定
+                useItemList[i] = null;
+            }
+        }
+
+        for(int i = 0; i < itemPoint.Length; i++)
+        {
+            //アイテム生成地点が存在する場合
+            if (itemPoint[i] != null)
+            {
+                //アイテム生成地点をnullに設定
+                itemPoint[i] = null;
+            }
+        }
+
+        for(int i = 0; i < baseEnemyTransformArray.Length; i++)
+        {
+            //敵の位置が存在する場合
+            if (baseEnemyTransformArray[i] != null)
+            {
+                //敵の位置をnullに設定
+                baseEnemyTransformArray[i] = null;
+            }
+        }
+
+        //インスタンスが存在する場合
+        if (instance == this)
+        {
+            //インスタンスをnullに設定
+            instance = null;
+        }
+    }
 
     private void Awake()
     {

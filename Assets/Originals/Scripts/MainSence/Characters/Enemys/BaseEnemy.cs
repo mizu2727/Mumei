@@ -244,7 +244,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private float distanceToPlayer;
 
-    [Header("徘徊地点のTransform配列")]
+    [Header("徘徊地点のTransform配列(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Transform[] patrolPoint;
 
     /// <summary>
@@ -501,6 +501,43 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     {
         masterSEVolume = volume;
         audioSourceFindPlayerSE.volume = volume;
+    }
+
+    /// <summary>
+    /// オブジェクトが破壊された際に呼ばれる関数
+    /// </summary>
+    void OnDestroy() 
+    {
+        for (int i = 0; i < patrolPoint.Length; i ++) 
+        {
+            //patrolPointが存在する場合
+            if (patrolPoint[i] != null) 
+            {
+                //patrolPointをnullに設定
+                patrolPoint[i] = null;
+            }
+        }
+
+        //targetPointが存在する場合
+        if (targetPoint != null) 
+        {
+            //targetPointをnullに設定
+            targetPoint = null;
+        }
+
+        //playerFoundPanelが存在する場合
+        if (playerFoundPanel != null) 
+        {
+            //playerFoundPanelをnullに設定
+            playerFoundPanel = null;
+        }
+
+        //noiseScreenPanelが存在する場合
+        if (noiseScreenPanel != null) 
+        {
+            //noiseScreenPanelをnullに設定
+            noiseScreenPanel = null;
+        }
     }
 
     void Start()

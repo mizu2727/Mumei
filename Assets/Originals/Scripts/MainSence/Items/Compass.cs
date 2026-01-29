@@ -49,6 +49,40 @@ public class Compass : MonoBehaviour
         compassArrowImage.enabled = isVisible;
     }
 
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy() 
+    {
+        //compassArrowImageが存在する場合
+        if (compassArrowImage != null)
+        {
+            //compassArrowImageをnullに設定
+            compassArrowImage = null;
+        }
+
+        //compassTextPanelが存在する場合
+        if (compassTextPanel != null)
+        {
+            //compassTextPanelをnullに設定
+            compassTextPanel = null;
+        }
+
+        //goalが存在する場合
+        if (goal != null)
+        {
+            //goalをnullに設定
+            goal = null;
+        }
+
+        //インスタンスが存在する場合
+        if (instance == this)
+        {
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
+        }
+    }
+
     private void Awake()
     {
         //コンパスの針の画像を非表示

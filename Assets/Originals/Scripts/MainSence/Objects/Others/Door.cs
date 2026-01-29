@@ -112,6 +112,20 @@ public class Door : MonoBehaviour
         audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
     }
 
+
+    /// <summary>
+    /// オブジェクトが破壊された際に呼ばれる関数
+    /// </summary>
+    void OnDestroy() 
+    {
+        //targetPointが存在する場合
+        if (targetPoint != null)
+        {
+            //targetPointをnullに設定
+            targetPoint = null;
+        }
+    }
+
     private void Start()
     {
         //AudioSourceの初期化

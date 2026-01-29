@@ -278,6 +278,61 @@ public class Inventory : MonoBehaviour
         audioSourceInventorySE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
     }
 
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy() 
+    {
+        //useItemPanelが存在する場合
+        if (useItemPanel != null)
+        {
+            //useItemPanelをnullに設定
+            useItemPanel = null;
+        }
+
+        //useItemCountTextが存在する場合
+        if (useItemCountText != null)
+        {
+            //useItemCountTextをnullに設定
+            useItemCountText = null;
+        }
+
+        //useItemImageが存在する場合
+        if (useItemImage != null)
+        {
+            //useItemImageをnullに設定
+            useItemImage = null;
+        }
+
+        //useItemTextPanelが存在する場合
+        if (useItemTextPanel != null)
+        {
+            //useItemTextPanelをnullに設定
+            useItemTextPanel = null;
+        }
+
+        //useItemNameTextが存在する場合
+        if (useItemNameText != null)
+        {
+            //useItemNameTextをnullに設定
+            useItemNameText = null;
+        }
+
+        //useItemExplanationTextが存在する場合
+        if (useItemExplanationText != null)
+        {
+            //useItemExplanationTextをnullに設定
+            useItemExplanationText = null;
+        }
+
+        //インスタンスが存在する場合
+        if (instance == this)
+        {
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
+        }
+    }
+
     private void Awake()
     {
         //シングルトンの設定

@@ -118,6 +118,19 @@ public class EnemyBGMController : MonoBehaviour
         MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
     }
 
+    /// <summary>
+    /// オブジェクトが破壊された際に呼ばれる関数
+    /// </summary>
+    void OnDestroy()
+    {
+        //インスタンスが存在する場合
+        if (instance == this)
+        {
+            //インスタンスをnullに設定
+            instance = null;
+        }
+    }
+
     private void Awake()
     {
         if (instance == null)
