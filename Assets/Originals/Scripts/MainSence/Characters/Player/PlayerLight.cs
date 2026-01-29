@@ -9,7 +9,7 @@ public class PlayerLight : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
 
     [Header("ライト(ヒエラルキー上からアタッチすること)")]
-    public GameObject playerHasLight;
+    [SerializeField] private GameObject playerHasLight;
 
     /// <summary>
     /// エラー防止用に追加。シーンがロードされた際にカメラ参照を更新するために、SceneManager.sceneLoaded イベントを登録
@@ -52,6 +52,26 @@ public class PlayerLight : MonoBehaviour
         else
         {
             Debug.LogError("No Camera found as a child of the Player!");
+        }
+    }
+
+    /// <summary>
+    /// オブジェクトが破壊された際に呼ばれる関数
+    /// </summary>
+    void OnDestroy() 
+    {
+        //cameraTransformが存在する場合
+        if (cameraTransform != null) 
+        {
+            //cameraTransformをnullに設定
+            cameraTransform = null;
+        }
+
+        //playerHasLightが存在する場合
+        if (playerHasLight != null) 
+        {
+            //playerHasLightをnullに設定
+            playerHasLight = null;
         }
     }
 

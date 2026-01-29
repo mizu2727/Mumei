@@ -469,6 +469,13 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     void OnDestroy()
     {
+        //staminaSliderをnullに設定
+        if (staminaSlider != null)
+        {
+            //staminaSliderをnullに設定
+            staminaSlider = null;
+        }
+
         //インスタンス破棄
         if (instance == this)
         {

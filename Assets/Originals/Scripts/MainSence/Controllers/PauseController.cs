@@ -239,6 +239,138 @@ public class PauseController : MonoBehaviour
         nowPlayBGMId = subjectPlayBGMId_;
     }
 
+
+    /// <summary>
+    /// オブジェクトが破棄される際に呼ばれる
+    /// </summary>
+    private void OnDestroy()
+    {
+        //goalが存在する場合
+        if(goal != null)
+        {
+            //goalをnullにする
+            goal = null;
+        }
+
+        for (int i = 0; i < baseEnemy.Length; i++) 
+        {
+            //baseEnemyが存在する場合
+            if (baseEnemy[i] != null)
+            {
+                //baseEnemyをnullにする
+                baseEnemy[i] = null;
+            }
+        }
+
+        //pausePanelが存在する場合
+        if (pausePanel != null)
+        {
+            //pausePanelをnullにする
+            pausePanel = null;
+        }
+
+        //viewItemsPanelが存在する場合
+        if (viewItemsPanel != null)
+        {
+            //viewItemsPanelをnullにする
+            viewItemsPanel = null;
+        }
+
+        //documentNameTextが存在する場合
+        if (documentNameText != null)
+        {
+            //documentNameTextをnullにする
+            documentNameText = null;
+        }
+
+        //documentExplanationTextが存在する場合
+        if (documentExplanationText != null)
+        {
+            //documentExplanationTextをnullにする
+            documentExplanationText = null;
+        }
+
+        //documentInventoryPanelが存在する場合
+        if (documentExplanationPanel != null)
+        {
+            //documentExplanationPanelをnullにする
+            documentExplanationPanel = null;
+        }
+
+        //documentInventoryPanelが存在する場合
+        if (documentInventoryPanel != null) 
+        {
+            //documentInventoryPanelをnullにする
+            documentInventoryPanel = null;
+        }
+
+        for (int i = 0; i < mysteryItemExplanationText.Length; i++)
+        {
+            //mysteryItemExplanationTextが存在する場合
+            if (mysteryItemExplanationText[i] != null)
+            {
+                //mysteryItemExplanationTextをnullにする
+                mysteryItemExplanationText[i] = null;
+            }
+        }
+
+        for (int i = 0; i < mysteryItemNameText.Length; i++) 
+        {
+            //mysteryItemNameTextが存在する場合
+            if (mysteryItemNameText[i] != null)
+            {
+                //mysteryItemNameTextをnullにする
+                mysteryItemNameText[i] = null;
+            }
+        }
+
+        for (int i = 0; i < mysteryItemImage.Length; i++)
+        {
+            //mysteryItemImageが存在する場合
+            if (mysteryItemImage[i] != null)
+            {
+                //mysteryItemImageをnullにする
+                mysteryItemImage[i] = null;
+            }
+        }
+
+        for (int i = 0; i < mysteryItemNameButton.Length; i++) 
+        {
+            //mysteryItemNameButtonが存在する場合
+            if (mysteryItemNameButton[i] != null)
+            {
+                //mysteryItemNameButtonをnullにする
+                mysteryItemNameButton[i] = null;
+            }
+        }
+
+        //mysteryItemInventoryPanelが存在する場合
+        if (mysteryItemExplanationPanel != null) 
+        {
+            //mysteryItemInventoryPanelをnullにする
+            mysteryItemExplanationPanel = null;
+        }
+
+        //mysteryItemInventoryPanelが存在する場合
+        if (mysteryItemInventoryPanel != null) 
+        {
+            //mysteryItemInventoryPanelをnullにする
+            mysteryItemInventoryPanel = null;
+        }
+
+        //returnToTitlePanelが存在する場合
+        if (returnToTitlePanel != null) 
+        {
+            //returnToTitlePanelをnullにする
+            returnToTitlePanel = null;
+        }
+
+        //もしこのインスタンスがシングルトンインスタンス自身であれば、staticな参照をクリアする
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
     private void Awake()
     {
         //シングルトンの設定
@@ -501,9 +633,6 @@ public class PauseController : MonoBehaviour
                 Debug.LogWarning("その他のシーン名");
                 break;
         };
-
-        //BGM一時停止
-        //MusicController.instance.PauseBGM();
 
         //再生中の効果音を全て一時停止し、ボタンSEを流す
         //PlayerのSE一時停止
@@ -1172,17 +1301,5 @@ public class PauseController : MonoBehaviour
         isViewItemsPanel = false;
         ChangeViewItemsPanel();
         Destroy(gameObject);
-    }
-
-    /// <summary>
-    /// オブジェクトが破棄される際に呼ばれる
-    /// </summary>
-    private void OnDestroy()
-    {
-        //もしこのインスタンスがシングルトンインスタンス自身であれば、staticな参照をクリアする
-        if (instance == this)
-        {
-            instance = null;
-        }
     }
 }

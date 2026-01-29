@@ -40,6 +40,41 @@ public class Goal : MonoBehaviour
     /// </summary>
     const string stringGameClearScene = "GameClearScene";
 
+
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy() 
+    {
+        for (int i = 0; i < selectMysteryItemImage.Length; i++) 
+        {
+            //ミステリーアイテム画像が存在する場合
+            if (selectMysteryItemImage[i] != null)
+            {
+                //ミステリーアイテム画像をnullにする
+                selectMysteryItemImage[i].sprite = null;
+                selectMysteryItemImage[i].enabled = false;
+            }
+        }
+
+        for (int i = 0; i < selectMysteryItemButton.Length; i++) 
+        {
+            //ミステリーアイテムボタンが存在する場合
+            if (selectMysteryItemButton[i] != null) 
+            {
+                //ミステリーアイテムボタンをnullにする
+                selectMysteryItemButton[i] = null;
+            }
+        }
+
+        //ゴールパネルが存在する場合
+        if (GoalPanel != null) 
+        {
+            //ゴールパネルをnullにする
+            GoalPanel = null;
+        }
+    }
+
     private void Start()
     {
         //ゴールパネルを非表示
