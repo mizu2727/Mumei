@@ -487,9 +487,12 @@ public class MessageController : MonoBehaviour
                 //会話している人の名前を設定
                 speakerNameText.text = talkMessage.talkMessage[number].speakerName;
             }
-            
+
             //チュートリアルの壁を消してゴールオブジェクトが見えるようにする
-            if (HomeController.instance.wall_Tutorial != null && number == 47) HomeController.instance.wall_Tutorial.SetActive(false);
+            if (HomeController.instance.wall_Tutorial != null && number == 47) 
+            { 
+                HomeController.instance.wall_Tutorial.SetActive(false); 
+            }
 
             await ShowNextMessage();
 
@@ -1048,20 +1051,6 @@ public class MessageController : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
-        //メッセージテキストが存在する場合
-        if (messageText != null) 
-        {
-            //メッセージテキストをnullにする(メモリリークを防ぐため)
-            messageText = null;
-        }
-
-        //メッセージパネルが存在する場合
-        if (messagePanel != null) 
-        {
-            //メッセージパネルをnullにする(メモリリークを防ぐため)
-            messagePanel = null; 
-        }
-
         //会話している人の名前パネルが存在する場合
         if (speakerNameText != null) 
         {
@@ -1103,7 +1092,14 @@ public class MessageController : MonoBehaviour
             //チュートリアル用のゴールオブジェクトをnullにする(メモリリークを防ぐため)
             goal = null;
         }
-            
+
+        //プレイヤーカメラが存在する場合
+        if (playerCamera != null) 
+        {
+            //プレイヤーカメラをnullにする(メモリリークを防ぐため)
+            playerCamera = null;
+        }
+
 
         //もしこのインスタンスがシングルトンインスタンス自身であれば、staticな参照をクリアする
         if (instance == this)

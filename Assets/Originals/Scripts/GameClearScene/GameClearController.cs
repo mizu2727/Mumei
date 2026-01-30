@@ -45,6 +45,26 @@ public class GameClearController : MonoBehaviour
     /// </summary>
     const string stringTitleScene = "TitleScene";
 
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy()
+    {
+        //gameClearCanvasが存在する場合
+        if (gameClearCanvas != null)
+        {
+            //gameClearCanvasをnullに設定
+            gameClearCanvas = null;
+        }
+
+        //instanceが存在する場合
+        if (instance != null)
+        {
+            //instanceをnullに設定
+            instance = null;
+        }
+    }
+
     private void Awake()
     {
         //インスタンス生成

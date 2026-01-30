@@ -88,6 +88,25 @@ public class GameOverScene : MonoBehaviour
         audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
     }
 
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy() 
+    {
+        //gameOverCanvasが存在する場合
+        if (gameOverCanvas != null) 
+        {
+            //gameOverCanvasをnullに設定
+            gameOverCanvas = null;
+        }
+
+        //instanceが存在する場合
+        if (instance != null)
+        {
+            //instanceをnullに設定
+            instance = null;
+        }
+    }
     void Start()
     {
         //シーンステータスをkGameOverSceneに設定

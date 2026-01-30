@@ -370,6 +370,13 @@ public class PauseController : MonoBehaviour
         {
             instance = null;
         }
+
+        //インスタンスが存在する場合
+        if (instance != null)
+        {
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
+        }
     }
     private void Awake()
     {
