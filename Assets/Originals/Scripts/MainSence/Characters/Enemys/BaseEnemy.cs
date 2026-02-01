@@ -1296,13 +1296,17 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     protected void PlayFindPlayerSE() 
     {
-        //プレイヤーを探すSE再生中フラグをtrue
-        isPlayFindPlayerSE = true;
+        //ポーズ中ではない場合
+        if(Time.timeScale == 1) 
+        {
+            //プレイヤーを探すSE再生中フラグをtrue
+            isPlayFindPlayerSE = true;
 
-        //警戒音を再生
-        audioSourceFindPlayerSE.clip = sO_SE.GetSEClip(findPlayerSEid);
-        audioSourceFindPlayerSE.loop = true;
-        audioSourceFindPlayerSE.Play();
+            //警戒音を再生
+            audioSourceFindPlayerSE.clip = sO_SE.GetSEClip(findPlayerSEid);
+            audioSourceFindPlayerSE.loop = true;
+            audioSourceFindPlayerSE.Play();
+        }
     }
 
     /// <summary>
