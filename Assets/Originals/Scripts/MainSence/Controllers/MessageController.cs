@@ -82,13 +82,10 @@ public class MessageController : MonoBehaviour
     [Header("プレイヤーの名前入力(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public InputField inputPlayerNameField;
 
-    [Header("プレイヤーカメラ(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] private PlayerCamera playerCamera;
-
     /// <summary>
-    /// プレイヤーカメラのTransform保存用
+    /// プレイヤーのTransform保存用
     /// </summary>
-    private Quaternion savePlayerCameraQuaternion;
+    private Quaternion savePlayerQuaternion;
 
     [Header("ゴール(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public Goal goal;
@@ -511,8 +508,8 @@ public class MessageController : MonoBehaviour
 
                         await UniTask.Delay(TimeSpan.FromSeconds(3));
 
-                        //プレイヤーカメラの回転を保存
-                        savePlayerCameraQuaternion = playerCamera.transform.rotation;
+                        //プレイヤーの回転を保存
+                        savePlayerQuaternion = Player.instance.transform.rotation;
 
                         //スペースキー押下で次のメッセージを書く
                         showTalkMessage.ShowGameTalkMessage(number);
@@ -660,10 +657,9 @@ public class MessageController : MonoBehaviour
                         ResetMessage();
 
                         //プレイヤーカメラの回転を元に戻す
-                        playerCamera.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                        playerCamera.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+                        PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                        PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 
-                        
                         GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
                         //シーン遷移時用データを保存
@@ -913,19 +909,23 @@ public class MessageController : MonoBehaviour
                     //カメラの角度をリセット
                     if (Player.instance != null)
                     {
-                        //プレイヤーカメラが存在する場合
-                        if (playerCamera != null)
-                        {
-                            // カメラの上下回転をリセット
-                            playerCamera.ResetCameraRotation();
+                        // カメラの上下回転をリセット
+                        PlayerCamera.instance.ResetCameraRotation();
 
-                            //プレイヤーカメラのtransform.ratationの値を保存していた値に戻す
-                            playerCamera.transform.rotation = savePlayerCameraQuaternion;
+                        // プレイヤーの向きをカメラの正面に同期（必要に応じて）
+                        Player.instance.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
 
-                            // プレイヤーの向きをカメラの正面に同期（必要に応じて）
-                            Player.instance.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
-                        }
+                        //プレイヤーのtransform.rotationの値を保存していた値に戻す
+                        Player.instance.transform.rotation = savePlayerQuaternion;
                     }
+
+                    //プレイヤーカメラのX軸回転リセットフラグをtrueに設定
+                    PlayerCamera.instance.SetIsResetXRotate(true);
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(1.5));
+
+                    //プレイヤーカメラのX軸回転リセットフラグをfalseに設定
+                    PlayerCamera.instance.SetIsResetXRotate(false);
 
                     //チュートリアル用アイテムを非表示
                     GameController.instance.tutorialItems.SetActive(false);
@@ -1091,13 +1091,6 @@ public class MessageController : MonoBehaviour
         {
             //チュートリアル用のゴールオブジェクトをnullにする(メモリリークを防ぐため)
             goal = null;
-        }
-
-        //プレイヤーカメラが存在する場合
-        if (playerCamera != null) 
-        {
-            //プレイヤーカメラをnullにする(メモリリークを防ぐため)
-            playerCamera = null;
         }
 
 

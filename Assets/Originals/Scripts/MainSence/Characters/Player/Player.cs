@@ -186,6 +186,8 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsBackRotate = value;
     }
 
+    
+
     [Header("ライト切り替えフラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] private bool playerIsLight = true;
     [SerializeField]
@@ -270,17 +272,15 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     private const float kMovingBoundaryValue = 0.01f;
 
-
     /// <summary>
-    /// 180度回転ベクトル
+    /// 180度Y軸回転ベクトル
     /// </summary>
-    private Vector3 rotate180 = new Vector3(0, 180f, 0);
+    private Vector3 rotateY180 = new Vector3(0, 180f, 0);
 
     /// <summary>
-    /// 回転速度倍率
+    /// 回転速度倍率0.5
     /// </summary>
     private const float kRotationSpeedMagnification = 0.5f;
-
 
     /// <summary>
     /// "Horizontal"
@@ -792,7 +792,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
 
-        if (IsMove && !wasMovingLastFrame && !isHidden)
+        if (IsMove && !wasMovingLastFrame && !isHidden && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
         {
             //移動開始時に効果音を再生
             audioSourceSE.clip = currentSE;
@@ -804,7 +804,7 @@ public class Player : MonoBehaviour, CharacterInterface
             //移動停止時に効果音を停止
             StopPlayerSE(audioSourceSE);
         }
-        else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE && !isHidden)
+        else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE && !isHidden && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
         {
             //移動中に歩行/ダッシュが切り替わった場合、効果音を変更
             audioSourceSE.Stop();
@@ -957,7 +957,7 @@ public class Player : MonoBehaviour, CharacterInterface
         if (GameController.instance.gameModeStatus == GameModeStatus.Story)
         {
             //プレイヤーの向きを180度ゆっくり回転させる
-            if (transform.rotation.y < 0) transform.Rotate(rotate180 * (Time.deltaTime * kRotationSpeedMagnification));
+            if (transform.rotation.y < 0) transform.Rotate(rotateY180 * (Time.deltaTime * kRotationSpeedMagnification));
             else playerIsBackRotate = false;
         }
     }

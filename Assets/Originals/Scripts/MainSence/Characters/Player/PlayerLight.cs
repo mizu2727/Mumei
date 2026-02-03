@@ -43,11 +43,9 @@ public class PlayerLight : MonoBehaviour
     /// </summary>
     void UpdateCameraReference()
     {
-        //プレイヤーの子オブジェクトからカメラを取得
-        Camera playerCamera = Player.instance.GetComponentInChildren<Camera>();
-        if (playerCamera != null)
+        if (PlayerCamera.instance != null)
         {
-            cameraTransform = playerCamera.transform;
+            cameraTransform = PlayerCamera.instance.transform;
         }
         else
         {
@@ -133,9 +131,6 @@ public class PlayerLight : MonoBehaviour
     /// </summary>
     void TurnOnAndOfLight() 
     {
-        //プレイヤーの子オブジェクトからカメラを取得
-        Camera playerCamera = Player.instance.GetComponentInChildren<Camera>();
-
         //通常プレイモードの場合
         if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
         {

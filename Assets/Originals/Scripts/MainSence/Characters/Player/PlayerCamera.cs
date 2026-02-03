@@ -8,6 +8,11 @@ using static GameController;
 public class PlayerCamera : MonoBehaviour
 {
     /// <summary>
+    /// インスタンス
+    /// </summary>
+    public static PlayerCamera instance;
+
+    /// <summary>
     /// マウス/ゲームパッドの右スティックの感度を保存
     /// </summary>
     private float keepMouseSensitivitySlider;
@@ -31,6 +36,11 @@ public class PlayerCamera : MonoBehaviour
     /// ゲームパッドの右スティックの縦移動
     /// </summary>
     float lookY2;
+
+    /// <summary>
+    /// 90度X軸回転ベクトル
+    /// </summary>
+    private Vector3 rotateX90 = new Vector3(90.0f, 0, 0);
 
     /// <summary>
     /// カメラのX軸回転角度
@@ -58,14 +68,42 @@ public class PlayerCamera : MonoBehaviour
     private const float kHiddenXRotationDownRange = 45.0f;
 
     /// <summary>
+    /// 回転速度倍率1
+    /// </summary>
+    private const float kRotationSpeedMagnification1 = 1.0f;
+
+    /// <summary>
     /// 前フレームの後ろを向くフラグ
     /// </summary>
     private bool wasTrunLastFrame = false;
 
     /// <summary>
+    /// X軸回転リセットフラグ
+    /// </summary>
+    private bool isResetXRotate = false;
+
+    /// <summary>
     /// プレイヤーのTransform
     /// </summary>
     private Transform playerTransform;
+
+    /// <summary>
+    /// X軸回転リセットフラグを取得
+    /// </summary>
+    /// <returns>X軸回転リセットフラグ</returns>
+    public bool GetIsResetXRotate()
+    {
+        return isResetXRotate;
+    }
+
+    /// <summary>
+    /// X軸回転リセットフラグを取得
+    /// </summary>
+    /// <param name="isResetXRotateValue">X軸回転リセットフラグ</param>
+    public void SetIsResetXRotate(bool isResetXRotateValue)
+    {
+        isResetXRotate = isResetXRotateValue;
+    }
 
 
     private void OnEnable()
@@ -91,6 +129,23 @@ public class PlayerCamera : MonoBehaviour
 
     }
 
+    private void Awake()
+    {
+        //シングルトンの設定
+        if (instance == null)
+        {
+            instance = this;
+
+            //シーン遷移時に破棄されないようにする
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            //すでにインスタンスが存在する場合は破棄
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
         //マウスカーソルを非表示にし、位置を固定
@@ -104,10 +159,16 @@ public class PlayerCamera : MonoBehaviour
 
         //カメラの下回転範囲を通常に戻す
         currentXRotationDownRange = kXRotationDownRange;
+
+        //X軸回転リセットフラグを初期化
+        isResetXRotate = false;
     }
 
     private void Update()
     {
+        //ストーリーモードでX軸回転をリセットする
+        if (isResetXRotate) ResetXRotate();
+
         //通常のプレイ以外の場合
         if (Player.instance == null || Player.instance.GetIsFallDown()
             || Time.timeScale == 0) 
@@ -115,6 +176,8 @@ public class PlayerCamera : MonoBehaviour
             //処理をスキップ
             return; 
         }
+
+        
 
         //プレイヤーが隠れている場合
         if (Player.instance.GetIsPlayerHidden())
@@ -204,7 +267,36 @@ public class PlayerCamera : MonoBehaviour
             xRotation = 0f;
 
             //カメラのローカル回転を初期状態に戻す
-            transform.localRotation = Quaternion.Euler(0f, 0f, 0f); 
+            transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+
+            //カメラのローカル回転を初期状態に戻す
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+
+            Debug.Log("カメラの回転をリセット");
+        }
+    }
+
+    /// <summary>
+    /// カメラのX軸回転をリセットする
+    /// </summary>
+    public void ResetXRotate()
+    {
+        //カメラのX軸の向きを0度になるように回転させる
+        if (transform.rotation.x < 0)
+        {
+            transform.Rotate(-rotateX90 * (Time.deltaTime * kRotationSpeedMagnification1));
+            Debug.Log("transform.rotation.xを下へ回転");
+        }
+        else if (transform.rotation.x > 0)
+        {
+            transform.Rotate(rotateX90 * (Time.deltaTime * kRotationSpeedMagnification1));
+            Debug.Log("transform.rotation.xを上へ回転");
+        }
+        else
+        {
+            //回転終了
+            isResetXRotate = false;
+            Debug.Log("transform.rotation.x回転終了");
         }
     }
 }
