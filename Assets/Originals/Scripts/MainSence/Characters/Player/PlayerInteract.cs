@@ -176,6 +176,11 @@ public class PlayerInteract : MonoBehaviour
     /// </summary>
     private readonly int getItemSEid = 2;
 
+    /// <summary>
+    /// ドキュメント取得時のSEのID
+    /// </summary>
+    private readonly int getDocumentSEid = 15;
+
     [Header("アイテムリセット(デバッグ用)")]
     public bool isDebugResetItem = false;
 
@@ -368,8 +373,17 @@ public class PlayerInteract : MonoBehaviour
                             //ポーズ画面内のアイテムのパネル内に追加する
                             sO_Item.AddDocumentORMysteryItem(item);
 
-                            //拾ったアイテムをステージ上から削除
-                            DestroyItem(pickUpItem);
+                            //ドキュメントの場合
+                            if (item.itemType == ItemType.Document)
+                            {
+                                //ドキュメントの場合は取得SEを再生してから削除
+                                DestroyDocument(pickUpItem);
+                            }
+                            else 
+                            {
+                                //拾ったアイテムをステージ上から削除
+                                DestroyItem(pickUpItem);
+                            }
                         }
                         //対象アイテムがプレイヤーが使用できるアイテムの場合
                         else if (item.itemType == ItemType.UseItem)
@@ -602,6 +616,31 @@ public class PlayerInteract : MonoBehaviour
             //Rayが何にも当たっていない場合、強調を解除
             ResetLayer();
         }
+    }
+
+    /// <summary>
+    /// ドキュメントのゲームオブジェクトをシーンのフィールド上から削除する
+    /// </summary>
+    /// <param name="pickUpItem">入手アイテム</param>
+    void DestroyDocument(GameObject pickUpItem)
+    {
+        if (audioSourceItemSE != null && sO_SE.GetSEClip(getDocumentSEid) != null)
+        {
+            //アイテム取得時の効果音を再生
+            audioSourceItemSE.clip = sO_SE.GetSEClip(getDocumentSEid);
+            audioSourceItemSE.loop = false;
+            audioSourceItemSE.Play();
+        }
+        else
+        {
+            Debug.LogWarning($"AudioSource or getDocumentSEid is null in DestroyItem");
+        }
+
+        //アイテムを削除
+        Destroy(pickUpItem);
+
+        //アイテムを拾ったらレイヤーをリセット
+        ResetLayer();
     }
 
     /// <summary>
