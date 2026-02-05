@@ -134,6 +134,9 @@ public class Stage01Controller : MonoBehaviour
 
     void Start()
     {
+        //プレイヤーをスタート地点へワープ
+        Player.instance.PlayerWarp(0,0,0);
+
         //シーンステータスをkStage01に設定
         GameController.instance.SetViewScene(ViewScene.kStage01);
 
@@ -142,6 +145,9 @@ public class Stage01Controller : MonoBehaviour
 
         //Stage01BGMを流す。現在再生中のBGMを設定する。
         PlayStage01BGM();
+
+        //ゲームモードステータスをInGameに設定
+        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
     }
 
     /// <summary>

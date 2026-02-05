@@ -38,6 +38,9 @@ public class HomeController : MonoBehaviour
     [Header("wall_Tutorial(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public GameObject wall_Tutorial;
 
+    [Header("wall_EndTutorial(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] public GameObject wall_EndTutorial;
+
     /// <summary>
     /// AudioSourceBGMを取得する
     /// </summary>
@@ -155,35 +158,10 @@ public class HomeController : MonoBehaviour
 
     private void Start()
     {
+        //wall_EndTutorialを表示
+        wall_EndTutorial.SetActive(true);
+
         //ホームシーンBGMを再生
         MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(homeSceneBGMId), homeSceneBGMId);
     }
-    /*
-    /// <summary>
-    /// オブジェクト破棄時の処理
-    /// </summary>
-    private void OnDestroy()
-    {
-        //returnToTitlePanelが存在する場合
-        if (returnToTitlePanel != null)
-        {
-            //returnToTitlePanelをnull
-            returnToTitlePanel = null;
-        }
-
-        //wall_Tutorialが存在する場合
-        if (wall_Tutorial != null) 
-        {
-            //wall_Tutorialをnullにする
-            wall_Tutorial = null;
-        }
-
-        //インスタンスが存在する場合
-        if (instance != null)
-        {
-            //インスタンスをnullにする(メモリリークを防ぐため)
-            instance = null;
-        }
-    }
-    */
 }

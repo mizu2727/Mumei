@@ -69,6 +69,11 @@ public class MessageController : MonoBehaviour
     private const int kTakeMessageNumber2 = 2;
 
     /// <summary>
+    /// 47番目のメッセージ番号
+    /// </summary>
+    private const int kMessageNumber47 = 47;
+
+    /// <summary>
     /// "カナメ"
     /// </summary>
     private const string kSpeakerNameKanane = "カナメ";
@@ -107,8 +112,10 @@ public class MessageController : MonoBehaviour
     /// </summary>
     private bool isChangeMessageTextColorRed = false;
 
-    [Header("ブラックアウトフラグ(ヒエラルキー上からの編集禁止)")]
-    public bool isBlackOutPanel = false;
+    /// <summary>
+    /// ブラックアウトフラグ
+    /// </summary>
+    private bool isBlackOutPanel = false;
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
@@ -131,7 +138,26 @@ public class MessageController : MonoBehaviour
     /// 非同期タスクのキャンセル用変数
     /// チュートリアル内のUniTask処理待機中にポーズ画面からタイトルへ戻る際のmessageTextでMissingReferenceExceptionエラーが起こるのを防止する用
     /// </summary>
-    private CancellationTokenSource cts; 
+    private CancellationTokenSource cts;
+
+
+    /// <summary>
+    /// ブラックアウトフラグを取得
+    /// </summary>
+    /// <returns>ブラックアウトフラグ</returns>
+    public bool GetIsBlackOutPanel() 
+    {
+        return isBlackOutPanel;
+    }
+
+    /// <summary>
+    /// ブラックアウトフラグを設定
+    /// </summary>
+    /// <param name="flag">ブラックアウトフラグ</param>
+    public void SetIsBlackOutPanel(bool flag) 
+    {
+        isBlackOutPanel = flag;
+    }
 
     private void OnEnable()
     {
@@ -485,8 +511,8 @@ public class MessageController : MonoBehaviour
                 speakerNameText.text = talkMessage.talkMessage[number].speakerName;
             }
 
-            //チュートリアルの壁を消してゴールオブジェクトが見えるようにする
-            if (HomeController.instance.wall_Tutorial != null && number == 47) 
+            //wall_Tutorialを消してゴールオブジェクトが見えるようにする
+            if (HomeController.instance.wall_Tutorial != null && number == kMessageNumber47) 
             { 
                 HomeController.instance.wall_Tutorial.SetActive(false); 
             }
@@ -660,13 +686,8 @@ public class MessageController : MonoBehaviour
                         PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                         PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 
+                        //ゲームモードステータスをInGameに設定
                         GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
-
-                        //シーン遷移時用データを保存
-                        GameController.instance.CallSaveSceneTransitionUserDataMethod();
-
-                        //ステージ1へ移動
-                        SceneManager.LoadScene("Stage01");
                         break;
 
                     case 70:
@@ -876,7 +897,7 @@ public class MessageController : MonoBehaviour
                     //ストーリーモードへ変更
                     GameController.instance.SetGameModeStatus(GameModeStatus.Story);
 
-                    showTalkMessage.ShowGameTalkMessage(47);
+                    showTalkMessage.ShowGameTalkMessage(kMessageNumber47);
                     break;
 
                 //チュートリアル終了
@@ -899,8 +920,11 @@ public class MessageController : MonoBehaviour
 
                     await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                    //壁を表示
+                    //wall_Tutorialを表示
                     HomeController.instance.wall_Tutorial.SetActive(true);
+
+                    //wall_EndTutorialを非表示
+                    HomeController.instance.wall_EndTutorial.SetActive(false);
 
                     //プレイヤー・カナメをワープ
                     Kaname.instance.WarpPostion(1, 0.505f, 2);

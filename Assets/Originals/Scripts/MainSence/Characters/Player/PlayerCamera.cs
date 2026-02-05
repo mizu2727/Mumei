@@ -271,8 +271,6 @@ public class PlayerCamera : MonoBehaviour
 
             //カメラのローカル回転を初期状態に戻す
             transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-
-            Debug.Log("カメラの回転をリセット");
         }
     }
 
@@ -285,18 +283,15 @@ public class PlayerCamera : MonoBehaviour
         if (transform.rotation.x < 0)
         {
             transform.Rotate(-rotateX90 * (Time.deltaTime * kRotationSpeedMagnification1));
-            Debug.Log("transform.rotation.xを下へ回転");
         }
         else if (transform.rotation.x > 0)
         {
             transform.Rotate(rotateX90 * (Time.deltaTime * kRotationSpeedMagnification1));
-            Debug.Log("transform.rotation.xを上へ回転");
         }
         else
         {
             //回転終了
             isResetXRotate = false;
-            Debug.Log("transform.rotation.x回転終了");
         }
     }
 }
