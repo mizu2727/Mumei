@@ -954,11 +954,11 @@ public class MessageController : MonoBehaviour
                     //チュートリアル用アイテムを非表示
                     GameController.instance.tutorialItems.SetActive(false);
 
+                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
                     //画面ブラックアウトを解除
                     isBlackOutPanel = false;
                     ViewBlackOutPanel();
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
                     showSystemMessage.ShowGameSystemMessage(number);
                     break;
