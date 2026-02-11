@@ -54,7 +54,7 @@ public class ChangeSceneZone : MonoBehaviour
             //HomeSceneの場合
             case stringHomeScene:
 
-                //プレイヤー効果音を停止(TODO:画面遷移時にプレイヤーのダッシュ等のSEが鳴り続けてしまう)
+                //プレイヤー効果音を停止
                 MusicController.instance.StopSE(Player.instance.audioSourceSE);
 
                 //ゲームモードステータスをStopInGameに設定
@@ -101,6 +101,9 @@ public class ChangeSceneZone : MonoBehaviour
         {
             //HomeSceneの場合
             case stringHomeScene:
+
+                //プレイヤー効果音を停止
+                MusicController.instance.StopSE(Player.instance.audioSourceSE);
 
                 //ゲームモードステータスをStopInGameに設定
                 GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);

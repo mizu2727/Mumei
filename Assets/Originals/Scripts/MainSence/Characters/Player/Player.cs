@@ -447,6 +447,17 @@ public class Player : MonoBehaviour, CharacterInterface
         float moveX = Input.GetAxis(stringHorizontal);
         float moveZ = Input.GetAxis(stringVertical);
 
+        //通常のプレイ以外の場合
+        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
+        {
+            //移動時の数値をリセット
+            moveX = 0;
+            moveZ = 0;
+
+            //移動していないと判定
+            return false;
+        }
+
         //隠れている場合
         if (isHidden) 
         {

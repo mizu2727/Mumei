@@ -863,6 +863,9 @@ public class MessageController : MonoBehaviour
                         && !PauseController.instance.isViewItemsPanel && !OptionUIController.instance.GetIsOptionPanel());
                     GameController.instance.SetIsTutorialNextMessageFlag(false);
 
+                    //プレイヤー効果音を停止
+                    MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
                     ResetMessage();
 
                     //ストーリーモードへ変更
@@ -893,6 +896,9 @@ public class MessageController : MonoBehaviour
                         && PauseController.instance.isViewMysteryItem_Tutorial && !OptionUIController.instance.GetIsOptionPanel());
                     PauseController.instance.isViewMysteryItem_Tutorial = false;
                     ResetMessage();
+
+                    //プレイヤー効果音を停止
+                    MusicController.instance.StopSE(Player.instance.audioSourceSE);
 
                     //ストーリーモードへ変更
                     GameController.instance.SetGameModeStatus(GameModeStatus.Story);
