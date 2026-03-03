@@ -214,4 +214,13 @@ public class EnemyBGMController : MonoBehaviour
         //現在再生中のBGMを設定する
         PauseController.instance.SetNowPlayBGMId(keepAudioBGMId);
     }
+
+    /// <summary>
+    /// プレイヤーを追従するBGMを停止する
+    /// </summary>
+    public void StopChasePlayerBGM()
+    {
+        //プレイヤーを追従するBGMを停止
+        MusicController.instance.StopBGM(audioSourceBGM, sO_BGM.GetBGMClip(chasePlayerBGMId), chasePlayerBGMId);
+    }
 }

@@ -136,6 +136,11 @@ public class GameController : MonoBehaviour
         StopInGame,
 
         /// <summary>
+        /// プレイヤーを攻撃する演出モード
+        /// </summary>
+        AttackMovieDirection,
+
+        /// <summary>
         /// ゲームオーバーモード
         /// </summary>
         GameOver,

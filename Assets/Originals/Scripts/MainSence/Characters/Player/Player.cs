@@ -203,6 +203,11 @@ public class Player : MonoBehaviour, CharacterInterface
     private bool isHidden = false;
 
     /// <summary>
+    /// 隠れポイントが近くに存在するかを判定するフラグ
+    /// </summary>
+    private bool isNearHidePoint = false;
+
+    /// <summary>
     /// 死亡
     /// </summary>
     public void Dead()
@@ -416,6 +421,24 @@ public class Player : MonoBehaviour, CharacterInterface
     public void SetIsPlayerHidden(bool isHiddenValue) 
     {
         isHidden = isHiddenValue;
+    }
+
+    /// <summary>
+    /// 隠れポイントが近くに存在するかを判定するフラグを取得
+    /// </summary>
+    /// <returns>隠れポイントが近くに存在するかを判定するフラグ</returns>
+    public bool GetIsNearHidePoint()
+    {
+        return isNearHidePoint;
+    }
+
+    /// <summary>
+    /// 隠れポイントが近くに存在するかを判定するフラグを設定
+    /// </summary>
+    /// <param name="isHiddenValue">隠れポイントが近くに存在するかを判定するフラグ</param>
+    public void SetIsNearHidePoint(bool isHiddenValue)
+    {
+        isNearHidePoint = isHiddenValue;
     }
 
     /// <summary>
@@ -815,7 +838,8 @@ public class Player : MonoBehaviour, CharacterInterface
             //移動停止時に効果音を停止
             StopPlayerSE(audioSourceSE);
         }
-        else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE && !isHidden && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
+        else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE 
+            && !isHidden && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
         {
             //移動中に歩行/ダッシュが切り替わった場合、効果音を変更
             audioSourceSE.Stop();

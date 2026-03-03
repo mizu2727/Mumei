@@ -23,6 +23,31 @@ public class HiddenObject : MonoBehaviour
     /// </summary>
     private Vector3 savePlayerLocalPosition;
 
+    /// <summary>
+    /// プレイヤーとの距離
+    /// </summary>
+    private float distanceToPlayer;
+
+    /// <summary>
+    /// 指定の距離
+    /// </summary>
+    private const float hideDistance = 2.0f;
+
+    /// <summary>
+    /// 時間カウント
+    /// </summary>
+    private float countTime;
+
+    /// <summary>
+    /// 指定時間
+    /// </summary>
+    private const float kTimer = 0.5f;
+
+    /// <summary>
+    /// カウントスタートフラグ
+    /// </summary>
+    private bool isStartCountTime = false;
+
 
     /// <summary>
     /// Stage01
@@ -128,6 +153,47 @@ public class HiddenObject : MonoBehaviour
     {
         //AudioSourceの初期化
         InitializeAudioSource();
+
+        //時間カウントスタートフラグをオフにする
+        isStartCountTime = false;
+
+        //時間カウントを初期化
+        countTime = 0.0f;
+    }
+
+
+    private void Update()
+    {
+        //プレイヤーとの距離を計算
+        distanceToPlayer = Vector3.Distance(transform.position, Player.instance.transform.position);
+
+        //カウントスタートフラグがオフの場合
+        if (!isStartCountTime) 
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //プレイヤーとの距離が近い場合&&時間カウントが指定時間以内の場合
+        if (distanceToPlayer <= hideDistance && countTime < kTimer)
+        {
+            //時間をカウント
+            countTime += Time.deltaTime;
+
+            //隠れポイントが近くに存在するかを判定するフラグをオンにする
+            Player.instance.SetIsNearHidePoint(true);
+        }
+        else 
+        {
+            //時間カウントスタートフラグをオフにする
+            isStartCountTime = false;
+
+            //時間カウントを初期化
+            countTime = 0.0f;
+
+            //隠れポイントが近くに存在するかを判定するフラグをオフにする
+            Player.instance.SetIsNearHidePoint(false);
+        }
     }
 
     /// <summary>
@@ -141,6 +207,9 @@ public class HiddenObject : MonoBehaviour
     /// </summary>
     public void HiddenPlayer()
     {
+        //時間カウントスタートフラグをオフにする
+        isStartCountTime = false;
+
         //プレイヤーのTransformを取得
         player = Player.instance.transform;
 
@@ -208,6 +277,9 @@ public class HiddenObject : MonoBehaviour
     /// </summary>
     public void ShowThePlayer() 
     {
+        //時間カウントスタートフラグをオンにする
+        isStartCountTime = true;
+
         //プレイヤーの親をnullに設定
         player.SetParent(null);
 

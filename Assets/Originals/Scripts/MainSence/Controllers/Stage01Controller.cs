@@ -162,4 +162,12 @@ public class Stage01Controller : MonoBehaviour
         PauseController.instance.SetNowPlayBGMId(stage01BGMId);
     }
 
+    /// <summary>
+    /// Stage01BGMÇí‚é~Ç∑ÇÈÅB
+    /// </summary>
+    public void StopStage01BGM() 
+    {
+        //Stage01BGMÇí‚é~
+        MusicController.instance.StopBGM(audioSourceBGM, sO_BGM.GetBGMClip(stage01BGMId), stage01BGMId);
+    }
 }
