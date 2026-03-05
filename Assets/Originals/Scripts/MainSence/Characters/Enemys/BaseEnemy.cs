@@ -176,13 +176,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [Header("自身のzoomOutGameObject(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject zoomOutGameObject;
 
+    [Header("自身のzoomOutGameObjectHideObject(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject zoomOutGameObjectHideObject;
+
     /// <summary>
     /// 攻撃フラグ
     /// </summary>
     private bool isAttack = false;
-
-    [Header("プレイヤーンのZoomObject(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private GameObject playerZoomObject;
 
 
     /// <summary>
@@ -204,6 +204,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         {
             //プレイヤーカメラを対象のオブジェクトの方へ向ける
             await LookAtCamera();
+            //await OldLookAtCamera();
 
             //シーン遷移時用データを保存
             GameController.instance.CallSaveSceneTransitionUserDataMethod();
@@ -216,8 +217,132 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// プレイヤーカメラを対象のオブジェクトの方へ向ける処理
     /// </summary>
-    private async UniTask LookAtCamera()
+    private async UniTask LookAtCamera() 
     {
+
+        //プレイヤーの身体のパーツを非表示にする(敵が襲う演出でプレイヤー自身が見えてしまうのを防ぐため)
+        for (int i = 0; i < Player.instance.playerBodys.Length; i++)
+        {
+            Player.instance.playerBodys[i].SetActive(false);
+        }
+
+        //カメラの上下左右回転をリセット
+        PlayerCamera.instance.ResetCameraRotation();
+
+        //プレイヤーカメラのX軸回転リセットフラグをtrueに設定
+        PlayerCamera.instance.SetIsResetXRotate(true);
+
+        //プレイヤーカメラのY軸回転リセットフラグをtrueに設定
+        PlayerCamera.instance.SetIsResetYRotate(true);
+
+        await UniTask.Delay(TimeSpan.FromSeconds(0.1));
+
+        //プレイヤーカメラのX軸回転リセットフラグをfalseに設定
+        PlayerCamera.instance.SetIsResetXRotate(false);
+
+        //プレイヤーカメラのY軸回転リセットフラグをtrueに設定
+        PlayerCamera.instance.SetIsResetYRotate(false);
+
+
+        //プレイヤーのRayCastが壁に当たっている場合
+        if (Player.instance.GetIsRaycastHitWall())
+        {
+            Debug.Log("壁に当たったゲームオーバー");
+            //プレイヤーの視点を敵の方へ向ける
+            Player.instance.transform.LookAt(transform.position);
+        }
+
+        //ステージBGMを停止する
+        Stage01Controller.instance.StopStage01BGM();
+
+        //プレイヤーを追従するBGMを停止する
+        EnemyBGMController.instance.StopChasePlayerBGM();
+
+        //移動アニメーションオフ
+        animator.SetBool(kIsRunAnimatorParameter, false);
+        animator.SetBool(kIsWalkAnimatorParameter, false);
+
+        //TODO:敵の表情が良く見えるように、ライティング処理が必要
+
+
+        //プレイヤーを攻撃するSEを再生
+        audioSourceAttackPlayerSE.clip = sO_SE.GetSEClip(attackPlayerSEid);
+        audioSourceAttackPlayerSE.loop = true;
+        audioSourceAttackPlayerSE.Play();
+
+        //NavmeshAgentの回転を無効にする
+        navMeshAgent.updateRotation = false;
+
+        //Rigidbodyの回転を固定する
+        rigidBody.freezeRotation = true;
+
+        //攻撃アニメーション再生
+        animator.SetBool(kIsAttackAnimatorParameter, true);
+
+        // プレイヤーの正面方向（カメラ/プレイヤーが向いている方向）を取得
+        Vector3 forward = Player.instance.transform.forward;
+
+        // 正規化はほぼ不要（forwardは通常すでに長さ1）だが安全のために
+        forward = forward.normalized;
+
+        // プレイヤーの位置から前方に一定距離だけ進んだ位置を計算
+        Vector3 targetPosition = Player.instance.transform.position + forward * 2;
+
+        // 高さを敵と同じにする
+        targetPosition.y = transform.position.y;           
+
+        // 敵をその位置に移動
+        transform.position = targetPosition;
+
+        // 敵をプレイヤーの方へ向ける（ほぼ必須）
+        transform.LookAt(Player.instance.transform.position);
+
+        //ゲームモードをプレイヤーを攻撃する演出モードに設定
+        GameController.instance.gameModeStatus = GameModeStatus.AttackMovieDirection;
+
+        // 遷移が完了して「AttackState」という名前のステートになるのを待つ
+        await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName(kAttackStateName));
+
+        // そのステートが終了間際まで待つ
+        await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f);
+
+        // アニメーションを最後で止める
+        animator.speed = 0;
+    }
+
+    /// <summary>
+    /// プレイヤーカメラを対象のオブジェクトの方へ向ける処理
+    /// 
+    /// 問題点
+    /// ●箱に入る⇒即出た場合に演出２になってしまう問題
+    /// ●箱に入る⇒即出た場合に敵の位置がずれてしまう問題
+    /// </summary>
+    private async UniTask OldLookAtCamera()
+    {
+        //プレイヤーの身体のパーツを非表示にする(敵が襲う演出でプレイヤー自身が見えてしまうのを防ぐため)
+        for (int i = 0; i < Player.instance.playerBodys.Length; i++)
+        {
+            Player.instance.playerBodys[i].SetActive(false);
+        }
+
+        //カメラの上下左右回転をリセット
+        PlayerCamera.instance.ResetCameraRotation();
+
+        //プレイヤーカメラのX軸回転リセットフラグをtrueに設定
+        PlayerCamera.instance.SetIsResetXRotate(true);
+
+        //プレイヤーカメラのY軸回転リセットフラグをtrueに設定
+        PlayerCamera.instance.SetIsResetYRotate(true);
+
+        await UniTask.Delay(TimeSpan.FromSeconds(0.1));
+
+        //プレイヤーカメラのX軸回転リセットフラグをfalseに設定
+        PlayerCamera.instance.SetIsResetXRotate(false);
+
+        //プレイヤーカメラのY軸回転リセットフラグをtrueに設定
+        PlayerCamera.instance.SetIsResetYRotate(false);
+
+
         //ステージBGMを停止する
         Stage01Controller.instance.StopStage01BGM();
 
@@ -240,24 +365,73 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //隠れポイントが近くに存在するかを判定するフラグがオンの場合
         if (Player.instance.GetIsNearHidePoint())
         {
+            Debug.Log("ゲームオーバーその001");
+
+            //NavmeshAgentの回転を無効にする
+            navMeshAgent.updateRotation = false;
+
+            //Rigidbodyの回転を固定する
+            rigidBody.freezeRotation = true;
+
             //敵の正面（少し前、少し上）の位置を計算する
-            Vector3 targetCameraPosition = zoomOutGameObject.transform.position
-                                      + zoomOutGameObject.transform.forward;// 敵の正面方向へ
+            //Vector3 targetCameraPosition = zoomOutGameObjectHideObject.transform.position
+            //                          + zoomOutGameObjectHideObject.transform.forward;// 敵の正面方向へ
 
             //プレイヤーカメラの位置をその固定位置に移動
-            PlayerCamera.instance.transform.position = targetCameraPosition;
+            //PlayerCamera.instance.transform.position = targetCameraPosition;
 
             //敵を向かせる
-            PlayerCamera.instance.transform.LookAt(zoomOutGameObject.transform);
+            //PlayerCamera.instance.transform.LookAt(zoomOutGameObjectHideObject.transform);
+
+            //ゲームモードをプレイヤーを攻撃する演出モードに設定
+            //GameController.instance.gameModeStatus = GameModeStatus.AttackMovieDirection;
+
+            //指定時間演出する
+            //await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
+
+
+            //攻撃アニメーション再生
+            animator.SetBool(kIsAttackAnimatorParameter, true);
+
+            // プレイヤーの正面方向（カメラ/プレイヤーが向いている方向）を取得
+            Vector3 forward = Player.instance.transform.forward;
+
+            // 正規化はほぼ不要（forwardは通常すでに長さ1）だが安全のために
+            forward = forward.normalized;
+
+            // プレイヤーの位置から前方に一定距離だけ進んだ位置を計算
+            Vector3 targetPosition = Player.instance.transform.position + forward * 2;
+
+            // 高さを敵と同じにする（地面に合わせたい場合はRaycast推奨）
+            targetPosition.y = transform.position.y;           // 簡易版
+                                                               // または targetPosition.y = Player.instance.transform.position.y; でもOK
+
+            // 敵をその位置に移動
+            transform.position = targetPosition;
+
+            // 敵をプレイヤーの方へ向ける（ほぼ必須）
+            transform.LookAt(Player.instance.transform.position);
+
 
             //ゲームモードをプレイヤーを攻撃する演出モードに設定
             GameController.instance.gameModeStatus = GameModeStatus.AttackMovieDirection;
 
             //指定時間演出する
-            await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
+            //await UniTask.Delay(TimeSpan.FromSeconds(1.25f));
+
+            // 遷移が完了して「AttackState」という名前のステートになるのを待つ
+            await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName(kAttackStateName));
+
+            // そのステートが終了間際まで待つ
+            await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f);
+
+            // アニメーションを最後で止める
+            animator.speed = 0;
         }
         else 
         {
+            Debug.Log("ゲームオーバーその002");
+
             //NavmeshAgentの回転を無効にする
             navMeshAgent.updateRotation = false;
 
@@ -295,18 +469,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName(kAttackStateName));
 
             // そのステートが終了間際まで待つ
-            await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.99f);
+            await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f);
 
             // アニメーションを最後で止める
             animator.speed = 0;
         }
     }
-
-
-    /// <summary>
-    /// "ChangeDirection"
-    /// </summary>
-    private const string kChangeDirection = "ChangeDirection";
 
 
     /// <summary>
@@ -1004,7 +1172,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             lastCollisionPoint = collision.contacts[0].point;
 
             //0.5秒後に方向転換
-            Invoke(kChangeDirection, 0.5f); 
+            Invoke("ChangeDirection", 0.5f); 
         }
 
         //プレイヤーに触れた場合

@@ -2,6 +2,7 @@ using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
@@ -19,6 +20,17 @@ public class Player : MonoBehaviour, CharacterInterface
     /// キャラクターコントローラー
     /// </summary>
     CharacterController characterController;
+
+    [Header("プレイヤーモデルのGameObject(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public GameObject[] playerBodys;
+
+    [Header("プレイヤーのZoomObject(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject playerZoomObject;
+
+    /// <summary>
+    /// RayCastが壁に当たっているかを判定するフラグ
+    /// </summary>
+    private bool isRaycastHitWall;
 
     /// <summary>
     /// アニメーション
@@ -359,6 +371,33 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     private const float kCharacterControllerRadius = 0.9f;
 
+
+    /// <summary>
+    /// プレイヤーのZoomObjectを取得する
+    /// </summary>
+    /// <returns>プレイヤーのZoomObject</returns>
+    public GameObject GetPlayerZoomObject() 
+    {
+        return playerZoomObject;
+    }
+
+    /// <summary>
+    /// RayCastが壁に当たっているかを判定するフラグを取得する
+    /// </summary>
+    /// <returns>RayCastが壁に当たっているかを判定するフラグ</returns>
+    public bool GetIsRaycastHitWall()
+    {
+        return isRaycastHitWall;
+    }
+
+    /// <summary>
+    /// RayCastが壁に当たっているかを判定するフラグを設定する
+    /// </summary>
+    /// <param name="isHit">RayCastが壁に当たっているかを判定するフラグ</param>
+    public void SetIsRaycastHitWall(bool isHit)
+    {
+        isRaycastHitWall = isHit;
+    }
 
     /// <summary>
     /// デフォルトのスタミナ消費値を取得

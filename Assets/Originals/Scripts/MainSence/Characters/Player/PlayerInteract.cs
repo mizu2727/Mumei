@@ -92,6 +92,11 @@ public class PlayerInteract : MonoBehaviour
 
 
     /// <summary>
+    /// Wallタグ
+    /// </summary>
+    private string wallTag = "Wall";
+
+    /// <summary>
     /// アイテムタグ
     /// </summary>
     private string itemTag = "Item";
@@ -576,6 +581,16 @@ public class PlayerInteract : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position,
             Camera.main.transform.forward, out raycastHit, distance))
         {
+            //壁に当たった場合
+            if (raycastHit.transform.tag == wallTag)
+            {
+                Player.instance.SetIsRaycastHitWall(true);
+            }
+            else
+            {
+                Player.instance.SetIsRaycastHitWall(false);
+            }
+
             //インタラクト可能なオブジェクトのいずれかに当たった場合
             if (raycastHit.transform.tag == itemTag ||
                 raycastHit.transform.tag == doorTag ||

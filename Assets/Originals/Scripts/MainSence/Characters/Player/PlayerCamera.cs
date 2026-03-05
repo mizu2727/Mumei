@@ -43,6 +43,11 @@ public class PlayerCamera : MonoBehaviour
     private Vector3 rotateX90 = new Vector3(90.0f, 0, 0);
 
     /// <summary>
+    /// 90度Y軸回転ベクトル
+    /// </summary>
+    private Vector3 rotateY90 = new Vector3(0, 90.0f, 0);
+
+    /// <summary>
     /// カメラのX軸回転角度
     /// </summary>
     private float xRotation = 0.0f;
@@ -83,6 +88,11 @@ public class PlayerCamera : MonoBehaviour
     private bool isResetXRotate = false;
 
     /// <summary>
+    /// Y軸回転リセットフラグ
+    /// </summary>
+    private bool isResetYRotate = false;
+
+    /// <summary>
     /// プレイヤーのTransform
     /// </summary>
     private Transform playerTransform;
@@ -103,6 +113,24 @@ public class PlayerCamera : MonoBehaviour
     public void SetIsResetXRotate(bool isResetXRotateValue)
     {
         isResetXRotate = isResetXRotateValue;
+    }
+
+    /// <summary>
+    /// Y軸回転リセットフラグを取得
+    /// </summary>
+    /// <returns>X軸回転リセットフラグ</returns>
+    public bool GetIsResetYRotate()
+    {
+        return isResetYRotate;
+    }
+
+    /// <summary>
+    /// Y軸回転リセットフラグを取得
+    /// </summary>
+    /// <param name="isResetYRotateValue">Y軸回転リセットフラグ</param>
+    public void SetIsResetYRotate(bool isResetYRotateValue)
+    {
+        isResetYRotate = isResetYRotateValue;
     }
 
 
@@ -166,8 +194,12 @@ public class PlayerCamera : MonoBehaviour
 
     private void Update()
     {
-        //ストーリーモードでX軸回転をリセットする
-        if (isResetXRotate) ResetXRotate();
+        //isResetXRotateフラグがtrueの場合
+        if (isResetXRotate) 
+        {
+            //X軸回転をリセットする
+            ResetXRotate(); 
+        }
 
         //通常のプレイ以外の場合
         if (Player.instance == null || Player.instance.GetIsFallDown()
@@ -261,10 +293,27 @@ public class PlayerCamera : MonoBehaviour
     /// </summary>
     public void ResetCameraRotation()
     {
+        //ストーリーモードの場合
         if (GameController.instance.gameModeStatus == GameModeStatus.Story) 
         {
             //上下回転をリセット
             xRotation = 0f;
+
+            //カメラのローカル回転を初期状態に戻す
+            transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+
+            //カメラのローカル回転を初期状態に戻す
+            transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        }
+
+        //通常プレイモードの場合
+        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
+        {
+            //上下回転をリセット
+            xRotation = 0f;
+
+            //左右回転をリセット
+            lookY = 0f;
 
             //カメラのローカル回転を初期状態に戻す
             transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
@@ -292,6 +341,27 @@ public class PlayerCamera : MonoBehaviour
         {
             //回転終了
             isResetXRotate = false;
+        }
+    }
+
+    /// <summary>
+    /// カメラのY軸回転をリセットする
+    /// </summary>
+    public void ResetYRotate()
+    {
+        //カメラのX軸の向きを0度になるように回転させる
+        if (transform.rotation.y < 0)
+        {
+            transform.Rotate(-rotateY90 * (Time.deltaTime * kRotationSpeedMagnification1));
+        }
+        else if (transform.rotation.y > 0)
+        {
+            transform.Rotate(rotateY90 * (Time.deltaTime * kRotationSpeedMagnification1));
+        }
+        else
+        {
+            //回転終了
+            isResetYRotate = false;
         }
     }
 }

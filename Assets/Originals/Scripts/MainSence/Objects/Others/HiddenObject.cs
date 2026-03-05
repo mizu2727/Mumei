@@ -41,7 +41,7 @@ public class HiddenObject : MonoBehaviour
     /// <summary>
     /// 指定時間
     /// </summary>
-    private const float kTimer = 0.5f;
+    private const float kTimer = 1.0f;
 
     /// <summary>
     /// カウントスタートフラグ
