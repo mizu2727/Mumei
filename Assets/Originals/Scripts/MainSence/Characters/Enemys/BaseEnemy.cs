@@ -279,34 +279,37 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //攻撃アニメーション再生
         animator.SetBool(kIsAttackAnimatorParameter, true);
 
-        // プレイヤーの正面方向（カメラ/プレイヤーが向いている方向）を取得
+        //プレイヤーの正面方向（カメラ/プレイヤーが向いている方向）を取得
         Vector3 forward = Player.instance.transform.forward;
 
-        // 正規化はほぼ不要（forwardは通常すでに長さ1）だが安全のために
+        //正規化
         forward = forward.normalized;
 
-        // プレイヤーの位置から前方に一定距離だけ進んだ位置を計算
-        Vector3 targetPosition = Player.instance.transform.position + forward * 2;
+        //距離の倍率
+        float distanceMagnification = 1.5f;
 
-        // 高さを敵と同じにする
+        //プレイヤーの位置から前方に一定距離だけ進んだ位置を計算
+        Vector3 targetPosition = Player.instance.transform.position + forward * distanceMagnification;
+
+        //プレイヤーの高さを敵と同じにする
         targetPosition.y = transform.position.y;           
 
-        // 敵をその位置に移動
+        //敵をその位置に移動
         transform.position = targetPosition;
 
-        // 敵をプレイヤーの方へ向ける（ほぼ必須）
+        //敵の向きをプレイヤーの方へ向ける
         transform.LookAt(Player.instance.transform.position);
 
         //ゲームモードをプレイヤーを攻撃する演出モードに設定
         GameController.instance.gameModeStatus = GameModeStatus.AttackMovieDirection;
 
-        // 遷移が完了して「AttackState」という名前のステートになるのを待つ
+        //遷移が完了して「AttackState」という名前のステートになるのを待つ
         await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName(kAttackStateName));
 
-        // そのステートが終了間際まで待つ
+        //そのステートが終了間際まで待つ
         await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f);
 
-        // アニメーションを最後で止める
+        //アニメーションを最後で止める
         animator.speed = 0;
     }
 
