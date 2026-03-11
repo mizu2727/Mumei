@@ -36,7 +36,6 @@ public class BrightnessAdjustmentController : MonoBehaviour
     /// </summary>
     Color blackColor = new Color32(0, 0, 0, 255);
 
-
     private void OnEnable()
     {
         //sceneLoaded‚ÉuOnSceneLoadedvŠÖ”‚ğ’Ç‰Á
