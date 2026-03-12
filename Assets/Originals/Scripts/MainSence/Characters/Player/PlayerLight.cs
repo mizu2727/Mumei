@@ -105,13 +105,14 @@ public class PlayerLight : MonoBehaviour
 
     /// <summary>
     /// ライトボタンを押下しているかを判定する
-    /// ライト切り替え…F・1キー
+    /// ライト切り替え…F・Hキー
     /// Light…"joystick button 0"を割り当てており、コントローラーではAボタンになる
     /// </summary>
     /// <returns>trueでライトボタンを押下</returns>
     bool PlayerIsLight()
     {
-        return Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1) || Input.GetButtonDown("Light");
+        return Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.F) 
+             || Input.GetKeyDown(KeyCode.Keypad1) || Input.GetButtonDown("Light");
     }
 
     /// <summary>

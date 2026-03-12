@@ -832,11 +832,13 @@ public class Player : MonoBehaviour, CharacterInterface
         //アニメーションの制御
         if (IsMove)
         {
-            //移動中:Shiftに応じて走行または歩行する
+            //移動中:ダッシュボタンに応じて走行または歩行する
             animator.SetBool(kIsRunAnimatorParameter, !isHidden && (Input.GetKey(KeyCode.LeftShift) 
-                || Input.GetKey(KeyCode.RightShift) || Input.GetButton(stringDash)));
+                || Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.Semicolon)  
+                || Input.GetButton(stringDash)));
             animator.SetBool(kIsWalkAnimatorParameter, !isHidden && !Input.GetKey(KeyCode.LeftShift)
-                && !Input.GetKey(KeyCode.RightShift) && !Input.GetButton(stringDash));
+                && !Input.GetKey(KeyCode.RightShift) && !Input.GetKey(KeyCode.Semicolon)  
+                && !Input.GetButton(stringDash));
         }
         else
         {
@@ -861,7 +863,8 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         //移動状態の変化を検知して効果音を制御
-        currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton(stringDash) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
+        currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) 
+            || Input.GetKey(KeyCode.Semicolon) || Input.GetButton(stringDash) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
 
 
@@ -902,10 +905,11 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     void PlayerDashOrWalk() 
     {
-        //Shiftキー・Xボタンを入力している間はダッシュ
+        //Shift or ;キー・Xボタンを入力している間はダッシュ
         //Dash…"joystick button 4"を割り当て。コントローラーではLボタンになる
         if (IsMove && isStamina && Time.timeScale == 1 && !isHidden
-            && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) || Input.GetButton(stringDash)))
+            && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
+            || Input.GetKey(KeyCode.Semicolon) || Input.GetButton(stringDash)))
         {
             //ダッシュ開始
             IsDash = true;
@@ -1000,10 +1004,10 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 振り返り判定
     /// </summary>
-    /// <returns>Ctrl押下でtrue</returns>
+    /// <returns>Ctrl or ?押下でtrue</returns>
     public bool PlayerIsBackRotate() 
     {
-        return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+        return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.Slash);
     }
 
     /// <summary>
