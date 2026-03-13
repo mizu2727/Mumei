@@ -127,6 +127,11 @@ public class PlayerInteract : MonoBehaviour
     private string hiddenObjectTag = "HiddenObject";
 
     /// <summary>
+    /// その他オブジェクトタグ
+    /// </summary>
+    private string otherStageObjectTag = "OtherStageObject";
+
+    /// <summary>
     /// アウトラインタグ
     /// </summary>
     private string outlineTag = "Outline";
@@ -581,8 +586,11 @@ public class PlayerInteract : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position,
             Camera.main.transform.forward, out raycastHit, distance))
         {
-            //壁に当たった場合
-            if (raycastHit.transform.tag == wallTag)
+            //壁orドアorゴールorその他オブジェクトに当たった場合
+            if (raycastHit.transform.tag == wallTag ||
+                raycastHit.transform.tag == doorTag ||
+                raycastHit.transform.tag == goalTag ||
+                raycastHit.transform.tag == otherStageObjectTag)
             {
                 Player.instance.SetIsRaycastHitWall(true);
             }
