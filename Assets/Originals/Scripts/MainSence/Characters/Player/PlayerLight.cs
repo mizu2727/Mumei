@@ -111,7 +111,7 @@ public class PlayerLight : MonoBehaviour
     /// <returns>trueでライトボタンを押下</returns>
     bool PlayerIsLight()
     {
-        return Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.F) 
+        return Input.GetKeyDown(KeyCode.F) || Input.GetKeyDown(KeyCode.H) 
              || Input.GetKeyDown(KeyCode.Keypad1) || Input.GetButtonDown("Light");
     }
 
