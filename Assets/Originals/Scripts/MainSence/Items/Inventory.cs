@@ -369,12 +369,12 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// 右クリックでインベントリアイテム使用する関数
+    /// 右クリック or U or Eでインベントリアイテム使用する関数
     /// </summary>
-    /// <returns>右クリックでtrue</returns>
+    /// <returns>右クリック or U or Eでtrue</returns>
     bool UseInventoryItem()
     {
-        return Input.GetMouseButtonDown(1);
+        return Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.U);
     }
 
     /// <summary>
