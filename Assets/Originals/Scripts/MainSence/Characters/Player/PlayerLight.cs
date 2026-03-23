@@ -12,6 +12,11 @@ public class PlayerLight : MonoBehaviour
     [SerializeField] private GameObject playerHasLight;
 
     /// <summary>
+    /// HomeSceneのシーン名
+    /// </summary>
+    const string stringHomeScene = "HomeScene";
+
+    /// <summary>
     /// エラー防止用に追加。シーンがロードされた際にカメラ参照を更新するために、SceneManager.sceneLoaded イベントを登録
     /// </summary>
     private void OnEnable()
@@ -75,8 +80,17 @@ public class PlayerLight : MonoBehaviour
 
     private void Start()
     {
+        //初期化
         playerHasLight.SetActive(false);
         Player.instance.IsLight = false;
+
+        //現在のシーンがHomeSceneの場合
+        if (SceneManager.GetActiveScene().name == stringHomeScene) 
+        {
+            //HomeSceneの場合プレイヤーはライトを持っていないため、フラグをfalseに設定
+            Player.instance.SetIsHavePlayerLight(false);
+        }
+
 
         //シーン開始時にカメラを再取得
         UpdateCameraReference();
@@ -132,8 +146,8 @@ public class PlayerLight : MonoBehaviour
     /// </summary>
     void TurnOnAndOfLight() 
     {
-        //通常プレイモードの場合
-        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
+        //通常プレイモードの場合&&プレイヤーライトを持っている場合
+        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.GetIsHavePlayerLight()) 
         {
             if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.isPause && Time.timeScale != 0)
             {

@@ -39,7 +39,7 @@ public class ChangeSceneZone : MonoBehaviour
     /// オブジェクトのコリジョンと衝突した場合の処理
     /// </summary>
     /// <param name="collision">衝突したオブジェクトのコリジョン</param>
-    private async void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
         //プレイヤー以外が触れた場合||プレイヤーが存在しない場合||プレイヤーが死亡している場合
         if (!collision.gameObject.CompareTag(playerTag) || Player.instance == null || Player.instance.IsDead)
@@ -54,31 +54,8 @@ public class ChangeSceneZone : MonoBehaviour
             //HomeSceneの場合
             case stringHomeScene:
 
-                //プレイヤー効果音を停止
-                MusicController.instance.StopSE(Player.instance.audioSourceSE);
-
-                //ゲームモードステータスをStopInGameに設定
-                GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);
-
-                //ブラックアウトパネルを表示する
-                MessageController.instance.SetIsBlackOutPanel(true);
-                MessageController.instance.ViewBlackOutPanel();
-
-                //3秒待機
-                await UniTask.Delay(TimeSpan.FromSeconds(3));
-
-                //プレイヤーカメラの回転を元に戻す
-                PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-
-                //プレイヤーの回転を元に戻す
-                Player.instance.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
-
-                //シーン遷移時用データを保存
-                GameController.instance.CallSaveSceneTransitionUserDataMethod();
-
-                //ステージ1へ移動
-                SceneManager.LoadScene(stringStage01Scene);
+                //ステージ1へシーン遷移する
+                LoadSceneStave01();
                 break;
         }
     }
@@ -87,7 +64,7 @@ public class ChangeSceneZone : MonoBehaviour
     /// オブジェクトのコライダーを貫通した場合の処理
     /// </summary>
     /// <param name="collider">貫通したオブジェクトのコライダー</param>
-    private async void OnTriggerEnter(Collider collider)
+    private void OnTriggerEnter(Collider collider)
     {
         //プレイヤー以外が触れた場合||プレイヤーが存在しない場合||プレイヤーが死亡している場合
         if (!collider.gameObject.CompareTag(playerTag) || Player.instance == null || Player.instance.IsDead)
@@ -102,32 +79,58 @@ public class ChangeSceneZone : MonoBehaviour
             //HomeSceneの場合
             case stringHomeScene:
 
-                //プレイヤー効果音を停止
-                MusicController.instance.StopSE(Player.instance.audioSourceSE);
-
-                //ゲームモードステータスをStopInGameに設定
-                GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);
-
-                //ブラックアウトパネルを表示する
-                MessageController.instance.SetIsBlackOutPanel(true);
-                MessageController.instance.ViewBlackOutPanel();
-
-                //3秒待機
-                await UniTask.Delay(TimeSpan.FromSeconds(3));
-
-                //プレイヤーカメラの回転を元に戻す
-                PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-
-                //ゲームモードステータスをInGameに設定
-                GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
-
-                //シーン遷移時用データを保存
-                GameController.instance.CallSaveSceneTransitionUserDataMethod();
-
-                //ステージ1へ移動
-                SceneManager.LoadScene(stringStage01Scene);
+                //ステージ1へシーン遷移する
+                LoadSceneStave01();
                 break;
         }
+    }
+
+    /// <summary>
+    /// Stage01へシーン遷移するための処理
+    /// </summary>
+    private async void LoadSceneStave01() 
+    {
+        //プレイヤーライトを持っていない場合
+        if (!Player.instance.GetIsHavePlayerLight()) 
+        {
+            //暗すぎてよく見えない旨のメッセージを表示
+            MessageController.instance.ShowInventoryMessage(5);
+
+            await UniTask.Delay(TimeSpan.FromSeconds(2));
+
+            MessageController.instance.ResetMessage();
+
+            //処理をスキップ
+            return;
+        }
+
+        //メッセージをリセット
+        MessageController.instance.ResetMessage();
+
+        //プレイヤー効果音を停止
+        MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
+        //ゲームモードステータスをStopInGameに設定
+        GameController.instance.SetGameModeStatus(GameModeStatus.StopInGame);
+
+        //ブラックアウトパネルを表示する
+        MessageController.instance.SetIsBlackOutPanel(true);
+        MessageController.instance.ViewBlackOutPanel();
+
+        //3秒待機
+        await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+        //プレイヤーカメラの回転を元に戻す
+        PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+
+        //ゲームモードステータスをInGameに設定
+        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+        //シーン遷移時用データを保存
+        GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+        //ステージ1へ移動
+        SceneManager.LoadScene(stringStage01Scene);
     }
 }

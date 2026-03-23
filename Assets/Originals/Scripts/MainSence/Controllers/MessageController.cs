@@ -682,6 +682,9 @@ public class MessageController : MonoBehaviour
                     case 68:
                         ResetMessage();
 
+                        //チュートリアル用引き出しを表示
+                        GameController.instance.GetTutorialDrawer().SetActive(true);
+
                         //プレイヤーカメラの回転を元に戻す
                         PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                         PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);

@@ -35,6 +35,11 @@ public enum ItemType
     /// コンパス
     /// </summary>
     Compass,
+
+    /// <summary>
+    /// プレイヤーライト
+    /// </summary>
+    PlayerLight,
 }
 
 

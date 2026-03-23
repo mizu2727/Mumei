@@ -210,6 +210,12 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
     /// <summary>
+    /// プレイヤーライト入手フラグ
+    /// </summary>
+    private bool isHavePlayerLight;
+
+
+    /// <summary>
     /// 隠れるフラグ
     /// </summary>
     private bool isHidden = false;
@@ -442,6 +448,24 @@ public class Player : MonoBehaviour, CharacterInterface
     public AudioClip GetCurrentSE() 
     {
         return currentSE;
+    }
+
+    /// <summary>
+    /// プレイヤーライト入手フラグを取得する
+    /// </summary>
+    /// <returns>プレイヤーライト入手フラグ</returns>
+    public bool GetIsHavePlayerLight() 
+    {
+        return isHavePlayerLight;
+    }
+
+    /// <summary>
+    /// プレイヤーライト入手フラグを設定する
+    /// </summary>
+    /// <param name="isHave">プレイヤーライト入手フラグ</param>
+    public void SetIsHavePlayerLight(bool isHave) 
+    {
+        isHavePlayerLight = isHave;
     }
 
     /// <summary>

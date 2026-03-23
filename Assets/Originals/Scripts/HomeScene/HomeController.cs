@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static GameController;
@@ -40,6 +41,14 @@ public class HomeController : MonoBehaviour
 
     [Header("wall_EndTutorial(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public GameObject wall_EndTutorial;
+
+
+    [Header("アイテムを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [SerializeField] private List<GameObject> itemPrefabList;
+
+    [Header("アイテム生成地点のTransform配列(ヒエラルキー上のDrawerスクリプトのdrawerItemTransformをアタッチすること)")]
+    [SerializeField] private Transform[] itemPoint;
+
 
     /// <summary>
     /// AudioSourceBGMを取得する
@@ -161,7 +170,42 @@ public class HomeController : MonoBehaviour
         //wall_EndTutorialを表示
         wall_EndTutorial.SetActive(true);
 
+        //引き出しにアイテムをセットする
+        SetDrawerItem();
+
+        //チュートリアル用引き出しを非表示
+        GameController.instance.GetTutorialDrawer().SetActive(false);
+
         //ホームシーンBGMを再生
         MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(homeSceneBGMId), homeSceneBGMId);
+    }
+
+    /// <summary>
+    /// 引き出しにアイテムをセットする関数
+    /// </summary>
+    private void SetDrawerItem() 
+    {
+        for (int i = 0; i < itemPrefabList.Count; i++) 
+        {
+            //アイテム生成地点にDrawerコンポーネントがあるか確認
+            Drawer drawer = itemPoint[i].GetComponent<Drawer>();
+
+            //nullチェック
+            if (drawer != null)
+            {
+                //アイテムを生成する際、位置情報をitemPoint[i].positionではなく、Drawerの親のTransformに合わせる
+                GameObject newItem = Instantiate(itemPrefabList[i]);
+
+                //アイテムの位置をitemPointに合わせる
+                newItem.transform.position = itemPoint[i].position;
+
+                //生成したアイテムをDrawerにアタッチ
+                drawer.SetItemTransform(newItem.transform);
+            }
+            else
+            {
+                Debug.LogError(itemPoint[i].name + "にDrawerコンポーネントが見つかりませんでした！");
+            }
+        }
     }
 }

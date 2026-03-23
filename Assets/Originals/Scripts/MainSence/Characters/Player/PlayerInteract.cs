@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -209,8 +210,14 @@ public class PlayerInteract : MonoBehaviour
     /// </summary>
     private string currentObjectTag;
 
+
+
+
+
     private void Start()
     {
+
+
         isInteract = false;
 
         //AudioSourceの初期化
@@ -368,8 +375,20 @@ public class PlayerInteract : MonoBehaviour
 
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
+                        //対象アイテムがプレイヤーライトの場合
+                        if (item.itemType == ItemType.PlayerLight) 
+                        {
+                            //拾ったアイテムをステージ上から削除
+                            DestroyItem(pickUpItem);
+
+                            //ライト入手フラグをtrueにする
+                            Player.instance.SetIsHavePlayerLight(true);
+
+                            //フラッシュライト関係のメッセージを表示
+                            MessageController.instance.ShowInventoryMessage(4);
+                        }
                         //対象アイテムがコンパスの場合
-                        if (item.itemType == ItemType.Compass)
+                        else if (item.itemType == ItemType.Compass)
                         {
                             //コンパスの針のUIを表示
                             Compass.instance.ViewOrHiddenCompassArrowImage(true);

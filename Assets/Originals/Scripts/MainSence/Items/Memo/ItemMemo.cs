@@ -19,6 +19,7 @@ public class ItemMemo
         "10:ロープ(チュートリアル用)",
         "11:スタミナ増強剤:UseItem",
         "12:コンパス:Compass",
+        "13:プレイヤーライト:PlayerLight",
         "994:TestUseItem02,UseItem",
         "995:TestUseItem01,UseItem",
         "996:TestMysteryItem02:MysteryItem",

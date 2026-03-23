@@ -31,6 +31,9 @@ public class GameController : MonoBehaviour
     [Header("チュートリアル用アイテム親オブジェクト")]
     [SerializeField] public GameObject tutorialItems;
 
+    [Header("チュートリアル用引き出しオブジェクト")]
+    [SerializeField] private GameObject tutorialDrawer;
+
     /// <summary>
     /// チュートリアル用フラグ
     /// </summary>
@@ -209,6 +212,15 @@ public class GameController : MonoBehaviour
     public ViewScene GetViewScene() 
     {
         return viewScene;
+    }
+
+    /// <summary>
+    /// チュートリアル用引き出しオブジェクトを取得
+    /// </summary>
+    /// <returns>チュートリアル用引き出しオブジェクト</returns>
+    public GameObject GetTutorialDrawer() 
+    {
+        return tutorialDrawer;
     }
 
     /// <summary>
@@ -595,6 +607,13 @@ public class GameController : MonoBehaviour
         {
             //チュートリアル用アイテム親オブジェクトをnullに設定
             tutorialItems = null;
+        }
+
+        //チュートリアル用引き出しオブジェクトが存在する場合
+        if (tutorialDrawer != null)
+        {
+            //チュートリアル用引き出しオブジェクトをnullに設定
+            tutorialDrawer = null;
         }
 
         //スタミナSliderが存在する場合
