@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
+using UnityEngine.EventSystems;
 
 public class DifficultyLevelController : MonoBehaviour
 {
@@ -15,12 +16,26 @@ public class DifficultyLevelController : MonoBehaviour
     /// </summary>
     private const string stringHomeScene = "HomeScene";
 
+    [Header("難易度説明(Prefabをアタッチ)")]
+    [SerializeField] private DifficultyLevelExplanation difficultyLevelExplanation;
+
+
     [Header("DifficultyLevelChoosePanel(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject difficultyLevelChoosePanel;
 
     [Header("NightmareLevelButton(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Button nightmareLevelButton;
 
+    [Header("難易度説明欄パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject difficultyLevelExplanationPanel;
+
+    [Header("難易度説明テキスト(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private Text difficultyLevelExplanationText;
+
+    /// <summary>
+    /// 難易度説明欄パネル閲覧フラグ
+    /// </summary>
+    private bool isDifficultyLevelExplanationPanel = false;
 
     [Header("難易度ステータス(ヒエラルキー上からの編集禁止)")]
     public DifficultyLevel difficultyLevelStatus;
@@ -86,6 +101,13 @@ public class DifficultyLevelController : MonoBehaviour
 
     private void OnDestroy()
     {
+        //difficultyLevelExplanationTextが存在する場合
+        if (difficultyLevelExplanationText != null)
+        {
+            //difficultyLevelExplanationTextをnullにする(メモリリークを防ぐため)
+            difficultyLevelExplanationText = null;
+        }
+
         //NightmareLevelButtonが存在する場合
         if (nightmareLevelButton != null) 
         {
@@ -145,6 +167,18 @@ public class DifficultyLevelController : MonoBehaviour
                     Debug.LogError("NightmareLevelButtonがアタッチされていません。");
                 }
 
+                //難易度説明欄パネルが存在しない場合
+                if (difficultyLevelExplanationPanel == null) 
+                {
+                    Debug.LogError("DifficultyLevelExplanationPanelがアタッチされていません。");
+                }
+
+                //難易度説明テキストが存在しない場合
+                if (difficultyLevelExplanationText == null) 
+                {
+                    Debug.LogError("DifficultyLevelExplanationTextがアタッチされていません。");
+                }
+
                 break;
 
             //その他のシーンの場合
@@ -153,6 +187,13 @@ public class DifficultyLevelController : MonoBehaviour
 
                 break;
         }
+
+        //初期化処理
+        //説明文をリセット
+        ResetExplanation();
+
+        //難易度選択パネルを非表示にする
+        DifficultyLevelController.instance.GetDifficultyLevelChoosePanel().SetActive(false);
     }
 
     /// <summary>
@@ -186,5 +227,67 @@ public class DifficultyLevelController : MonoBehaviour
 
         //ステージシーンに遷移する処理を開始する
         ChangeSceneZone.instance.ChangeStageScene();
+    }
+
+    /// <summary>
+    /// 難易度ボタンにマウスポインタが乗ったときに呼ばれる関数
+    /// </summary>
+    /// <param name="number">難易度説明番号</param>
+    public void OnPointerEnterDifficultyLevelButton(int number)
+    {
+        //難易度説明を表示
+        ShowDifficultyLevelExplanation(number);
+    }
+
+    /// <summary>
+    /// 難易度ボタンからマウスポインタが離れたときに呼ばれる関数
+    /// </summary>
+    public void OnPointerExitDifficultyLevelButton() 
+    {
+        //説明文をリセット
+        ResetExplanation();
+    }
+
+    /// <summary>
+    /// 難易度説明欄パネルの表示/非表示
+    /// </summary>
+    void ChangeViewDifficultyLevelExplanationPanel()
+    {
+        if (isDifficultyLevelExplanationPanel)
+        {
+            //表示
+            difficultyLevelExplanationPanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            difficultyLevelExplanationPanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 説明文をリセット
+    /// </summary>
+    public void ResetExplanation()
+    {
+        //説明文をリセット
+        difficultyLevelExplanationText.text = "";
+
+        //難易度説明欄パネルを非表示にする
+        isDifficultyLevelExplanationPanel = false;
+        ChangeViewDifficultyLevelExplanationPanel();
+    }
+
+    /// <summary>
+    /// 難易度説明を表示
+    /// </summary>
+    /// <param name="number">難易度説明番号</param>
+    public void ShowDifficultyLevelExplanation(int number)
+    {
+        difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanation;
+
+        //難易度説明欄パネルを表示にする
+        isDifficultyLevelExplanationPanel = true;
+        ChangeViewDifficultyLevelExplanationPanel();
     }
 }
