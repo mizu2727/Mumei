@@ -133,6 +133,9 @@ public class SaveLoad : MonoBehaviour
 
             //CompassTextPanel手動閲覧フラグを保存
             isSelfViewCompassTextPanel = GameController.isSaveSelfViewCompassTextPanel,
+
+            //難易度ステータスを保存
+            _difficultyLevelStatus = GameController.saveDifficultyLevelStatus,
         };
 
         Debug.Log("シーン遷移用Json形式でデータを保存した内容:" + JsonUtility.ToJson(userData, true));
@@ -169,6 +172,7 @@ public class SaveLoad : MonoBehaviour
             GameController.isSaveSelfViewOperationPanel = userData.isSelfViewOperationPanel;
             GameController.isSaveSelfViewUseItemTextPanel = userData.isSelfViewUseItemTextPanel;
             GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
+            GameController.saveDifficultyLevelStatus = userData._difficultyLevelStatus;
         }
         else
         {

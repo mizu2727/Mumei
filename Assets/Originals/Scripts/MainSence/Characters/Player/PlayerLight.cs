@@ -85,15 +85,20 @@ public class PlayerLight : MonoBehaviour
         Player.instance.IsLight = false;
 
         //現在のシーンがHomeSceneの場合
-        if (SceneManager.GetActiveScene().name == stringHomeScene) 
+        if (SceneManager.GetActiveScene().name == stringHomeScene)
         {
             //HomeSceneの場合プレイヤーはライトを持っていないため、フラグをfalseに設定
             Player.instance.SetIsHavePlayerLight(false);
         }
+        else 
+        {
+            //HomeScene以外の場合プレイヤーはライトを持っているため、フラグをtrueに設定
+            Player.instance.SetIsHavePlayerLight(true);
+        }
 
 
-        //シーン開始時にカメラを再取得
-        UpdateCameraReference();
+            //シーン開始時にカメラを再取得
+            UpdateCameraReference();
     }
 
     void Update()

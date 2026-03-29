@@ -41,4 +41,7 @@ public class UserData
 
     [Header("セーブするCompassTextPanel手動閲覧フラグ")]
     public bool isSelfViewCompassTextPanel;
+
+    [Header("セーブする難易度ステータス")]
+    public DifficultyLevelController.DifficultyLevel _difficultyLevelStatus;
 }

@@ -118,6 +118,9 @@ public class GameController : MonoBehaviour
     [Header("セーブするCompassTextPanel手動閲覧フラグ")]
     public static bool isSaveSelfViewCompassTextPanel = true;
 
+    [Header("セーブする難易度ステータス")]
+    public static DifficultyLevelController.DifficultyLevel saveDifficultyLevelStatus = DifficultyLevelController.DifficultyLevel.kNone;
+
     /// <summary>
     /// ゲームモードステータス
     /// </summary>
@@ -368,6 +371,18 @@ public class GameController : MonoBehaviour
                 OperationExplanationController.instance.SetIsSelfViewCompassTextPanel(isSaveSelfViewCompassTextPanel);
                 Debug.Log("ロードしたCompassTextPanel手動閲覧フラグ:" + isSaveSelfViewCompassTextPanel);
             }
+        }
+
+        //DifficultyLevelControllerが存在する場合
+        if (DifficultyLevelController.instance != null)
+        {
+            //難易度ステータスを保存した値に設定
+            DifficultyLevelController.instance.SetDifficultyLevelStatus(saveDifficultyLevelStatus);
+        }
+        else 
+        {
+            //TODO:難易度ステータスを保存した値に設定
+            //DifficultyLevelController.instance.SetDifficultyLevelStatus(DifficultyLevelController.DifficultyLevel.kNormal);
         }
     }
 

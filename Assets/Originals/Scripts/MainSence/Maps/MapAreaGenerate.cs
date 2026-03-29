@@ -26,8 +26,27 @@ public class MapAreaGenerate : MonoBehaviour
     [SerializeField] private Transform[] mapAreaPoint;
 
 
-    [Header("アイテムを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
-    [SerializeField] private List<GameObject> itemPrefabList;
+    [Header("ドキュメントとミステリーアイテムを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [SerializeField] private List<GameObject> documentAndMysteryItemPrefabList;
+
+    [Header("コンパスを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [SerializeField] private List<GameObject> compassPrefabList;
+
+    [Header("スタミナ増強剤を格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [SerializeField] private List<GameObject> staminaEnhancerPrefabList;
+
+    /// <summary>
+    /// デフォルトのスタミナ増強剤格納数
+    /// </summary>
+    [SerializeField] private int defaultStaminaEnhancerCount;
+
+    [Header("ダミーアイテムオブジェクトを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [SerializeField] private List<GameObject> dammyItemPrefabList;
+
+    /// <summary>
+    /// シャッフル予定のアイテムを格納する
+    /// </summary>
+    private List<GameObject> shuffledItemPrefabList;
 
     [Header("ランダムに選ばれたアイテムが格納される(ヒエラルキー上からのアタッチ禁止。シャッフルされたアイテム確認用)")]
     public List<GameObject> useItemList = new();
@@ -84,13 +103,13 @@ public class MapAreaGenerate : MonoBehaviour
             }
         }
 
-        for(int i = 0; i < itemPrefabList.Count; i++)
+        for(int i = 0; i < shuffledItemPrefabList.Count; i++)
         {
             //アイテムが存在する場合
-            if (itemPrefabList[i] != null)
+            if (shuffledItemPrefabList[i] != null)
             {
                 //アイテムをnullに設定
-                itemPrefabList[i] = null;
+                shuffledItemPrefabList[i] = null;
             }
         }
 
@@ -186,14 +205,37 @@ public class MapAreaGenerate : MonoBehaviour
     /// </summary>
     void ItemGenerate()
     {
-        //areaPrefabListのコピーを作成
-        List<GameObject> shuffledItemPrefabList = new List<GameObject>(itemPrefabList);
+        //documentAndMysteryItemPrefabListのコピーを作成
+        shuffledItemPrefabList = new List<GameObject>(documentAndMysteryItemPrefabList);
 
-        //areaPrefabListをシャッフル
+        //コンパスを全アイテム格納リストに追加
+        shuffledItemPrefabList.AddRange(compassPrefabList);
+
+        //スタミナ増強剤を指定の数だけ全アイテム格納リストに追加
+        for (int i = 0; i < defaultStaminaEnhancerCount; i++)
+        {
+            //スタミナ増強剤を全アイテム格納リストに追加
+            shuffledItemPrefabList.AddRange(staminaEnhancerPrefabList);
+        }
+
+
+        //引き出しの数がshuffledItemPrefabList数より多い場合
+        if (shuffledItemPrefabList.Count < itemPoint.Length)
+        {
+            //引き出しの数ととshuffledItemPrefabList.Count数の差分数の差分数だけダミーアイテムオブジェクトを全アイテム格納リストに追加
+            for (int i = 0; i < itemPoint.Length - shuffledItemPrefabList.Count; i++)
+            {
+                //ダミーアイテムオブジェクトを全アイテム格納リストに追加
+                shuffledItemPrefabList.AddRange(dammyItemPrefabList);
+            }
+        }
+
+        //allItemListをシャッフル
         ShuffleList(shuffledItemPrefabList);
 
         //シャッフルされたリストを格納
         useItemList.AddRange(shuffledItemPrefabList);
+
 
         for (int i = 0; i < useItemList.Count; i++)
         {
