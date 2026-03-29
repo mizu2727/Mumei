@@ -230,8 +230,9 @@ public class MapAreaGenerate : MonoBehaviour
                 staminaEnhancerCount = easyStaminaEnhancerCount;
                 break;
 
-            //難易度Normal用の場合
+            //難易度Normal用の場合(デバッグ用にkNoneも追加)
             case DifficultyLevelController.DifficultyLevel.kNormal:
+            case DifficultyLevelController.DifficultyLevel.kNone:
 
                 //スタミナ増強剤の格納数をデフォルト用に設定
                 staminaEnhancerCount = defaultStaminaEnhancerCount;

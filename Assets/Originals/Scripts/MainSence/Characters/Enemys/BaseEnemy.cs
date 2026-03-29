@@ -52,20 +52,40 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => enemyName = value;
     }
 
+
+    [Header("難易度Easyの場合の通常移動速度")]
+    [SerializeField] private float easyMoveSpeed = 2.0f;
+
+    [Header("難易度Normalの場合の通常移動速度")]
+    [SerializeField] private float defaultMoveSpeed = 3.0f;
+
+    [Header("難易度Nightmareの場合の通常移動速度")]
+    [SerializeField] private float nightmareMoveSpeed = 4.0f;
+
     /// <summary>
     /// 通常移動速度
     /// </summary>
-    private float Speed = 3.0f;
+    private float Speed;
     public float NormalSpeed
     {
         get => Speed;
         set => Speed = value;
     }
 
+
+    [Header("難易度Easyの場合のダッシュ移動速度")]
+    [SerializeField] private float easyDashSpeed = 4.0f;
+
+    [Header("難易度Normalの場合のダッシュ移動速度")]
+    [SerializeField] private float defaultDashSpeed = 4.5f;
+
+    [Header("難易度Nightmareの場合のダッシュ移動速度")]
+    [SerializeField] private float nightmareDashSpeed = 5.0f;
+
     /// <summary>
     /// ダッシュ時の移動速度
     /// </summary>
-    private float dashSpeed = 4.5f;
+    private float dashSpeed;
     public float SprintSpeed
     {
         get => dashSpeed;
@@ -808,6 +828,42 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         //rigidbodyを取得
         rigidBody = GetComponent<Rigidbody>();
+
+
+        //難易度に応じてそれぞれの設定を変更する
+        switch (DifficultyLevelController.instance.GetDifficultyLevelStatus())
+        {
+            //難易度Easyの場合
+            case DifficultyLevelController.DifficultyLevel.kEasy:
+
+                //通常移動速度を難易度Easy用に設定
+                Speed = easyMoveSpeed;
+
+                //ダッシュ移動速度を難易度Easy用に設定
+                dashSpeed = easyDashSpeed;
+                break;
+
+            //難易度Normal用の場合(デバッグ用にkNoneも追加)
+            case DifficultyLevelController.DifficultyLevel.kNormal:
+            case DifficultyLevelController.DifficultyLevel.kNone:
+
+                //通常移動速度を難易度Normal用に設定
+                Speed = defaultMoveSpeed;
+
+                //ダッシュ移動速度を難易度Normal用に設定
+                dashSpeed = defaultDashSpeed;
+                break;
+
+            //難易度Nightmare用の場合
+            case DifficultyLevelController.DifficultyLevel.kNightmare:
+
+                //通常移動速度を難易度Nightmare用に設定
+                Speed = nightmareMoveSpeed;
+
+                //ダッシュ移動速度を難易度Nightmare用に設定
+                dashSpeed = nightmareDashSpeed;
+                break;
+        }
     }
 
     /// <summary>
