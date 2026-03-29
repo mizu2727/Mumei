@@ -25,7 +25,7 @@ public class UserData
     public float sEVolume;
 
     [Header("セーブする明るさの値")]
-    public float brightnessValue;
+    public float _brightnessValue;
 
     [Header("セーブするフルスクリーンフラグ値")]
     public bool isFullScreen;

@@ -8,6 +8,11 @@ using static GameController;
 public class ChangeSceneZone : MonoBehaviour
 {
     /// <summary>
+    /// インスタンス
+    /// </summary>
+    public static ChangeSceneZone instance;
+
+    /// <summary>
     /// 現在のシーン名
     /// </summary>
     private string nowSceneName;
@@ -28,6 +33,31 @@ public class ChangeSceneZone : MonoBehaviour
     /// </summary>
     private const string playerTag = "Player";
 
+
+    private void OnDestroy()
+    {
+        //インスタンスが存在する場合
+        if (instance != null)
+        {
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
+        }
+    }
+
+    private void Awake()
+    {
+        //インスタンスが存在しない場合
+        if (instance == null)
+        {
+            //インスタンスを設定
+            instance = this;
+        }
+        else
+        {
+            //このオブジェクトを破壊する
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -55,7 +85,7 @@ public class ChangeSceneZone : MonoBehaviour
             case stringHomeScene:
 
                 //ステージ1へシーン遷移する
-                LoadSceneStave01();
+                LoadSceneStage01();
                 break;
         }
     }
@@ -80,7 +110,7 @@ public class ChangeSceneZone : MonoBehaviour
             case stringHomeScene:
 
                 //ステージ1へシーン遷移する
-                LoadSceneStave01();
+                LoadSceneStage01();
                 break;
         }
     }
@@ -88,7 +118,7 @@ public class ChangeSceneZone : MonoBehaviour
     /// <summary>
     /// Stage01へシーン遷移するための処理
     /// </summary>
-    private async void LoadSceneStave01() 
+    private async void LoadSceneStage01() 
     {
         //プレイヤーライトを持っていない場合
         if (!Player.instance.GetIsHavePlayerLight()) 
@@ -116,6 +146,26 @@ public class ChangeSceneZone : MonoBehaviour
         //ブラックアウトパネルを表示する
         MessageController.instance.SetIsBlackOutPanel(true);
         MessageController.instance.ViewBlackOutPanel();
+
+        //難易度選択パネルを表示する
+        DifficultyLevelController.instance.GetDifficultyLevelChoosePanel().SetActive(true);
+
+        //マウスカーソルを表示し、固定を解除する
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    /// <summary>
+    /// Stage系のシーンへ遷移する処理
+    /// </summary>
+    public async void ChangeStageScene() 
+    {
+        //難易度選択パネルを非表示にする
+        DifficultyLevelController.instance.GetDifficultyLevelChoosePanel().SetActive(false);
+
+        //マウスカーソルを非表示にし、固定する
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         //3秒待機
         await UniTask.Delay(TimeSpan.FromSeconds(3));

@@ -141,6 +141,7 @@ public class BrightnessAdjustmentController : MonoBehaviour
     public void SaveBrightnessValue() 
     {
         //セーブ用明るさの値をスライダーから取得
-        brightnessValue = RenderSettings.fogDensity;
+        //brightnessValue = RenderSettings.fogDensity;
+        brightnessValue = brightnessAdjustmentSlider.value;
     }
 }

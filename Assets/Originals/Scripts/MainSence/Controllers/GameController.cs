@@ -326,13 +326,7 @@ public class GameController : MonoBehaviour
             } 
         }
 
-        //明るさ調整スライダーが存在する場合
-        if (BrightnessAdjustmentController.instance.brightnessAdjustmentSlider != null) 
-        {
-            //明るさを保存した値に設定
-            BrightnessAdjustmentController.instance.brightnessAdjustmentSlider.value = brightnessValue;
-            Debug.Log("ロードした明るさの値:" + brightnessValue);
-        }
+        
 
         //画面解像度テキストが存在する場合
         if (resolutionText != null) 
@@ -342,47 +336,6 @@ public class GameController : MonoBehaviour
 
             //フルスクリーンフラグ値を保存した値に設定
             ScreenAspect.instance.SetFullScreenFlag(isFullScreen);
-        }
-
-        //OperationExplanationControllerが存在する場合
-        if (OperationExplanationController.instance != null)
-        {
-            //OperationPanelが存在する場合
-            if (OperationExplanationController.instance.GetOperationPanel() != null)
-            {
-                //OperationPanel手動閲覧フラグを保存した値に設定
-                OperationExplanationController.instance.SetIsSelfViewOperationPanel(isSaveSelfViewOperationPanel);
-                Debug.Log("ロードしたOperationPanel手動閲覧フラグ:" + isSaveSelfViewOperationPanel);
-            }
-
-            //UseItemTextPanelが存在する場合
-            if (OperationExplanationController.instance.GetUseItemTextPanel() != null)
-            {
-                //UseItemTextPanel手動閲覧フラグを保存した値に設定
-                OperationExplanationController.instance.SetIsSelfViewUseItemTextPanel(isSaveSelfViewUseItemTextPanel);
-                Debug.Log("ロードしたUseItemTextPanel手動閲覧フラグ:" + isSaveSelfViewUseItemTextPanel);
-            }
-
-
-            //CompassTextPanelが存在する場合
-            if (OperationExplanationController.instance.GetCompassTextPanel() != null)
-            {
-                //CompassTextPanel手動閲覧フラグを保存した値に設定
-                OperationExplanationController.instance.SetIsSelfViewCompassTextPanel(isSaveSelfViewCompassTextPanel);
-                Debug.Log("ロードしたCompassTextPanel手動閲覧フラグ:" + isSaveSelfViewCompassTextPanel);
-            }
-        }
-
-        //DifficultyLevelControllerが存在する場合
-        if (DifficultyLevelController.instance != null)
-        {
-            //難易度ステータスを保存した値に設定
-            DifficultyLevelController.instance.SetDifficultyLevelStatus(saveDifficultyLevelStatus);
-        }
-        else 
-        {
-            //TODO:難易度ステータスを保存した値に設定
-            //DifficultyLevelController.instance.SetDifficultyLevelStatus(DifficultyLevelController.DifficultyLevel.kNormal);
         }
     }
 
@@ -425,6 +378,16 @@ public class GameController : MonoBehaviour
         //SE音量のSliderの最大値を設定
         if (MusicController.instance.sESlider) MusicController.instance.sESlider.maxValue = MusicController.instance.GetMaxSESliderVolume();
 
+
+        ////TODO(Start関数内に記載した方が良い？):明るさ調整スライダーが存在する場合
+        if (BrightnessAdjustmentController.instance.brightnessAdjustmentSlider != null)
+        {
+            //明るさを保存した値に設定
+            BrightnessAdjustmentController.instance.brightnessAdjustmentSlider.value = brightnessValue;
+            Debug.Log("ロードした明るさの値:" + brightnessValue);
+        }
+
+
         //Fog欄内・明るさスライダーの最大値と最小値を設定
         if (BrightnessAdjustmentController.instance.brightnessAdjustmentSlider) 
         {
@@ -433,6 +396,46 @@ public class GameController : MonoBehaviour
 
             //明るさのスライダーに関する設定
             BrightnessAdjustmentController.instance.ApplyBrightnessAdjustmentSlider();
+        }
+
+
+        //TODO(Start関数内に記載した方が良い？):OperationExplanationControllerが存在する場合
+        if (OperationExplanationController.instance != null)
+        {
+            //OperationPanelが存在する場合
+            if (OperationExplanationController.instance.GetOperationPanel() != null)
+            {
+                //OperationPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewOperationPanel(isSaveSelfViewOperationPanel);
+            }
+
+            //UseItemTextPanelが存在する場合
+            if (OperationExplanationController.instance.GetUseItemTextPanel() != null)
+            {
+                //UseItemTextPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewUseItemTextPanel(isSaveSelfViewUseItemTextPanel);
+            }
+
+
+            //CompassTextPanelが存在する場合
+            if (OperationExplanationController.instance.GetCompassTextPanel() != null)
+            {
+                //CompassTextPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewCompassTextPanel(isSaveSelfViewCompassTextPanel);
+            }
+        }
+
+
+        //DifficultyLevelControllerが存在する場合
+        if (DifficultyLevelController.instance != null)
+        {
+            //難易度ステータスを保存した値に設定
+            DifficultyLevelController.instance.SetDifficultyLevelStatus(saveDifficultyLevelStatus);
+        }
+        else
+        {
+            //難易度ステータスを保存した値に設定
+            saveDifficultyLevelStatus = DifficultyLevelController.DifficultyLevel.kNone;
         }
 
         //リセット(デバッグ用。新しいシーン遷移時用データ用パラメータが追加された場合に一度実行すること)
@@ -558,6 +561,9 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void ReturnToTitle() 
     {
+        //難易度をなしにリセット
+        DifficultyLevelController.instance.SetDifficultyLevelStatus(DifficultyLevelController.DifficultyLevel.kNone);
+
         //シーン遷移時用データを保存
         CallSaveSceneTransitionUserDataMethod();
 

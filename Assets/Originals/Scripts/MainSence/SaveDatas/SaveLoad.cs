@@ -35,7 +35,7 @@ public class SaveLoad : MonoBehaviour
             sEVolume = GameController.sEVolume,
 
             //明るさを保存
-            brightnessValue = GameController.brightnessValue,
+            _brightnessValue = GameController.brightnessValue,
 
             //フルスクリーンフラグを保存
             isFullScreen = GameController.isFullScreen,
@@ -85,7 +85,7 @@ public class SaveLoad : MonoBehaviour
             GameController.lookSensitivity = userData.sensitivityValue;
             GameController.bGMVolume = userData.bGMVolume;
             GameController.sEVolume = userData.sEVolume;
-            GameController.brightnessValue = userData.brightnessValue;
+            GameController.brightnessValue = userData._brightnessValue;
             GameController.isFullScreen = userData.isFullScreen;
             GameController.resolutionArrayIndexNumber = userData.resolutionArrayIndexNumber;
             GameController.isSaveSelfViewOperationPanel = userData.isSelfViewOperationPanel;
@@ -117,7 +117,7 @@ public class SaveLoad : MonoBehaviour
             sEVolume = GameController.sEVolume,
 
             //明るさを保存
-            brightnessValue = GameController.brightnessValue,
+            _brightnessValue = GameController.brightnessValue,
 
             //フルスクリーンフラグを保存
             isFullScreen = GameController.isFullScreen,
@@ -166,7 +166,7 @@ public class SaveLoad : MonoBehaviour
             GameController.lookSensitivity = userData.sensitivityValue;
             GameController.bGMVolume = userData.bGMVolume;
             GameController.sEVolume = userData.sEVolume;
-            GameController.brightnessValue = userData.brightnessValue;
+            GameController.brightnessValue = userData._brightnessValue;
             GameController.isFullScreen = userData.isFullScreen;
             GameController.resolutionArrayIndexNumber = userData.resolutionArrayIndexNumber;
             GameController.isSaveSelfViewOperationPanel = userData.isSelfViewOperationPanel;

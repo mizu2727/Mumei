@@ -35,10 +35,19 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("スタミナ増強剤を格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
     [SerializeField] private List<GameObject> staminaEnhancerPrefabList;
 
-    /// <summary>
-    /// デフォルトのスタミナ増強剤格納数
-    /// </summary>
+    [Header("難易度Easyのスタミナ増強剤格納数")]
+    [SerializeField] private int easyStaminaEnhancerCount;
+
+    [Header("デフォルト(難易度Normal)のスタミナ増強剤格納数")]
     [SerializeField] private int defaultStaminaEnhancerCount;
+
+    [Header("難易度Nightmareのスタミナ増強剤格納数")]
+    [SerializeField] private int nightmareStaminaEnhancerCount;
+
+    /// <summary>
+    /// スタミナ増強剤格納数
+    /// </summary>
+    private int staminaEnhancerCount;
 
     [Header("ダミーアイテムオブジェクトを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
     [SerializeField] private List<GameObject> dammyItemPrefabList;
@@ -211,13 +220,38 @@ public class MapAreaGenerate : MonoBehaviour
         //コンパスを全アイテム格納リストに追加
         shuffledItemPrefabList.AddRange(compassPrefabList);
 
+        //難易度に応じてアイテムの格納数を変更する
+        switch (DifficultyLevelController.instance.GetDifficultyLevelStatus()) 
+        {
+            //難易度Easyの場合
+            case DifficultyLevelController.DifficultyLevel.kEasy:
+
+                //スタミナ増強剤の格納数を難易度Easy用に設定
+                staminaEnhancerCount = easyStaminaEnhancerCount;
+                break;
+
+            //難易度Normal用の場合
+            case DifficultyLevelController.DifficultyLevel.kNormal:
+
+                //スタミナ増強剤の格納数をデフォルト用に設定
+                staminaEnhancerCount = defaultStaminaEnhancerCount;
+                break;
+
+            //難易度Nightmare用の場合
+            case DifficultyLevelController.DifficultyLevel.kNightmare:
+                //スタミナ増強剤の格納数を難易度Nightmare用に設定
+                staminaEnhancerCount = nightmareStaminaEnhancerCount;
+                break; 
+        }
+
+
         //スタミナ増強剤を指定の数だけ全アイテム格納リストに追加
-        for (int i = 0; i < defaultStaminaEnhancerCount; i++)
+        for (int i = 0; i < staminaEnhancerCount; i++)
         {
             //スタミナ増強剤を全アイテム格納リストに追加
             shuffledItemPrefabList.AddRange(staminaEnhancerPrefabList);
         }
-
+        
 
         //引き出しの数がshuffledItemPrefabList数より多い場合
         if (shuffledItemPrefabList.Count < itemPoint.Length)
