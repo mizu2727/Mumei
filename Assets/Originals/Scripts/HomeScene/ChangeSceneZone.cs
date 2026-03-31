@@ -27,11 +27,47 @@ public class ChangeSceneZone : MonoBehaviour
     /// </summary>
     private const string stringStage01Scene = "Stage01";
 
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02Scene = "Stage02";
+
+    /// <summary>
+    /// Stage03
+    /// </summary>
+    private const string stringStage03Scene = "Stage03";
+
+    /// <summary>
+    /// Stage04
+    /// </summary>
+    private const string stringStage04Scene = "Stage04";
+
+    /// <summary>
+    /// シーン名の配列(0番目のみ空けている)
+    /// </summary>
+    private string[] stageSceneNameArray = {""
+            ,stringStage01Scene, stringStage02Scene
+            , stringStage03Scene, stringStage04Scene};
+
+    /// <summary>
+    ///  シーン名配列インデックス番号
+    /// </summary>
+    private int stageSceneNameArrayIndex;
 
     /// <summary>
     /// "Player"タグ
     /// </summary>
     private const string playerTag = "Player";
+
+
+    /// <summary>
+    /// シーン名配列インデックス番号を設定する
+    /// </summary>
+    /// <param name="index">シーン名配列インデックス番号</param>
+    public void SetStageSceneNameArrayIndex(int index) 
+    {
+        stageSceneNameArrayIndex = index;
+    }
 
 
     private void OnDestroy()
@@ -147,8 +183,9 @@ public class ChangeSceneZone : MonoBehaviour
         MessageController.instance.SetIsBlackOutPanel(true);
         MessageController.instance.ViewBlackOutPanel();
 
-        //難易度選択パネルを表示する
-        DifficultyLevelController.instance.GetDifficultyLevelChoosePanel().SetActive(true);
+        //ステージ及び難易度選択パネルを表示にする
+        DifficultyLevelController.instance.SetIsViewStageAndDifficultyLevelChoosePanel(true);
+        DifficultyLevelController.instance.ChangeViewStageAndDifficultyLevelChoosePanel();
 
         //マウスカーソルを表示し、固定を解除する
         Cursor.visible = true;
@@ -160,8 +197,9 @@ public class ChangeSceneZone : MonoBehaviour
     /// </summary>
     public async void ChangeStageScene() 
     {
-        //難易度選択パネルを非表示にする
-        DifficultyLevelController.instance.GetDifficultyLevelChoosePanel().SetActive(false);
+        //ステージ及び難易度選択パネルを非表示にする
+        DifficultyLevelController.instance.SetIsViewStageAndDifficultyLevelChoosePanel(false);
+        DifficultyLevelController.instance.ChangeViewStageAndDifficultyLevelChoosePanel();
 
         //マウスカーソルを非表示にし、固定する
         Cursor.visible = false;
@@ -180,7 +218,7 @@ public class ChangeSceneZone : MonoBehaviour
         //シーン遷移時用データを保存
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
-        //ステージ1へ移動
-        SceneManager.LoadScene(stringStage01Scene);
+        //ステージへ移動
+        SceneManager.LoadScene(stageSceneNameArray[stageSceneNameArrayIndex]);
     }
 }
