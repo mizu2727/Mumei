@@ -279,6 +279,44 @@ public class Goal : MonoBehaviour
             if (mysteryItems[index].id == anserItemId)
             {
                 //正解時の処理
+                //デモ版の場合
+                if (GameController.instance.GetIsDemoPlayFlag())
+                {
+                    //デモ版クリアステータス番号を1(通常クリア)にする
+                    saveStageClearStatusArray["DemoStage01"] = 1;
+                }
+                //製品版の場合
+                else
+                {
+                    //セーブするシーン名配列インデックス番号によって、対応するステージクリアステータス情報を更新する
+                    switch (saveStageSceneNameArrayIndex)
+                    {
+                        case 1:
+                            //ステージ1クリアステータス番号を1(通常クリア)にする
+                            saveStageClearStatusArray["StageScene01"] = 1;
+                            break;
+
+                        case 2:
+                            //ステージ2クリアステータス番号を1(通常クリア)にする
+                            saveStageClearStatusArray["StageScene02"] = 1;
+                            break;
+
+                        case 3:
+                            //ステージ3クリアステータス番号を1(通常クリア)にする
+                            saveStageClearStatusArray["StageScene03"] = 1;
+                            break;
+
+                        case 4:
+                            //ステージ4クリアステータス番号を1(通常クリア)にする
+                            saveStageClearStatusArray["StageScene04"] = 1;
+                            break;
+
+                        default:
+                            Debug.LogError("不正なシーン名配列インデックス番号です");
+                            break;
+                    };
+                }
+
                 //シーン遷移時用データを保存
                 GameController.instance.CallSaveSceneTransitionUserDataMethod();
 

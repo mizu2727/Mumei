@@ -215,6 +215,9 @@ public class ChangeSceneZone : MonoBehaviour
         //ゲームモードステータスをInGameに設定
         GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
+        //保存用シーン名配列インデックス番号を設定
+        saveStageSceneNameArrayIndex = stageSceneNameArrayIndex;
+
         //シーン遷移時用データを保存
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 

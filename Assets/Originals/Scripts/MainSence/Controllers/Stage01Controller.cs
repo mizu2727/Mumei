@@ -148,6 +148,10 @@ public class Stage01Controller : MonoBehaviour
 
         //ゲームモードステータスをInGameに設定
         GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+
+        //(デバッグ用)デモ版クリアステータス番号を0にする
+        //saveStageClearStatusArray["DemoStage01"] = 0;
     }
 
     /// <summary>

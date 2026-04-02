@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
-using UnityEngine.EventSystems;
 
 public class DifficultyLevelController : MonoBehaviour
 {
@@ -22,10 +23,10 @@ public class DifficultyLevelController : MonoBehaviour
     [Header("backgroundStageImage(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Image backgroundStageImage;
 
-    [Header("各ステージ背景画像(Prefabからアタッチすること)")]
+    [Header("各ステージ背景画像(Prefabからアタッチすること。0番目のみ空けること)")]
     [SerializeField] private Sprite[] backgroundStageImageArray;
 
-    [Header("ステージ及び難易度選択パネル(ヒエラルキー上からアタッチすること。0番目のみ空けること)")]
+    [Header("ステージ及び難易度選択パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject stageAndDifficultyLevelChoosePanel;
 
     [Header("難易度選択パネル(ヒエラルキー上からアタッチすること)")]
@@ -43,7 +44,18 @@ public class DifficultyLevelController : MonoBehaviour
     [Header("ステージクリア情報パネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject stageClearInformationPanel;
 
-    //TODO:ステージクリアフラグとクリアタイム時間を保存する変数を追加する
+    //TODO:ステージクリアした難易度ステータスとクリアタイム時間を保存する変数を追加する
+
+    /// <summary>
+    /// ステージクリアステータス配列
+    /// </summary>
+    private Dictionary<string, int> stageClearStatusArray = new(){
+    {"DemoStage01", 0},
+    {"Stage01", 0},
+    {"Stage02", 0},
+    {"Stage03", 0},
+    {"Stage04", 0},
+    };
 
     /// <summary>
     /// ステージ及び難易度選択パネル閲覧フラグ
@@ -280,6 +292,14 @@ public class DifficultyLevelController : MonoBehaviour
 
                 break;
         }
+    }
+
+    /// <summary>
+    /// ステージクリア情報を設定する関数
+    /// </summary>
+    public void SettingStageClearInformation() 
+    {
+        stageClearStatusArray = saveStageClearStatusArray;
     }
 
     /// <summary>

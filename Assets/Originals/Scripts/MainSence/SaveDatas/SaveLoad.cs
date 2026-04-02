@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
@@ -53,6 +54,12 @@ public class SaveLoad : MonoBehaviour
             isSelfViewCompassTextPanel = GameController.isSaveSelfViewCompassTextPanel,
         };
 
+        //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStageClearStatusArray)
+        {
+            userData.stageClearList.Add(new StageClearData { key = item.Key, value = item.Value });
+        }
+
         //ユーザーデータをJSON形式で保存
         //UserDataオブジェクトをJSON文字列に変換
         string json = JsonUtility.ToJson(userData, true);
@@ -91,6 +98,14 @@ public class SaveLoad : MonoBehaviour
             GameController.isSaveSelfViewOperationPanel = userData.isSelfViewOperationPanel;
             GameController.isSaveSelfViewUseItemTextPanel = userData.isSelfViewUseItemTextPanel;
             GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
+
+            //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
+            Dictionary<string, int> restoredDict = new Dictionary<string, int>();
+            foreach (var data in userData.stageClearList)
+            {
+                restoredDict[data.key] = data.value;
+            }
+            GameController.saveStageClearStatusArray = restoredDict;
         }
         else
         {
@@ -134,9 +149,19 @@ public class SaveLoad : MonoBehaviour
             //CompassTextPanel手動閲覧フラグを保存
             isSelfViewCompassTextPanel = GameController.isSaveSelfViewCompassTextPanel,
 
+            //シーン名配列インデックス番号を保存
+            _stageSceneNameArrayIndex = GameController.saveStageSceneNameArrayIndex,
+
             //難易度ステータスを保存
             _difficultyLevelStatus = GameController.saveDifficultyLevelStatus,
         };
+
+
+        //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStageClearStatusArray)
+        {
+            userData.stageClearList.Add(new StageClearData { key = item.Key, value = item.Value });
+        }
 
         Debug.Log("シーン遷移用Json形式でデータを保存した内容:" + JsonUtility.ToJson(userData, true));
 
@@ -172,7 +197,16 @@ public class SaveLoad : MonoBehaviour
             GameController.isSaveSelfViewOperationPanel = userData.isSelfViewOperationPanel;
             GameController.isSaveSelfViewUseItemTextPanel = userData.isSelfViewUseItemTextPanel;
             GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
+            GameController.saveStageSceneNameArrayIndex = userData._stageSceneNameArrayIndex;
             GameController.saveDifficultyLevelStatus = userData._difficultyLevelStatus;
+
+            //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
+            Dictionary<string, int> restoredDict = new Dictionary<string, int>();
+            foreach (var data in userData.stageClearList)
+            {
+                restoredDict[data.key] = data.value;
+            }
+            GameController.saveStageClearStatusArray = restoredDict;
         }
         else
         {

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -42,6 +43,23 @@ public class UserData
     [Header("セーブするCompassTextPanel手動閲覧フラグ")]
     public bool isSelfViewCompassTextPanel;
 
+    [Header("セーブするシーン名配列インデックス番号")]
+    public int _stageSceneNameArrayIndex;
+
     [Header("セーブする難易度ステータス")]
     public DifficultyLevelController.DifficultyLevel _difficultyLevelStatus;
+
+    [Header("セーブするステージクリアステータス配列(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<StageClearData> stageClearList = new ();
+}
+
+/// <summary>
+/// Dictionary型のステージクリアステータスを保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class StageClearData
+{
+    public string key;
+    public int value;
 }

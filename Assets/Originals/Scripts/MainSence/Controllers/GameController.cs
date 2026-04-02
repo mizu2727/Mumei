@@ -1,9 +1,12 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.DebugUI;
 
 public class GameController : MonoBehaviour
 {
@@ -11,6 +14,11 @@ public class GameController : MonoBehaviour
     /// インスタンス
     /// </summary>
     public static GameController instance;
+
+    /// <summary>
+    /// デモ版プレイフラグ(TODO:製品版リリースタイミングでは必ずfalseにすること)
+    /// </summary>
+    private bool isDemoPlayFlag = true;
 
     [Header("Prefab内のGameControllerの子オブジェクトをアタッチすること")]
     [SerializeField] private SaveLoad saveLoad;
@@ -118,8 +126,20 @@ public class GameController : MonoBehaviour
     [Header("セーブするCompassTextPanel手動閲覧フラグ")]
     public static bool isSaveSelfViewCompassTextPanel = true;
 
+    [Header("セーブするシーン名配列インデックス番号")]
+    public static int saveStageSceneNameArrayIndex = 0;
+
     [Header("セーブする難易度ステータス")]
     public static DifficultyLevelController.DifficultyLevel saveDifficultyLevelStatus = DifficultyLevelController.DifficultyLevel.kNone;
+
+    [Header("セーブするステージクリアステータス配列")]
+    public static Dictionary <string, int> saveStageClearStatusArray = new (){
+    {"DemoStage01", 0},
+    {"Stage01", 0},
+    {"Stage02", 0},
+    {"Stage03", 0},
+    {"Stage04", 0}
+    };
 
     /// <summary>
     /// ゲームモードステータス
@@ -207,6 +227,15 @@ public class GameController : MonoBehaviour
     /// GameOverSceneのシーン名
     /// </summary>
     const string stringGameOverScene = "GameOverScene";
+
+    /// <summary>
+    /// デモ版プレイフラグを取得
+    /// </summary>
+    /// <returns>デモ版プレイフラグ</returns>
+    public bool GetIsDemoPlayFlag() 
+    {
+        return isDemoPlayFlag;
+    }
 
     /// <summary>
     /// 表示するシーンステータスを取得
@@ -431,6 +460,15 @@ public class GameController : MonoBehaviour
         {
             //難易度ステータスを保存した値に設定
             DifficultyLevelController.instance.SetDifficultyLevelStatus(saveDifficultyLevelStatus);
+
+            //ステージクリア情報を保存した値に設定
+            DifficultyLevelController.instance.SettingStageClearInformation();
+
+            //ステージクリア情報を表示(デバッグ用)
+            foreach (KeyValuePair<string, int> item in saveStageClearStatusArray)
+            {
+                Debug.Log("ステージクリア情報を表示(デバッグ用)のキーは" + item.Key + "です。  バリューは" + item.Value + "です。");
+            }
         }
         else
         {
@@ -561,6 +599,8 @@ public class GameController : MonoBehaviour
     /// </summary>
     public void ReturnToTitle() 
     {
+
+
         //難易度をなしにリセット
         DifficultyLevelController.instance.SetDifficultyLevelStatus(DifficultyLevelController.DifficultyLevel.kNone);
 
