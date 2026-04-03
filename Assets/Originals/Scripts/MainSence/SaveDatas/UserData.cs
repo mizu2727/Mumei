@@ -49,8 +49,23 @@ public class UserData
     [Header("セーブする難易度ステータス")]
     public DifficultyLevelController.DifficultyLevel _difficultyLevelStatus;
 
-    [Header("セーブするステージクリアステータス配列(JsonUtilityで保存可能な形式への変換用List)")]
+    [Header("セーブするステージクリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
     public List<StageClearData> stageClearList = new ();
+
+    [Header("セーブするデモステージ01難易度クリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<DemoStage01DifficultyLevelClearData> demoStage01DifficultyLevelClearDataList = new();
+
+    [Header("セーブするステージ01難易度クリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<Stage01DifficultyLevelClearData> stage01DifficultyLevelClearDataList = new();
+
+    [Header("セーブするステージ02難易度クリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<Stage02DifficultyLevelClearData> stage02DifficultyLevelClearDataList = new();
+
+    [Header("セーブするステージ03難易度クリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<Stage03DifficultyLevelClearData> stage03DifficultyLevelClearDataList = new();
+
+    [Header("セーブするステージ04難易度クリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<Stage04DifficultyLevelClearData> stage04DifficultyLevelClearDataList = new();
 }
 
 /// <summary>
@@ -59,6 +74,61 @@ public class UserData
 /// </summary>
 [System.Serializable]
 public class StageClearData
+{
+    public string key;
+    public int value;
+}
+
+/// <summary>
+/// Dictionary型のデモステージ01難易度クリアステータス配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class DemoStage01DifficultyLevelClearData
+{
+    public string key;
+    public int value;
+}
+
+/// <summary>
+/// Dictionary型のステージ01難易度クリアステータス配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class Stage01DifficultyLevelClearData
+{
+    public string key;
+    public int value;
+}
+
+/// <summary>
+/// Dictionary型のステージ02難易度クリアステータス配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class Stage02DifficultyLevelClearData
+{
+    public string key;
+    public int value;
+}
+
+/// <summary>
+/// Dictionary型のステージ03難易度クリアステータス配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class Stage03DifficultyLevelClearData
+{
+    public string key;
+    public int value;
+}
+
+/// <summary>
+/// Dictionary型のステージ04難易度クリアステータス配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class Stage04DifficultyLevelClearData
 {
     public string key;
     public int value;

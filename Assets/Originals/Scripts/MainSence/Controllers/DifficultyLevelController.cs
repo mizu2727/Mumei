@@ -17,6 +17,47 @@ public class DifficultyLevelController : MonoBehaviour
     /// </summary>
     private const string stringHomeScene = "HomeScene";
 
+    /// <summary>
+    /// DemoStage01
+    /// </summary>
+    private const string stringDemoStage01 = "DemoStage01";
+
+    /// <summary>
+    /// Stage01
+    /// </summary>
+    private const string stringStage01 = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02 = "Stage02";
+
+    /// <summary>
+    /// Stage03
+    /// </summary>
+    private const string stringStage03 = "Stage03";
+
+    /// <summary>
+    /// Stage04
+    /// </summary>
+    private const string stringStage04 = "Stage04";
+
+    /// <summary>
+    /// EasyLevel
+    /// </summary>
+    private const string stringEasyLevel = "EasyLevel";
+
+    /// <summary>
+    /// NormalLevel
+    /// </summary>
+    private const string stringNormalLevel = "NormalLevel";
+
+    /// <summary>
+    /// NightmareLevel
+    /// </summary>
+    private const string stringNightmareLevel = "NightmareLevel";
+
+
     [Header("難易度説明(Prefabをアタッチ)")]
     [SerializeField] private DifficultyLevelExplanation difficultyLevelExplanation;
 
@@ -50,11 +91,56 @@ public class DifficultyLevelController : MonoBehaviour
     /// ステージクリアステータス配列
     /// </summary>
     private Dictionary<string, int> stageClearStatusArray = new(){
-    {"DemoStage01", 0},
-    {"Stage01", 0},
-    {"Stage02", 0},
-    {"Stage03", 0},
-    {"Stage04", 0},
+    {stringDemoStage01, 0},
+    {stringStage01, 0},
+    {stringStage02, 0},
+    {stringStage03, 0},
+    {stringStage04, 0},
+    };
+
+    /// <summary>
+    /// デモステージ01難易度クリアステータス配列
+    /// </summary>
+    private Dictionary<string, int> demoStage01DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
+    };
+
+    /// <summary>
+    /// ステージ01難易度クリアステータス配列
+    /// </summary>
+    private Dictionary<string, int> stage01DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
+    };
+
+    /// <summary>
+    /// ステージ02難易度クリアステータス配列
+    /// </summary>
+    private Dictionary<string, int> stage02DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
+    };
+
+    /// <summary>
+    /// ステージ03難易度クリアステータス配列
+    /// </summary>
+    private Dictionary<string, int> stage03DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
+    };
+
+    /// <summary>
+    /// ステージ04難易度クリアステータス配列
+    /// </summary>
+    private Dictionary<string, int> stage04DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
     };
 
     /// <summary>
@@ -295,11 +381,27 @@ public class DifficultyLevelController : MonoBehaviour
     }
 
     /// <summary>
-    /// ステージクリア情報を設定する関数
+    /// ステージクリア関連情報を設定する関数
     /// </summary>
     public void SettingStageClearInformation() 
     {
+        //ステージクリアステータス配列に保存用変数のステージクリアステータス配列を設定する
         stageClearStatusArray = saveStageClearStatusArray;
+
+        //デモステージ01難易度クリアステータス配列に保存用変数のデモステージ01難易度クリアステータス配列を設定する
+        demoStage01DifficultyLevelClearStatusArray = saveDemoStage01DifficultyLevelClearStatusArray;
+
+        //ステージ01難易度クリアステータス配列に保存用変数のステージ01難易度クリアステータス配列を設定する
+        stage01DifficultyLevelClearStatusArray = saveStage01DifficultyLevelClearStatusArray;
+
+        //ステージ02難易度クリアステータス配列に保存用変数のステージ02難易度クリアステータス配列を設定する
+        stage02DifficultyLevelClearStatusArray = saveStage02DifficultyLevelClearStatusArray;
+
+        //ステージ03難易度クリアステータス配列に保存用変数のステージ03難易度クリアステータス配列を設定する
+        stage03DifficultyLevelClearStatusArray = saveStage03DifficultyLevelClearStatusArray;
+
+        //ステージ04難易度クリアステータス配列に保存用変数のステージ04難易度クリアステータス配列を設定する
+        stage04DifficultyLevelClearStatusArray = saveStage04DifficultyLevelClearStatusArray;
     }
 
     /// <summary>

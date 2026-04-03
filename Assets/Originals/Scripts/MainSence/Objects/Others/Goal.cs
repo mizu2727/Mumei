@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -36,9 +37,49 @@ public class Goal : MonoBehaviour
     [SerializeField] public bool isTutorial;
 
     /// <summary>
+    /// DemoStage01
+    /// </summary>
+    private const string stringDemoStage01 = "DemoStage01";
+
+    /// <summary>
+    /// Stage01
+    /// </summary>
+    private const string stringStage01 = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02 = "Stage02";
+
+    /// <summary>
+    /// Stage03
+    /// </summary>
+    private const string stringStage03 = "Stage03";
+
+    /// <summary>
+    /// Stage04
+    /// </summary>
+    private const string stringStage04 = "Stage04";
+
+    /// <summary>
     /// GameClearScene
     /// </summary>
     const string stringGameClearScene = "GameClearScene";
+
+    /// <summary>
+    /// EasyLevel
+    /// </summary>
+    private const string stringEasyLevel = "EasyLevel";
+
+    /// <summary>
+    /// NormalLevel
+    /// </summary>
+    private const string stringNormalLevel = "NormalLevel";
+
+    /// <summary>
+    /// NightmareLevel
+    /// </summary>
+    private const string stringNightmareLevel = "NightmareLevel";
 
 
     /// <summary>
@@ -283,7 +324,10 @@ public class Goal : MonoBehaviour
                 if (GameController.instance.GetIsDemoPlayFlag())
                 {
                     //デモ版クリアステータス番号を1(通常クリア)にする
-                    saveStageClearStatusArray["DemoStage01"] = 1;
+                    saveStageClearStatusArray[stringDemoStage01] = 1;
+
+                    //デモ版ステージ1難易度クリアステータス情報を更新する
+                    SettingStageDifficultyLevelClearStatus(saveDemoStage01DifficultyLevelClearStatusArray);
                 }
                 //製品版の場合
                 else
@@ -291,24 +335,40 @@ public class Goal : MonoBehaviour
                     //セーブするシーン名配列インデックス番号によって、対応するステージクリアステータス情報を更新する
                     switch (saveStageSceneNameArrayIndex)
                     {
+                        //ステージ1の場合
                         case 1:
                             //ステージ1クリアステータス番号を1(通常クリア)にする
-                            saveStageClearStatusArray["StageScene01"] = 1;
+                            saveStageClearStatusArray[stringStage01] = 1;
+
+                            //ステージ1難易度クリアステータス情報を更新する
+                            SettingStageDifficultyLevelClearStatus(saveStage01DifficultyLevelClearStatusArray);
                             break;
 
+                        //ステージ2の場合
                         case 2:
                             //ステージ2クリアステータス番号を1(通常クリア)にする
-                            saveStageClearStatusArray["StageScene02"] = 1;
+                            saveStageClearStatusArray[stringStage02] = 1;
+
+                            //ステージ2難易度クリアステータス情報を更新する
+                            SettingStageDifficultyLevelClearStatus(saveStage02DifficultyLevelClearStatusArray);
                             break;
 
+                        //ステージ3の場合
                         case 3:
                             //ステージ3クリアステータス番号を1(通常クリア)にする
-                            saveStageClearStatusArray["StageScene03"] = 1;
+                            saveStageClearStatusArray[stringStage03] = 1;
+
+                            //ステージ3難易度クリアステータス情報を更新する
+                            SettingStageDifficultyLevelClearStatus(saveStage03DifficultyLevelClearStatusArray);
                             break;
 
+                        //ステージ4の場合
                         case 4:
                             //ステージ4クリアステータス番号を1(通常クリア)にする
-                            saveStageClearStatusArray["StageScene04"] = 1;
+                            saveStageClearStatusArray[stringStage04] = 1;
+
+                            //ステージ4難易度クリアステータス情報を更新する
+                            SettingStageDifficultyLevelClearStatus(saveStage04DifficultyLevelClearStatusArray);
                             break;
 
                         default:
@@ -382,5 +442,39 @@ public class Goal : MonoBehaviour
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// クリアしたステージの難易度レベルに応じて、対応するステージ難易度のクリアステータス情報を更新する
+    /// </summary>
+    /// <param name="targetkeys">該当ステージ難易度情報</param>
+    private void SettingStageDifficultyLevelClearStatus(Dictionary<string, int> targetkeys) 
+    {
+        //セーブする難易度ステータスによって、対応するステージクリアステータス情報を更新する
+        switch (DifficultyLevelController.instance.GetDifficultyLevelStatus())
+        {
+            //イージーレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kEasy:
+
+                //該当ステージのEasyクリアステータス番号を1(通常クリア)にする
+                targetkeys[stringEasyLevel] = 1;
+                break;
+            //ノーマルレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kNormal:
+
+                //該当ステージのNormalクリアステータス番号を1(通常クリア)にする
+                targetkeys[stringNormalLevel] = 1;
+                break;
+            //ナイトメアレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kNightmare:
+
+                //該当ステージのNightmareクリアステータス番号を1(通常クリア)にする
+                targetkeys[stringNightmareLevel] = 1;
+                break;
+
+            default:
+                Debug.LogError("不正な難易度ステータスです");
+                break;
+        };
     }
 }

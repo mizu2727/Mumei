@@ -153,6 +153,9 @@ public class GameOverScene : MonoBehaviour
     /// </summary>
     public void OnClickedReturnToTitleButton()
     {
+        //難易度をなしにリセット
+        DifficultyLevelController.instance.SetDifficultyLevelStatus(DifficultyLevelController.DifficultyLevel.kNone);
+
         //シーン遷移時用データを保存
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 

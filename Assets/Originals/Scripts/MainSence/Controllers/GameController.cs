@@ -134,11 +134,46 @@ public class GameController : MonoBehaviour
 
     [Header("セーブするステージクリアステータス配列")]
     public static Dictionary <string, int> saveStageClearStatusArray = new (){
-    {"DemoStage01", 0},
-    {"Stage01", 0},
-    {"Stage02", 0},
-    {"Stage03", 0},
-    {"Stage04", 0}
+    {stringDemoStage01, 0},
+    {stringStage01, 0},
+    {stringStage02, 0},
+    {stringStage03, 0},
+    {stringStage04, 0}
+    };
+
+    [Header("セーブするデモステージ01難易度クリアステータス配列")]
+    public static Dictionary<string, int> saveDemoStage01DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
+    };
+
+    [Header("セーブするステージ01難易度クリアステータス配列")]
+    public static Dictionary<string, int> saveStage01DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
+    };
+
+    [Header("セーブするステージ02難易度クリアステータス配列")]
+    public static Dictionary<string, int> saveStage02DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
+    };
+
+    [Header("セーブするステージ03難易度クリアステータス配列")]
+    public static Dictionary<string, int> saveStage03DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
+    };
+
+    [Header("セーブするステージ04難易度クリアステータス配列")]
+    public static Dictionary<string, int> saveStage04DifficultyLevelClearStatusArray = new(){
+    {stringEasyLevel, 0},
+    {stringNormalLevel, 0},
+    {stringNightmareLevel, 0},
     };
 
     /// <summary>
@@ -224,9 +259,49 @@ public class GameController : MonoBehaviour
     const string stringTitleScene = "TitleScene";
 
     /// <summary>
+    /// DemoStage01
+    /// </summary>
+    private const string stringDemoStage01 = "DemoStage01";
+
+    /// <summary>
+    /// Stage01
+    /// </summary>
+    private const string stringStage01 = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02 = "Stage02";
+
+    /// <summary>
+    /// Stage03
+    /// </summary>
+    private const string stringStage03 = "Stage03";
+
+    /// <summary>
+    /// Stage04
+    /// </summary>
+    private const string stringStage04 = "Stage04";
+
+    /// <summary>
     /// GameOverSceneのシーン名
     /// </summary>
     const string stringGameOverScene = "GameOverScene";
+
+    /// <summary>
+    /// EasyLevel
+    /// </summary>
+    private const string stringEasyLevel = "EasyLevel";
+
+    /// <summary>
+    /// NormalLevel
+    /// </summary>
+    private const string stringNormalLevel = "NormalLevel";
+
+    /// <summary>
+    /// NightmareLevel
+    /// </summary>
+    private const string stringNightmareLevel = "NightmareLevel";
 
     /// <summary>
     /// デモ版プレイフラグを取得
@@ -461,7 +536,7 @@ public class GameController : MonoBehaviour
             //難易度ステータスを保存した値に設定
             DifficultyLevelController.instance.SetDifficultyLevelStatus(saveDifficultyLevelStatus);
 
-            //ステージクリア情報を保存した値に設定
+            //ステージクリア関連情報を保存した値に設定
             DifficultyLevelController.instance.SettingStageClearInformation();
 
             //ステージクリア情報を表示(デバッグ用)
