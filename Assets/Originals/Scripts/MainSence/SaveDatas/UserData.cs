@@ -66,6 +66,21 @@ public class UserData
 
     [Header("セーブするステージ04難易度クリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
     public List<Stage04DifficultyLevelClearData> stage04DifficultyLevelClearDataList = new();
+
+    [Header("セーブするデモステージ01難易度毎クリアタイムリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<DemoStage01DifficultyLevelClearTimeData> demoStage01DifficultyLevelClearTimeDataList = new();
+
+    [Header("セーブするステージ01難易度毎クリアタイムリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<Stage01DifficultyLevelClearTimeData> stage01DifficultyLevelClearTimeDataList = new();
+
+    [Header("セーブするステージ02難易度毎クリアタイムリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<Stage02DifficultyLevelClearTimeData> stage02DifficultyLevelClearTimeDataList = new();
+
+    [Header("セーブするステージ03難易度毎クリアタイムリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<Stage03DifficultyLevelClearTimeData> stage03DifficultyLevelClearTimeDataList = new();
+
+    [Header("セーブするステージ04難易度毎クリアタイムリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<Stage04DifficultyLevelClearTimeData> stage04DifficultyLevelClearTimeDataList = new();
 }
 
 /// <summary>
@@ -132,4 +147,59 @@ public class Stage04DifficultyLevelClearData
 {
     public string key;
     public int value;
+}
+
+/// <summary>
+/// Dictionary型のデモステージ01難易度毎クリアタイム配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class DemoStage01DifficultyLevelClearTimeData
+{
+    public string key;
+    public string value;
+}
+
+/// <summary>
+/// Dictionary型のステージ01難易度毎クリアタイム配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class Stage01DifficultyLevelClearTimeData
+{
+    public string key;
+    public string value;
+}
+
+/// <summary>
+/// Dictionary型のステージ02難易度毎クリアタイム配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class Stage02DifficultyLevelClearTimeData
+{
+    public string key;
+    public string value;
+}
+
+/// <summary>
+/// Dictionary型のステージ03難易度毎クリアタイム配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class Stage03DifficultyLevelClearTimeData
+{
+    public string key;
+    public string value;
+}
+
+/// <summary>
+/// Dictionary型のステージ04難易度毎クリアタイム配列を保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class Stage04DifficultyLevelClearTimeData
+{
+    public string key;
+    public string value;
 }

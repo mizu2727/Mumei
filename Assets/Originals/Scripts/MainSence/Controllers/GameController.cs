@@ -145,7 +145,7 @@ public class GameController : MonoBehaviour
     public static Dictionary<string, int> saveDemoStage01DifficultyLevelClearStatusArray = new(){
     {stringEasyLevel, 0},
     {stringNormalLevel, 0},
-    {stringNightmareLevel, 0},
+    {stringNightmareLevel, 0}
     };
 
     [Header("セーブするステージ01難易度クリアステータス配列")]
@@ -174,6 +174,41 @@ public class GameController : MonoBehaviour
     {stringEasyLevel, 0},
     {stringNormalLevel, 0},
     {stringNightmareLevel, 0},
+    };
+
+    [Header("セーブするデモステージ01難易度毎クリアタイム配列")]
+    public static Dictionary<string, string> saveDemoStage01DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
+    };
+
+    [Header("セーブするステージ01難易度毎クリアタイム配列")]
+    public static Dictionary<string, string> saveStage01DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
+    };
+
+    [Header("セーブするステージ02難易度毎クリアタイム配列")]
+    public static Dictionary<string, string> saveStage02DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
+    };
+
+    [Header("セーブするステージ03難易度毎クリアタイム配列")]
+    public static Dictionary<string, string> saveStage03DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
+    };
+
+    [Header("セーブするステージ04難易度毎クリアタイム配列")]
+    public static Dictionary<string, string> saveStage04DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
     };
 
     /// <summary>
@@ -536,14 +571,20 @@ public class GameController : MonoBehaviour
             //難易度ステータスを保存した値に設定
             DifficultyLevelController.instance.SetDifficultyLevelStatus(saveDifficultyLevelStatus);
 
+            //デモステージ01難易度クリアステータス情報を表示(デバッグ用)
+            //foreach (KeyValuePair<string, int> item in saveDemoStage01DifficultyLevelClearStatusArray)
+            //{
+            //    Debug.Log("デモステージ01難易度クリアステータス情報を表示(デバッグ用)のキーは" + item.Key + "です。  バリューは" + item.Value + "です。");
+            //}
+
             //ステージクリア関連情報を保存した値に設定
             DifficultyLevelController.instance.SettingStageClearInformation();
 
             //ステージクリア情報を表示(デバッグ用)
-            foreach (KeyValuePair<string, int> item in saveStageClearStatusArray)
-            {
-                Debug.Log("ステージクリア情報を表示(デバッグ用)のキーは" + item.Key + "です。  バリューは" + item.Value + "です。");
-            }
+            //foreach (KeyValuePair<string, int> item in saveStageClearStatusArray)
+            //{
+            //    Debug.Log("ステージクリア情報を表示(デバッグ用)のキーは" + item.Key + "です。  バリューは" + item.Value + "です。");
+            //}
         }
         else
         {
@@ -552,7 +593,10 @@ public class GameController : MonoBehaviour
         }
 
         //リセット(デバッグ用。新しいシーン遷移時用データ用パラメータが追加された場合に一度実行すること)
-        //CallRestDataMethod();
+        //例：新規のDictionary型パラメータが追加された際に実行する
+        //実行時には、テストプレイ終了方法を必ず停止ボタンで止めること
+        //(「ゲーム終了」ボタンを押下場合、セーブした値が残ってしまうため)
+        CallRestDataMethod();
     }
 
     private void Update()

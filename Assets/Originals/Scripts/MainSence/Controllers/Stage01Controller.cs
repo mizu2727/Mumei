@@ -12,6 +12,11 @@ public class Stage01Controller : MonoBehaviour
     /// </summary>
     public static Stage01Controller instance;
 
+    /// <summary>
+    /// 時間計測フラグ
+    /// </summary>
+    private bool isTimer;
+
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
 
@@ -25,7 +30,19 @@ public class Stage01Controller : MonoBehaviour
     /// </summary>
     private readonly int stage01BGMId = 2;
 
+    /// <summary>
+    /// 経過時間
+    /// </summary>
+    private float elpasedTime;
 
+    /// <summary>
+    /// 時間計測フラグを設定
+    /// </summary>
+    /// <param name="isTimer">時間計測フラグ</param>
+    public void SetIsTimer(bool isTimer) 
+    {
+        this.isTimer = isTimer;
+    }
 
     /// <summary>
     /// AudioSourceBGMを取得する
@@ -43,6 +60,15 @@ public class Stage01Controller : MonoBehaviour
     public int GetStage01BGMId()
     {
         return stage01BGMId;
+    }
+
+    /// <summary>
+    /// 経過時間を取得する
+    /// </summary>
+    /// <returns>経過時間</returns>
+    public float GetElapsedTime()
+    {
+        return elpasedTime;
     }
 
     private void OnEnable()
@@ -149,9 +175,25 @@ public class Stage01Controller : MonoBehaviour
         //ゲームモードステータスをInGameに設定
         GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
+        //経過時間を初期化
+        elpasedTime = 0.0f;
+
+        //時間計測フラグをオンにする
+        isTimer = true;
 
         //(デバッグ用)デモ版クリアステータス番号を0にする
         //saveStageClearStatusArray["DemoStage01"] = 0;
+    }
+
+    private void Update()
+    {
+        //タイマーフラグがオンの場合
+        if (isTimer) 
+        {
+            //経過時間を更新
+            elpasedTime += Time.deltaTime;
+        }
+        
     }
 
     /// <summary>

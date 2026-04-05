@@ -81,6 +81,10 @@ public class Goal : MonoBehaviour
     /// </summary>
     private const string stringNightmareLevel = "NightmareLevel";
 
+    /// <summary>
+    /// 比較用の最速クリア時間
+    /// </summary>
+    TimeSpan saveTimeSpan;
 
     /// <summary>
     /// オブジェクト破棄時の処理
@@ -319,6 +323,9 @@ public class Goal : MonoBehaviour
             //正解のミステリーアイテムであるかを判定
             if (mysteryItems[index].id == anserItemId)
             {
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
                 //正解時の処理
                 //デモ版の場合
                 if (GameController.instance.GetIsDemoPlayFlag())
@@ -328,6 +335,9 @@ public class Goal : MonoBehaviour
 
                     //デモ版ステージ1難易度クリアステータス情報を更新する
                     SettingStageDifficultyLevelClearStatus(saveDemoStage01DifficultyLevelClearStatusArray);
+
+                    //デモ版ステージ1難易度クリア時間情報を更新する
+                    SettingDifficultyLevelClearTime(saveDemoStage01DifficultyLevelClearTimeArray);
                 }
                 //製品版の場合
                 else
@@ -342,6 +352,9 @@ public class Goal : MonoBehaviour
 
                             //ステージ1難易度クリアステータス情報を更新する
                             SettingStageDifficultyLevelClearStatus(saveStage01DifficultyLevelClearStatusArray);
+
+                            //ステージ1難易度クリア時間情報を更新する
+                            SettingDifficultyLevelClearTime(saveStage01DifficultyLevelClearTimeArray);
                             break;
 
                         //ステージ2の場合
@@ -351,6 +364,9 @@ public class Goal : MonoBehaviour
 
                             //ステージ2難易度クリアステータス情報を更新する
                             SettingStageDifficultyLevelClearStatus(saveStage02DifficultyLevelClearStatusArray);
+
+                            //ステージ2難易度クリア時間情報を更新する
+                            SettingDifficultyLevelClearTime(saveStage02DifficultyLevelClearTimeArray);
                             break;
 
                         //ステージ3の場合
@@ -360,6 +376,9 @@ public class Goal : MonoBehaviour
 
                             //ステージ3難易度クリアステータス情報を更新する
                             SettingStageDifficultyLevelClearStatus(saveStage03DifficultyLevelClearStatusArray);
+
+                            //ステージ3難易度クリア時間情報を更新する
+                            SettingDifficultyLevelClearTime(saveStage03DifficultyLevelClearTimeArray);
                             break;
 
                         //ステージ4の場合
@@ -369,6 +388,9 @@ public class Goal : MonoBehaviour
 
                             //ステージ4難易度クリアステータス情報を更新する
                             SettingStageDifficultyLevelClearStatus(saveStage04DifficultyLevelClearStatusArray);
+
+                            //ステージ4難易度クリア時間情報を更新する
+                            SettingDifficultyLevelClearTime(saveStage04DifficultyLevelClearTimeArray);
                             break;
 
                         default:
@@ -476,5 +498,84 @@ public class Goal : MonoBehaviour
                 Debug.LogError("不正な難易度ステータスです");
                 break;
         };
+    }
+
+    /// <summary>
+    /// クリアしたステージの難易度レベルに応じて、対応するステージ難易度のクリア時間情報を更新する
+    /// </summary>
+    /// <param name="targetkeys">該当ステージ難易度のクリア時間情報</param>
+    private void SettingDifficultyLevelClearTime(Dictionary<string, string> targetkeys) 
+    {
+        //TimeSpanのインスタンスを生成。時分は0で良い
+        TimeSpan timespan = new TimeSpan(0, 0, (int)Stage01Controller.instance.GetElapsedTime());
+
+        //hh:mm:ss形式に変換（String）
+        string clearTime = timespan.ToString(@"hh\:mm\:ss");
+
+        
+
+        switch (DifficultyLevelController.instance.GetDifficultyLevelStatus())
+        {
+            //イージーレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kEasy:
+
+                //既にクリア時間を保存している場合、
+                if (targetkeys[stringEasyLevel] != "--:--:--") 
+                {
+                    //クリア時間の文字列をTimeSpanに変換
+                    saveTimeSpan = TimeSpan.Parse(targetkeys[stringEasyLevel]);
+                }
+
+                //初クリアの場合||今回のクリア時間の記録が最速の場合
+                if (targetkeys[stringEasyLevel] == "--:--:--" || timespan < saveTimeSpan) 
+                {
+                    //該当ステージのEasyクリア時間を更新する
+                    targetkeys[stringEasyLevel] = clearTime;
+                }
+                break;
+
+            //ノーマルレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kNormal:
+
+                //既にクリア時間を保存している場合、
+                if (targetkeys[stringNormalLevel] != "--:--:--")
+                {
+                    //クリア時間の文字列をTimeSpanに変換
+                    saveTimeSpan = TimeSpan.Parse(targetkeys[stringNormalLevel]);
+                }
+
+                //初クリアの場合||今回のクリア時間の記録が最速の場合
+                if (targetkeys[stringNormalLevel] == "--:--:--" || timespan < saveTimeSpan) 
+                {
+                    //該当ステージのNormalクリア時間を更新する
+                    targetkeys[stringNormalLevel] = clearTime;
+                }
+                    
+                break;
+
+            //ナイトメアレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kNightmare:
+
+                //既にクリア時間を保存している場合、
+                if (targetkeys[stringNightmareLevel] != "--:--:--")
+                {
+                    //クリア時間の文字列をTimeSpanに変換
+                    saveTimeSpan = TimeSpan.Parse(targetkeys[stringNightmareLevel]);
+                }
+
+                //初クリアの場合||今回のクリア時間の記録が最速の場合
+                if (targetkeys[stringNightmareLevel] == "--:--:--" || timespan < saveTimeSpan) 
+                {
+                    //該当ステージのNightmareクリア時間を更新する
+                    targetkeys[stringNightmareLevel] = clearTime;
+                }
+                    
+                break;
+
+            default:
+                Debug.LogError("不正な難易度ステータスのため、クリア時間を更新できません");
+                break;
+        }
+        ;
     }
 }

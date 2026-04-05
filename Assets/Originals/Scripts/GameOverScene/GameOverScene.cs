@@ -15,13 +15,35 @@ public class GameOverScene : MonoBehaviour
     [Header("ゲームオーバー画面のCanvas")]
     [SerializeField] private Canvas gameOverCanvas;
 
-    [Header("ロードしたいScene名")]
-    [SerializeField] private string SceneName;
+    /// <summary>
+    /// ロードしたいScene名
+    /// </summary>
+    private string SceneName;
 
     /// <summary>
     /// TitleSceneのシーン名
     /// </summary>
     const string stringTitleScene = "TitleScene";
+
+    /// <summary>
+    /// Stage01
+    /// </summary>
+    private const string stringStage01 = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02 = "Stage02";
+
+    /// <summary>
+    /// Stage03
+    /// </summary>
+    private const string stringStage03 = "Stage03";
+
+    /// <summary>
+    /// Stage04
+    /// </summary>
+    private const string stringStage04 = "Stage04";
 
     /// <summary>
     /// AudioSource
@@ -109,6 +131,38 @@ public class GameOverScene : MonoBehaviour
     }
     void Start()
     {
+        //シーン名配列インデックス番号
+        switch (saveStageSceneNameArrayIndex) 
+        {
+            //ステージ1の場合
+            case 1:
+                //SceneNameをStage01に設定
+                SceneName = stringStage01;
+                break;
+
+            //ステージ2の場合
+            case 2:
+                //SceneNameをStage02に設定
+                SceneName = stringStage02;
+                break;
+
+            //ステージ3の場合
+            case 3:
+                //SceneNameをStage03に設定
+                SceneName = stringStage03;  
+                break;
+
+            //ステージ4の場合
+            case 4:
+                //SceneNameをStage04に設定
+                SceneName = stringStage04;
+                break;
+
+            default:
+                Debug.LogError("シーン名配列インデックス番号が正しくありません。SceneNameを空に設定します。");
+                break;
+        }
+
         //シーンステータスをkGameOverSceneに設定
         GameController.instance.SetViewScene(ViewScene.kGameOverScene);
 

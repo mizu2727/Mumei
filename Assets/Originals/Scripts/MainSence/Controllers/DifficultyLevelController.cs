@@ -85,7 +85,26 @@ public class DifficultyLevelController : MonoBehaviour
     [Header("ステージクリア情報パネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject stageClearInformationPanel;
 
-    //TODO:ステージクリアした難易度ステータスとクリアタイム時間を保存する変数を追加する
+    [Header("悪夢ステージクリア情報パネル(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private GameObject nightmareLeveClearInformationPanel;
+
+    [Header("Easyクリアアイコン(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private GameObject easyLeveClearImage;
+
+    [Header("Normalクリアアイコン(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private GameObject normalLeveClearImage;
+
+    [Header("Nightmareクリアアイコン(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private GameObject nightmareLeveClearImage;
+
+    [Header("Easyクリア時間テキスト(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private Text easyLeveClearTimeText;
+
+    [Header("Normalクリア時間テキスト(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private Text normalLeveClearTimeText;
+
+    [Header("Nightmareクリア時間テキスト(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private Text nightmareLeveClearTimeText;
 
     /// <summary>
     /// ステージクリアステータス配列
@@ -95,7 +114,7 @@ public class DifficultyLevelController : MonoBehaviour
     {stringStage01, 0},
     {stringStage02, 0},
     {stringStage03, 0},
-    {stringStage04, 0},
+    {stringStage04, 0}
     };
 
     /// <summary>
@@ -104,7 +123,7 @@ public class DifficultyLevelController : MonoBehaviour
     private Dictionary<string, int> demoStage01DifficultyLevelClearStatusArray = new(){
     {stringEasyLevel, 0},
     {stringNormalLevel, 0},
-    {stringNightmareLevel, 0},
+    {stringNightmareLevel, 0}
     };
 
     /// <summary>
@@ -141,6 +160,51 @@ public class DifficultyLevelController : MonoBehaviour
     {stringEasyLevel, 0},
     {stringNormalLevel, 0},
     {stringNightmareLevel, 0},
+    };
+
+    /// <summary>
+    /// デモステージ01難易度毎クリアタイム配列
+    /// </summary>
+    private Dictionary<string, string> demoStage01DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
+    };
+
+    /// <summary>
+    /// ステージ01難易度毎クリアタイム配列
+    /// </summary>
+    private Dictionary<string, string> stage01DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
+    };
+
+    /// <summary>
+    /// ステージ02難易度毎クリアタイム配列
+    /// </summary>
+    private Dictionary<string, string> stage02DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
+    };
+
+    /// <summary>
+    /// ステージ03難易度毎クリアタイム配列
+    /// </summary>
+    private Dictionary<string, string> stage03DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
+    };
+
+    /// <summary>
+    /// ステージ04難易度毎クリアタイム配列
+    /// </summary>
+    private Dictionary<string, string> stage04DifficultyLevelClearTimeArray = new(){
+    {stringEasyLevel, "--:--:--"},
+    {stringNormalLevel, "--:--:--"},
+    {stringNightmareLevel, "--:--:--"},
     };
 
     /// <summary>
@@ -349,6 +413,48 @@ public class DifficultyLevelController : MonoBehaviour
                     Debug.LogError("DifficultyLevelExplanationTextがアタッチされていません。");
                 }
 
+                //Easyクリアアイコンが存在しない場合
+                if (easyLeveClearImage == null) 
+                {
+                    Debug.LogError("EasyLeveClearImageがアタッチされていません。");
+                }
+
+                //Normalクリアアイコンが存在しない場合
+                if (normalLeveClearImage == null) 
+                {
+                    Debug.LogError("NormalLeveClearImageがアタッチされていません。");
+                }
+
+                //Nightmareクリアアイコンが存在しない場合
+                if (nightmareLeveClearImage == null) 
+                {
+                    Debug.LogError("NightmareLeveClearImageがアタッチされていません。");
+                }
+
+                //Easyクリア時間テキストが存在しない場合
+                if (easyLeveClearTimeText == null) 
+                {
+                    Debug.LogError("EasyLeveClearTimeTextがアタッチされていません。");
+                }
+
+                //Normalクリア時間テキストが存在しない場合
+                if (normalLeveClearTimeText == null) 
+                {
+                    Debug.LogError("NormalLeveClearTimeTextがアタッチされていません。");
+                }
+
+                //Nightmareクリア時間テキストが存在しない場合
+                if (nightmareLeveClearTimeText == null) 
+                {
+                    Debug.LogError("NightmareLeveClearTimeTextがアタッチされていません。");
+                }
+
+                //悪夢ステージクリア情報パネルが存在しない場合
+                if (nightmareLeveClearInformationPanel == null) 
+                {
+                    Debug.LogError("NightmareLeveClearInformationPanelがアタッチされていません。");
+                }
+
                 //ステージクリア情報パネルが存在しない場合
                 if (stageClearInformationPanel == null) 
                 {
@@ -402,6 +508,64 @@ public class DifficultyLevelController : MonoBehaviour
 
         //ステージ04難易度クリアステータス配列に保存用変数のステージ04難易度クリアステータス配列を設定する
         stage04DifficultyLevelClearStatusArray = saveStage04DifficultyLevelClearStatusArray;
+
+        //デモステージ01難易度クリアタイム配列に保存用変数のデモステージ01難易度クリアタイム配列を設定する
+        demoStage01DifficultyLevelClearTimeArray = saveDemoStage01DifficultyLevelClearTimeArray;
+
+        //ステージ01難易度クリアタイム配列に保存用変数のステージ01難易度クリアタイム配列を設定する
+        stage01DifficultyLevelClearTimeArray = saveStage01DifficultyLevelClearTimeArray;
+
+        //ステージ02難易度クリアタイム配列に保存用変数のステージ02難易度クリアタイム配列を設定する
+        stage02DifficultyLevelClearTimeArray = saveStage02DifficultyLevelClearTimeArray;
+
+        //ステージ03難易度クリアタイム配列に保存用変数のステージ03難易度クリアタイム配列を設定する
+        stage03DifficultyLevelClearTimeArray = saveStage03DifficultyLevelClearTimeArray;
+
+        //ステージ04難易度クリアタイム配列に保存用変数のステージ04難易度クリアタイム配列を設定する
+        stage04DifficultyLevelClearTimeArray = saveStage04DifficultyLevelClearTimeArray;
+    }
+
+    /// <summary>
+    /// ステージクリアアイコンを表示/非表示する関数
+    /// </summary>
+    /// <param name="targetKeys">該当ステージ難易度のステータス</param>
+    void ViewStageClearIconImage(Dictionary<string, int> targetKeys) 
+    {
+        //難易度EasyLevelを通常クリアしている場合
+        if (targetKeys[stringEasyLevel] == 1)
+        {
+            //Easyクリアアイコンを表示する
+            easyLeveClearImage.SetActive(true);
+        }
+        else
+        {
+            //Easyクリアアイコンを非表示にする
+            easyLeveClearImage.SetActive(false);
+        }
+
+        //難易度NormalLevelを通常クリアしている場合
+        if (targetKeys[stringNormalLevel] == 1)
+        {
+            //Normalクリアアイコンを表示する
+            normalLeveClearImage.SetActive(true);
+        }
+        else
+        {
+            //Normalクリアアイコンを非表示にする
+            normalLeveClearImage.SetActive(false);
+        }
+
+        //難易度NightmareLevelを通常クリアしている場合(TODO:ナイトメアモードを解放している条件も追加する)
+        if (targetKeys[stringNightmareLevel] == 1)
+        {
+            //Nightmareクリアアイコンを表示する
+            nightmareLeveClearImage.SetActive(true);
+        }
+        else
+        {
+            //Nightmareクリアアイコンを非表示にする
+            nightmareLeveClearImage.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -433,6 +597,67 @@ public class DifficultyLevelController : MonoBehaviour
         //ステージクリア情報パネルを表示する
         isStageClearInformationPanel = true;
         ChangeViewStageClearInformationPanel();
+
+        //ステージクリア情報パネルにステージクリアフラグとクリアタイム時間を設定する処理
+        switch (number) 
+        {
+            case 1:
+                //デモ版モードの場合
+                if (GameController.instance.GetIsDemoPlayFlag())
+                {
+                    //デモステージ01クリアアイコン画像を各難易度毎に表示/非表示する
+                    ViewStageClearIconImage(demoStage01DifficultyLevelClearStatusArray);
+
+                    //デモステージ01難易度クリアタイム配列の値をステージクリア時間テキストに設定する
+                    easyLeveClearTimeText.text = demoStage01DifficultyLevelClearTimeArray[stringEasyLevel];
+                    normalLeveClearTimeText.text = demoStage01DifficultyLevelClearTimeArray[stringNormalLevel];
+                    nightmareLeveClearTimeText.text = demoStage01DifficultyLevelClearTimeArray[stringNightmareLevel];
+                }
+                else 
+                {
+                    //ステージ01クリアアイコン画像を各難易度毎に表示/非表示する
+                    ViewStageClearIconImage(stage01DifficultyLevelClearStatusArray);
+
+                    //ステージ01難易度クリアタイム配列の値をステージクリア時間テキストに設定する
+                    easyLeveClearTimeText.text = stage01DifficultyLevelClearTimeArray[stringEasyLevel];
+                    normalLeveClearTimeText.text = stage01DifficultyLevelClearTimeArray[stringNormalLevel];
+                    nightmareLeveClearTimeText.text = stage01DifficultyLevelClearTimeArray[stringNightmareLevel];
+                }
+                    break;
+
+            case 2:
+                //ステージ02クリアアイコン画像を各難易度毎に表示/非表示する
+                ViewStageClearIconImage(stage02DifficultyLevelClearStatusArray);
+
+                //ステージ02難易度クリアタイム配列の値をステージクリア時間テキストに設定する
+                easyLeveClearTimeText.text = stage02DifficultyLevelClearTimeArray[stringEasyLevel];
+                normalLeveClearTimeText.text = stage02DifficultyLevelClearTimeArray[stringNormalLevel];
+                nightmareLeveClearTimeText.text = stage02DifficultyLevelClearTimeArray[stringNightmareLevel];
+                break;
+
+            case 3:
+                //ステージ03クリアアイコン画像を各難易度毎に表示/非表示する
+                ViewStageClearIconImage(stage03DifficultyLevelClearStatusArray);
+
+                //ステージ03難易度クリアタイム配列の値をステージクリア時間テキストに設定する
+                easyLeveClearTimeText.text = stage03DifficultyLevelClearTimeArray[stringEasyLevel];
+                normalLeveClearTimeText.text = stage03DifficultyLevelClearTimeArray[stringNormalLevel];
+                nightmareLeveClearTimeText.text = stage03DifficultyLevelClearTimeArray[stringNightmareLevel];
+                break;
+
+            case 4:
+                //ステージ04クリアアイコン画像を各難易度毎に表示/非表示する
+                ViewStageClearIconImage(stage04DifficultyLevelClearStatusArray);
+
+                //ステージ04難易度クリアタイム配列の値をステージクリア時間テキストに設定する
+                easyLeveClearTimeText.text = stage04DifficultyLevelClearTimeArray[stringEasyLevel];
+                normalLeveClearTimeText.text = stage04DifficultyLevelClearTimeArray[stringNormalLevel];
+                nightmareLeveClearTimeText.text = stage04DifficultyLevelClearTimeArray[stringNightmareLevel];
+                break;
+            default:
+                Debug.LogError("ステージインデックス番号が正しい番号ではないため、ステージクリア情報を更新して表示することができません。");
+                break;
+        }
     }
 
     /// <summary>
@@ -444,7 +669,15 @@ public class DifficultyLevelController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
-        //TODO:ステージクリアフラグとクリアタイム時間の変数をリセットする処理
+        //クリアアイコンを非表示にする
+        easyLeveClearImage.SetActive(false);
+        normalLeveClearImage.SetActive(false);
+        nightmareLeveClearImage.SetActive(false);
+
+        //クリア時間テキストを空にする
+        easyLeveClearTimeText.text = "";
+        normalLeveClearTimeText.text = "";
+        nightmareLeveClearTimeText.text = "";
 
         //ステージのクリア情報パネルを非表示にする
         isStageClearInformationPanel = false;
@@ -610,6 +843,15 @@ public class DifficultyLevelController : MonoBehaviour
         {
             //非表示
             stageClearInformationPanel.SetActive(false);
+
+            if (easyLeveClearImage != null && normalLeveClearImage != null && nightmareLeveClearImage != null) 
+            {
+                //クリアアイコンを非表示にする
+                easyLeveClearImage.SetActive(false);
+                normalLeveClearImage.SetActive(false);
+                nightmareLeveClearImage.SetActive(false);
+            }
+            
         }
     }
 

@@ -282,8 +282,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         animator.SetBool(kIsRunAnimatorParameter, false);
         animator.SetBool(kIsWalkAnimatorParameter, false);
 
-        //TODO:敵の表情が良く見えるように、ライティング処理が必要
-
 
         //プレイヤーを攻撃するSEを再生
         audioSourceAttackPlayerSE.clip = sO_SE.GetSEClip(attackPlayerSEid);

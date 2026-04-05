@@ -59,6 +59,11 @@ public class HiddenObject : MonoBehaviour
     /// </summary>
     private const string stage02 = "Stage02";
 
+    /// <summary>
+    /// GameClearSceneのシーン名
+    /// </summary>
+    const string stringGameClearScene = "GameClearScene";
+
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -164,6 +169,13 @@ public class HiddenObject : MonoBehaviour
 
     private void Update()
     {
+        //GameClearSceneの場合
+        if (SceneManager.GetActiveScene().name == stringGameClearScene) 
+        {
+            //処理をスキップ
+            return;
+        }
+
         //プレイヤーとの距離を計算
         distanceToPlayer = Vector3.Distance(transform.position, Player.instance.transform.position);
 

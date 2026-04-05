@@ -5,7 +5,20 @@ using UnityEngine.UIElements;
 
 public class SaveLoad : MonoBehaviour
 {
+    /// <summary>
+    /// UserData
+    /// </summary>
     UserData userData;
+
+    /// <summary>
+    /// PlayerUserData
+    /// </summary>
+    private const string stringPlayerUserData = "PlayerUserData";
+
+    /// <summary>
+    /// SceneTransitionPlayerUserData
+    /// </summary>
+    private const string stringSceneTransitionPlayerUserData = "SceneTransitionPlayerUserData";
 
     /// <summary>
     /// データを保存するメソッド
@@ -90,6 +103,36 @@ public class SaveLoad : MonoBehaviour
             userData.stage04DifficultyLevelClearDataList.Add(new Stage04DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
+        //Dictionary型のデモステージ01難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveDemoStage01DifficultyLevelClearTimeArray)
+        {
+            userData.demoStage01DifficultyLevelClearTimeDataList.Add(new DemoStage01DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型のステージ01難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStage01DifficultyLevelClearTimeArray)
+        {
+            userData.stage01DifficultyLevelClearTimeDataList.Add(new Stage01DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型のステージ02難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStage02DifficultyLevelClearTimeArray)
+        {
+            userData.stage02DifficultyLevelClearTimeDataList.Add(new Stage02DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型のステージ03難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStage03DifficultyLevelClearTimeArray)
+        {
+            userData.stage03DifficultyLevelClearTimeDataList.Add(new Stage03DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型のステージ04難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStage04DifficultyLevelClearTimeArray)
+        {
+            userData.stage04DifficultyLevelClearTimeDataList.Add(new Stage04DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
         //ユーザーデータをJSON形式で保存
         //UserDataオブジェクトをJSON文字列に変換
         string json = JsonUtility.ToJson(userData, true);
@@ -97,7 +140,7 @@ public class SaveLoad : MonoBehaviour
         Debug.Log("Json形式でデータを保存した内容:" + json);
 
         //PlayerPrefsに保存
-        PlayerPrefs.SetString("PlayerUserData", json);
+        PlayerPrefs.SetString(stringPlayerUserData, json);
         PlayerPrefs.Save();
     }
 
@@ -106,10 +149,10 @@ public class SaveLoad : MonoBehaviour
     /// </summary>
     public void LoadUserData() 
     {
-        if (PlayerPrefs.HasKey("PlayerUserData")) 
+        if (PlayerPrefs.HasKey(stringPlayerUserData)) 
         {
             //PlayerPrefsからJSON文字列を取得
-            string josn = PlayerPrefs.GetString("PlayerUserData");
+            string josn = PlayerPrefs.GetString(stringPlayerUserData);
 
             //JSON文字列をUserDataオブジェクトに変換
             UserData userData = JsonUtility.FromJson<UserData>(josn);           
@@ -176,10 +219,50 @@ public class SaveLoad : MonoBehaviour
                 restoredStage04DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage04DifficultyLevelClearStatusArray = restoredStage04DifficultyLevelClearStatusDict;
+
+            //JsonUtilityで保存可能な形式へ変換したデモステージ01難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredDemoStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.demoStage01DifficultyLevelClearTimeDataList)
+            {
+                restoredDemoStage01DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveDemoStage01DifficultyLevelClearTimeArray = restoredDemoStage01DifficultyLevelClearTimeDict;
+
+            //JsonUtilityで保存可能な形式へ変換したステージ01難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.stage01DifficultyLevelClearTimeDataList)
+            {
+                restoredStage01DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveStage01DifficultyLevelClearTimeArray = restoredStage01DifficultyLevelClearTimeDict;
+
+            //JsonUtilityで保存可能な形式へ変換したステージ02難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredStage02DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.stage02DifficultyLevelClearTimeDataList)
+            {
+                restoredStage02DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveStage02DifficultyLevelClearTimeArray = restoredStage02DifficultyLevelClearTimeDict;
+
+            //JsonUtilityで保存可能な形式へ変換したステージ03難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredStage03DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.stage03DifficultyLevelClearTimeDataList)
+            {
+                restoredStage03DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveStage03DifficultyLevelClearTimeArray = restoredStage03DifficultyLevelClearTimeDict;
+
+            //JsonUtilityで保存可能な形式へ変換したステージ04難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredStage04DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.stage04DifficultyLevelClearTimeDataList)
+            {
+                restoredStage04DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveStage04DifficultyLevelClearTimeArray = restoredStage04DifficultyLevelClearTimeDict;
         }
         else
         {
-            Debug.LogWarning("PlayerUserDataが存在しません");
+            Debug.LogWarning(stringPlayerUserData + "が存在しません");
         }
     }
 
@@ -263,6 +346,36 @@ public class SaveLoad : MonoBehaviour
             userData.stage04DifficultyLevelClearDataList.Add(new Stage04DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
+        //Dictionary型のデモステージ01難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveDemoStage01DifficultyLevelClearTimeArray)
+        {
+            userData.demoStage01DifficultyLevelClearTimeDataList.Add(new DemoStage01DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型のステージ01難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStage01DifficultyLevelClearTimeArray)
+        {
+            userData.stage01DifficultyLevelClearTimeDataList.Add(new Stage01DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型のステージ02難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStage02DifficultyLevelClearTimeArray)
+        {
+            userData.stage02DifficultyLevelClearTimeDataList.Add(new Stage02DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型のステージ03難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStage03DifficultyLevelClearTimeArray)
+        {
+            userData.stage03DifficultyLevelClearTimeDataList.Add(new Stage03DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型のステージ04難易度毎クリアタイム配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveStage04DifficultyLevelClearTimeArray)
+        {
+            userData.stage04DifficultyLevelClearTimeDataList.Add(new Stage04DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
+        }
+
         Debug.Log("シーン遷移用Json形式でデータを保存した内容:" + JsonUtility.ToJson(userData, true));
 
         //ユーザーデータをJSON形式で保存
@@ -270,7 +383,7 @@ public class SaveLoad : MonoBehaviour
         string json = JsonUtility.ToJson(userData, true);
 
         //PlayerPrefsに保存
-        PlayerPrefs.SetString("SceneTransitionPlayerUserData", json);
+        PlayerPrefs.SetString(stringSceneTransitionPlayerUserData, json);
         PlayerPrefs.Save();
     }
 
@@ -279,10 +392,10 @@ public class SaveLoad : MonoBehaviour
     /// </summary>
     public void LoadSceneTransitionUserData()
     {
-        if (PlayerPrefs.HasKey("SceneTransitionPlayerUserData"))
+        if (PlayerPrefs.HasKey(stringSceneTransitionPlayerUserData))
         {
             //PlayerPrefsからJSON文字列を取得
-            string josn = PlayerPrefs.GetString("SceneTransitionPlayerUserData");
+            string josn = PlayerPrefs.GetString(stringSceneTransitionPlayerUserData);
 
             //JSON文字列をUserDataオブジェクトに変換
             UserData userData = JsonUtility.FromJson<UserData>(josn);
@@ -347,10 +460,50 @@ public class SaveLoad : MonoBehaviour
                 restoredStage04DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage04DifficultyLevelClearStatusArray = restoredStage04DifficultyLevelClearStatusDict;
+
+            //JsonUtilityで保存可能な形式へ変換したデモステージ01難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredDemoStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.demoStage01DifficultyLevelClearTimeDataList)
+            {
+                restoredDemoStage01DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveDemoStage01DifficultyLevelClearTimeArray = restoredDemoStage01DifficultyLevelClearTimeDict;
+
+            //JsonUtilityで保存可能な形式へ変換したステージ01難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.stage01DifficultyLevelClearTimeDataList)
+            {
+                restoredStage01DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveStage01DifficultyLevelClearTimeArray = restoredStage01DifficultyLevelClearTimeDict;
+
+            //JsonUtilityで保存可能な形式へ変換したステージ02難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredStage02DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.stage02DifficultyLevelClearTimeDataList)
+            {
+                restoredStage02DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveStage02DifficultyLevelClearTimeArray = restoredStage02DifficultyLevelClearTimeDict;
+
+            //JsonUtilityで保存可能な形式へ変換したステージ03難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredStage03DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.stage03DifficultyLevelClearTimeDataList)
+            {
+                restoredStage03DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveStage03DifficultyLevelClearTimeArray = restoredStage03DifficultyLevelClearTimeDict;
+
+            //JsonUtilityで保存可能な形式へ変換したステージ04難易度毎クリアタイム配列をDictionary型に変換してロードする
+            Dictionary<string, string> restoredStage04DifficultyLevelClearTimeDict = new Dictionary<string, string>();
+            foreach (var data in userData.stage04DifficultyLevelClearTimeDataList)
+            {
+                restoredStage04DifficultyLevelClearTimeDict[data.key] = data.value;
+            }
+            GameController.saveStage04DifficultyLevelClearTimeArray = restoredStage04DifficultyLevelClearTimeDict;
         }
         else
         {
-            Debug.LogWarning("SceneTransitionPlayerUserDataが存在しません");
+            Debug.LogWarning(stringSceneTransitionPlayerUserData + "が存在しません");
         }
     }
 
@@ -360,17 +513,17 @@ public class SaveLoad : MonoBehaviour
     public void ResetUserData()
     {
         // 特定のキーのデータを削除する場合
-        if (PlayerPrefs.HasKey("PlayerUserData"))
+        if (PlayerPrefs.HasKey(stringPlayerUserData))
         {
-            PlayerPrefs.DeleteKey("PlayerUserData");
-            Debug.Log("PlayerUserDataを初期化しました");
+            PlayerPrefs.DeleteKey(stringPlayerUserData);
+            Debug.Log(stringPlayerUserData + "を初期化しました");
         }
 
         // 特定のキーのデータを削除する場合
-        if (PlayerPrefs.HasKey("SceneTransitionPlayerUserData"))
+        if (PlayerPrefs.HasKey(stringSceneTransitionPlayerUserData))
         {
-            PlayerPrefs.DeleteKey("SceneTransitionPlayerUserData");
-            Debug.Log("SceneTransitionPlayerUserDataを初期化しました");
+            PlayerPrefs.DeleteKey(stringSceneTransitionPlayerUserData);
+            Debug.Log(stringSceneTransitionPlayerUserData + "を初期化しました");
         }
 
         // 変更を保存する
