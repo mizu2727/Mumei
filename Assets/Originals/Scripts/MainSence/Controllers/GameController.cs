@@ -596,7 +596,7 @@ public class GameController : MonoBehaviour
         //例：新規のDictionary型パラメータが追加された際に実行する
         //実行時には、テストプレイ終了方法を必ず停止ボタンで止めること
         //(「ゲーム終了」ボタンを押下場合、セーブした値が残ってしまうため)
-        //CallRestDataMethod();
+        CallRestDataMethod();
     }
 
     private void Update()
