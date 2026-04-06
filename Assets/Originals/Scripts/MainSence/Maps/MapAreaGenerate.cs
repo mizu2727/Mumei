@@ -77,6 +77,10 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("敵の位置(ヒエラルキー上からアタッチすること。ステージライトとの距離測定で必要)")]
     [SerializeField] public Transform[] baseEnemyTransformArray;
 
+
+    [Header("Easy用の隠れる地点のTransform配列(ヒエラルキー上のHiddeObjectをアタッチすること)")]
+    [SerializeField] private Transform[] easyHideObject;
+
     /// <summary>
     /// オブジェクトが破壊された際に呼ばれる関数
     /// </summary>
@@ -183,6 +187,8 @@ public class MapAreaGenerate : MonoBehaviour
         //アイテムをランダム配置
         ItemGenerate();
 
+        //難易度に応じてオブジェクトを表示/非表示するメソッド
+        SettingViewObjects();
 
         stageGround.Build(navMeshSurface);
     }
@@ -299,6 +305,69 @@ public class MapAreaGenerate : MonoBehaviour
             {
                 Debug.LogError(itemPoint[i].name + "にDrawerコンポーネントが見つかりませんでした！");
             }
+        }
+    }
+
+    /// <summary>
+    /// 難易度に応じてオブジェクトを表示/非表示するメソッド
+    /// </summary>
+    void SettingViewObjects() 
+    {
+        switch (DifficultyLevelController.instance.GetDifficultyLevelStatus()) 
+        {
+            //Easyの場合
+            case DifficultyLevelController.DifficultyLevel.kEasy:
+
+                //Easy用の隠れる地点が設定されている場合
+                if (easyHideObject.Length != 0)
+                {
+                    //難易度Easy用の隠れる地点を表示する
+                    for (int i = 0; i < easyHideObject.Length; i++)
+                    {
+                        easyHideObject[i].gameObject.SetActive(true);
+                    }
+                }
+                else 
+                {
+                    Debug.LogWarning("難易度Easy用の隠れる地点が設定されていません。");
+                }
+                break;
+
+            //Normalの場合
+            case DifficultyLevelController.DifficultyLevel.kNormal:
+
+                //Easy用の隠れる地点が設定されている場合
+                if (easyHideObject.Length != 0)
+                {
+                    //難易度Easy用の隠れる地点を非表示
+                    for (int i = 0; i < easyHideObject.Length; i++)
+                    {
+                        easyHideObject[i].gameObject.SetActive(false);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("難易度Easy用の隠れる地点が設定されていません。");
+                }
+                break;
+
+            //Nightmareの場合
+            case DifficultyLevelController.DifficultyLevel.kNightmare:
+
+            //Easy用の隠れる地点が設定されている場合
+            if (easyHideObject.Length != 0)
+            {
+                //難易度Easy用の隠れる地点を非表示
+                for (int i = 0; i < easyHideObject.Length; i++)
+                {
+                    easyHideObject[i].gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("難易度Easy用の隠れる地点が設定されていません。");
+            }
+            break;
         }
     }
 
