@@ -554,61 +554,64 @@ public class MessageController : MonoBehaviour
                 return;
             }
 
+            //isPlaySoundNoiseStatusが1の場合
+            if (talkMessage.talkMessage[number].isPlaySoundNoiseStatus == 1)
+            {
+                messageText.text = "";
+                speakerNameText.text = "";
+                number++;
+
+                await UniTask.Delay(TimeSpan.FromSeconds(1));
+
+                //BGMを一時停止してノイズを流す
+                MusicController.instance.PauseBGM(HomeController.instance.GetAudioSourceBGM(),
+                    sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
+
+                audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
+                MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
+
+                //メッセージテキストの色を赤色に変更するフラグをtrueに設定
+                isChangeMessageTextColorRed = true;
+
+                //文字の色を赤色に設定
+                messageText.color = Color.red;
+
+                //メッセージ系のテキストの色を変更
+                ChangeTextColor(number);
+
+                Write(talkMessage.talkMessage[number].message);
+
+                //speakerNameTextが存在する場合
+                if (speakerNameText != null)
+                {
+                    //会話している人の名前を設定
+                    speakerNameText.text = talkMessage.talkMessage[number].speakerName;
+                }
+
+                await ShowNextMessage();
+
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                //BGMの一時停止を解除
+                MusicController.instance.UnPauseBGM(HomeController.instance.GetAudioSourceBGM(),
+                    sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
+
+
+                //メッセージテキストの色を赤色に変更するフラグをfalseに設定
+                isChangeMessageTextColorRed = false;
+
+                messageText.text = "";
+                speakerNameText.text = "";
+                number++;
+
+                showTalkMessage.ShowGameTalkMessage(number);
+
+                //処理をスキップ
+                return;
+            }
+
                 switch (number)
                 {
-                    case 11:
-                    case 19:
-                    case 60:
-                        messageText.text = "";
-                        speakerNameText.text = "";
-                        number++;
-
-                        await UniTask.Delay(TimeSpan.FromSeconds(1));
-
-                        //BGMを一時停止してノイズを流す
-                        MusicController.instance.PauseBGM(HomeController.instance.GetAudioSourceBGM(),
-                            sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
-
-                        audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
-                        MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
-
-                        //メッセージテキストの色を赤色に変更するフラグをtrueに設定
-                        isChangeMessageTextColorRed = true;
-
-                        //文字の色を赤色に設定
-                        messageText.color = Color.red;
-
-                        //メッセージ系のテキストの色を変更
-                        ChangeTextColor(number);
-
-                        Write(talkMessage.talkMessage[number].message);
-
-                        //speakerNameTextが存在する場合
-                        if (speakerNameText != null)
-                        {
-                            //会話している人の名前を設定
-                            speakerNameText.text = talkMessage.talkMessage[number].speakerName;
-                        }
-
-                        await ShowNextMessage();
-
-                        await UniTask.Delay(TimeSpan.FromSeconds(0.5));
-
-                        //BGMの一時停止を解除
-                        MusicController.instance.UnPauseBGM(HomeController.instance.GetAudioSourceBGM(),
-                            sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
-
-
-                        //メッセージテキストの色を赤色に変更するフラグをfalseに設定
-                        isChangeMessageTextColorRed = false;
-
-                        messageText.text = "";
-                        speakerNameText.text = "";
-                        number++;
-
-                        showTalkMessage.ShowGameTalkMessage(number);
-                        break;
-
                     case 27:
                     case 33:
                         messageText.text = "";

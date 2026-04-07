@@ -24,4 +24,9 @@ public class TalkMessageEntity
     /// 後ろを振り向くステータス（0:振り向かない、1:振り向く）
     /// </summary>
     public int isplayerBackRotateStatus;
+
+    /// <summary>
+    /// ノイズSEを流すステータス（0:流さない、1:流す）
+    /// </summary>
+    public int isPlaySoundNoiseStatus;
 }
