@@ -528,28 +528,34 @@ public class MessageController : MonoBehaviour
 
             await ShowNextMessage();
 
+
+            //後ろを振り向くステータスが1の場合
+            if (talkMessage.talkMessage[number].isplayerBackRotateStatus == 1) 
+            {
+                //メッセージテキストと会話している人の名前テキストをリセット
+                messageText.text = "";
+                speakerNameText.text = "";
+
+                //次のメッセージ番号へ
+                number++;
+
+                //後ろを振り返る
+                Player.instance.playerIsBackRotate = true;
+
+                await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+                //プレイヤーの回転を保存
+                savePlayerQuaternion = Player.instance.transform.rotation;
+
+                //スペースキー押下で次のメッセージを書く
+                showTalkMessage.ShowGameTalkMessage(number);
+
+                //処理をスキップ
+                return;
+            }
+
                 switch (number)
                 {
-                    case 2:
-                        //メッセージテキストと会話している人の名前テキストをリセット
-                        messageText.text = "";
-                        speakerNameText.text = "";
-
-                        //次のメッセージ番号へ
-                        number++;
-
-                        //後ろを振り返る
-                        Player.instance.playerIsBackRotate = true;
-
-                        await UniTask.Delay(TimeSpan.FromSeconds(3));
-
-                        //プレイヤーの回転を保存
-                        savePlayerQuaternion = Player.instance.transform.rotation;
-
-                        //スペースキー押下で次のメッセージを書く
-                        showTalkMessage.ShowGameTalkMessage(number);
-                        break;
-
                     case 11:
                     case 19:
                     case 60:
