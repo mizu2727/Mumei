@@ -24,6 +24,11 @@ public class MessageController : MonoBehaviour
     /// </summary>
     private const string stringInteract = "Interact";
 
+    /// <summary>
+    /// GameClearScene
+    /// </summary>
+    private const string stringGameClearScene = "GameClearScene";
+
 
     [Header("メッセージパネル関連")]
     [Header("メッセージパネル(ヒエラルキー上からアタッチする必要がある)")]
@@ -511,10 +516,14 @@ public class MessageController : MonoBehaviour
                 speakerNameText.text = talkMessage.talkMessage[number].speakerName;
             }
 
-            //wall_Tutorialを消してゴールオブジェクトが見えるようにする
-            if (HomeController.instance.wall_Tutorial != null && number == kMessageNumber47) 
-            { 
-                HomeController.instance.wall_Tutorial.SetActive(false); 
+            //SceneがGameClearSceneでない場合(GameClearSceneからデバッグプレイする際に発生するエラーを防ぐため)
+            if (SceneManager.GetActiveScene().name != stringGameClearScene) 
+            {
+                //wall_Tutorialを消してゴールオブジェクトが見えるようにする
+                if (HomeController.instance.wall_Tutorial != null && number == kMessageNumber47)
+                {
+                    HomeController.instance.wall_Tutorial.SetActive(false);
+                }
             }
 
             await ShowNextMessage();

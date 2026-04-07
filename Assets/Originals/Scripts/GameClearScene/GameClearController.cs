@@ -15,11 +15,20 @@ public class GameClearController : MonoBehaviour
     [Header("ゲームクリア画面のCanvas")]
     [SerializeField] public Canvas gameClearCanvas;
 
-    [Header("アンケートURL")]
-    [SerializeField] private string questionnaireURL = "https://docs.google.com/forms/d/13qMmaottZOaX7lg4lu8kzzvfE5aXFS3kNgPPoCmxI6M/viewform";
+    /// <summary>
+    /// アンケートURL
+    /// </summary>
+    private const string questionnaireURL = "https://docs.google.com/forms/d/13qMmaottZOaX7lg4lu8kzzvfE5aXFS3kNgPPoCmxI6M/viewform";
 
-    [Header("XのURL")]
-    [SerializeField] private string X_URL = "https://x.com/Tomanegi0707";
+    /// <summary>
+    /// XのURL
+    /// </summary>
+    private const string X_URL = "https://x.com/Tomanegi0707";
+
+    /// <summary>
+    /// BlueSkyのURL
+    /// </summary>
+    private const string BlueSky_URL = "https://bsky.app/profile/tomanegi0707.bsky.social";
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
@@ -222,5 +231,13 @@ public class GameClearController : MonoBehaviour
     public void OnClickedX_Button()
     {
         Application.OpenURL(X_URL);
+    }
+
+    /// <summary>
+    /// BlueSkyのURLを開く
+    /// </summary>
+    public void OnClickedBlueSky_Button()
+    {
+        Application.OpenURL(BlueSky_URL);
     }
 }
