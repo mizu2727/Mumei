@@ -25,6 +25,11 @@ public class MessageController : MonoBehaviour
     private const string stringInteract = "Interact";
 
     /// <summary>
+    /// HomeScene
+    /// </summary>
+    private const string stringHomeScene = "HomeScene";
+
+    /// <summary>
     /// GameClearScene
     /// </summary>
     private const string stringGameClearScene = "GameClearScene";
@@ -804,220 +809,259 @@ public class MessageController : MonoBehaviour
             //エクセルデータ型.リスト型[番号].カラム名
             Write(systemMessage.systemMessage[number].message);
 
-            switch (number)
+            //InputPlayerNameFieldに関するステータスが1の場合
+            if (systemMessage.systemMessage[number].isInputPlayerNameFieldStatus == 1)
             {
                 //名前入力UIを表示
-                case 3:
-                    await ShowNextMessage();
+                await ShowNextMessage();
 
-                    ResetMessage();
+                ResetMessage();
 
-                    Cursor.visible = true;
-                    Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
 
-                    inputPlayerNameField.gameObject.SetActive(true);
-                    break;
+                inputPlayerNameField.gameObject.SetActive(true);
 
-                //名前入力制限に引っかかった後に、もう一度名前入力UIを表示
-                case 4:
-                    await ShowNextMessage();
-
-                    ResetMessage();
-                    showSystemMessage.ShowGameSystemMessage(3);
-                    break;
-
-                case 6:
-                    await ShowNextMessage();
-
-                    messageText.text = "";
-                    number++;
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(2));
-
-                    //ノイズを流す
-                    audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
-                    MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
-
-                    //文字の色を赤色に設定
-                    messageText.color = Color.red;
-
-                    Write(systemMessage.systemMessage[number].message);
-
-                    await ShowNextMessage();
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(1));
-
-                    ResetMessage();
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(3));
-
-                    //シーン遷移時用データを保存
-                    GameController.instance.CallSaveSceneTransitionUserDataMethod();
-
-                    //HomeSceneへ移動
-                    SceneManager.LoadScene("HomeScene");
-                    break;
-
-                //会話メッセージを表示
-                case 9:
-                    await ShowNextMessage();
-
-                    ResetMessage();
-
-                    showTalkMessage.ShowGameTalkMessage(38);
-                    break;
-
-                case 10:
-                    //ドキュメント(チュートリアル版)入手したらメッセージを勧める
-                    await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag());
-                    GameController.instance.SetIsTutorialNextMessageFlag(false);
-
-                    //プレイヤー効果音を停止
-                    MusicController.instance.StopSE(Player.instance.audioSourceSE);
-
-                    //左クリック…ドキュメント入手操作の説明
-                    ResetMessage();
-
-                    //ストーリーモードへ変更
-                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
-
-                    showTalkMessage.ShowGameTalkMessage(43);
-                    break;
-
-                case 11:
-                    //ドキュメント(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                    await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag() && !PauseController.instance.isPause 
-                        && !PauseController.instance.isViewItemsPanel && !OptionUIController.instance.GetIsOptionPanel());
-                    GameController.instance.SetIsTutorialNextMessageFlag(false);
-
-                    //プレイヤー効果音を停止
-                    MusicController.instance.StopSE(Player.instance.audioSourceSE);
-
-                    ResetMessage();
-
-                    //ストーリーモードへ変更
-                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
-
-                    showTalkMessage.ShowGameTalkMessage(44);
-                    break;
-
-                case 12:
-                    //ミステリーアイテム(チュートリアル版)入手したらメッセージを勧める
-                    await UniTask.WaitUntil(() => PauseController.instance.isGetHammer_Tutorial && PauseController.instance.isGetRope_Tutorial);
-
-                    //プレイヤー効果音を停止
-                    MusicController.instance.StopSE(Player.instance.audioSourceSE);
-
-                    ResetMessage();
-
-
-                    //ストーリーモードへ変更
-                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
-
-                    showTalkMessage.ShowGameTalkMessage(46);
-                    break;
-
-                case 13:
-                    //ミステリーアイテム(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                    await UniTask.WaitUntil(() => !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel 
-                        && PauseController.instance.isViewMysteryItem_Tutorial && !OptionUIController.instance.GetIsOptionPanel());
-                    PauseController.instance.isViewMysteryItem_Tutorial = false;
-                    ResetMessage();
-
-                    //プレイヤー効果音を停止
-                    MusicController.instance.StopSE(Player.instance.audioSourceSE);
-
-                    //ストーリーモードへ変更
-                    GameController.instance.SetGameModeStatus(GameModeStatus.Story);
-
-                    showTalkMessage.ShowGameTalkMessage(kMessageNumber47);
-                    break;
-
-                //チュートリアル終了
-                case 14:
-                    //チュートリアル用ゴールの閲覧終了したらメッセージを勧める
-                    await UniTask.WaitUntil(() => Time.timeScale == 1
-                    && GameController.instance.GetIsTutorialGoalFlag());
-
-                    
-                    GameController.instance.SetIsTutorialGoalFlag(false);
-
-                    messageText.text = "";
-                    number++;
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
-
-                    //画面ブラックアウト
-                    isBlackOutPanel = true;
-                    ViewBlackOutPanel();
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
-
-                    //wall_Tutorialを表示
-                    HomeController.instance.wall_Tutorial.SetActive(true);
-
-                    //wall_EndTutorialを非表示
-                    HomeController.instance.wall_EndTutorial.SetActive(false);
-
-                    //プレイヤー・カナメをワープ
-                    Kaname.instance.WarpPostion(1, 0.505f, 2);
-                    Player.instance.PlayerWarp(1, 0.562f, 0);
-
-                    //カメラの角度をリセット
-                    if (Player.instance != null)
-                    {
-                        // カメラの上下回転をリセット
-                        PlayerCamera.instance.ResetCameraRotation();
-
-                        // プレイヤーの向きをカメラの正面に同期（必要に応じて）
-                        Player.instance.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
-
-                        //プレイヤーのtransform.rotationの値を保存していた値に戻す
-                        Player.instance.transform.rotation = savePlayerQuaternion;
-                    }
-
-                    //プレイヤーカメラのX軸回転リセットフラグをtrueに設定
-                    PlayerCamera.instance.SetIsResetXRotate(true);
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(1.5));
-
-                    //プレイヤーカメラのX軸回転リセットフラグをfalseに設定
-                    PlayerCamera.instance.SetIsResetXRotate(false);
-
-                    //チュートリアル用アイテムを非表示
-                    GameController.instance.tutorialItems.SetActive(false);
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
-
-                    //画面ブラックアウトを解除
-                    isBlackOutPanel = false;
-                    ViewBlackOutPanel();
-
-                    showSystemMessage.ShowGameSystemMessage(number);
-                    break;
-
-                case 15:
-                    await ShowNextMessage();
-
-                    ResetMessage();
-
-                    await UniTask.Delay(TimeSpan.FromSeconds(0.5));
-
-                    showTalkMessage.ShowGameTalkMessage(49);
-                    break;
-
-
-                //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
-                default:
-                    await ShowNextMessage();
-
-                    messageText.text = "";
-                    number++;
-
-                    //スペースキー押下で次のメッセージを書く
-                    showSystemMessage.ShowGameSystemMessage(number);
-                    break;
+                //処理をスキップ
+                return;
             }
+
+            //InputPlayerNameFieldに関するステータスが2の場合
+            if (systemMessage.systemMessage[number].isInputPlayerNameFieldStatus == 2) 
+            {
+                //名前入力制限に引っかかった後に、もう一度名前入力UIを表示
+                await ShowNextMessage();
+
+                ResetMessage();
+                showSystemMessage.ShowGameSystemMessage(systemMessage.systemMessage[number].showSystemMessageNumber);
+
+                //処理をスキップ
+                return;
+            }
+
+            //isPlaySoundNoiseStatusが3の場合
+            if (systemMessage.systemMessage[number].isPlaySoundNoiseStatus == 3) 
+            {
+                await ShowNextMessage();
+
+                messageText.text = "";
+
+                number++;
+
+                await UniTask.Delay(TimeSpan.FromSeconds(2));
+
+                //ノイズを流す
+                audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
+                MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
+
+                //文字の色を赤色に設定
+                messageText.color = Color.red;
+
+                Write(systemMessage.systemMessage[number].message);
+
+                await ShowNextMessage();
+
+                await UniTask.Delay(TimeSpan.FromSeconds(1));
+
+                ResetMessage();
+
+                await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //HomeSceneへ移動
+                SceneManager.LoadScene(stringHomeScene);
+
+                //処理をスキップ
+                return;
+            }
+
+            //TalkMessageStatus関連フラグが1の場合
+            if (systemMessage.systemMessage[number].isShowTalkMessageStatus == 1) 
+            {
+                await ShowNextMessage();
+
+                ResetMessage();
+
+                showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
+                //処理をスキップ
+                return;
+            }
+
+            //チュートリアルフラグが4の場合
+            if (systemMessage.systemMessage[number].isTutorialStatus == 4) 
+            {
+                //ドキュメント(チュートリアル版)入手したらメッセージを勧める
+                await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag());
+                GameController.instance.SetIsTutorialNextMessageFlag(false);
+
+                //プレイヤー効果音を停止
+                MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
+                //左クリック…ドキュメント入手操作の説明
+                ResetMessage();
+
+                //ストーリーモードへ変更
+                GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
+                //処理をスキップ
+                return;
+            }
+
+            //チュートリアルフラグが5の場合
+            if (systemMessage.systemMessage[number].isTutorialStatus == 5) 
+            {
+                //ドキュメント(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
+                await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag() && !PauseController.instance.isPause
+                    && !PauseController.instance.isViewItemsPanel && !OptionUIController.instance.GetIsOptionPanel());
+                GameController.instance.SetIsTutorialNextMessageFlag(false);
+
+                //プレイヤー効果音を停止
+                MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
+                ResetMessage();
+
+                //ストーリーモードへ変更
+                GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
+                //処理をスキップ
+                return;
+            }
+
+            //チュートリアルフラグが6の場合
+            if (systemMessage.systemMessage[number].isTutorialStatus == 6) 
+            {
+                //ミステリーアイテム(チュートリアル版)入手したらメッセージを勧める
+                await UniTask.WaitUntil(() => PauseController.instance.isGetHammer_Tutorial && PauseController.instance.isGetRope_Tutorial);
+
+                //プレイヤー効果音を停止
+                MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
+                ResetMessage();
+
+                //ストーリーモードへ変更
+                GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
+                //処理をスキップ
+                return;
+            }
+
+            //チュートリアルフラグが7の場合
+            if (systemMessage.systemMessage[number].isTutorialStatus == 7) 
+            {
+                //ミステリーアイテム(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
+                await UniTask.WaitUntil(() => !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel
+                    && PauseController.instance.isViewMysteryItem_Tutorial && !OptionUIController.instance.GetIsOptionPanel());
+                PauseController.instance.isViewMysteryItem_Tutorial = false;
+                ResetMessage();
+
+                //プレイヤー効果音を停止
+                MusicController.instance.StopSE(Player.instance.audioSourceSE);
+
+                //ストーリーモードへ変更
+                GameController.instance.SetGameModeStatus(GameModeStatus.Story);
+
+                showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
+                //処理をスキップ
+                return;
+            }
+
+            //チュートリアルフラグが8の場合
+            if (systemMessage.systemMessage[number].isTutorialStatus == 8) 
+            {
+                //チュートリアル終了
+
+                //チュートリアル用ゴールの閲覧終了したらメッセージを勧める
+                await UniTask.WaitUntil(() => Time.timeScale == 1
+                && GameController.instance.GetIsTutorialGoalFlag());
+
+
+                GameController.instance.SetIsTutorialGoalFlag(false);
+
+                messageText.text = "";
+                number++;
+
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                //画面ブラックアウト
+                isBlackOutPanel = true;
+                ViewBlackOutPanel();
+
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                //wall_Tutorialを表示
+                HomeController.instance.wall_Tutorial.SetActive(true);
+
+                //wall_EndTutorialを非表示
+                HomeController.instance.wall_EndTutorial.SetActive(false);
+
+                //プレイヤー・カナメをワープ
+                Kaname.instance.WarpPostion(1, 0.505f, 2);
+                Player.instance.PlayerWarp(1, 0.562f, 0);
+
+                //カメラの角度をリセット
+                if (Player.instance != null)
+                {
+                    // カメラの上下回転をリセット
+                    PlayerCamera.instance.ResetCameraRotation();
+
+                    // プレイヤーの向きをカメラの正面に同期（必要に応じて）
+                    Player.instance.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
+
+                    //プレイヤーのtransform.rotationの値を保存していた値に戻す
+                    Player.instance.transform.rotation = savePlayerQuaternion;
+                }
+
+                //プレイヤーカメラのX軸回転リセットフラグをtrueに設定
+                PlayerCamera.instance.SetIsResetXRotate(true);
+
+                await UniTask.Delay(TimeSpan.FromSeconds(1.5));
+
+                //プレイヤーカメラのX軸回転リセットフラグをfalseに設定
+                PlayerCamera.instance.SetIsResetXRotate(false);
+
+                //チュートリアル用アイテムを非表示
+                GameController.instance.tutorialItems.SetActive(false);
+
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                //画面ブラックアウトを解除
+                isBlackOutPanel = false;
+                ViewBlackOutPanel();
+
+                showSystemMessage.ShowGameSystemMessage(number);
+
+                //処理をスキップ
+                return;
+            }
+
+            //TalkMessageStatus関連フラグが2の場合
+            if (systemMessage.systemMessage[number].isShowTalkMessageStatus == 2) 
+            {
+                await ShowNextMessage();
+
+                ResetMessage();
+
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+
+                showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
+
+                //処理をスキップ
+                return;
+            }
+
+            //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
+            await ShowNextMessage();
+
+            messageText.text = "";
+            number++;
+
+            //スペースキー押下で次のメッセージを書く
+            showSystemMessage.ShowGameSystemMessage(number);
         }
     }
 
