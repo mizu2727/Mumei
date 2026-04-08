@@ -536,13 +536,13 @@ public class MessageController : MonoBehaviour
                 messageText.text = "";
                 speakerNameText.text = "";
 
-                //次のメッセージ番号へ
-                number++;
-
                 //後ろを振り返る
                 Player.instance.playerIsBackRotate = true;
 
-                await UniTask.Delay(TimeSpan.FromSeconds(3));
+                await UniTask.Delay(TimeSpan.FromSeconds(talkMessage.talkMessage[number].waitTime));
+
+                //次のメッセージ番号へ
+                number++;
 
                 //プレイヤーの回転を保存
                 savePlayerQuaternion = Player.instance.transform.rotation;
@@ -610,166 +610,172 @@ public class MessageController : MonoBehaviour
                 return;
             }
 
-                switch (number)
-                {
-                    case 27:
-                    case 33:
-                        messageText.text = "";
-                        number++;
+            //isPlaySoundNoiseStatusが2の場合
+            if (talkMessage.talkMessage[number].isPlaySoundNoiseStatus == 2) 
+            {
+                messageText.text = "";
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(1));
+                //BGMを止める
+                MusicController.instance.StopBGM(GameClearController.instance.GetAudioSourceBGM(),
+                    sO_BGM.GetBGMClip(GameClearController.instance.GetGameClearSceneBGMId()), GameClearController.instance.GetGameClearSceneBGMId());
 
-                        //スペースキー押下で次のメッセージを書く
-                        showTalkMessage.ShowGameTalkMessage(number);
-                        break;
+                //画面ブラックアウト
+                isBlackOutPanel = true;
+                ViewBlackOutPanel();
 
-                    //会話終了してチュートリアルに入る
-                    case 36:
-                        ResetMessage();
+                await UniTask.Delay(TimeSpan.FromSeconds(talkMessage.talkMessage[number].waitTime));
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+                number++;
 
-                        //画面をブラックアウト
-                        isBlackOutPanel = true;
-                        ViewBlackOutPanel();
+                //ノイズを流す
+                audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
+                MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+                //文字の色を赤色に設定
+                messageText.color = Color.red;
 
-                        //カナメをワープ
-                        Kaname.instance.WarpPostion(1, 0.505f, 7);
+                Write(talkMessage.talkMessage[number].message);
 
-                        ////チュートリアル用ドキュメントを表示
-                        GameController.instance.tutorialDocument.SetActive(true);
+                await ShowNextMessage();
 
-                        //画面ブラックアウトを解除
-                        isBlackOutPanel = false;
-                        ViewBlackOutPanel();
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+                ResetMessage();
 
-                        //システムメッセージ
-                        showSystemMessage.ShowGameSystemMessage(9);
-                        break;
+                //ゲームクリアパネルを表示
+                GameClearController.instance.ViewGameClearUI();
 
-                    case 42:
-                        ResetMessage();
+                //画面ブラックアウトを解除
+                isBlackOutPanel = false;
+                ViewBlackOutPanel();
 
-                        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+                //処理をスキップ
+                return;
+            }
 
-                        showSystemMessage.ShowGameSystemMessage(10);
-                        break;
+            //待ち時間を発生させるステータスが1の場合
+            if (talkMessage.talkMessage[number].isWaitStatus == 1) 
+            {
+                messageText.text = "";
 
-                    case 43:
-                        ResetMessage();
+                //指定の秒数間待機
+                await UniTask.Delay(TimeSpan.FromSeconds(talkMessage.talkMessage[number].waitTime));
 
-                        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+                number++;
 
-                        showSystemMessage.ShowGameSystemMessage(11);
-                        break;
+                //スペースキー押下で次のメッセージを書く
+                showTalkMessage.ShowGameTalkMessage(number);
 
-                    //チュートリアルミステリーアイテムを表示
-                    case 45:
-                        ResetMessage();
+                //処理をスキップ
+                return;
+            }
 
-                        //チュートリアル用アイテムを表示
-                        GameController.instance.tutorialMysteryItem01.SetActive(true);
-                        GameController.instance.tutorialMysteryItem02.SetActive(true);
+            //チュートリアルフラグが1の場合
+            if (talkMessage.talkMessage[number].isTutorialStatus == 1) 
+            {
+                //会話終了してチュートリアルに入る
+                ResetMessage();
 
-                        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                        showSystemMessage.ShowGameSystemMessage(12);
-                        break;
+                //画面をブラックアウト
+                isBlackOutPanel = true;
+                ViewBlackOutPanel();
 
-                    case 46:
-                        ResetMessage();
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+                //カナメをワープ
+                Kaname.instance.WarpPostion(1, 0.505f, 7);
 
-                        showSystemMessage.ShowGameSystemMessage(13);
-                        break;
+                ////チュートリアル用ドキュメントを表示
+                GameController.instance.tutorialDocument.SetActive(true);
 
+                //画面ブラックアウトを解除
+                isBlackOutPanel = false;
+                ViewBlackOutPanel();
 
-                    case 48:
-                        ResetMessage();
+                await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+                //システムメッセージ
+                showSystemMessage.ShowGameSystemMessage(talkMessage.talkMessage[number].showSystemMessageNumber);
 
-                        showSystemMessage.ShowGameSystemMessage(14);
-                        break;
+                //処理をスキップ
+                return;
+            }
 
-                    case 68:
-                        ResetMessage();
+            //チュートリアルフラグが2の場合
+            if (talkMessage.talkMessage[number].isTutorialStatus == 2) 
+            {
+                ResetMessage();
 
-                        //チュートリアル用引き出しを表示
-                        GameController.instance.GetTutorialDrawer().SetActive(true);
+                GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
-                        //プレイヤーカメラの回転を元に戻す
-                        PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                        PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
+                showSystemMessage.ShowGameSystemMessage(talkMessage.talkMessage[number].showSystemMessageNumber);
 
-                        //ゲームモードステータスをInGameに設定
-                        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
-                        break;
+                //処理をスキップ
+                return;
+            }
 
-                    case 70:
-                        messageText.text = "";
-                        number++;
+            //チュートリアルフラグが3の場合
+            if (talkMessage.talkMessage[number].isTutorialStatus == 3)
+            {
+                ResetMessage();
 
-                        //画面ブラックアウトを解除
-                        isBlackOutPanel = false;
-                        ViewBlackOutPanel();
+                //チュートリアル用ミステリーアイテムを表示
+                GameController.instance.tutorialMysteryItem01.SetActive(true);
+                GameController.instance.tutorialMysteryItem02.SetActive(true);
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(1));
+                GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
-                        showTalkMessage.ShowGameTalkMessage(number);
-                        break;
+                showSystemMessage.ShowGameSystemMessage(12);
 
-                    case 86:
-                        messageText.text = "";
-                        number++;
+                //処理をスキップ
+                return;
+            }
 
-                    //BGMを止める
-                    MusicController.instance.StopBGM(GameClearController.instance.GetAudioSourceBGM(),
-                        sO_BGM.GetBGMClip(GameClearController.instance.GetGameClearSceneBGMId()), GameClearController.instance.GetGameClearSceneBGMId());
+            //会話終了パターンその1の場合
+            if (talkMessage.talkMessage[number].isEndStatus == 1) 
+            {
+                ResetMessage();
 
-                    //画面ブラックアウト
-                    isBlackOutPanel = true;
-                            ViewBlackOutPanel();
+                //チュートリアル用引き出しを表示
+                GameController.instance.GetTutorialDrawer().SetActive(true);
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(1));
+                //プレイヤーカメラの回転を元に戻す
+                PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 
-                        //ノイズを流す
-                        audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
-                        MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
+                //ゲームモードステータスをInGameに設定
+                GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
-                        //文字の色を赤色に設定
-                        messageText.color = Color.red;
+                //処理をスキップ
+                return;
+            }
 
-                        Write(talkMessage.talkMessage[number].message);
+            //ブラックアウト関連ステータスが2の場合
+            if (talkMessage.talkMessage[number].isBlackOutStatus == 2) 
+            {
+                messageText.text = "";
+                number++;
 
-                        await ShowNextMessage();
+                //画面ブラックアウトを解除
+                isBlackOutPanel = false;
+                ViewBlackOutPanel();
 
-                        await UniTask.Delay(TimeSpan.FromSeconds(0.5));
+                await UniTask.Delay(TimeSpan.FromSeconds(1));
 
-                        ResetMessage();
+                showTalkMessage.ShowGameTalkMessage(number);
 
-                        //ゲームクリアパネルを表示
-                        GameClearController.instance.ViewGameClearUI();
+                //処理をスキップ
+                return;
+            }
 
-                        //画面ブラックアウトを解除
-                        isBlackOutPanel = false;
-                        ViewBlackOutPanel();
-                        break;
+            //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
+            messageText.text = "";
+            number++;
 
-                    //メッセージ番号に対応しているメッセージを記載＆次のメッセージ番号を用意
-                    default:
-                        messageText.text = "";
-                        number++;
-
-                        //スペースキー押下で次のメッセージを書く
-                        showTalkMessage.ShowGameTalkMessage(number);
-                        break;
-                }
+            //スペースキー押下で次のメッセージを書く
+            showTalkMessage.ShowGameTalkMessage(number);
         }
     }
 
