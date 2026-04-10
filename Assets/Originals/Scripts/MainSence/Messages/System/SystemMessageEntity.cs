@@ -16,6 +16,21 @@ public class SystemMessageEntity
     public string message;
 
     /// <summary>
+    /// 日本語メッセージサイズ
+    /// </summary>
+    public int messageSizeJapanese;
+
+    /// <summary>
+    /// 英語メッセージ
+    /// </summary>
+    public string messageEnglish;
+
+    /// <summary>
+    /// 英語メッセージサイズ
+    /// </summary>
+    public int messageSizeEnglish;
+
+    /// <summary>
     /// InputPlayerNameFieldに関するステータス（0:何もなし、1:InputPlayerNameFieldを表示、2:InputPlayerNameFieldを再度表示）
     /// </summary>
     public int isInputPlayerNameFieldStatus;

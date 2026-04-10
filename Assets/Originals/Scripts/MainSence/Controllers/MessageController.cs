@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
+using static LanguageController;
 using static UnityEngine.Rendering.DebugUI;
 
 /// <summary>
@@ -806,8 +807,34 @@ public class MessageController : MonoBehaviour
             isMessagePanel = true;
             ViewMessagePanel();
 
-            //エクセルデータ型.リスト型[番号].カラム名
-            Write(systemMessage.systemMessage[number].message);
+            //言語ステータスに応じて、テキストを変更する
+            switch (LanguageController.instance.GetLanguageStatus())
+            {
+                //日本語の場合
+                case LanguageStatus.kJapanese:
+
+                    //メッセージテキストのフォントサイズを日本語用に設定
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizeJapanese;
+
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(systemMessage.systemMessage[number].message);
+                    break;
+
+                //英語の場合
+                case LanguageStatus.kEnglish:
+
+                    //メッセージテキストのフォントサイズを英語用に設定
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizeEnglish;
+
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(systemMessage.systemMessage[number].messageEnglish);
+                    break;
+
+                //それ以外の場合
+                default:
+                    Debug.LogError("想定していない言語ステータスです");
+                    break;
+            }
 
             //InputPlayerNameFieldに関するステータスが1の場合
             if (systemMessage.systemMessage[number].isInputPlayerNameFieldStatus == 1)
@@ -858,6 +885,7 @@ public class MessageController : MonoBehaviour
                 messageText.color = Color.red;
 
                 Write(systemMessage.systemMessage[number].message);
+                SettingLanguageSystemMessage(number);
 
                 await ShowNextMessage();
 
@@ -1066,6 +1094,42 @@ public class MessageController : MonoBehaviour
     }
 
     /// <summary>
+    /// システムメッセージの言語を設定
+    /// </summary>
+    /// <param name="number">メッセージ番号</param>
+    private void SettingLanguageSystemMessage(int number) 
+    {
+        //言語ステータスに応じて、テキストを変更する
+        switch (LanguageController.instance.GetLanguageStatus())
+        {
+            //日本語の場合
+            case LanguageStatus.kJapanese:
+
+                //メッセージテキストのフォントサイズを日本語用に設定
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizeJapanese;
+
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(systemMessage.systemMessage[number].message);
+                break;
+
+            //英語の場合
+            case LanguageStatus.kEnglish:
+
+                //メッセージテキストのフォントサイズを英語用に設定
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizeEnglish;
+
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(systemMessage.systemMessage[number].messageEnglish);
+                break;
+
+            //それ以外の場合
+            default:
+                Debug.LogError("想定していない言語ステータスです");
+                break;
+        }
+    }
+
+    /// <summary>
     /// ゴールメッセージを表示
     /// </summary>
     /// <param name="number">メッセージ番号</param>
@@ -1099,8 +1163,29 @@ public class MessageController : MonoBehaviour
             //名前を一時的に保存
             inputPlayerNameField.text = playerName;
 
-            //確認用テキストに入力した名前を表示
-            CheckInputNameText.text = inputPlayerNameField.text + " でよろしいですか？";
+
+            //言語ステータスに応じて、テキストを変更する
+            switch (LanguageController.instance.GetLanguageStatus())
+            {
+                //日本語の場合
+                case LanguageStatus.kJapanese:
+
+                    //確認用テキストに入力した名前を表示
+                    CheckInputNameText.text = inputPlayerNameField.text + " でよろしいですか？";
+                    break;
+
+                //英語の場合
+                case LanguageStatus.kEnglish:
+
+                    //確認用テキストに入力した名前を表示
+                    CheckInputNameText.text = "Is it correct as " + inputPlayerNameField.text + "？";
+                    break;
+
+                //それ以外の場合
+                default:
+                    Debug.LogError("想定していない言語ステータスです");
+                    break;
+            }
 
             //入力内容確認パネルを表示
             CheckInputNamePanel.SetActive(true);

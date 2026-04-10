@@ -479,6 +479,14 @@ public class GameController : MonoBehaviour
             //フルスクリーンフラグ値を保存した値に設定
             ScreenAspect.instance.SetFullScreenFlag(isFullScreen);
         }
+
+
+        //LanguageControllerが存在する場合
+        if (LanguageController.instance != null)
+        {
+            //言語ステータスを保存した値に設定
+            LanguageController.instance.SetLanguageStatus(saveLanguageStatus);
+        }
     }
 
     /// <summary>
@@ -595,18 +603,11 @@ public class GameController : MonoBehaviour
             saveDifficultyLevelStatus = DifficultyLevelController.DifficultyLevel.kNone;
         }
 
-        //LanguageControllerが存在する場合
-        if (LanguageController.instance != null) 
-        {
-            //言語ステータスを保存した値に設定
-            LanguageController.instance.SetLanguageStatus(saveLanguageStatus);
-        }
-
         //リセット(デバッグ用。新しいシーン遷移時用データ用パラメータが追加された場合に一度実行すること)
         //例：新規のDictionary型パラメータが追加された際に実行する
         //実行時には、テストプレイ終了方法を必ず停止ボタンで止めること
         //(「ゲーム終了」ボタンを押下場合、セーブした値が残ってしまうため)
-        CallRestDataMethod();
+        //CallRestDataMethod();
     }
 
     private void Update()

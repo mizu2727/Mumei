@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static GameController;
 
 public class LanguageController : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class LanguageController : MonoBehaviour
 
     [Header("ボタンテキストメッセージ(Prefabをアタッチ)")]
     [SerializeField] private ButtonMessage buttonMessage;
+
+    [Header("UIテキストメッセージ(Prefabをアタッチ)")]
+    [SerializeField] private UITextMessage uITextMessage;
 
     [Header("言語ステータス(ヒエラルキー上からの編集禁止)")]
     public LanguageStatus languageStatus;
@@ -152,6 +156,9 @@ public class LanguageController : MonoBehaviour
     /// </summary>
     private void SettingLanguageText() 
     {
+        //保存用変数に言語設定を保存する
+        saveLanguageStatus = languageStatus;
+
         //言語ステータスに応じて、テキストを変更する
         switch (languageStatus) 
         {
@@ -170,6 +177,18 @@ public class LanguageController : MonoBehaviour
                     buttonTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeJapanese;
                 }
 
+                //UIテキストを日本語に変更する
+                for (int i = 0; i < uITextArray.Length; i++)
+                {
+                    uITextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageJapanese;
+                }
+
+                //UIサイズを日本語用に変更する
+                for (int i = 0; i < uITextArray.Length; i++)
+                {
+                    uITextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeJapanese;
+                }
+
                 break;
 
             //英語
@@ -185,6 +204,18 @@ public class LanguageController : MonoBehaviour
                 for (int i = 0; i < buttonTextArray.Length; i++)
                 {
                     buttonTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeEnglish;
+                }
+
+                //UIテキストを英語に変更する
+                for (int i = 0; i < uITextArray.Length; i++)
+                {
+                    uITextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageEnglish;
+                }
+
+                //UIサイズを英語用に変更する
+                for (int i = 0; i < uITextArray.Length; i++)
+                {
+                    uITextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeEnglish;
                 }
 
                 break;
