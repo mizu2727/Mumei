@@ -65,6 +65,9 @@ public class SaveLoad : MonoBehaviour
 
             //CompassTextPanel手動閲覧フラグを保存
             isSelfViewCompassTextPanel = GameController.isSaveSelfViewCompassTextPanel,
+
+            //言語設定を保存
+            _languageStatusStatus = GameController.saveLanguageStatus,
         };
 
         //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
@@ -171,6 +174,7 @@ public class SaveLoad : MonoBehaviour
             GameController.isSaveSelfViewOperationPanel = userData.isSelfViewOperationPanel;
             GameController.isSaveSelfViewUseItemTextPanel = userData.isSelfViewUseItemTextPanel;
             GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
+            GameController.saveLanguageStatus = userData._languageStatusStatus;
 
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
             Dictionary<string, int> restoredDict = new Dictionary<string, int>();
@@ -307,6 +311,9 @@ public class SaveLoad : MonoBehaviour
 
             //難易度ステータスを保存
             _difficultyLevelStatus = GameController.saveDifficultyLevelStatus,
+
+            //言語設定を保存
+            _languageStatusStatus = GameController.saveLanguageStatus,
         };
 
 
@@ -412,6 +419,7 @@ public class SaveLoad : MonoBehaviour
             GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
             GameController.saveStageSceneNameArrayIndex = userData._stageSceneNameArrayIndex;
             GameController.saveDifficultyLevelStatus = userData._difficultyLevelStatus;
+            GameController.saveLanguageStatus = userData._languageStatusStatus;
 
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
             Dictionary<string, int> restoredDict = new Dictionary<string, int>();

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LanguageController : MonoBehaviour
@@ -16,6 +17,19 @@ public class LanguageController : MonoBehaviour
     [Header("言語ステータス(ヒエラルキー上からの編集禁止)")]
     public LanguageStatus languageStatus;
 
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
+    /// <summary>
+    /// SE用audioSource
+    /// </summary>
+    private AudioSource audioSourceSE;
+
+    /// <summary>
+    /// ボタンSEのID
+    /// </summary>
+    private readonly int buttonSEid = 4;
+
     /// <summary>
     /// 言語ステータス
     /// </summary>
@@ -24,12 +38,12 @@ public class LanguageController : MonoBehaviour
         /// <summary>
         /// 日本語
         /// </summary>
-        Japanese,
+        kJapanese,
 
         /// <summary>
         /// 英語
         /// </summary>
-        English,
+        kEnglish,
     }
 
     [Header("ボタン配下内のテキストを格納(ヒエラルキー上からアタッチすること)")]
@@ -63,6 +77,54 @@ public class LanguageController : MonoBehaviour
         this.languageStatus = languageStatus;
     }
 
+    private void OnEnable()
+    {
+        //sceneLoadedに「OnSceneLoaded」関数を追加
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
+    }
+
+    private void OnDisable()
+    {
+        //シーン遷移時に設定するための関数登録解除
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        if (audioSourceSE != null)
+        {
+            audioSourceSE.volume = volume;
+        }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
+    {
+        
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        //AudioSourceを取得
+        audioSourceSE = gameObject.AddComponent<AudioSource>();
+
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
+        audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
+        audioSourceSE.playOnAwake = false;
+    }
+
     private void Awake()
     {
         //シングルトンの実装
@@ -79,8 +141,7 @@ public class LanguageController : MonoBehaviour
 
     private void Start()
     {
-        //デバッグ用…英語に設定する
-        languageStatus = LanguageStatus.English;
+        InitializeAudioSource();
 
         //言語を設定する
         SettingLanguageText();
@@ -95,7 +156,7 @@ public class LanguageController : MonoBehaviour
         switch (languageStatus) 
         {
             //日本語
-            case LanguageStatus.Japanese:
+            case LanguageStatus.kJapanese:
 
                 //ボタンテキストを日本語に変更する
                 for (int i = 0; i < buttonTextArray.Length; i++)
@@ -112,7 +173,7 @@ public class LanguageController : MonoBehaviour
                 break;
 
             //英語
-            case LanguageStatus.English:
+            case LanguageStatus.kEnglish:
 
                 //ボタンテキストを英語に変更する
                 for (int i = 0; i < buttonTextArray.Length; i++)
@@ -128,5 +189,35 @@ public class LanguageController : MonoBehaviour
 
                 break;
         }
+    }
+
+    /// <summary>
+    /// 日本語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedJapaseneButton() 
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //言語ステータスを日本語に設定する
+        languageStatus = LanguageStatus.kJapanese;
+
+        //言語を設定する
+        SettingLanguageText();
+    }
+
+    /// <summary>
+    /// 英語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedEnglishButton() 
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //言語ステータスを英語に設定する
+        languageStatus = LanguageStatus.kEnglish;
+
+        //言語を設定する
+        SettingLanguageText();
     }
 }

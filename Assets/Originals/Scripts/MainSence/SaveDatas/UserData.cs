@@ -81,6 +81,9 @@ public class UserData
 
     [Header("セーブするステージ04難易度毎クリアタイムリスト(JsonUtilityで保存可能な形式への変換用List)")]
     public List<Stage04DifficultyLevelClearTimeData> stage04DifficultyLevelClearTimeDataList = new();
+
+    [Header("セーブする言語ステータス")]
+    public LanguageController.LanguageStatus _languageStatusStatus;
 }
 
 /// <summary>

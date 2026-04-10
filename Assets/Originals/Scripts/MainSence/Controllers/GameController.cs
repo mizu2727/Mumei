@@ -211,6 +211,9 @@ public class GameController : MonoBehaviour
     {stringNightmareLevel, "--:--:--"},
     };
 
+    [Header("セーブする言語ステータス")]
+    public static LanguageController.LanguageStatus saveLanguageStatus = LanguageController.LanguageStatus.kJapanese;
+
     /// <summary>
     /// ゲームモードステータス
     /// </summary>
@@ -590,6 +593,13 @@ public class GameController : MonoBehaviour
         {
             //難易度ステータスを保存した値に設定
             saveDifficultyLevelStatus = DifficultyLevelController.DifficultyLevel.kNone;
+        }
+
+        //LanguageControllerが存在する場合
+        if (LanguageController.instance != null) 
+        {
+            //言語ステータスを保存した値に設定
+            LanguageController.instance.SetLanguageStatus(saveLanguageStatus);
         }
 
         //リセット(デバッグ用。新しいシーン遷移時用データ用パラメータが追加された場合に一度実行すること)

@@ -32,10 +32,14 @@ public class OptionUIController : MonoBehaviour
     [Header("説明関係設定パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject explanationPanel;
 
-
     [Header("説明関係ボタン(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject explanationButton;
 
+    [Header("言語設定パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject languagePanel;
+
+    [Header("言語設定ボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject languageButton;
 
     /// <summary>
     /// オプションパネル閲覧フラグ
@@ -66,6 +70,11 @@ public class OptionUIController : MonoBehaviour
     /// 説明関係設定パネル閲覧フラグ
     /// </summary>
     private bool isViewExplanationPanel = false;
+
+    /// <summary>
+    /// 言語設定パネル閲覧フラグ
+    /// </summary>
+    private bool isViewLanguagePanel = false;
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -165,6 +174,20 @@ public class OptionUIController : MonoBehaviour
             //explanationButtonをnullに設定
             explanationButton = null;
         }
+
+        //言語設定パネルが存在する場合
+        if (languagePanel != null)
+        {
+            //languagePanelをnullに設定
+            languagePanel = null;
+        }
+
+        //言語設定ボタンが存在する場合
+        if (languageButton != null)
+        {
+            //languageButtonをnullに設定
+            languageButton = null;
+        }
     }
 
     /// <summary>
@@ -204,6 +227,10 @@ public class OptionUIController : MonoBehaviour
         //説明関係設定パネルを非表示
         isViewExplanationPanel = false;
         ChangeExplanationPanel();
+
+        //言語設定パネルを非表示
+        isViewLanguagePanel = false;
+        ChangeLanguagePanel();
 
         //現在のシーン名がTitleSceneの場合
         if (stringTitleScene == SceneManager.GetActiveScene().name)
@@ -306,6 +333,10 @@ public class OptionUIController : MonoBehaviour
         isViewExplanationPanel = false;
         ChangeExplanationPanel();
 
+        //言語設定パネルを非表示
+        isViewLanguagePanel = false;
+        ChangeLanguagePanel();
+
 
         //感度設定パネルを表示
         isViewMouseSensitivityPanel = true;
@@ -337,6 +368,10 @@ public class OptionUIController : MonoBehaviour
         isViewExplanationPanel = false;
         ChangeExplanationPanel();
 
+        //言語設定パネルを非表示
+        isViewLanguagePanel = false;
+        ChangeLanguagePanel();
+
 
         //音量調整設定パネルを表示
         isViewAudioAdjustmentPanel = true;
@@ -344,7 +379,7 @@ public class OptionUIController : MonoBehaviour
     }
 
     /// <summary>
-    /// 「暗さ」ボタン押下
+    /// 「明るさ」ボタン押下
     /// </summary>
     public void OnClickedBrightnessAdjustmentButton() 
     {
@@ -367,6 +402,10 @@ public class OptionUIController : MonoBehaviour
         //説明関係設定パネルを非表示
         isViewExplanationPanel = false;
         ChangeExplanationPanel();
+
+        //言語設定パネルを非表示
+        isViewLanguagePanel = false;
+        ChangeLanguagePanel();
 
 
         //明るさ調整設定パネルを表示
@@ -399,6 +438,10 @@ public class OptionUIController : MonoBehaviour
         isViewExplanationPanel = false;
         ChangeExplanationPanel();
 
+        //言語設定パネルを非表示
+        isViewLanguagePanel = false;
+        ChangeLanguagePanel();
+
 
         //スクリーン調整設定パネルを表示
         isViewScreenAdjustmentPanel = true;
@@ -430,10 +473,47 @@ public class OptionUIController : MonoBehaviour
         isViewScreenAdjustmentPanel = false;
         ChangeScreenAdjustmentPanel();
 
+        //言語設定パネルを非表示
+        isViewLanguagePanel = false;
+        ChangeLanguagePanel();
+
 
         //説明関係設定パネルを表示
         isViewExplanationPanel = true;
         ChangeExplanationPanel();
+    }
+
+
+    public void OnClickedLanguageButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //他の設定パネルを非表示にする
+        //感度設定パネルを非表示にする
+        isViewMouseSensitivityPanel = false;
+        ChangeMouseSensitivityPanel();
+
+        //音量調整設定パネルを非表示
+        isViewAudioAdjustmentPanel = false;
+        ChangeAudioAdjustmentPanel();
+
+        //明るさ調整設定パネルを非表示
+        isViewBrightnessAdjustmentPanel = false;
+        ChangeBrightnessAdjustmentPanel();
+
+        //スクリーン調整設定パネルを非表示
+        isViewScreenAdjustmentPanel = false;
+        ChangeScreenAdjustmentPanel();
+
+        //説明関係設定パネルを非表示
+        isViewExplanationPanel = false;
+        ChangeExplanationPanel();
+
+
+        //言語設定パネルを表示
+        isViewLanguagePanel = true;
+        ChangeLanguagePanel();
     }
 
     /// <summary>
@@ -479,6 +559,10 @@ public class OptionUIController : MonoBehaviour
         //説明関係設定パネルを非表示
         isViewExplanationPanel = false;
         ChangeExplanationPanel();
+
+        //言語設定パネルを非表示
+        isViewLanguagePanel = false;
+        ChangeLanguagePanel();
 
         //オプションパネルを非表示
         isOptionPanel = false;
@@ -597,6 +681,24 @@ public class OptionUIController : MonoBehaviour
         {
             //非表示
             explanationPanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 言語設定パネルの表示/非表示
+    /// </summary>
+    private void ChangeLanguagePanel() 
+    {
+        //フラグ値がオンの場合
+        if (isViewLanguagePanel)
+        {
+            //表示
+            languagePanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            languagePanel.SetActive(false);
         }
     }
 }
