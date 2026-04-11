@@ -874,7 +874,31 @@ public class DifficultyLevelController : MonoBehaviour
     /// <param name="number">難易度説明番号</param>
     public void ShowDifficultyLevelExplanation(int number)
     {
-        difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanation;
+        //言語ステータスに応じて、テキストを変更する
+        switch (LanguageController.instance.GetLanguageStatus()) 
+        {
+            case LanguageController.LanguageStatus.kJapanese:
+
+                //日本語の場合は日本語の説明文を表示する
+                difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanation;
+
+                //フォントサイズを日本語の説明文に適したサイズにする
+                difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeJapanese;
+                break;
+
+            case LanguageController.LanguageStatus.kEnglish:
+
+                //英語の場合は英語の説明文を表示する
+                difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationEnglish;
+
+                //フォントサイズを英語の説明文に適したサイズにする
+                difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeEnglish;
+                break;
+
+            default:
+                Debug.LogError("言語ステータスが正しい値ではないため、難易度説明文を表示することができません。");
+                break;
+        }
 
         //難易度説明欄パネルを表示にする
         isDifficultyLevelExplanationPanel = true;
