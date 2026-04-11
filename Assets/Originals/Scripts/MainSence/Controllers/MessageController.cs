@@ -507,8 +507,34 @@ public class MessageController : MonoBehaviour
             //メッセージ系のテキストの色を変更
             ChangeTextColor(number);
 
-            //エクセルデータ型.リスト型[番号].カラム名
-            Write(talkMessage.talkMessage[number].message);
+            //言語ステータスに応じて、テキストを変更する
+            switch (LanguageController.instance.GetLanguageStatus())
+            {
+                //日本語の場合
+                case LanguageStatus.kJapanese:
+
+                    //メッセージテキストのフォントサイズを日本語用に設定
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizeJapanese;
+
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(talkMessage.talkMessage[number].message);
+                    break;
+
+                //英語の場合
+                case LanguageStatus.kEnglish:
+
+                    //メッセージテキストのフォントサイズを英語用に設定
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizeEnglish;
+
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(talkMessage.talkMessage[number].messageEnglish);
+                    break;
+
+                //それ以外の場合
+                default:
+                    Debug.LogError("想定していない言語ステータスです");
+                    break;
+            }
 
 
             //会話している人の名前を表示
@@ -585,7 +611,8 @@ public class MessageController : MonoBehaviour
                 //メッセージ系のテキストの色を変更
                 ChangeTextColor(number);
 
-                Write(talkMessage.talkMessage[number].message);
+                //言語ステータスに応じて、テキストを変更して表示する
+                SettingLanguageTalkMessage(number);
 
                 //speakerNameTextが存在する場合
                 if (speakerNameText != null)
@@ -640,7 +667,8 @@ public class MessageController : MonoBehaviour
                 //文字の色を赤色に設定
                 messageText.color = Color.red;
 
-                Write(talkMessage.talkMessage[number].message);
+                //言語ステータスに応じて、テキストを変更して表示する
+                SettingLanguageTalkMessage(number);
 
                 await ShowNextMessage();
 
@@ -782,6 +810,42 @@ public class MessageController : MonoBehaviour
 
             //スペースキー押下で次のメッセージを書く
             showTalkMessage.ShowGameTalkMessage(number);
+        }
+    }
+
+    /// <summary>
+    /// 会話メッセージの言語を設定
+    /// </summary>
+    /// <param name="number">メッセージ番号</param>
+    private void SettingLanguageTalkMessage(int number)
+    {
+        //言語ステータスに応じて、テキストを変更する
+        switch (LanguageController.instance.GetLanguageStatus())
+        {
+            //日本語の場合
+            case LanguageStatus.kJapanese:
+
+                //メッセージテキストのフォントサイズを日本語用に設定
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizeJapanese;
+
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(talkMessage.talkMessage[number].message);
+                break;
+
+            //英語の場合
+            case LanguageStatus.kEnglish:
+
+                //メッセージテキストのフォントサイズを英語用に設定
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizeEnglish;
+
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(talkMessage.talkMessage[number].messageEnglish);
+                break;
+
+            //それ以外の場合
+            default:
+                Debug.LogError("想定していない言語ステータスです");
+                break;
         }
     }
 

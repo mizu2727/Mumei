@@ -21,6 +21,26 @@ public class TalkMessageEntity
     public string speakerName;
 
     /// <summary>
+    /// 日本語メッセージサイズ
+    /// </summary>
+    public int messageSizeJapanese;
+
+    /// <summary>
+    /// 英語メッセージ
+    /// </summary>
+    public string messageEnglish;
+
+    /// <summary>
+    /// 話しているキャラクターの名前の英語表記
+    /// </summary>
+    public string speakerNameEnglish;
+
+    /// <summary>
+    /// 英語メッセージサイズ
+    /// </summary>
+    public int messageSizeEnglish;
+
+    /// <summary>
     /// 後ろを振り向くステータス（0:振り向かない、1:振り向く）
     /// </summary>
     public int isplayerBackRotateStatus;
