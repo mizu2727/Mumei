@@ -29,4 +29,9 @@ public class UITextMessageEntity
     /// 英語メッセージサイズ
     /// </summary>
     public int messageSizeEnglish;
+
+    /// <summary>
+    /// メモ欄
+    /// </summary>
+    public string memo;
 }

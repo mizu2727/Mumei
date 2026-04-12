@@ -29,4 +29,9 @@ public class ButtonMessageEntity
     /// 英語メッセージサイズ
     /// </summary>
     public int messageSizeEnglish;
+
+    /// <summary>
+    /// メモ欄
+    /// </summary>
+    public string memo;
 }
