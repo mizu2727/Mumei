@@ -544,8 +544,21 @@ public class MessageController : MonoBehaviour
             //speakerNameTextが存在する場合
             if (speakerNameText != null) 
             {
-                //会話している人の名前を設定
-                speakerNameText.text = talkMessage.talkMessage[number].speakerName;
+                //言語ステータスに応じて、テキストを変更する
+                switch (LanguageController.instance.GetLanguageStatus()) 
+                {
+                    case LanguageStatus.kJapanese:
+
+                    //会話している人の名前を設定
+                    speakerNameText.text = talkMessage.talkMessage[number].speakerName;
+                    break;
+
+                    case LanguageStatus.kEnglish:
+
+                    //会話している人の名前を設定
+                    speakerNameText.text = talkMessage.talkMessage[number].speakerNameEnglish;
+                        break;
+                }
             }
 
             //SceneがGameClearSceneでない場合(GameClearSceneからデバッグプレイする際に発生するエラーを防ぐため)
@@ -617,8 +630,21 @@ public class MessageController : MonoBehaviour
                 //speakerNameTextが存在する場合
                 if (speakerNameText != null)
                 {
-                    //会話している人の名前を設定
-                    speakerNameText.text = talkMessage.talkMessage[number].speakerName;
+                    //言語ステータスに応じて、テキストを変更する
+                    switch (LanguageController.instance.GetLanguageStatus())
+                    {
+                        case LanguageStatus.kJapanese:
+
+                            //会話している人の名前を設定
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerName;
+                            break;
+
+                        case LanguageStatus.kEnglish:
+
+                            //会話している人の名前を設定
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerNameEnglish;
+                            break;
+                    }
                 }
 
                 await ShowNextMessage();

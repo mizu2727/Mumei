@@ -376,7 +376,7 @@ public class PlayerInteract : MonoBehaviour
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
                         //対象アイテムがプレイヤーライトの場合
-                        if (item.itemType == ItemType.PlayerLight) 
+                        if (item.GetItemType() == ItemType.PlayerLight) 
                         {
                             //拾ったアイテムをステージ上から削除
                             DestroyItem(pickUpItem);
@@ -388,7 +388,7 @@ public class PlayerInteract : MonoBehaviour
                             MessageController.instance.ShowInventoryMessage(4);
                         }
                         //対象アイテムがコンパスの場合
-                        else if (item.itemType == ItemType.Compass)
+                        else if (item.GetItemType() == ItemType.Compass)
                         {
                             //コンパスの針のUIを表示
                             Compass.instance.ViewOrHiddenCompassArrowImage(true);
@@ -397,13 +397,13 @@ public class PlayerInteract : MonoBehaviour
                             DestroyItem(pickUpItem);
                         }
                         //対象アイテムがドキュメントorミステリーアイテムの場合
-                        else if ((item.itemType == ItemType.Document) || (item.itemType == ItemType.MysteryItem))
+                        else if ((item.GetItemType() == ItemType.Document) || (item.GetItemType() == ItemType.MysteryItem))
                         {
                             //ポーズ画面内のアイテムのパネル内に追加する
                             sO_Item.AddDocumentORMysteryItem(item);
 
                             //ドキュメントの場合
-                            if (item.itemType == ItemType.Document)
+                            if (item.GetItemType() == ItemType.Document)
                             {
                                 //ドキュメントの場合は取得SEを再生してから削除
                                 DestroyDocument(pickUpItem);
@@ -415,10 +415,10 @@ public class PlayerInteract : MonoBehaviour
                             }
                         }
                         //対象アイテムがプレイヤーが使用できるアイテムの場合
-                        else if (item.itemType == ItemType.UseItem)
+                        else if (item.GetItemType() == ItemType.UseItem)
                         {
                             //インベントリに空きがあるかを確認
-                            if ((Inventory.instance.GetKeepItemId() == 99999) || (Inventory.instance.GetKeepItemId() == item.id))
+                            if ((Inventory.instance.GetKeepItemId() == 99999) || (Inventory.instance.GetKeepItemId() == item.GetId()))
                             {
                                 //インベントリに追加
                                 sO_Item.AddUseItem(item);

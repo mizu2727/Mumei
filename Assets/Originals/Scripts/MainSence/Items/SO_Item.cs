@@ -85,57 +85,57 @@ public class SO_Item : ScriptableObject
             /// <summary>
             /// アイテムのID
             /// </summary>
-            id = item.id;
+            id = item.GetId();
 
             /// <summary>
             /// アイテムのプレハブ
             /// </summary>
-            prefab = item.prefab;
+            prefab = item.GetPrefab();
 
             /// <summary>
             /// アイテムのプレハブのAddressables名
             /// </summary>
-            prefabPath = item.prefabPath;
+            prefabPath = item.GetPrefabPath();
 
             /// <summary>
             /// プレイヤーの位置からアイテムを生成したい位置
             /// </summary>
-            spawnPosition = item.spawnPosition;
+            spawnPosition = item.GetSpawnPosition();
 
             /// <summary>
             /// アイテムの回転数値
             /// </summary>
-            spawnRotation = item.spawnRotation;
+            spawnRotation = item.GetSpawnRotation();
 
             /// <summary>
             /// アイテムのアイコン画像
             /// </summary>
-            icon = item.icon;
+            icon = item.GetIcon();
 
             /// <summary>
             /// アイテムの種類
             /// </summary>
-            itemType = item.itemType;
+            itemType = item.GetItemType();
 
             /// <summary>
             /// アイテムの名前
             /// </summary>
-            itemName = item.itemName;
+            itemName = item.GetItemName();
 
             /// <summary>
             /// アイテムの説明
             /// </summary>
-            description = item.description;
+            description = item.Description();
 
             /// <summary>
             /// 所持数
             /// </summary>
-            count = item.count;
+            count = item.GetCount();
 
             /// <summary>
             /// 効果値
             /// </summary>
-            effectValue = item.effectValue;
+            effectValue = item.GetEffectValue();
         }
     }
 
@@ -190,7 +190,33 @@ public class SO_Item : ScriptableObject
         return result;
     }
 
-    
+    /// <summary>
+    /// アイテム名をidで検索して変更するメソッド
+    /// </summary>
+    /// <param name="id">アイテムID</param>
+    /// <param name="newName">アイテム名</param>
+    public void SetItemName(int id, string newName) 
+    {
+        if (itemList.Exists(item => item.id == id)) 
+        {
+            var updateItem = itemList.Find(item => item.id == id);
+            updateItem.itemName = newName;
+        }
+    }
+
+    /// <summary>
+    /// アイテム説明をidで検索して変更するメソッド
+    /// </summary>
+    /// <param name="id">アイテムID</param>
+    /// <param name="newDescription">アイテム説明</param>
+    public void SetItemDescription(int id, string newDescription) 
+    {
+        if (itemList.Exists(item => item.id == id)) 
+        {
+            var updateItem = itemList.Find(item => item.id == id);
+            updateItem.description = newDescription;
+        }
+    }
 
 
     /// <summary>
@@ -200,7 +226,7 @@ public class SO_Item : ScriptableObject
     public void AddUseItem(Item newItem)
     {
         
-        if (!itemList.Exists(item => item.id == newItem.id))
+        if (!itemList.Exists(item => item.id == newItem.GetId()))
         {
             //アイテム新規追加
             ItemData itemData = new ItemData(newItem);
@@ -213,8 +239,8 @@ public class SO_Item : ScriptableObject
         else 
         {
             //既存アイテムの数を追加更新
-            var updateItem = itemList.Find(item => item.id == newItem.id);
-            updateItem.count += newItem.count;
+            var updateItem = itemList.Find(item => item.id == newItem.GetId());
+            updateItem.count += newItem.GetCount();
 
             //インベントリに追加
             Inventory.instance.GetItem(updateItem.id, updateItem.prefabPath, updateItem.spawnPosition, updateItem.spawnRotation, 
@@ -250,7 +276,7 @@ public class SO_Item : ScriptableObject
             return;
         }
 
-        if (!itemList.Exists(item => item != null && item.id == newItem.id))
+        if (!itemList.Exists(item => item != null && item.id == newItem.GetId()))
         {
             //アイテムを新規追加
             ItemData itemData = new ItemData(newItem);

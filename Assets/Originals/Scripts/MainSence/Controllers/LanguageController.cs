@@ -62,6 +62,9 @@ public class LanguageController : MonoBehaviour
     [Header("通常テキスト番号を記載(ヒエラルキー上から記載すること)")]
     [SerializeField] public int[] uITextNumberArray;
 
+    [Header("アイテムを格納(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] public Item[] itemArray;
+
 
     /// <summary>
     /// 言語ステータスを取得する
@@ -219,6 +222,19 @@ public class LanguageController : MonoBehaviour
                 }
 
                 break;
+        }
+
+        //アイテムのテキスト関連を設定する
+        for (int i = 0; i < itemArray.Length; i++)
+        {
+            itemArray[i].SettingLanguageText();
+        }
+
+        //ポーズコントローラーが存在する場合
+        if (PauseController.instance != null)
+        {
+            //ポーズコントローラーのテキスト関連を設定する
+            PauseController.instance.SettingLanguageText();
         }
     }
 

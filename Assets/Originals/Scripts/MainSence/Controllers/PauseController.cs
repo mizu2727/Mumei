@@ -163,6 +163,14 @@ public class PauseController : MonoBehaviour
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
+    [Header("ボタンテキストメッセージ(Prefabをアタッチ)")]
+    [SerializeField] private ItemMessage itemMessage;
+
+    /// <summary>
+    /// アイテム入手前の名称表示用テキスト
+    /// </summary>
+    private string defaultItemName = "?????????";
+
     /// <summary>
     /// HomeScene
     /// </summary>
@@ -1107,7 +1115,7 @@ public class PauseController : MonoBehaviour
             mysteryItemNameButton[i].onClick.AddListener(() => OnClickedMysteryItemNameButton(index));
 
             //入手していないアイテム名の初期表示を"?????????"にする
-            mysteryItemNameText[i].text = "?????????";
+            mysteryItemNameText[i].text = defaultItemName;
         }
     }
 
@@ -1147,6 +1155,35 @@ public class PauseController : MonoBehaviour
                 if (mysteryItemExplanationText.Length > 0)
                 {
                     mysteryItemExplanationText[0].text = item.description;
+
+                    //mysteryItemExplanationText[0].text = mysteryItemExplanations[index];
+                    /*
+                    //言語ステータスに応じて、テキストを変更する
+                    switch (LanguageController.instance.GetLanguageStatus()) 
+                    {
+                        case LanguageController.LanguageStatus.kJapanese:
+
+                            //ミステリーアイテム説明欄に日本語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionJapanese;
+
+                            //ミステリーアイテム説明テキストサイズを日本語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeJapanese;
+                            break;
+
+                        case LanguageController.LanguageStatus.kEnglish:
+
+                            //ミステリーアイテム説明欄に英語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionEnglish;
+
+                            //ミステリーアイテム説明テキストサイズを英語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeEnglish;
+                            break;
+
+                        default:
+                            Debug.LogWarning("その他の言語ステータス");
+                            break;
+                    }
+                    */
                 }
 
                 //画像を更新
@@ -1253,7 +1290,7 @@ public class PauseController : MonoBehaviour
                     Debug.LogWarning($"アイテム '{itemName}' が見つかりません");
 
                     //ボタンに表示されるテキストを"?????????"にする
-                    mysteryItemNameText[i].text = "?????????";
+                    mysteryItemNameText[i].text = defaultItemName;
 
                     //ボタンクリックを無効
                     mysteryItemNameButton[i].interactable = false;
@@ -1275,7 +1312,7 @@ public class PauseController : MonoBehaviour
             else
             {
                 //ボタンに表示されるテキストを"?????????"にする
-                mysteryItemNameText[i].text = "?????????";
+                mysteryItemNameText[i].text = defaultItemName;
 
                 //ボタンクリックを無効
                 mysteryItemNameButton[i].interactable = false;
@@ -1293,6 +1330,134 @@ public class PauseController : MonoBehaviour
                     mysteryItemImage[i].enabled = false;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// 言語を設定する
+    /// </summary>
+    public void SettingLanguageText() 
+    {
+        //ドキュメントIDを取得している場合
+        if (keepDocumentBookID != defaultDocumentBookID) 
+        {
+            //言語ステータスに応じて、テキストを変更する
+            switch (LanguageController.instance.GetLanguageStatus()) 
+            {
+                case LanguageController.LanguageStatus.kJapanese:
+                    //日本語の場合は、ドキュメント名称テキストを日本語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameJapanese;
+
+                    //ドキュメント名称を日本語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeJapanese;
+
+                    //説明テキストも日本語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionJapanese;
+
+                    //ドキュメント説明テキストサイズを日本語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeJapanese;
+                    break;
+
+                case LanguageController.LanguageStatus.kEnglish:
+                    //\ドキュメント名称テキストを英語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameEnglish;
+
+                    //ドキュメント名称を英語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeEnglish;
+
+                    //説明テキストも英語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionEnglish;
+
+                    //ドキュメント説明テキストサイズを英語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeEnglish;
+                    break;
+
+                default:
+                    Debug.LogWarning("その他の言語ステータス");
+                    break;
+            }
+        }
+
+        for (int i = 0; i < mysteryItemIds.Count; i++)
+        {
+            string itemName = mysteryItemNames[i];
+            var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
+
+            //Debug.Log("デバッグ変更前：" +mysteryItemNames[i] + "のIDは" + mysteryItemIds[i] + "。説明文は" + mysteryItemExplanations[i]);
+            //Debug.Log("デバッグ変更前：mysteryItemNameText[i].textは" + mysteryItemNameText[i].text + "。mysteryItemExplanationText[i].textは" + mysteryItemExplanationText[i].text);
+
+            //言語ステータスに応じて、テキストを変更する
+            switch (LanguageController.instance.GetLanguageStatus()) 
+            {
+                
+                case LanguageController.LanguageStatus.kJapanese:
+
+                    //ミステリーアイテム名称テキストを日本語にする
+                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameJapanese;
+                    //mysteryItemNameText[i].text = mysteryItemNames[i];
+                    //mysteryItemNameText[i].text = itemMessage.itemMessage[mysteryItemIds[i]].itemNameJapanese;
+                    //mysteryItemNameText[i].text = itemMessage.itemMessage[item.id].itemNameJapanese;
+                    sO_Item.SetItemName(item.id , itemMessage.itemMessage[item.id].itemNameJapanese);
+                    mysteryItemNameText[i].text = item.itemName;
+
+                    //ミステリーアイテム名称テキストサイズを日本語用に設定する
+                    //mysteryItemNameText[i].fontSize = itemMessage.itemMessage[mysteryItemIds[i]].itemNameSizeJapanese;
+                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeJapanese;
+
+                    if (0 < mysteryItemExplanationText.Length) 
+                    {
+                        //ミステリーアイテム説明テキストを日本語にする
+                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionJapanese;
+                        //mysteryItemExplanationText[i].text = mysteryItemExplanations[i];
+                        //item.description = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionJapanese;
+                        //mysteryItemExplanationText[i].text = item.description;
+                        //mysteryItemExplanationText[i].text = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionJapanese;
+                        //mysteryItemExplanationText[i].text = itemMessage.itemMessage[item.id].itemDescriptionJapanese;
+                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionJapanese);
+                        mysteryItemExplanationText[i].text = item.description;
+
+                        //ミステリーアイテム説明テキストサイズを日本語用に設定する
+                        //mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionSizeJapanese;
+                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeJapanese;
+                    }
+                    break;
+
+                case LanguageController.LanguageStatus.kEnglish:
+
+                    //ミステリーアイテム名称テキストを英語にする
+                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameEnglish;
+                    //mysteryItemNameText[i].text = mysteryItemNames[i];
+                    //mysteryItemNameText[i].text = itemMessage.itemMessage[mysteryItemIds[i]].itemNameEnglish;
+                    //mysteryItemNameText[i].text = itemMessage.itemMessage[item.id].itemNameEnglish;
+                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameEnglish);
+                    mysteryItemNameText[i].text = item.itemName;
+
+                    //ミステリーアイテム名称テキストサイズを英語用に設定する
+                    //mysteryItemNameText[i].fontSize = itemMessage.itemMessage[mysteryItemIds[i]].itemNameSizeEnglish;
+                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeEnglish;
+
+                    if (0 < mysteryItemExplanationText.Length) 
+                    {
+                        //ミステリーアイテム説明テキストを英語にする
+                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionEnglish;
+                        //mysteryItemExplanationText[i].text = mysteryItemExplanations[i];
+                        //item.description = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionEnglish;
+                        //mysteryItemExplanationText[i].text = item.description;
+                        //mysteryItemExplanationText[i].text = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionEnglish;
+                        //mysteryItemExplanationText[i].text = itemMessage.itemMessage[item.id].itemDescriptionEnglish;
+                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionEnglish);
+                        mysteryItemExplanationText[i].text = item.description;
+
+                        //ミステリーアイテム説明テキストサイズを英語に設定する
+                        //mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionSizeEnglish;
+                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeEnglish;
+                    }   
+                    break;
+            }
+
+            //Debug.Log("デバッグ変更後：" + mysteryItemNames[i] + "のIDは" + mysteryItemIds[i] + "。説明文は" + mysteryItemExplanations[i]);
+            //Debug.Log("デバッグ変更後：mysteryItemNameText[i].textは" + mysteryItemNameText[i].text + "。mysteryItemExplanationText[i].textは" + mysteryItemExplanationText[i].text);
+
         }
     }
 
