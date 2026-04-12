@@ -1199,10 +1199,41 @@ public class MessageController : MonoBehaviour
     /// <param name="number">メッセージ番号</param>
     public void ShowGoalMessage(int number) 
     {
-        messageText.text = goalMessage.goalMessage[number].message;
+        //言語ステータスに応じて、テキストを変更する
+        switch (LanguageController.instance.GetLanguageStatus())
+        {
+            //日本語の場合
+            case LanguageStatus.kJapanese:
+
+                //メッセージテキストのフォントサイズを日本語用に設定
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizeJapanese;
+
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(goalMessage.goalMessage[number].message);
+                break;
+
+            //英語の場合
+            case LanguageStatus.kEnglish:
+
+                //メッセージテキストのフォントサイズを英語用に設定
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizeEnglish;
+
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(goalMessage.goalMessage[number].messageEnglish);
+                break;
+
+            //それ以外の場合
+            default:
+                Debug.LogError("想定していない言語ステータスです");
+                break;
+        }
+
+        //メッセージパネルを表示
         isMessagePanel = true;
         ViewMessagePanel();
     }
+
+
 
     /// <summary>
     /// インベントリメッセージを表示
@@ -1210,7 +1241,36 @@ public class MessageController : MonoBehaviour
     /// <param name="number">メッセージ番号</param>
     public void ShowInventoryMessage(int number) 
     {
-        messageText.text = inventoryMessage.inventoryMessage[number].message;
+        //言語ステータスに応じて、テキストを変更する
+        switch (LanguageController.instance.GetLanguageStatus())
+        {
+            //日本語の場合
+            case LanguageStatus.kJapanese:
+
+                //メッセージテキストのフォントサイズを日本語用に設定
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeJapanese;
+
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(inventoryMessage.inventoryMessage[number].message);
+                break;
+
+            //英語の場合
+            case LanguageStatus.kEnglish:
+
+                //メッセージテキストのフォントサイズを英語用に設定
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeEnglish;
+
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(inventoryMessage.inventoryMessage[number].messageEnglish);
+                break;
+
+            //それ以外の場合
+            default:
+                Debug.LogError("想定していない言語ステータスです");
+                break;
+        }
+
+        //メッセージパネルを表示
         isMessagePanel = true;
         ViewMessagePanel();
     }
