@@ -49,7 +49,7 @@ public enum ItemType
 [System.Serializable]
 public class Item : MonoBehaviour
 {
-    [Header("ボタンテキストメッセージ(Prefabをアタッチ)")]
+    [Header("アイテムメッセージ(Prefabをアタッチ)")]
     [SerializeField] private ItemMessage itemMessage;
 
     /// <summary>

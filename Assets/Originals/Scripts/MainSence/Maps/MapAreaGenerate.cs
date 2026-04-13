@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
+using static LanguageController;
+using static UnityEditor.Progress;
 using Random = UnityEngine.Random;
 
 
@@ -26,13 +28,18 @@ public class MapAreaGenerate : MonoBehaviour
     [SerializeField] private Transform[] mapAreaPoint;
 
 
-    [Header("ドキュメントとミステリーアイテムを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    /// <summary>
+    /// Item.cs
+    /// </summary>
+    private Item item;
+
+    [Header("ドキュメントとミステリーアイテムを格納する(Prefabをアタッチすること。空のEmptyPrefabも格納すること。)")]
     [SerializeField] private List<GameObject> documentAndMysteryItemPrefabList;
 
-    [Header("コンパスを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [Header("コンパスを格納する(Prefabをアタッチすること。空のEmptyPrefabも格納すること。)")]
     [SerializeField] private List<GameObject> compassPrefabList;
 
-    [Header("スタミナ増強剤を格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [Header("スタミナ増強剤を格納する(Prefabをアタッチすること。空のEmptyPrefabも格納すること。)")]
     [SerializeField] private List<GameObject> staminaEnhancerPrefabList;
 
     [Header("難易度Easyのスタミナ増強剤格納数")]
@@ -181,6 +188,11 @@ public class MapAreaGenerate : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("マップエリアランダムStart");
+
+        //言語を設定するメソッド
+        SettingLanguageText();
+
         //マップをランダムに配置
         MapGenerate();
 
@@ -191,6 +203,42 @@ public class MapAreaGenerate : MonoBehaviour
         SettingViewObjects();
 
         stageGround.Build(navMeshSurface);
+    }
+
+    /// <summary>
+    /// 言語を設定する
+    /// </summary>
+    private void SettingLanguageText()
+    {
+        //ドキュメントとミステリーアイテムPrefabのテキスト関連を設定する
+        for (int i = 0; i < documentAndMysteryItemPrefabList.Count; i++)
+        {
+            //Itemコンポーネントを取得
+            item = documentAndMysteryItemPrefabList[i].GetComponent<Item>();
+
+            //ドキュメントとミステリーアイテムPrefabのテキスト関連を設定する
+            item.SettingLanguageText();
+        }
+
+        //コンパスPrefabのテキスト関連を設定する
+        for (int i = 0; i < compassPrefabList.Count; i++)
+        {
+            //Itemコンポーネントを取得
+            item = compassPrefabList[i].GetComponent<Item>();
+
+            //コンパスPrefabのテキスト関連を設定する
+            item.SettingLanguageText();
+        }
+
+        //スタミナ増強剤Prefabのテキスト関連を設定する
+        for (int i = 0; i < staminaEnhancerPrefabList.Count; i++)
+        {
+            //Itemコンポーネントを取得
+            item = staminaEnhancerPrefabList[i].GetComponent<Item>();
+
+            //スタミナ増強剤Prefabのテキスト関連を設定する
+            item.SettingLanguageText();
+        }
     }
 
     /// <summary>

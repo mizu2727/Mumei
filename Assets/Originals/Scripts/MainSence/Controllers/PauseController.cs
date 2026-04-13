@@ -858,10 +858,21 @@ public class PauseController : MonoBehaviour
             mysteryItemImage[0].sprite = null;
             mysteryItemImage[0].enabled = false;
         }
-        if (mysteryItemExplanationText.Length > 0)
+
+        //修正後
+        for (int i = 0; i < mysteryItemExplanationText.Length; i++)
         {
-            mysteryItemExplanationText[0].text = "";
+            if (mysteryItemExplanationText.Length > 0)
+            {
+                mysteryItemExplanationText[i].text = "";
+            }
         }
+
+        //修正前
+        //if (mysteryItemExplanationText.Length > 0)
+        //{
+        //    mysteryItemExplanationText[0].text = "";
+        //}
     }
 
 
@@ -1069,10 +1080,21 @@ public class PauseController : MonoBehaviour
                 mysteryItemImage[0].sprite = null;
                 mysteryItemImage[0].enabled = false;
             }
-            if (mysteryItemExplanationText.Length > 0)
+
+            //修正後
+            for (int i = 0; i < mysteryItemExplanationText.Length; i++)
             {
-                mysteryItemExplanationText[0].text = "";
+                if (mysteryItemExplanationText.Length > 0)
+                {
+                    mysteryItemExplanationText[i].text = "";
+                }
             }
+
+            //修正前
+            //if (mysteryItemExplanationText.Length > 0)
+            //{
+            //    mysteryItemExplanationText[0].text = "";
+            //}
         }
     }
 
@@ -1154,7 +1176,20 @@ public class PauseController : MonoBehaviour
                 //説明テキストを更新
                 if (mysteryItemExplanationText.Length > 0)
                 {
-                    mysteryItemExplanationText[0].text = item.description;
+                    //説明テキストが重なるのを防止するため、全ての説明テキストを一旦クリアする
+                    for (int i = 0; i < mysteryItemExplanationText.Length; i++)
+                    {
+                        if (mysteryItemExplanationText.Length > 0)
+                        {
+                            mysteryItemExplanationText[i].text = "";
+                        }
+                    }
+
+                    //修正前
+                    //mysteryItemExplanationText[0].text = item.description;
+
+                    //修正後
+                    mysteryItemExplanationText[index].text = item.description;
 
                     //mysteryItemExplanationText[0].text = mysteryItemExplanations[index];
                     /*
@@ -1380,8 +1415,11 @@ public class PauseController : MonoBehaviour
 
         for (int i = 0; i < mysteryItemIds.Count; i++)
         {
-            string itemName = mysteryItemNames[i];
-            var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
+            //string itemName = mysteryItemNames[i];
+            //var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
+
+            int itemId = mysteryItemIds[i];
+            var item = sO_Item.itemList.Find(x => x.id == itemId && x.itemType == ItemType.MysteryItem);
 
             //Debug.Log("デバッグ変更前：" +mysteryItemNames[i] + "のIDは" + mysteryItemIds[i] + "。説明文は" + mysteryItemExplanations[i]);
             //Debug.Log("デバッグ変更前：mysteryItemNameText[i].textは" + mysteryItemNameText[i].text + "。mysteryItemExplanationText[i].textは" + mysteryItemExplanationText[i].text);

@@ -23,6 +23,9 @@ public class Inventory : MonoBehaviour
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
+    [Header("アイテムメッセージ(Prefabをアタッチ)")]
+    [SerializeField] private ItemMessage itemMessage;
+
 
     [Header("使用アイテムパネル関連")]
     [Header("使用アイテムパネル(ヒエラルキー上からアタッチすること)")]
@@ -541,6 +544,54 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 言語を設定する
+    /// </summary>
+    public void SettingLanguageText() 
+    {
+        //使用アイテムを所持していない場合
+        if (keepItemId == kNoneItemId) 
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //言語ステータスに応じて、テキストを変更する
+        switch (LanguageController.instance.GetLanguageStatus())
+        {
+            case LanguageController.LanguageStatus.kJapanese:
+                //日本語の場合は、使用アイテム名称テキストを日本語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameJapanese;
+
+                //使用アイテム名称を日本語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizeJapanese;
+
+                //説明テキストも日本語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionJapanese;
+
+                //使用アイテム説明テキストサイズを日本語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeJapanese;
+                break;
+
+            case LanguageController.LanguageStatus.kEnglish:
+                //\使用アイテム名称テキストを英語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameEnglish;
+
+                //使用アイテム名称を英語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizeEnglish;
+
+                //説明テキストも英語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionEnglish;
+
+                //使用アイテム説明テキストサイズを英語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeEnglish;
+                break;
+
+            default:
+                Debug.LogWarning("その他の言語ステータス");
+                break;
+        }
+    }
 
     /// <summary>
     /// インベントリをリセットする

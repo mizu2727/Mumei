@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,12 +9,25 @@ public class Compass : MonoBehaviour
     /// </summary>
     public static Compass instance;
 
+    [Header("アイテムメッセージ(Prefabをアタッチ)")]
+    [SerializeField] private ItemMessage itemMessage;
+
+    /// <summary>
+    /// コンパスのアイテムID
+    /// </summary>
+    private const int kItemId = 12;
 
     [Header("コンパスの針の画像(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private Image compassArrowImage;
 
     [Header("CompassTextPanel(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject compassTextPanel;
+
+    [Header("CompassNameText(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private Text CompassNameText;
+    
+    [Header("CompassExplanationText(ヒエラルキー上からアタッチする必要がある)")]
+    [SerializeField] private Text CompassExplanationText;
 
     /// <summary>
     /// コンパス関係を表示・非表示するフラグ
@@ -59,6 +73,20 @@ public class Compass : MonoBehaviour
         {
             //compassArrowImageをnullに設定
             compassArrowImage = null;
+        }
+
+        //CompassNameTextが存在する場合
+        if (CompassNameText != null)
+        {
+            //CompassNameTextをnullに設定
+            CompassNameText = null;
+        }
+
+        //CompassExplanationTextが存在する場合
+        if (CompassExplanationText != null)
+        {
+            //CompassExplanationTextをnullに設定
+            CompassExplanationText = null;
         }
 
         //compassTextPanelが存在する場合
@@ -157,6 +185,46 @@ public class Compass : MonoBehaviour
         {
             //コンパステキストパネルを非表示
             compassTextPanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// 言語を設定する
+    /// </summary>
+    public void SettingLanguageText()
+    {
+        //言語ステータスに応じて、テキストを変更する
+        switch (LanguageController.instance.GetLanguageStatus())
+        {
+            case LanguageController.LanguageStatus.kJapanese:
+
+                //日本語アイテム名を設定する
+                CompassNameText.text = itemMessage.itemMessage[kItemId].itemNameJapanese;
+
+                //アイテム名のフォントサイズを日本語用に設定する
+                CompassNameText.fontSize = itemMessage.itemMessage[kItemId].itemNameSizeJapanese;
+
+                //日本語アイテム説明を設定する
+                CompassExplanationText.text = itemMessage.itemMessage[kItemId].itemDescriptionJapanese;
+
+                //アイテム説明のフォントサイズを日本語用に設定する
+                CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeJapanese;
+                break;
+
+            case LanguageController.LanguageStatus.kEnglish:
+
+                //英語アイテムを設定する
+                CompassNameText.text = itemMessage.itemMessage[kItemId].itemNameEnglish;
+
+                //アイテム名のフォントサイズを英語用に設定する
+                CompassNameText.fontSize = itemMessage.itemMessage[kItemId].itemNameSizeEnglish;
+
+                //英語アイテム説明名を設定する
+                CompassExplanationText.text = itemMessage.itemMessage[kItemId].itemDescriptionEnglish;
+
+                //アイテム説明のフォントサイズを英語用に設定する
+                CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeEnglish;
+                break;
         }
     }
 }

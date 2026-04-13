@@ -65,6 +65,14 @@ public class LanguageController : MonoBehaviour
     [Header("アイテムを格納(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Item[] itemArray;
 
+    [Header("アイテムPrefabを格納(Prefabをアタッチすること)")]
+    [SerializeField] public GameObject[] itemPrefabArray;
+
+    /// <summary>
+    /// Item.cs
+    /// </summary>
+    private Item item;
+
 
     /// <summary>
     /// 言語ステータスを取得する
@@ -148,6 +156,8 @@ public class LanguageController : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("LanguageController Start");
+
         InitializeAudioSource();
 
         //言語を設定する
@@ -230,11 +240,28 @@ public class LanguageController : MonoBehaviour
             itemArray[i].SettingLanguageText();
         }
 
+        //アイテムPrefabのテキスト関連を設定する
+        for (int i = 0; i < itemPrefabArray.Length; i++)
+        {
+            //Itemコンポーネントを取得
+            item = itemPrefabArray[i].GetComponent<Item>();
+
+            //アイテムPrefabのテキスト関連を設定する
+            item.SettingLanguageText();
+        }
+
         //ポーズコントローラーが存在する場合
         if (PauseController.instance != null)
         {
             //ポーズコントローラーのテキスト関連を設定する
             PauseController.instance.SettingLanguageText();
+        }
+
+        //Compassが存在する場合
+        if (Compass.instance != null)
+        {
+            //Compassのテキスト関連を設定する
+            Compass.instance.SettingLanguageText();
         }
     }
 
