@@ -40,6 +40,11 @@ public enum ItemType
     /// プレイヤーライト
     /// </summary>
     PlayerLight,
+
+    /// <summary>
+    /// なにもなし
+    /// </summary>
+    Dammy,
 }
 
 
@@ -65,17 +70,17 @@ public class Item : MonoBehaviour
     /// <summary>
     /// アイテムのプレハブのAddressables名
     /// </summary>
-    private string prefabPath;
+    [SerializeField] private string prefabPath;
 
     /// <summary>
     /// プレイヤーの位置からアイテムを生成したい位置
     /// </summary>
-    private Vector3 spawnPosition;
+    [SerializeField] private Vector3 spawnPosition;
 
     /// <summary>
     /// アイテムの回転数値
     /// </summary>
-    private Quaternion spawnRotation;
+    [SerializeField] private Quaternion spawnRotation;
 
     /// <summary>
     /// アイテムのアイコン画像
@@ -90,22 +95,22 @@ public class Item : MonoBehaviour
     /// <summary>
     /// アイテムの名前
     /// </summary>
-    private string itemName;
+    [SerializeField] private string itemName;
 
     /// <summary>
     /// アイテムの説明
     /// </summary>
-    private string description;
+    [SerializeField] private string description;
 
     /// <summary>
     /// 所持数
     /// </summary>
-    private int count;
+    [SerializeField] private int count;
 
     /// <summary>
     /// 効果値
     /// </summary>
-    private int effectValue;
+    [SerializeField] private int effectValue;
 
     /// <summary>
     /// ID取得

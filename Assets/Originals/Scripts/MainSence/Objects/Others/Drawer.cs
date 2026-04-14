@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static UnityEditor.Progress;
 
 public class Drawer : MonoBehaviour
 {
@@ -18,6 +19,11 @@ public class Drawer : MonoBehaviour
 
     [Header("引き出しに入れるアイテム")]
     [SerializeField] public Transform drawerItemTransform;
+
+    /// <summary>
+    /// Item.cs
+    /// </summary>
+    private Item item;
 
     [Header("引き出しを開いた時の位置")]
     [SerializeField] private Vector3 openPosition;
@@ -288,5 +294,37 @@ public class Drawer : MonoBehaviour
             //引き出しを開けるSEを再生
             audioSourceSE.PlayOneShot(sO_SE.GetSEClip(openSEid));
         }
+    }
+
+    /// <summary>
+    /// 引き出し内のアイテムの言語を設定する
+    /// </summary>
+    public void SettingLanguageText()
+    {
+        //drawerItemTransformがnullの場合
+        if (drawerItemTransform == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //Itemコンポーネントを取得
+        item = drawerItemTransform.GetComponent<Item>();
+
+        //アイテムの種類がDammyの場合
+        if (item.GetItemType() == ItemType.Dammy) 
+        {
+            //処理をスキップ
+            return;
+        }
+
+        Debug.Log($"引き出し内のアイテム: {item.GetItemName()} のテキストを設定します。");
+
+        //アイテムのテキスト関連を設定する
+        item.SettingLanguageText();
+
+        //アイテムのTransformをdrawerItemTransformにアタッチ
+        drawerItemTransform = item.transform;
+
     }
 }

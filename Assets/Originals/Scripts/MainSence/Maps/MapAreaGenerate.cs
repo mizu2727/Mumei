@@ -65,7 +65,7 @@ public class MapAreaGenerate : MonoBehaviour
     private List<GameObject> shuffledItemPrefabList;
 
     [Header("ランダムに選ばれたアイテムが格納される(ヒエラルキー上からのアタッチ禁止。シャッフルされたアイテム確認用)")]
-    public List<GameObject> useItemList = new();
+    [SerializeField] private List<GameObject> useItemList = new();
 
     [Header("アイテム生成地点のTransform配列(ヒエラルキー上のDrawerスクリプトのdrawerItemTransformをアタッチすること)")]
     [SerializeField] private Transform[] itemPoint;
@@ -190,8 +190,7 @@ public class MapAreaGenerate : MonoBehaviour
     {
         Debug.Log("マップエリアランダムStart");
 
-        //言語を設定するメソッド
-        SettingLanguageText();
+
 
         //マップをランダムに配置
         MapGenerate();
@@ -205,41 +204,7 @@ public class MapAreaGenerate : MonoBehaviour
         stageGround.Build(navMeshSurface);
     }
 
-    /// <summary>
-    /// 言語を設定する
-    /// </summary>
-    private void SettingLanguageText()
-    {
-        //ドキュメントとミステリーアイテムPrefabのテキスト関連を設定する
-        for (int i = 0; i < documentAndMysteryItemPrefabList.Count; i++)
-        {
-            //Itemコンポーネントを取得
-            item = documentAndMysteryItemPrefabList[i].GetComponent<Item>();
 
-            //ドキュメントとミステリーアイテムPrefabのテキスト関連を設定する
-            item.SettingLanguageText();
-        }
-
-        //コンパスPrefabのテキスト関連を設定する
-        for (int i = 0; i < compassPrefabList.Count; i++)
-        {
-            //Itemコンポーネントを取得
-            item = compassPrefabList[i].GetComponent<Item>();
-
-            //コンパスPrefabのテキスト関連を設定する
-            item.SettingLanguageText();
-        }
-
-        //スタミナ増強剤Prefabのテキスト関連を設定する
-        for (int i = 0; i < staminaEnhancerPrefabList.Count; i++)
-        {
-            //Itemコンポーネントを取得
-            item = staminaEnhancerPrefabList[i].GetComponent<Item>();
-
-            //スタミナ増強剤Prefabのテキスト関連を設定する
-            item.SettingLanguageText();
-        }
-    }
 
     /// <summary>
     /// マップをランダム配置するメソッド
@@ -306,7 +271,12 @@ public class MapAreaGenerate : MonoBehaviour
             //スタミナ増強剤を全アイテム格納リストに追加
             shuffledItemPrefabList.AddRange(staminaEnhancerPrefabList);
         }
-        
+
+        for (int i = 0; i < shuffledItemPrefabList.Count; i++)
+        {
+            //アイテムのテキスト関連を設定する
+            shuffledItemPrefabList[i] = SettingLanguageText(shuffledItemPrefabList[i]);
+        }
 
         //引き出しの数がshuffledItemPrefabList数より多い場合
         if (shuffledItemPrefabList.Count < itemPoint.Length)
@@ -346,6 +316,7 @@ public class MapAreaGenerate : MonoBehaviour
                 //アイテムの位置をitemPointに合わせる
                 newItem.transform.position = itemPoint[i].position;
 
+
                 //生成したアイテムをDrawerにアタッチ
                 drawer.SetItemTransform(newItem.transform);
             }
@@ -353,6 +324,38 @@ public class MapAreaGenerate : MonoBehaviour
             {
                 Debug.LogError(itemPoint[i].name + "にDrawerコンポーネントが見つかりませんでした！");
             }
+        }
+    }
+
+    /// <summary>
+    /// 言語を設定する
+    /// </summary>
+    /// <param name="targetItem">アイテム</param>
+    private GameObject SettingLanguageText(GameObject targetItem)
+    {
+        //Itemコンポーネントを取得
+        item = targetItem.GetComponent<Item>();
+
+        //ItemPrefabのテキスト関連を設定する
+        item.SettingLanguageText();
+
+        targetItem = item.gameObject;
+
+        return targetItem;
+    }
+
+    /// <summary>
+    /// 引き出し内のアイテムの言語を変更するメソッド
+    /// </summary>
+    public void ChangeLanguageText() 
+    {
+        for (int i = 0; i < useItemList.Count; i++) 
+        {
+            //Drawerコンポーネントを取得
+            Drawer drawer = itemPoint[i].GetComponent<Drawer>();
+
+            //引き出し内のアイテムのテキスト関連を設定する
+            drawer.SettingLanguageText();
         }
     }
 

@@ -911,6 +911,9 @@ public class PauseController : MonoBehaviour
         //ドキュメント名称ボタンSE
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(documentNameButtonSEid));
 
+        //テキスト内容を変更する
+        SettingLanguageText();
+
         //ドキュメントの説明を表示
         isDocumentExplanationPanel = true;
         ChangeViewDocumentExplanationPanel();
@@ -1032,9 +1035,11 @@ public class PauseController : MonoBehaviour
             //フラグ値をオン
             GameController.instance.SetIsTutorialNextMessageFlag(true);
 
-            //IDを保存
-            keepDocumentBookID = documentId;
+            
         }
+
+        //IDを保存
+        keepDocumentBookID = documentId;
 
         //シーン内で取得したドキュメントオブジェクトの名前を保存
         documentNameText = documentNameText.GetComponent<Text>();
@@ -1411,6 +1416,11 @@ public class PauseController : MonoBehaviour
                     Debug.LogWarning("その他の言語ステータス");
                     break;
             }
+            
+        }
+        else 
+        { 
+            Debug.LogWarning("ドキュメントIDを取得していないため、テキストを変更できません");
         }
 
         for (int i = 0; i < mysteryItemIds.Count; i++)
