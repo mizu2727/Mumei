@@ -188,10 +188,6 @@ public class MapAreaGenerate : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("マップエリアランダムStart");
-
-
-
         //マップをランダムに配置
         MapGenerate();
 

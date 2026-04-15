@@ -689,6 +689,12 @@ public class OptionUIController : MonoBehaviour
     /// </summary>
     private void ChangeLanguagePanel() 
     {
+        if(languagePanel == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
         //フラグ値がオンの場合
         if (isViewLanguagePanel)
         {

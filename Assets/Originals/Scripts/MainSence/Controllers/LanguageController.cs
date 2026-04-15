@@ -153,8 +153,6 @@ public class LanguageController : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log("LanguageController Start");
-
         InitializeAudioSource();
 
         //Œ¾Œê‚ğİ’è‚·‚é
