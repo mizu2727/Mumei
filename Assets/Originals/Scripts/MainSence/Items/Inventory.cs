@@ -470,17 +470,18 @@ public class Inventory : MonoBehaviour
         {
             //スタミナ増強剤
             case 11:
+                //スタミナ増強剤SEを再生
+                audioSourceInventorySE.clip = sO_SE.GetSEClip(useStaminaEnhancerSEid);
+                audioSourceInventorySE.loop = false;
+                audioSourceInventorySE.Play();
+
                 //スタミナ効果が適用中の場合
                 if (isUseStaminaItem)
                 {
-                    //スタミナ効果が適用中である旨のメッセージを表示
-                    MessageController.instance.ShowInventoryMessage(kUsingStaminaEnhancerMessageId);
-
-                    //メッセージ表示時間待機
-                    await UniTask.Delay(TimeSpan.FromSeconds(kViewMessageSeconds));
-
-                    //メッセージをリセット
-                    MessageController.instance.ResetMessage();
+                    //アイテムカウントを減少
+                    --keepItemCount;
+                    useItemCountText.text = keepItemCount.ToString();
+                    sO_Item.ReduceUseItem(keepItemId, keepItemCount);
 
                     //処理をスキップ
                     return;
@@ -493,11 +494,6 @@ public class Inventory : MonoBehaviour
 
                 //スタミナゲージの元の色を保存
                 Color keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
-
-                //スタミナ増強剤SEを再生
-                audioSourceInventorySE.clip = sO_SE.GetSEClip(useStaminaEnhancerSEid);
-                audioSourceInventorySE.loop = false;
-                audioSourceInventorySE.Play();
 
                 //スタミナ消費率を12.5%に変更
                 Player.instance.SetStaminaConsumeRatio(kSpecifiedStaminaConsumeRatio);
