@@ -30,6 +30,16 @@ public class GameClearController : MonoBehaviour
     /// </summary>
     private const string BlueSky_URL = "https://bsky.app/profile/tomanegi0707.bsky.social";
 
+    /// <summary>
+    /// インデイ市のデモ版ストアページURL
+    /// </summary>
+    private const string demo_Indieichi_URL = "https://indieichi.com/games/cmg1xsi4x00093ty3rwizl7op";
+
+    /// <summary>
+    /// Steamの製品版ストアページURL
+    /// </summary>
+    private const string full_Steam_URL = "https://store.steampowered.com/app/4034690/_Mumei/";
+
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
 
@@ -239,5 +249,21 @@ public class GameClearController : MonoBehaviour
     public void OnClickedBlueSky_Button()
     {
         Application.OpenURL(BlueSky_URL);
+    }
+
+    /// <summary>
+    /// インデイ市のデモ版ストアページのURLを開く
+    /// </summary>
+    public void OnClickedDemo_Indieichi_URL_Button()
+    {
+        Application.OpenURL(demo_Indieichi_URL);
+    }
+
+    /// <summary>
+    /// Steamの製品版ストアページのURLを開く
+    /// </summary>
+    public void OnClickedFull_Steam_URL_Button()
+    {
+        Application.OpenURL(full_Steam_URL);
     }
 }
