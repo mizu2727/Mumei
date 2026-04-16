@@ -4,7 +4,6 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 using static LanguageController;
-using static UnityEditor.Progress;
 using Random = UnityEngine.Random;
 
 

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Progress;
 
 public class Drawer : MonoBehaviour
 {
@@ -317,8 +316,6 @@ public class Drawer : MonoBehaviour
             //処理をスキップ
             return;
         }
-
-        Debug.Log($"引き出し内のアイテム: {item.GetItemName()} のテキストを設定します。");
 
         //アイテムのテキスト関連を設定する
         item.SettingLanguageText();
