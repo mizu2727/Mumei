@@ -36,6 +36,11 @@ public class GameClearController : MonoBehaviour
     private const string demo_Indieichi_URL = "https://indieichi.com/games/cmg1xsi4x00093ty3rwizl7op";
 
     /// <summary>
+    /// インデイ市の製品版ストアページURL
+    /// </summary>
+    private const string indieichi_URL = "https://indieichi.com/games/cmo2x0dzr0063ntwhtu1in4xa";
+
+    /// <summary>
     /// Steamの製品版ストアページURL
     /// </summary>
     private const string full_Steam_URL = "https://store.steampowered.com/app/4034690/_Mumei/";
@@ -257,6 +262,14 @@ public class GameClearController : MonoBehaviour
     public void OnClickedDemo_Indieichi_URL_Button()
     {
         Application.OpenURL(demo_Indieichi_URL);
+    }
+
+    /// <summary>
+    /// インデイ市の製品版ストアページのURLを開く
+    /// </summary>
+    public void OnClickedIndieichi_URL_Button()
+    {
+        Application.OpenURL(indieichi_URL);
     }
 
     /// <summary>
