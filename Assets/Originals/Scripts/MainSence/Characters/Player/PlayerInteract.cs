@@ -526,10 +526,11 @@ public class PlayerInteract : MonoBehaviour
     /// 左クリック・Rボタンでインタラクト操作
     /// Interact…"joystick button 5"を割り当てている。コントローラーではRボタンになる
     /// </summary>
-    /// <returns>ボタン押下でtrue</returns>
+    /// <returns>ボタン押下&&振り返り操作オフ(振り返りながら裁きの青玉に触れるとプレイヤーが見えてしまうバグを防ぐため)でtrue</returns>
     bool PlayInteract() 
     {
-        return Input.GetMouseButtonDown(0) || Input.GetButtonDown(stringInteract);
+        return (Input.GetMouseButtonDown(0) || Input.GetButtonDown(stringInteract))
+            && !Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl) && !Input.GetKey(KeyCode.Slash);
     }
 
 
