@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using static GameController;
 
+/// <summary>
+/// 周囲の音を聞き取ることができる敵クラス
+/// </summary>
 public class HearingEnemy : BaseEnemy
 {
     [Header("ダッシュ音の検知範囲")]

@@ -13,6 +13,30 @@ using Random = UnityEngine.Random;
 
 public class BaseEnemy : MonoBehaviour, CharacterInterface
 {
+    [Header("敵の情報(Prefabをアタッチ)")]
+    [SerializeField] private EnemyInformation enemyInformation;
+
+
+    [Header("彷徨う者の名前のステータス(直接編集すること)")]
+    [SerializeField] private EnemyName enemyNameStatus;
+
+    /// <summary>
+    /// 彷徨う者の名前
+    /// </summary>
+    enum EnemyName 
+    {
+        /// <summary>
+        /// 静声に熱する彷徨う者
+        /// </summary>
+        VeinVainWanderer,
+
+        /// <summary>
+        /// 微美しき魅忘の彷徨う者
+        /// </summary>
+        BeauteousBewilderWanderer,
+    }
+
+
     [Header("アニメーション")]
     public Animator animator;
     public Animator PlayAnimator
@@ -41,26 +65,31 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private const string kIsAttackAnimatorParameter = "isAttack";
 
+    /// <summary>
+    /// 名前
+    /// </summary>
+    private string nameJapanese;
 
-    [Header("名前")]
-    [SerializeField] private string enemyName;
-
-    [SerializeField]
     public string CharacterName
     {
-        get => enemyName;
-        set => enemyName = value;
+        get => nameJapanese;
+        set => nameJapanese = value;
     }
 
+    /// <summary>
+    /// 名前(英語)
+    /// </summary>
+    private string nameEnglish;
 
-    [Header("難易度Easyの場合の通常移動速度")]
-    [SerializeField] private float easyMoveSpeed = 2.0f;
 
-    [Header("難易度Normalの場合の通常移動速度")]
-    [SerializeField] private float defaultMoveSpeed = 3.0f;
+    [Header("難易度Easyの場合の通常移動速度(直接調整すること)")]
+    [SerializeField] private float easyMoveSpeed;
 
-    [Header("難易度Nightmareの場合の通常移動速度")]
-    [SerializeField] private float nightmareMoveSpeed = 4.0f;
+    [Header("難易度Normalの場合の通常移動速度(直接調整すること)")]
+    [SerializeField] private float defaultMoveSpeed;
+
+    [Header("難易度Nightmareの場合の通常移動速度(直接調整すること)")]
+    [SerializeField] private float nightmareMoveSpeed;
 
     /// <summary>
     /// 通常移動速度
@@ -73,14 +102,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     }
 
 
-    [Header("難易度Easyの場合のダッシュ移動速度")]
-    [SerializeField] private float easyDashSpeed = 4.0f;
+    [Header("難易度Easyの場合のダッシュ移動速度(直接調整すること)")]
+    [SerializeField] private float easyDashSpeed;
 
-    [Header("難易度Normalの場合のダッシュ移動速度")]
-    [SerializeField] private float defaultDashSpeed = 4.5f;
+    [Header("難易度Normalの場合のダッシュ移動速度(直接調整すること)")]
+    [SerializeField] private float defaultDashSpeed;
 
-    [Header("難易度Nightmareの場合のダッシュ移動速度")]
-    [SerializeField] private float nightmareDashSpeed = 5.0f;
+    [Header("難易度Nightmareの場合のダッシュ移動速度(直接調整すること)")]
+    [SerializeField] private float nightmareDashSpeed;
 
     /// <summary>
     /// ダッシュ時の移動速度
@@ -93,7 +122,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     }
 
     [Header("検知範囲")]
-    [SerializeField] private float enemyDetectionRange = 40f;
+    [SerializeField] private float enemyDetectionRange;
     [SerializeField]
     public float DetectionRange
     {
@@ -446,12 +475,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 歩行音のID
     /// </summary>
-    private readonly int walkSEid = 7;
+    private  int walkSEid;
 
     /// <summary>
     /// ダッシュ音のID
     /// </summary>
-    private readonly int runSEid = 8;
+    private  int runSEid;
 
     /// <summary>
     /// プレイヤーを探す音用のaudioSource
@@ -461,7 +490,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// プレイヤーを探す音のID
     /// </summary>
-    private readonly int findPlayerSEid = 9;
+    private  int findPlayerSEid;
 
     /// <summary>
     /// プレイヤーを襲う音用のaudioSource
@@ -478,8 +507,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private AudioClip currentSE;
 
-    [Header("走る音の再生速度(要調整)")]
-    [SerializeField] private float runSEPitch = 2f;
+    [Header("走る音の再生速度(直接調整すること)")]
+    [SerializeField] private float runSEPitch;
 
 
     /// <summary>
@@ -826,6 +855,44 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         //rigidbodyを取得
         rigidBody = GetComponent<Rigidbody>();
+
+
+        //彷徨う者の名前のステータスに応じて各設定をする
+        switch (enemyNameStatus)
+        {
+            //静声に熱する彷徨う者
+            case EnemyName.VeinVainWanderer:
+
+                //名前を設定
+                nameJapanese = enemyInformation.enemyInformation[1].nameJapanese;
+                nameEnglish = enemyInformation.enemyInformation[1].nameEnglish;
+
+                //SEのIDを設定
+                walkSEid = enemyInformation.enemyInformation[1].walkSEId;
+                runSEid = enemyInformation.enemyInformation[1].runSEId;
+                findPlayerSEid = enemyInformation.enemyInformation[1].findPlayerSEId;
+
+                break;
+
+            //微美しき魅忘の彷徨う者
+            case EnemyName.BeauteousBewilderWanderer:
+
+                //名前を設定
+                nameJapanese = enemyInformation.enemyInformation[2].nameJapanese;
+                nameEnglish = enemyInformation.enemyInformation[2].nameEnglish;
+
+                //TODO予定(SEをアタッチすること):SEのIDを設定
+                walkSEid = enemyInformation.enemyInformation[2].walkSEId;
+                runSEid = enemyInformation.enemyInformation[2].runSEId;
+                findPlayerSEid = enemyInformation.enemyInformation[2].findPlayerSEId;
+
+                break;
+
+
+            default:
+                Debug.LogError($"[{gameObject.name}] enemyNameStatusが未設定です。");
+                break;
+        }
 
 
         //難易度に応じてそれぞれの設定を変更する
