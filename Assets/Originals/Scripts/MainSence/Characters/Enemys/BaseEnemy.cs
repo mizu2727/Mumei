@@ -881,10 +881,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 nameJapanese = enemyInformation.enemyInformation[2].nameJapanese;
                 nameEnglish = enemyInformation.enemyInformation[2].nameEnglish;
 
-                //TODO予定(SEをアタッチすること):SEのIDを設定
-                walkSEid = enemyInformation.enemyInformation[2].walkSEId;
-                runSEid = enemyInformation.enemyInformation[2].runSEId;
-                findPlayerSEid = enemyInformation.enemyInformation[2].findPlayerSEId;
+                //TODO予定(SEをアタッチすること):SEのIDを設定。インデックス番号を2に戻すこと
+                walkSEid = enemyInformation.enemyInformation[1].walkSEId;
+                runSEid = enemyInformation.enemyInformation[1].runSEId;
+                findPlayerSEid = enemyInformation.enemyInformation[1].findPlayerSEId;
 
                 break;
 
