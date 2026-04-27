@@ -628,19 +628,16 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private void OnEnable()
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
-        //SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
 
         //SE音量変更時のイベント登録
-        //MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
-
-        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
         MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
     {
         //シーン遷移時にAudioSourceを再設定するための関数登録解除
-        //SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
 
         //SE音量変更時のイベント登録解除
         MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
@@ -664,7 +661,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         if (MusicController.instance != null)
         {
             audioSourceSE = MusicController.instance.GetAudioSource();
-            //audioSourceSE = gameObject.AddComponent<AudioSource>();
 
             if (audioSourceSE != null)
             {
@@ -708,16 +704,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     void OnDestroy() 
     {
-        Debug.Log($"[{gameObject.name}] OnDestroy called. Cleaning up references.");
-
-        // これをコンソールで見れば、どのスクリプトのどの行がDestroyを呼んだか分かります
-        /*
-        Debug.Log($"<color=red>[Critical] {gameObject.name} が破壊されました！</color>\n" +
-                  $"Stack Trace:\n{System.Environment.StackTrace}");
-        */
-
-        Debug.Log($"<color=yellow>Destroyが呼ばれましたが無視しました: {gameObject.name}</color>");
-
         for (int i = 0; i < patrolPoint.Length; i ++) 
         {
             //patrolPointが存在する場合
