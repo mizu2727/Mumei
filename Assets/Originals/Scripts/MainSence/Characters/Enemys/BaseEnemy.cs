@@ -628,16 +628,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private void OnEnable()
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        //SceneManager.sceneLoaded += OnSceneLoaded;
 
         //SE音量変更時のイベント登録
+        //MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
+
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
         MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
     {
         //シーン遷移時にAudioSourceを再設定するための関数登録解除
-        SceneManager.sceneLoaded -= OnSceneLoaded;
+        //SceneManager.sceneLoaded -= OnSceneLoaded;
 
         //SE音量変更時のイベント登録解除
         MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
@@ -650,16 +653,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <param name="mode"></param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        InitializeAudioSource();
-        if (Player.instance != null)
-        {
-            targetPoint = Player.instance.transform;
-        }
-        else
-        {
-            Debug.LogError($"[{gameObject.name}] Player.instanceが見つかりません。targetPointを設定できません。");
-            navMeshAgent.isStopped = true;
-        }
+
     }
 
     /// <summary>
@@ -670,6 +664,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         if (MusicController.instance != null)
         {
             audioSourceSE = MusicController.instance.GetAudioSource();
+            //audioSourceSE = gameObject.AddComponent<AudioSource>();
+
             if (audioSourceSE != null)
             {
                 audioSourceSE.playOnAwake = false;
@@ -712,6 +708,16 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     void OnDestroy() 
     {
+        Debug.Log($"[{gameObject.name}] OnDestroy called. Cleaning up references.");
+
+        // これをコンソールで見れば、どのスクリプトのどの行がDestroyを呼んだか分かります
+        /*
+        Debug.Log($"<color=red>[Critical] {gameObject.name} が破壊されました！</color>\n" +
+                  $"Stack Trace:\n{System.Environment.StackTrace}");
+        */
+
+        Debug.Log($"<color=yellow>Destroyが呼ばれましたが無視しました: {gameObject.name}</color>");
+
         for (int i = 0; i < patrolPoint.Length; i ++) 
         {
             //patrolPointが存在する場合
@@ -753,6 +759,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     void Start()
     {
+       InitializeAudioSource();
+
         PlayAnimator = GetComponent<Animator>();
 
         //専用の新しいAudioSourceを取得
@@ -763,6 +771,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             audioSourceSE = gameObject.AddComponent<AudioSource>();
             audioSourceSE.playOnAwake = false;
         }
+        
 
         navMeshAgent = GetComponent<NavMeshAgent>();
         if (navMeshAgent == null)
@@ -1236,6 +1245,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     protected virtual async void Update()
     {
+
         //通常プレイ以外のモードの場合
         if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
         {

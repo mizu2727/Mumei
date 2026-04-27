@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// プレイヤーが敵に襲われる際のエフェクト画面を管理するクラス。EnemyAttackScreenControllerとして扱う
+/// </summary>
 public class EnemyAttackScreen : MonoBehaviour
 {
     /// <summary>

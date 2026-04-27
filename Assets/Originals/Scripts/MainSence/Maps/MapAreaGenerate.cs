@@ -81,11 +81,20 @@ public class MapAreaGenerate : MonoBehaviour
 
 
     [Header("敵の位置(ヒエラルキー上からアタッチすること。ステージライトとの距離測定で必要)")]
-    [SerializeField] public Transform[] baseEnemyTransformArray;
+    [SerializeField] private Transform[] baseEnemyTransformArray;
 
 
     [Header("Easy用の隠れる地点のTransform配列(ヒエラルキー上のHiddeObjectをアタッチすること)")]
     [SerializeField] private Transform[] easyHideObject;
+
+    /// <summary>
+    /// 敵の位置の配列を取得
+    /// </summary>
+    /// <returns>敵の位置の配列</returns>
+    public Transform[] GetBaseEnemyTransformArray() 
+    {
+        return baseEnemyTransformArray;
+    }
 
     /// <summary>
     /// オブジェクトが破壊された際に呼ばれる関数
@@ -187,6 +196,7 @@ public class MapAreaGenerate : MonoBehaviour
 
     void Start()
     {
+
         //マップをランダムに配置
         MapGenerate();
 

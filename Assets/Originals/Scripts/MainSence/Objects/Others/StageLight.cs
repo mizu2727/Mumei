@@ -41,6 +41,7 @@ public class StageLight : MonoBehaviour
 
     void Start()
     {
+
         //ステージライトフラグがオフの場合
         if (!isLitLight) 
         {
@@ -59,7 +60,7 @@ public class StageLight : MonoBehaviour
         if (MapAreaGenerate.instance != null) 
         {
             //敵との距離配列を初期化
-            distanceArray = new float[MapAreaGenerate.instance.baseEnemyTransformArray.Length];
+            distanceArray = new float[MapAreaGenerate.instance.GetBaseEnemyTransformArray().Length];
         }
 
         
@@ -75,10 +76,10 @@ public class StageLight : MonoBehaviour
             return;
         }
 
-        for (int i = 0; i < MapAreaGenerate.instance.baseEnemyTransformArray.Length; i++)
+        for (int i = 0; i < MapAreaGenerate.instance.GetBaseEnemyTransformArray().Length; i++)
         {
             //敵との距離を測定
-            distanceArray[i] = Vector3.Distance(MapAreaGenerate.instance.baseEnemyTransformArray[i].position, transform.position);
+            distanceArray[i] = Vector3.Distance(MapAreaGenerate.instance.GetBaseEnemyTransformArray()[i].position, transform.position);
 
 
             //距離が点滅開始範囲以内の場合
