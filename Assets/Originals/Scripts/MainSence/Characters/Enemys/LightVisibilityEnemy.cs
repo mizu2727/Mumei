@@ -21,6 +21,11 @@ public class LightVisibilityEnemy : BaseEnemy
     /// </summary>
     RaycastHit playerlightHit;
 
+    /// <summary>
+    /// プレイヤータグ
+    /// </summary>
+    private string playerTag = "Player";
+
     [Header("プレイヤーライト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Transform playerLight;
 
@@ -33,6 +38,11 @@ public class LightVisibilityEnemy : BaseEnemy
     /// オブジェクトライトのRaycastHit情報
     /// </summary>
     RaycastHit objectlightHit;
+
+    /// <summary>
+    /// オブジェクトタグ
+    /// </summary>
+    private string otherStageObjectTag = "OtherStageObject";
 
     [Header("ステージ内のオブジェクトライト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Transform objectLight;
@@ -71,7 +81,8 @@ public class LightVisibilityEnemy : BaseEnemy
         }
 
         //フラッシュライトから飛ばしているRaycastにオブジェクトが当たった場合&&オブジェクトライトが見えていない場合
-        if (Physics.Raycast(playerLight.position, playerLight.forward, out playerlightHit, Mathf.Infinity) && Player.instance.IsLight && !isViewObjectLight)
+        if (Physics.Raycast(playerLight.position, playerLight.forward, out playerlightHit, Mathf.Infinity) 
+            && Player.instance.IsLight && !isViewObjectLight)
         {
             //敵の顔から1つ目のRaycastの当たった場所への方向
             Vector3 headToPlayerLightHitDir = Vector3.Normalize(playerlightHit.point - viewLightObject.position);
@@ -79,11 +90,16 @@ public class LightVisibilityEnemy : BaseEnemy
             //Debug.DrawRay(viewLightObject.position, headToPlayerLightHitDir * 10, Color.red, 0.1f);
             //Debug.Log("テスト001:フラッシュライトから飛ばしているRaycastにオブジェクトが当たった");
 
+            
+
             //フラッシュライトからのRaycastが当たったオブジェクトに敵のRaycastが当たった場合
             if (Physics.Raycast(viewLightObject.position, headToPlayerLightHitDir, out seeTheLightHit, Mathf.Infinity))
             {
                 //Debug.DrawRay(viewLightObject.position, headToPlayerLightHitDir * 10, Color.blue, 0.1f);
                 //Debug.Log("テスト002:敵のRaycastが当たった場合");
+
+
+                
 
                 // ライトと視線が同じ場所に当たった場合（距離が近い場合も含む）
                 //if (playerlightHit.point == seeTheLightHit.point)に近い考え方である
@@ -105,7 +121,7 @@ public class LightVisibilityEnemy : BaseEnemy
                     Debug.Log("テスト003:ライトと視線が同じ場所に当たった場合");
 
                     //光の位置を記録
-                    lastViewLightPosition = targetPoint.position;
+                    lastViewLightPosition = playerLight.position;
                     isInvestigatingLight = true;
                     lightInvestigateTimer = 0f;
 
@@ -165,54 +181,62 @@ public class LightVisibilityEnemy : BaseEnemy
             isViewPlayerLight = false;
         }
 
-        //オブジェクトのライトから飛ばしているRaycastにオブジェクトが当たった場合&&プレイヤーのライトが見えていない場合
-        if (Physics.Raycast(objectLight.position, objectLight.forward, out objectlightHit, Mathf.Infinity) && !isViewPlayerLight)
+        if (objectLight != null) 
         {
-            //敵の顔から1つ目のRaycastの当たった場所への方向
-            Vector3 headToObjectLightHitDir = Vector3.Normalize(objectlightHit.point - viewLightObject.position);
-
-            Debug.DrawRay(viewLightObject.position, headToObjectLightHitDir * 10, Color.red, 0.1f);
-            //Debug.Log("テスト005:オブジェクトのライトから飛ばしているRaycastにオブジェクトが当たった");
-
-            //オブジェクトのライトからのRaycastが当たったオブジェクトに敵のRaycastが当たった場合
-            if (Physics.Raycast(viewLightObject.position, headToObjectLightHitDir, out seeTheLightHit, Mathf.Infinity))
+            //オブジェクトのライトから飛ばしているRaycastにオブジェクトが当たった場合&&プレイヤーのライトが見えていない場合
+            if (Physics.Raycast(objectLight.position, objectLight.forward, out objectlightHit, Mathf.Infinity) && !isViewPlayerLight)
             {
-                //Debug.DrawRay(viewLightObject.position, headToObjectLightHitDir * 10, Color.blue, 0.1f);
-                //Debug.Log("テスト006:敵のRaycastが当たった場合");
+                //敵の顔から1つ目のRaycastの当たった場所への方向
+                Vector3 headToObjectLightHitDir = Vector3.Normalize(objectlightHit.point - viewLightObject.position);
 
-                //オブジェクトのライトと視線が同じ場所に当たった場合（距離が近い場合も含む）
-                //if (lightHit.point == seeTheLightHit.point)に近い考え方である
-                if (Vector3.Distance(objectlightHit.point, seeTheLightHit.point) < 0.1f)
+                Debug.DrawRay(viewLightObject.position, headToObjectLightHitDir * 10, Color.red, 0.1f);
+                //Debug.Log("テスト005:オブジェクトのライトから飛ばしているRaycastにオブジェクトが当たった");
+
+                //オブジェクトのライトからのRaycastが当たったオブジェクトに敵のRaycastが当たった場合
+                if (Physics.Raycast(viewLightObject.position, headToObjectLightHitDir, out seeTheLightHit, Mathf.Infinity))
                 {
-                    //オブジェクトライト発見フラグをオンにする
-                    isViewObjectLight = true;
+                    //Debug.DrawRay(viewLightObject.position, headToObjectLightHitDir * 10, Color.blue, 0.1f);
+                    //Debug.Log("テスト006:敵のRaycastが当たった場合");
 
-                    //追従モード以外の場合
-                    if (currentState != EnemyState.Chase)
+                    //オブジェクトのライトと視線が同じ場所に当たった場合（距離が近い場合も含む）
+                    //if (lightHit.point == seeTheLightHit.point)に近い考え方である
+                    if (Vector3.Distance(objectlightHit.point, seeTheLightHit.point) < 0.1f)
                     {
-                        //ノイズ画面を表示
-                        Debug.Log("テスト007:オブジェクトの光を検知");
+                        //オブジェクトライト発見フラグをオンにする
+                        isViewObjectLight = true;
+
+                        //追従モード以外の場合
+                        if (currentState != EnemyState.Chase)
+                        {
+                            //ノイズ画面を表示
+                            Debug.Log("テスト007:オブジェクトの光を検知");
+                        }
+
+                        //敵の顔からライトが当たった場所への方向と、敵の顔からライトが当たった場所への方向の内積を計算
+                        float dot = Vector3.Dot(headToObjectLightHitDir, viewLightObject.forward);
+                        Debug.Log("テスト008:オブジェクトのライトと視線が同じ場所に当たった場合");
+
+                        //光の位置を記録
+                        lastViewLightPosition = objectLight.position;
+                        isInvestigatingLight = true;
+                        lightInvestigateTimer = 0f;
+
+                        //光を検知した場合、調査状態に移行
+                        currentState = EnemyState.Investigate;
+
+                        //光の位置へ移動
+                        navMeshAgent.SetDestination(lastViewLightPosition);
+
+                        //内積が正の場合、ライトが敵の視線の前方にあることを意味する
+                        if (dot > 0)
+                        {
+                            Debug.Log("テスト009:オブジェクトのライトが見えている");
+                        }
                     }
-
-                    //敵の顔からライトが当たった場所への方向と、敵の顔からライトが当たった場所への方向の内積を計算
-                    float dot = Vector3.Dot(headToObjectLightHitDir, viewLightObject.forward);
-                    Debug.Log("テスト008:オブジェクトのライトと視線が同じ場所に当たった場合");
-
-                    //光の位置を記録
-                    lastViewLightPosition = targetPoint.position;
-                    isInvestigatingLight = true;
-                    lightInvestigateTimer = 0f;
-
-                    //光を検知した場合、調査状態に移行
-                    currentState = EnemyState.Investigate;
-
-                    //光の位置へ移動
-                    navMeshAgent.SetDestination(lastViewLightPosition);
-
-                    //内積が正の場合、ライトが敵の視線の前方にあることを意味する
-                    if (dot > 0)
+                    else
                     {
-                        Debug.Log("テスト009:オブジェクトのライトが見えている");
+                        //オブジェクトライト発見フラグをオフにする
+                        isViewObjectLight = false;
                     }
                 }
                 else
@@ -227,13 +251,14 @@ public class LightVisibilityEnemy : BaseEnemy
                 isViewObjectLight = false;
             }
         }
-        else 
+        else
         {
             //オブジェクトライト発見フラグをオフにする
             isViewObjectLight = false;
         }
 
-            //BaseEnemy.csのUpdate関数を呼び出す
-            base.Update();
+
+        //BaseEnemy.csのUpdate関数を呼び出す
+        base.Update();
     }
 }
