@@ -52,12 +52,12 @@ public class HiddenObject : MonoBehaviour
     /// <summary>
     /// Stage01
     /// </summary>
-    private const string stage01 = "Stage01";
+    private const string stringStage01 = "Stage01";
 
     /// <summary>
     /// Stage02
     /// </summary>
-    private const string stage02 = "Stage02";
+    private const string stringStage02 = "Stage02";
 
     /// <summary>
     /// GameClearSceneのシーン名
@@ -143,11 +143,11 @@ public class HiddenObject : MonoBehaviour
         //SEのIDを現在のStageSceneによって切り替えて設定する
         switch (SceneManager.GetActiveScene().name) 
         {
-            case stage01:
+            case stringStage01:
                 currentHiddenPlayerSEid = chestSEid;
                 break;
 
-            case stage02:
+            case stringStage02:
                 currentHiddenPlayerSEid = trashCanSEid;
                 break;
         }
@@ -266,15 +266,6 @@ public class HiddenObject : MonoBehaviour
 
         //playerのローカル回転を初期化
         player.localRotation = Quaternion.identity;
-
-
-        //nullチェック
-        if (characterController != null)
-        {
-            //物理判定を有効化
-            characterController.enabled = true;
-        }
-
 
         //プレイヤーが隠れるアニメーションを再生
         Player.instance.PlayOrStopKneelingAnimation();
