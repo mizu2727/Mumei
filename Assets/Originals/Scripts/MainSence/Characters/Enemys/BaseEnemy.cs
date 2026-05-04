@@ -302,7 +302,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //ステージBGMを停止する
-        Stage01Controller.instance.StopStage01BGM();
+        Stage01Controller.instance.StopStageBGM();
 
         //プレイヤーを追従するBGMを停止する
         EnemyBGMController.instance.StopChasePlayerBGM();

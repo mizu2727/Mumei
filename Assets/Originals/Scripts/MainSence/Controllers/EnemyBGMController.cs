@@ -11,7 +11,12 @@ public class EnemyBGMController : MonoBehaviour
     /// <summary>
     /// Stage01
     /// </summary>
-    private const string stage01 = "Stage01";
+    private const string stringStage01 = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02 = "Stage02";
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
@@ -151,8 +156,8 @@ public class EnemyBGMController : MonoBehaviour
 
         //一時停止するBGMの情報を保存する(BGMID:999をSO_BGMのBGMID検索処理に渡してしまいエラーが発生するのを防ぐために必要)
         keepAudioSourceBGM = Stage01Controller.instance.GetAudioSourceBGM();
-        keepAudioClipBGM = sO_BGM.GetBGMClip(Stage01Controller.instance.GetStage01BGMId());
-        keepAudioBGMId = Stage01Controller.instance.GetStage01BGMId();
+        keepAudioClipBGM = sO_BGM.GetBGMClip(Stage01Controller.instance.GetCurrentBGMId());
+        keepAudioBGMId = Stage01Controller.instance.GetCurrentBGMId();
     }
 
     /// <summary>
@@ -172,22 +177,11 @@ public class EnemyBGMController : MonoBehaviour
     /// </summary>
     public void ChangeBGMFromStageBGMToChasePlayerBGM() 
     {
-        //現在のシーン名を取得し、その名前によって一時停止するステージBGMを決める
-        switch (SceneManager.GetActiveScene().name)
-        {
-            //Stage01
-            case stage01:
 
-                //一時停止するBGMの情報を保存する
-                keepAudioSourceBGM = Stage01Controller.instance.GetAudioSourceBGM();
-                keepAudioClipBGM = sO_BGM.GetBGMClip(Stage01Controller.instance.GetStage01BGMId());
-                keepAudioBGMId = Stage01Controller.instance.GetStage01BGMId();
-                break;
-
-            default:
-                Debug.LogWarning("その他のシーン名");
-                break;
-        }
+        //一時停止するBGMの情報を保存する
+        keepAudioSourceBGM = Stage01Controller.instance.GetAudioSourceBGM();
+        keepAudioClipBGM = sO_BGM.GetBGMClip(Stage01Controller.instance.GetCurrentBGMId());
+        keepAudioBGMId = Stage01Controller.instance.GetCurrentBGMId();
 
         //ステージBGMを一時停止
         MusicController.instance.PauseBGM(keepAudioSourceBGM,keepAudioClipBGM, keepAudioBGMId);

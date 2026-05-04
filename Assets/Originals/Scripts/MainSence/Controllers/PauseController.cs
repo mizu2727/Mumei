@@ -179,7 +179,12 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// Stage01
     /// </summary>
-    private const string stage01 = "Stage01";
+    private const string stringStage01 = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02 = "Stage02";
 
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -627,8 +632,9 @@ public class PauseController : MonoBehaviour
                     sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
                 break;
 
-            //Stage01
-            case stage01:
+            //StageXX
+            case stringStage01:
+            case stringStage02:
                 //現在流れているBGMがステージBGMなのか敵に追われているBGMなのかを判別する
                 if (nowPlayBGMId == EnemyBGMController.instance.GetChasePlayerBGMId())
                 {
@@ -640,7 +646,7 @@ public class PauseController : MonoBehaviour
                 {
                     //Stage01BGMを一時停止
                     MusicController.instance.PauseBGM(Stage01Controller.instance.GetAudioSourceBGM(),
-                        sO_BGM.GetBGMClip(Stage01Controller.instance.GetStage01BGMId()), Stage01Controller.instance.GetStage01BGMId());
+                        sO_BGM.GetBGMClip(Stage01Controller.instance.GetCurrentBGMId()), Stage01Controller.instance.GetCurrentBGMId());
                 }
                 break;
 
@@ -730,8 +736,9 @@ public class PauseController : MonoBehaviour
                         sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
                     break;
 
-                //Stage01
-                case stage01:
+                //StageXX
+                case stringStage01:
+                case stringStage02:
                     //現在一時停止しているBGMがステージBGMなのか敵に追われているBGMなのかを判別する
                     if (nowPlayBGMId == EnemyBGMController.instance.GetChasePlayerBGMId())
                     {
@@ -743,7 +750,7 @@ public class PauseController : MonoBehaviour
                     {
                         //Stage01BGMを一時停止解除
                         MusicController.instance.UnPauseBGM(Stage01Controller.instance.GetAudioSourceBGM(),
-                            sO_BGM.GetBGMClip(Stage01Controller.instance.GetStage01BGMId()), Stage01Controller.instance.GetStage01BGMId());
+                            sO_BGM.GetBGMClip(Stage01Controller.instance.GetCurrentBGMId()), Stage01Controller.instance.GetCurrentBGMId());
                     }
                     break;
 

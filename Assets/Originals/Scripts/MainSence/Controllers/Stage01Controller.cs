@@ -13,6 +13,16 @@ public class Stage01Controller : MonoBehaviour
     public static Stage01Controller instance;
 
     /// <summary>
+    /// Stage01
+    /// </summary>
+    private const string stringStage01 = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02 = "Stage02";
+
+    /// <summary>
     /// 時間計測フラグ
     /// </summary>
     private bool isTimer;
@@ -26,9 +36,19 @@ public class Stage01Controller : MonoBehaviour
     private AudioSource audioSourceBGM;
 
     /// <summary>
+    /// 設定用のBGMのID
+    /// </summary>
+    private int currentBGMId;
+
+    /// <summary>
     /// Stage01BGMのID
     /// </summary>
     private readonly int stage01BGMId = 2;
+
+    /// <summary>
+    /// Stage02BGMのID
+    /// </summary>
+    private readonly int stage02BGMId = 3;
 
     /// <summary>
     /// 経過時間
@@ -54,12 +74,12 @@ public class Stage01Controller : MonoBehaviour
     }
 
     /// <summary>
-    /// Stage01BGMのIDを取得する
+    /// 現在のStageBGMのIDを取得する
     /// </summary>
-    /// <returns>Stage01BGMのID</returns>
-    public int GetStage01BGMId()
+    /// <returns>現在のStageBGMのID</returns>
+    public int GetCurrentBGMId()
     {
-        return stage01BGMId;
+        return currentBGMId;
     }
 
     /// <summary>
@@ -163,14 +183,39 @@ public class Stage01Controller : MonoBehaviour
         //プレイヤーをスタート地点へワープ
         Player.instance.PlayerWarp(0,0,0);
 
-        //シーンステータスをkStage01に設定
-        GameController.instance.SetViewScene(ViewScene.kStage01);
+        //現在のシーン名を取得し、その名前によってシーンステータスとSteageBGMをを決める
+        switch (SceneManager.GetActiveScene().name)
+        {
+            //Stage01
+            case stringStage01:
+                //シーンステータスをkStage01に設定
+                GameController.instance.SetViewScene(ViewScene.kStage01);
+
+                //Stage01BGMを設定する
+                currentBGMId = stage01BGMId;
+
+                break;
+
+            //Stage02
+            case stringStage02:
+                //シーンステータスをkStage02に設定
+                GameController.instance.SetViewScene(ViewScene.kStage02);
+
+                //Stage02BGMを設定する
+                currentBGMId = stage02BGMId;
+
+                break;
+
+            default:
+                Debug.LogWarning("その他のシーン名(Stage01Controller)");
+                break;
+        }
 
         //AudioSourceの初期化
         InitializeAudioSource();
 
-        //Stage01BGMを流す。現在再生中のBGMを設定する。
-        PlayStage01BGM();
+        //StageBGMを流す。現在再生中のBGMを設定する。
+        PlayStageBGM();
 
         //ゲームモードステータスをInGameに設定
         GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
@@ -197,23 +242,23 @@ public class Stage01Controller : MonoBehaviour
     }
 
     /// <summary>
-    /// Stage01BGMを流す。現在再生中のBGMを設定する。
+    /// StageBGMを流す。現在再生中のBGMを設定する。
     /// </summary>
-    public void PlayStage01BGM() 
+    public void PlayStageBGM() 
     {
         //Stage01BGMを再生
-        MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(stage01BGMId), stage01BGMId);
+        MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(currentBGMId), currentBGMId);
 
-        //現在再生中のBGMをStage01BGMに設定する
-        PauseController.instance.SetNowPlayBGMId(stage01BGMId);
+        //現在再生中のBGMをStageXXBGMに設定する
+        PauseController.instance.SetNowPlayBGMId(currentBGMId);
     }
 
     /// <summary>
-    /// Stage01BGMを停止する。
+    /// StageBGMを停止する。
     /// </summary>
-    public void StopStage01BGM() 
+    public void StopStageBGM() 
     {
         //Stage01BGMを停止
-        MusicController.instance.StopBGM(audioSourceBGM, sO_BGM.GetBGMClip(stage01BGMId), stage01BGMId);
+        MusicController.instance.StopBGM(audioSourceBGM, sO_BGM.GetBGMClip(currentBGMId), currentBGMId);
     }
 }
