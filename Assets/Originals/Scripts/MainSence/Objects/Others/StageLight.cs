@@ -47,7 +47,11 @@ public class StageLight : MonoBehaviour
         {
             //ステージライトを消灯させる
             lightPrefab.gameObject.SetActive(false);
-            particleSystemPrefab.gameObject.SetActive(false);
+
+            if (particleSystemPrefab != null)
+            {
+                particleSystemPrefab.gameObject.SetActive(false);
+            }
         }
 
         //ステージライト点滅フラグをオフにする
@@ -107,7 +111,11 @@ public class StageLight : MonoBehaviour
         {
             //ステージライトをそのまま点灯させた状態にする
             lightPrefab.gameObject.SetActive(true);
-            particleSystemPrefab.gameObject.SetActive(true);
+
+            if (particleSystemPrefab != null)
+            {
+                particleSystemPrefab.gameObject.SetActive(true);
+            }
 
             //処理をスキップ
             return;
@@ -139,7 +147,11 @@ public class StageLight : MonoBehaviour
         {
             //ステージライトを点灯させる
             lightPrefab.gameObject.SetActive(true);
-            particleSystemPrefab.gameObject.SetActive(true);
+
+            if (particleSystemPrefab != null)
+            {
+                particleSystemPrefab.gameObject.SetActive(true);
+            }
 
             //フラグ値をオン
             isLitLight = true;
@@ -157,13 +169,21 @@ public class StageLight : MonoBehaviour
         {
             //ステージライトを消灯させる
             lightPrefab.gameObject.SetActive(false);
-            particleSystemPrefab.gameObject.SetActive(false);
+
+            if (particleSystemPrefab != null)
+            {
+                particleSystemPrefab.gameObject.SetActive(false);
+            }
         }
         else 
         {
             //ステージライトを点灯させる
             lightPrefab.gameObject.SetActive(true);
-            particleSystemPrefab.gameObject.SetActive(true);
+
+            if (particleSystemPrefab != null)
+            {
+                particleSystemPrefab.gameObject.SetActive(true);
+            }
         }
 
         //ステージライト点滅時間を初期化
