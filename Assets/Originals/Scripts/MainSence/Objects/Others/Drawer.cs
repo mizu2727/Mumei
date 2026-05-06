@@ -38,9 +38,19 @@ public class Drawer : MonoBehaviour
     [SerializeField] private Transform itemPlacementPoint;
 
     /// <summary>
-    /// 引き出しを閉じた時のアイテムのローカルポジション
+    /// デフォルトの引き出しを閉じた時のアイテムのローカルポジション
     /// </summary>
-    private Vector3 closeItemPosition = new Vector3(-0.03f, 0.0f, -0.23f);
+    private Vector3 defaultCloseItemPosition = new Vector3(-0.03f, 0.0f, -0.23f);
+
+    /// <summary>
+    /// 引き出しを閉じた時のアイテムのローカルポジション01
+    /// </summary>
+    private Vector3 closeItemPosition01 = new Vector3(-0.03f, 0.0f, -0.23f);
+
+    /// <summary>
+    /// 引き出しを閉じた時のアイテムのローカルポジション02
+    /// </summary>
+    private Vector3 closeItemPosition02 = new Vector3(0.2351f, -0.0498f, 0f);
 
 
     /// <summary>
@@ -71,6 +81,21 @@ public class Drawer : MonoBehaviour
 
     [Header("引き出しの戸のBoxCollider")]
     [SerializeField] private BoxCollider boxCollider;
+
+    /// <summary>
+    /// HomeScene
+    /// </summary>
+    private const string stringHomeScene = "HomeScene";
+
+    /// <summary>
+    /// Stage01
+    /// </summary>
+    private const string stringStage01 = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02 = "Stage02";
 
 
     /// <summary>
@@ -188,8 +213,21 @@ public class Drawer : MonoBehaviour
             // itemPlacementPointの原点に配置
             itemTransform.localPosition = Vector3.zero;
 
+            //defaultCloseItemPositionを現在のStageSceneによって切り替えて設定する
+            switch (SceneManager.GetActiveScene().name)
+            {
+                case stringHomeScene:
+                case stringStage01:
+                    defaultCloseItemPosition = closeItemPosition01;
+                    break;
+
+                case stringStage02:
+                    defaultCloseItemPosition = closeItemPosition02;
+                    break;
+            }
+
             //アイテムのローカルポジション
-            itemTransform.localPosition = closeItemPosition;
+            itemTransform.localPosition = defaultCloseItemPosition;
 
             // drawerItemTransformにアタッチ
             drawerItemTransform = itemTransform;
