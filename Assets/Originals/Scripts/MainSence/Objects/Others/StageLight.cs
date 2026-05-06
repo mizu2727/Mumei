@@ -9,10 +9,13 @@ public class StageLight : MonoBehaviour
     [SerializeField] public bool isLitLight = false;
 
     [Header("ポイントライト(Prefabをアタッチすること)")]
-    [SerializeField] Light lightPrefab;
+    [SerializeField] private Light lightPrefab;
 
     [Header("パーティクルシステム(Prefabをアタッチすること)")]
-    [SerializeField] ParticleSystem particleSystemPrefab;
+    [SerializeField] private ParticleSystem particleSystemPrefab;
+
+    [Header("電球本体オブジェクト(Prefabをアタッチすること)")]
+    [SerializeField] private GameObject lightBulbPrefab;
 
     /// <summary>
     /// 敵との距離
@@ -46,12 +49,7 @@ public class StageLight : MonoBehaviour
         if (!isLitLight) 
         {
             //ステージライトを消灯させる
-            lightPrefab.gameObject.SetActive(false);
-
-            if (particleSystemPrefab != null)
-            {
-                particleSystemPrefab.gameObject.SetActive(false);
-            }
+            LightOff();
         }
 
         //ステージライト点滅フラグをオフにする
@@ -110,12 +108,7 @@ public class StageLight : MonoBehaviour
         if (!isBlinkingLightFlag) 
         {
             //ステージライトをそのまま点灯させた状態にする
-            lightPrefab.gameObject.SetActive(true);
-
-            if (particleSystemPrefab != null)
-            {
-                particleSystemPrefab.gameObject.SetActive(true);
-            }
+            LightOn();
 
             //処理をスキップ
             return;
@@ -138,7 +131,7 @@ public class StageLight : MonoBehaviour
     }
 
     /// <summary>
-    /// ステージ内のライトを点灯させる
+    /// ステージ内のライトを手動または自動で点灯させる
     /// </summary>
     public void LitStageLight() 
     {
@@ -146,12 +139,7 @@ public class StageLight : MonoBehaviour
         if (!isLitLight)
         {
             //ステージライトを点灯させる
-            lightPrefab.gameObject.SetActive(true);
-
-            if (particleSystemPrefab != null)
-            {
-                particleSystemPrefab.gameObject.SetActive(true);
-            }
+            LightOn();
 
             //フラグ値をオン
             isLitLight = true;
@@ -168,25 +156,57 @@ public class StageLight : MonoBehaviour
         if (lightPrefab.gameObject.activeSelf)
         {
             //ステージライトを消灯させる
-            lightPrefab.gameObject.SetActive(false);
-
-            if (particleSystemPrefab != null)
-            {
-                particleSystemPrefab.gameObject.SetActive(false);
-            }
+            LightOff();
         }
         else 
         {
             //ステージライトを点灯させる
-            lightPrefab.gameObject.SetActive(true);
-
-            if (particleSystemPrefab != null)
-            {
-                particleSystemPrefab.gameObject.SetActive(true);
-            }
+            LightOn();
         }
 
         //ステージライト点滅時間を初期化
         blinkTimer = 0.0f;
+    }
+
+    /// <summary>
+    /// ステージライト点灯処理
+    /// </summary>
+    private void LightOn() 
+    {
+        //ステージライトを点灯させる
+        lightPrefab.gameObject.SetActive(true);
+
+        //パーティクルシステムを点灯させる
+        if (particleSystemPrefab != null)
+        {
+            particleSystemPrefab.gameObject.SetActive(true);
+        }
+
+        //電球本体オブジェクトを点灯させる
+        if (lightBulbPrefab != null)
+        {
+            lightBulbPrefab.gameObject.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// ステージライト消灯処理
+    /// </summary>
+    private void LightOff()
+    {
+        //ステージライトを消灯させる
+        lightPrefab.gameObject.SetActive(false);
+
+        //パーティクルシステムを消灯させる
+        if (particleSystemPrefab != null)
+        {
+            particleSystemPrefab.gameObject.SetActive(false);
+        }
+
+        //電球本体オブジェクトを消灯させる
+        if (lightBulbPrefab != null)
+        {
+            lightBulbPrefab.gameObject.SetActive(false);
+        }
     }
 }
