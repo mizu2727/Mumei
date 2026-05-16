@@ -78,6 +78,9 @@ public class StageLight : MonoBehaviour
             return;
         }
 
+        //ステージライト点滅フラグをオフにする
+        isBlinkingLightFlag = false;
+
         for (int i = 0; i < MapAreaGenerate.instance.GetBaseEnemyTransformArray().Length; i++)
         {
             //敵との距離を測定
@@ -89,11 +92,6 @@ public class StageLight : MonoBehaviour
             {
                 //ステージライト点滅フラグをオンにする
                 isBlinkingLightFlag = true;
-            }
-            else 
-            {
-                //ステージライト点滅フラグをオフにする
-                isBlinkingLightFlag = false;
             }
         }
 
