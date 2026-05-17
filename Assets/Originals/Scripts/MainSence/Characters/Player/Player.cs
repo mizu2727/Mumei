@@ -21,6 +21,27 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     CharacterController characterController;
 
+    /// <summary>
+    /// characterController.enabledを取得
+    /// </summary>
+    /// <returns>characterController.enabled</returns>
+    public bool GetCharacterControllerEnabled()
+    {
+        return characterController != null && characterController.enabled;
+    }
+
+    /// <summary>
+    /// characterController.enabledを設定
+    /// </summary>
+    /// <param name="isEnabled">characterController.enabled</param>
+    public void SetCharacterControllerEnabled(bool isEnabled)
+    {
+        if (characterController != null)
+        {
+            characterController.enabled = isEnabled;
+        }
+    }
+
     [Header("プレイヤーモデルのGameObject(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public GameObject[] playerBodys;
 

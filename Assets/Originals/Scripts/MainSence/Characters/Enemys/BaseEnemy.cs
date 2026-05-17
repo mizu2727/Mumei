@@ -269,7 +269,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //敵がプレイヤーを襲う際のエフェクト画面を表示するフラグをtrueに設定
         EnemyAttackScreen.instance.SetIsViewEnemyAttackScreen(true);
 
-
         //プレイヤーの身体のパーツを非表示にする(敵が襲う演出でプレイヤー自身が見えてしまうのを防ぐため)
         for (int i = 0; i < Player.instance.playerBodys.Length; i++)
         {
