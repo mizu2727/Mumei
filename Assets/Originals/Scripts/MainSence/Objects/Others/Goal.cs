@@ -30,6 +30,28 @@ public class Goal : MonoBehaviour
     [Header("ミステリーアイテム画像(ヒエラルキー上の画像をアタッチする必要がある)")]
     [SerializeField] private Image[] selectMysteryItemImage;
 
+    [Header("ゴール壁(ヒエラルキーからアタッチする必要がある)")]
+    [SerializeField] private GameObject goalWall;
+
+    /// <summary>
+    /// ゴール壁の移動速度
+    /// </summary>
+    private const float goalWallMoveSpeed = 0.5f;
+
+    /// <summary>
+    /// メモ
+    /// ステージ1の場合：(X:56,Y:10,Z:68)
+    /// </summary>
+    [Header("移動後のゴール壁位置(子オブジェクトに鳴っていない場合の位置を設定する必要がある)")]
+    [SerializeField] private Vector3 movedGoalWallPosition;
+
+    
+
+    /// <summary>
+    /// 正解のミステリーアイテムを選択したかどうかのフラグ
+    /// </summary>
+    private bool isChoosedAnser;
+
     [Header("ゴールフラグ")]
     public bool isGoalPanel;
 
@@ -122,6 +144,9 @@ public class Goal : MonoBehaviour
 
     private void Start()
     {
+        //正解のミステリーアイテムを選択したフラグをオフにする
+        isChoosedAnser = false;
+
         //ゴールパネルを非表示
         isGoalPanel = false;
         ViewGoalPanel();
@@ -137,6 +162,13 @@ public class Goal : MonoBehaviour
     {
         //アイテムのnullチェック
         sO_Item.CleanNullItems();
+
+        //既に正解のミステリーアイテムを選択している場合
+        if (isChoosedAnser) 
+        {
+            //処理をスキップ
+            return;
+        }
 
         //ドキュメントを入手していない場合
         if (sO_Item.GetItemByType(ItemType.Document) == false)
@@ -326,6 +358,23 @@ public class Goal : MonoBehaviour
                 //タイマーを停止する
                 Stage01Controller.instance.SetIsTimer(false);
 
+
+                //正解のミステリーアイテムを選択したフラグをオンにする
+                isChoosedAnser = true;
+
+                //ゴール壁を移動させる
+                //goalWall.transform.position = movedGoalWallPosition;
+
+                //ゴール壁のTransformコンポーネントを取得
+                Transform moveObjectTransform = goalWall.GetComponent<Transform>();
+
+                //目的の位置に移動
+                moveObjectTransform.position = Vector3.Lerp(moveObjectTransform.position, movedGoalWallPosition, goalWallMoveSpeed * Time.deltaTime); 
+
+                //パネルを非表示にする(戻るボタン押下時と同じ処理を発動)
+                OnClickedReturnToInGameButton();
+
+                /*
                 //正解時の処理
                 //デモ版の場合
                 if (GameController.instance.GetIsDemoPlayFlag())
@@ -407,6 +456,7 @@ public class Goal : MonoBehaviour
                 
                 //画面遷移
                 SceneManager.LoadScene(stringGameClearScene);
+                */
             }
             //正解のミステリーアイテム(チュートリアル版)であるかを判定
             else if (mysteryItems[index].id == anserTutorialItemId) 
@@ -575,7 +625,6 @@ public class Goal : MonoBehaviour
             default:
                 Debug.LogError("不正な難易度ステータスのため、クリア時間を更新できません");
                 break;
-        }
-        ;
+        };
     }
 }

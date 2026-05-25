@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 using UnityEngine.SceneManagement;
@@ -23,6 +24,11 @@ public class ChangeSceneZone : MonoBehaviour
     private const string stringHomeScene = "HomeScene";
 
     /// <summary>
+    /// DemoStage01
+    /// </summary>
+    private const string stringDemoStage01 = "DemoStage01";
+
+    /// <summary>
     /// Stage01
     /// </summary>
     private const string stringStage01Scene = "Stage01";
@@ -43,6 +49,11 @@ public class ChangeSceneZone : MonoBehaviour
     private const string stringStage04Scene = "Stage04";
 
     /// <summary>
+    /// GameClearScene
+    /// </summary>
+    const string stringGameClearScene = "GameClearScene";
+
+    /// <summary>
     /// シーン名の配列(0番目のみ空けている)
     /// </summary>
     private string[] stageSceneNameArray = {""
@@ -53,6 +64,26 @@ public class ChangeSceneZone : MonoBehaviour
     ///  シーン名配列インデックス番号
     /// </summary>
     private int stageSceneNameArrayIndex;
+
+    /// <summary>
+    /// EasyLevel
+    /// </summary>
+    private const string stringEasyLevel = "EasyLevel";
+
+    /// <summary>
+    /// NormalLevel
+    /// </summary>
+    private const string stringNormalLevel = "NormalLevel";
+
+    /// <summary>
+    /// NightmareLevel
+    /// </summary>
+    private const string stringNightmareLevel = "NightmareLevel";
+
+    /// <summary>
+    /// 比較用の最速クリア時間
+    /// </summary>
+    TimeSpan saveTimeSpan;
 
     /// <summary>
     /// "Player"タグ
@@ -123,6 +154,126 @@ public class ChangeSceneZone : MonoBehaviour
                 //ステージ1へシーン遷移する
                 LoadSceneStage01();
                 break;
+
+            //Stage01の場合
+            case stringStage01Scene:
+
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
+                //デモ版の場合
+                if (GameController.instance.GetIsDemoPlayFlag())
+                {
+                    //デモ版クリアステータス番号を1(通常クリア)にする
+                    saveStageClearStatusArray[stringDemoStage01] = 1;
+
+                    //デモ版ステージ1難易度クリアステータス情報を更新する
+                    SettingStageDifficultyLevelClearStatus(saveDemoStage01DifficultyLevelClearStatusArray);
+
+                    //デモ版ステージ1難易度クリア時間情報を更新する
+                    SettingDifficultyLevelClearTime(saveDemoStage01DifficultyLevelClearTimeArray);
+                }
+                //製品版の場合
+                else
+                {
+                    //ステージ1クリアステータス番号を1(通常クリア)にする
+                    saveStageClearStatusArray[stringStage01Scene] = 1;
+
+                    //ステージ1難易度クリアステータス情報を更新する
+                    SettingStageDifficultyLevelClearStatus(saveStage01DifficultyLevelClearStatusArray);
+
+                    //ステージ1難易度クリア時間情報を更新する
+                    SettingDifficultyLevelClearTime(saveStage01DifficultyLevelClearTimeArray);
+                }
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+
+                //画面遷移
+                SceneManager.LoadScene(stringGameClearScene);
+
+                break;
+
+            //Stage02の場合
+            case stringStage02Scene:
+
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
+                //ステージ2クリアステータス番号を1(通常クリア)にする
+                saveStageClearStatusArray[stringStage02Scene] = 1;
+
+                //ステージ2難易度クリアステータス情報を更新する
+                SettingStageDifficultyLevelClearStatus(saveStage02DifficultyLevelClearStatusArray);
+
+                //ステージ2難易度クリア時間情報を更新する
+                SettingDifficultyLevelClearTime(saveStage02DifficultyLevelClearTimeArray);
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+
+                //画面遷移
+                SceneManager.LoadScene(stringGameClearScene);
+
+                break;
+
+            //Stage03の場合
+            case stringStage03Scene:
+
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
+                //ステージ3クリアステータス番号を1(通常クリア)にする
+                saveStageClearStatusArray[stringStage03Scene] = 1;
+
+                //ステージ3難易度クリアステータス情報を更新する
+                SettingStageDifficultyLevelClearStatus(saveStage03DifficultyLevelClearStatusArray);
+
+                //ステージ3難易度クリア時間情報を更新する
+                SettingDifficultyLevelClearTime(saveStage03DifficultyLevelClearTimeArray);
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+
+                //画面遷移
+                SceneManager.LoadScene(stringGameClearScene);
+
+                break;
+
+            //Stage04の場合
+            case stringStage04Scene:
+
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
+                //ステージ4クリアステータス番号を1(通常クリア)にする
+                saveStageClearStatusArray[stringStage04Scene] = 1;
+
+                //ステージ4難易度クリアステータス情報を更新する
+                SettingStageDifficultyLevelClearStatus(saveStage04DifficultyLevelClearStatusArray);
+
+                //ステージ4難易度クリア時間情報を更新する
+                SettingDifficultyLevelClearTime(saveStage04DifficultyLevelClearTimeArray);
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+
+                //画面遷移
+                SceneManager.LoadScene(stringGameClearScene);
+
+                break;
         }
     }
 
@@ -147,6 +298,127 @@ public class ChangeSceneZone : MonoBehaviour
 
                 //ステージ1へシーン遷移する
                 LoadSceneStage01();
+                break;
+
+            //Stage01の場合
+            case stringStage01Scene:
+
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
+                //デモ版の場合
+                if (GameController.instance.GetIsDemoPlayFlag())
+                {
+                    //デモ版クリアステータス番号を1(通常クリア)にする
+                    saveStageClearStatusArray[stringDemoStage01] = 1;
+
+                    //デモ版ステージ1難易度クリアステータス情報を更新する
+                    SettingStageDifficultyLevelClearStatus(saveDemoStage01DifficultyLevelClearStatusArray);
+
+                    //デモ版ステージ1難易度クリア時間情報を更新する
+                    SettingDifficultyLevelClearTime(saveDemoStage01DifficultyLevelClearTimeArray);
+                }
+                //製品版の場合
+                else 
+                {
+                    //ステージ1クリアステータス番号を1(通常クリア)にする
+                    saveStageClearStatusArray[stringStage01Scene] = 1;
+
+                    //ステージ1難易度クリアステータス情報を更新する
+                    SettingStageDifficultyLevelClearStatus(saveStage01DifficultyLevelClearStatusArray);
+
+                    //ステージ1難易度クリア時間情報を更新する
+                    SettingDifficultyLevelClearTime(saveStage01DifficultyLevelClearTimeArray);
+                }
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+
+                //画面遷移
+                SceneManager.LoadScene(stringGameClearScene);
+
+
+                break;
+
+            //Stage02の場合
+            case stringStage02Scene:
+
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
+                //ステージ2クリアステータス番号を1(通常クリア)にする
+                saveStageClearStatusArray[stringStage02Scene] = 1;
+
+                //ステージ2難易度クリアステータス情報を更新する
+                SettingStageDifficultyLevelClearStatus(saveStage02DifficultyLevelClearStatusArray);
+
+                //ステージ2難易度クリア時間情報を更新する
+                SettingDifficultyLevelClearTime(saveStage02DifficultyLevelClearTimeArray);
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+
+                //画面遷移
+                SceneManager.LoadScene(stringGameClearScene);
+
+                break;
+
+            //Stage03の場合
+            case stringStage03Scene:
+
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
+                //ステージ3クリアステータス番号を1(通常クリア)にする
+                saveStageClearStatusArray[stringStage03Scene] = 1;
+
+                //ステージ3難易度クリアステータス情報を更新する
+                SettingStageDifficultyLevelClearStatus(saveStage03DifficultyLevelClearStatusArray);
+
+                //ステージ3難易度クリア時間情報を更新する
+                SettingDifficultyLevelClearTime(saveStage03DifficultyLevelClearTimeArray);
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+
+                //画面遷移
+                SceneManager.LoadScene(stringGameClearScene);
+
+                break;
+
+            //Stage04の場合
+            case stringStage04Scene:
+
+                //タイマーを停止する
+                Stage01Controller.instance.SetIsTimer(false);
+
+                //ステージ4クリアステータス番号を1(通常クリア)にする
+                saveStageClearStatusArray[stringStage04Scene] = 1;
+
+                //ステージ4難易度クリアステータス情報を更新する
+                SettingStageDifficultyLevelClearStatus(saveStage04DifficultyLevelClearStatusArray);
+
+                //ステージ4難易度クリア時間情報を更新する
+                SettingDifficultyLevelClearTime(saveStage04DifficultyLevelClearTimeArray);
+
+                //シーン遷移時用データを保存
+                GameController.instance.CallSaveSceneTransitionUserDataMethod();
+
+                //プレイヤーを削除
+                Player.instance.DestroyPlayer();
+
+                //画面遷移
+                SceneManager.LoadScene(stringGameClearScene);
+
                 break;
         }
     }
@@ -223,5 +495,119 @@ public class ChangeSceneZone : MonoBehaviour
 
         //ステージへ移動
         SceneManager.LoadScene(stageSceneNameArray[stageSceneNameArrayIndex]);
+    }
+
+    /// <summary>
+    /// クリアしたステージの難易度レベルに応じて、対応するステージ難易度のクリアステータス情報を更新する
+    /// </summary>
+    /// <param name="targetkeys">該当ステージ難易度情報</param>
+    private void SettingStageDifficultyLevelClearStatus(Dictionary<string, int> targetkeys)
+    {
+        //セーブする難易度ステータスによって、対応するステージクリアステータス情報を更新する
+        switch (DifficultyLevelController.instance.GetDifficultyLevelStatus())
+        {
+            //イージーレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kEasy:
+
+                //該当ステージのEasyクリアステータス番号を1(通常クリア)にする
+                targetkeys[stringEasyLevel] = 1;
+                break;
+            //ノーマルレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kNormal:
+
+                //該当ステージのNormalクリアステータス番号を1(通常クリア)にする
+                targetkeys[stringNormalLevel] = 1;
+                break;
+            //ナイトメアレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kNightmare:
+
+                //該当ステージのNightmareクリアステータス番号を1(通常クリア)にする
+                targetkeys[stringNightmareLevel] = 1;
+                break;
+
+            default:
+                Debug.LogError("不正な難易度ステータスです");
+                break;
+        }
+        ;
+    }
+
+    /// <summary>
+    /// クリアしたステージの難易度レベルに応じて、対応するステージ難易度のクリア時間情報を更新する
+    /// </summary>
+    /// <param name="targetkeys">該当ステージ難易度のクリア時間情報</param>
+    private void SettingDifficultyLevelClearTime(Dictionary<string, string> targetkeys)
+    {
+        //TimeSpanのインスタンスを生成。時分は0で良い
+        TimeSpan timespan = new TimeSpan(0, 0, (int)Stage01Controller.instance.GetElapsedTime());
+
+        //hh:mm:ss形式に変換（String）
+        string clearTime = timespan.ToString(@"hh\:mm\:ss");
+
+
+
+        switch (DifficultyLevelController.instance.GetDifficultyLevelStatus())
+        {
+            //イージーレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kEasy:
+
+                //既にクリア時間を保存している場合、
+                if (targetkeys[stringEasyLevel] != "--:--:--")
+                {
+                    //クリア時間の文字列をTimeSpanに変換
+                    saveTimeSpan = TimeSpan.Parse(targetkeys[stringEasyLevel]);
+                }
+
+                //初クリアの場合||今回のクリア時間の記録が最速の場合
+                if (targetkeys[stringEasyLevel] == "--:--:--" || timespan < saveTimeSpan)
+                {
+                    //該当ステージのEasyクリア時間を更新する
+                    targetkeys[stringEasyLevel] = clearTime;
+                }
+                break;
+
+            //ノーマルレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kNormal:
+
+                //既にクリア時間を保存している場合、
+                if (targetkeys[stringNormalLevel] != "--:--:--")
+                {
+                    //クリア時間の文字列をTimeSpanに変換
+                    saveTimeSpan = TimeSpan.Parse(targetkeys[stringNormalLevel]);
+                }
+
+                //初クリアの場合||今回のクリア時間の記録が最速の場合
+                if (targetkeys[stringNormalLevel] == "--:--:--" || timespan < saveTimeSpan)
+                {
+                    //該当ステージのNormalクリア時間を更新する
+                    targetkeys[stringNormalLevel] = clearTime;
+                }
+
+                break;
+
+            //ナイトメアレベルの場合
+            case DifficultyLevelController.DifficultyLevel.kNightmare:
+
+                //既にクリア時間を保存している場合、
+                if (targetkeys[stringNightmareLevel] != "--:--:--")
+                {
+                    //クリア時間の文字列をTimeSpanに変換
+                    saveTimeSpan = TimeSpan.Parse(targetkeys[stringNightmareLevel]);
+                }
+
+                //初クリアの場合||今回のクリア時間の記録が最速の場合
+                if (targetkeys[stringNightmareLevel] == "--:--:--" || timespan < saveTimeSpan)
+                {
+                    //該当ステージのNightmareクリア時間を更新する
+                    targetkeys[stringNightmareLevel] = clearTime;
+                }
+
+                break;
+
+            default:
+                Debug.LogError("不正な難易度ステータスのため、クリア時間を更新できません");
+                break;
+        }
+        ;
     }
 }
