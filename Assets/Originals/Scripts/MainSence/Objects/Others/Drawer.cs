@@ -310,7 +310,7 @@ public class Drawer : MonoBehaviour
         isOpenDrawer = true;
         boxCollider.enabled = false;
 
-        DrawerSE(true);
+        DrawerSE();
 
         //タグをUntaggedに変更(開けた引き出しのoutlineを非表示にするため)
         this.gameObject.tag = stringUntaggedTag;
@@ -319,8 +319,7 @@ public class Drawer : MonoBehaviour
     /// <summary>
     /// 引き出し効果音
     /// </summary>
-    /// <param name="opening"></param>
-    void DrawerSE(bool opening)
+    void DrawerSE()
     {
         //audioSourceSEが存在する&&引き出しを開けるSEが存在する場合
         if (audioSourceSE != null && sO_SE.GetSEClip(openSEid) != null)
