@@ -36,7 +36,27 @@ public class Goal : MonoBehaviour
     /// <summary>
     /// ゴール壁の移動速度
     /// </summary>
-    private const float goalWallMoveSpeed = 0.5f;
+    private float currentGoalWallMoveSpeed;
+
+    /// <summary>
+    /// ステージ1ゴール壁の移動速度
+    /// </summary>
+    private const float stage01GoalWallMoveSpeed = 0.25f;
+
+    /// <summary>
+    /// ステージ2ゴール壁の移動速度
+    /// </summary>
+    private const float stage02GoalWallMoveSpeed = 0.5f;
+
+    /// <summary>
+    /// ステージ3ゴール壁の移動速度
+    /// </summary>
+    private const float stage03GoalWallMoveSpeed = 0.5f;
+
+    /// <summary>
+    /// ステージ4ゴール壁の移動速度
+    /// </summary>
+    private const float stage04GoalWallMoveSpeed = 0.5f;
 
     /// <summary>
     /// メモ
@@ -44,6 +64,27 @@ public class Goal : MonoBehaviour
     /// </summary>
     [Header("移動後のゴール壁位置(子オブジェクトに鳴っていない場合の位置を設定する必要がある)")]
     [SerializeField] private Vector3 movedGoalWallPosition;
+
+
+    /// <summary>
+    /// Stage01
+    /// </summary>
+    private const string stringStage01Scene = "Stage01";
+
+    /// <summary>
+    /// Stage02
+    /// </summary>
+    private const string stringStage02Scene = "Stage02";
+
+    /// <summary>
+    /// Stage03
+    /// </summary>
+    private const string stringStage03Scene = "Stage03";
+
+    /// <summary>
+    /// Stage04
+    /// </summary>
+    private const string stringStage04Scene = "Stage04";
 
     /// <summary>
     /// 正解のミステリーアイテムを選択したかどうかのフラグ
@@ -130,7 +171,7 @@ public class Goal : MonoBehaviour
             Transform moveObjectTransform = goalWall.GetComponent<Transform>();
 
             //ゴール壁を目的の位置に移動
-            moveObjectTransform.position = Vector3.Lerp(moveObjectTransform.position, movedGoalWallPosition, goalWallMoveSpeed * Time.deltaTime);
+            moveObjectTransform.position = Vector3.Lerp(moveObjectTransform.position, movedGoalWallPosition, currentGoalWallMoveSpeed * Time.deltaTime);
 
             //ゴール壁が目的の位置に到達した場合
             if (moveObjectTransform.position == movedGoalWallPosition) 
@@ -341,6 +382,39 @@ public class Goal : MonoBehaviour
             //正解のミステリーアイテムであるかを判定
             if (mysteryItems[index].id == anserItemId)
             {
+                //現在のシーン名を取得
+                switch (SceneManager.GetActiveScene().name) 
+                {
+                    //ステージ1の場合
+                    case stringStage01Scene:
+
+                        //ステージ1のゴール壁移動速度を設定
+                        currentGoalWallMoveSpeed = stage01GoalWallMoveSpeed;
+                        break;
+
+                    //ステージ2の場合
+                    case stringStage02Scene:
+
+                        //ステージ2のゴール壁移動速度を設定
+                        currentGoalWallMoveSpeed = stage02GoalWallMoveSpeed;
+                        break;
+
+                    //ステージ3の場合
+                    case stringStage03Scene:
+
+                        //ステージ3のゴール壁移動速度を設定
+                        currentGoalWallMoveSpeed = stage03GoalWallMoveSpeed;
+                        break;
+
+                    //ステージ4の場合
+                    case stringStage04Scene:
+
+                        //ステージ4のゴール壁移動速度を設定
+                        currentGoalWallMoveSpeed = stage04GoalWallMoveSpeed;
+                        break;
+                }
+
+
                 //正解のミステリーアイテムを選択したフラグをオンにする
                 isChoosedAnser = true;
 
