@@ -87,6 +87,10 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("Easy用の隠れる地点のTransform配列(ヒエラルキー上のHiddeObjectをアタッチすること)")]
     [SerializeField] private Transform[] easyHideObject;
 
+    [Header("Normal用の隠れる地点のTransform配列(ヒエラルキー上のHiddeObjectをアタッチすること)")]
+    [SerializeField] private Transform[] normalHideObject;
+
+
     /// <summary>
     /// 敵の位置の配列を取得
     /// </summary>
@@ -374,56 +378,35 @@ public class MapAreaGenerate : MonoBehaviour
             //Easyの場合
             case DifficultyLevelController.DifficultyLevel.kEasy:
 
-                //Easy用の隠れる地点が設定されている場合
-                if (easyHideObject.Length != 0)
-                {
-                    //難易度Easy用の隠れる地点を表示する
-                    for (int i = 0; i < easyHideObject.Length; i++)
-                    {
-                        easyHideObject[i].gameObject.SetActive(true);
-                    }
-                }
-                else 
-                {
-                    Debug.LogWarning("難易度Easy用の隠れる地点が設定されていません。");
-                }
+                //難易度Easy用の隠れる地点を表示
+                SettingEasyHideObject(true);
+
+                //難易度Normal用の隠れる地点を表示
+                SettingNormalHideObject(true);
+
                 break;
 
             //Normalの場合
             case DifficultyLevelController.DifficultyLevel.kNormal:
 
-                //Easy用の隠れる地点が設定されている場合
-                if (easyHideObject.Length != 0)
-                {
-                    //難易度Easy用の隠れる地点を非表示
-                    for (int i = 0; i < easyHideObject.Length; i++)
-                    {
-                        easyHideObject[i].gameObject.SetActive(false);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("難易度Easy用の隠れる地点が設定されていません。");
-                }
+                //難易度Easy用の隠れる地点を非表示にする
+                SettingEasyHideObject(false);
+
+                //難易度Normal用の隠れる地点を表示
+                SettingNormalHideObject(true);
+
                 break;
 
             //Nightmareの場合
             case DifficultyLevelController.DifficultyLevel.kNightmare:
 
-            //Easy用の隠れる地点が設定されている場合
-            if (easyHideObject.Length != 0)
-            {
-                //難易度Easy用の隠れる地点を非表示
-                for (int i = 0; i < easyHideObject.Length; i++)
-                {
-                    easyHideObject[i].gameObject.SetActive(false);
-                }
-            }
-            else
-            {
-                Debug.LogWarning("難易度Easy用の隠れる地点が設定されていません。");
-            }
-            break;
+                //難易度Easy用の隠れる地点を非表示にする
+                SettingEasyHideObject(false);
+
+                //難易度Normal用の隠れる地点を非表示にする
+                SettingNormalHideObject(false);
+
+                break;
         }
     }
 
@@ -438,6 +421,48 @@ public class MapAreaGenerate : MonoBehaviour
             int randomIndex = Random.Range(i, list.Count);
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
+        }
+    }
+
+    /// <summary>
+    /// 難易度Easy用のHideObjectを表示/非表示するメソッド
+    /// </summary>
+    /// <param name="targetEnable">表示/非表示</param>
+    private void SettingEasyHideObject(bool targetEnable) 
+    {
+        //Easy用の隠れる地点が設定されている場合
+        if (easyHideObject.Length != 0)
+        {
+            //難易度Easy用の隠れる地点を表示/非表示
+            for (int i = 0; i < easyHideObject.Length; i++)
+            {
+                easyHideObject[i].gameObject.SetActive(targetEnable);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("難易度Easy用の隠れる地点が設定されていません。");
+        }
+    }
+
+    /// <summary>
+    /// 難易度Normal用のHideObjectを表示/非表示するメソッド
+    /// </summary>
+    /// <param name="targetEnable">表示/非表示</param>
+    private void SettingNormalHideObject(bool targetEnable)
+    {
+        //Normal用の隠れる地点が設定されている場合
+        if (normalHideObject.Length != 0)
+        {
+            //難易度Normal用の隠れる地点を表示/非表示
+            for (int i = 0; i < normalHideObject.Length; i++)
+            {
+                normalHideObject[i].gameObject.SetActive(targetEnable);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("難易度Normal用の隠れる地点が設定されていません。");
         }
     }
 }
