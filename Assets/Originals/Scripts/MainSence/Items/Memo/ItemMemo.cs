@@ -22,6 +22,7 @@ public class ItemMemo
         "13:プレイヤーライト:PlayerLight",
         "14:病院のベッドの模型:MysteryItem",
         "15:踏切の模型:MysteryItem",
+        "16:崩れたビルの模型:MysteryItem",
         "994:TestUseItem02,UseItem",
         "995:TestUseItem01,UseItem",
         "996:TestMysteryItem02:MysteryItem",
