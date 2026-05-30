@@ -23,6 +23,8 @@ public class ItemMemo
         "14:•a‰@‚Ìƒxƒbƒh‚Ì–ÍŒ^:MysteryItem",
         "15:“¥Ø‚Ì–ÍŒ^:MysteryItem",
         "16:•ö‚ê‚½ƒrƒ‹‚Ì–ÍŒ^:MysteryItem",
+        "17:’g˜F‚Ì–ÍŒ^:MysteryItem",
+        "18:ƒv[ƒ‹‚Ì–ÍŒ^:MysteryItem",
         "994:TestUseItem02,UseItem",
         "995:TestUseItem01,UseItem",
         "996:TestMysteryItem02:MysteryItem",
