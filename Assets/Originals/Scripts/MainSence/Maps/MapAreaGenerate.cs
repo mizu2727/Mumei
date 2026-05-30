@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -80,7 +81,16 @@ public class MapAreaGenerate : MonoBehaviour
     [SerializeField] private NavMeshSurface navMeshSurface;
 
 
-    [Header("敵の位置(ヒエラルキー上からアタッチすること。ステージライトとの距離測定で必要)")]
+    [Header("難易度Easyでの敵の位置(ヒエラルキー上からアタッチすること。ステージライトとの距離測定で必要)")]
+    [SerializeField] private Transform[] easyBaseEnemyTransformArray;
+
+    [Header("難易度Normalでの敵の位置(ヒエラルキー上からアタッチすること。ステージライトとの距離測定で必要)")]
+    [SerializeField] private Transform[] normalBaseEnemyTransformArray;
+
+    [Header("難易度Nightmareでの敵の位置(ヒエラルキー上からアタッチすること。ステージライトとの距離測定で必要)")]
+    [SerializeField] private Transform[] nightmareBaseEnemyTransformArray;
+
+    [Header("敵の位置(ヒエラルキー上からのアタッチ禁止。格納結果確認用。ステージライトとの距離測定で必要)")]
     [SerializeField] private Transform[] baseEnemyTransformArray;
 
 
@@ -384,6 +394,21 @@ public class MapAreaGenerate : MonoBehaviour
                 //難易度Normal用の隠れる地点を表示
                 SettingNormalHideObject(true);
 
+                //難易度Easy用の敵の位置が設定されている場合
+                if (easyBaseEnemyTransformArray.Length != 0) 
+                {
+                    //難易度Easy用に敵をを表示
+                    for (int i = 0; i < easyBaseEnemyTransformArray.Length; i++)
+                    {
+                        easyBaseEnemyTransformArray[i].gameObject.SetActive(true);
+                    }
+
+                    //難易度Easy用の敵の位置を設定
+                    baseEnemyTransformArray = easyBaseEnemyTransformArray;
+                }
+
+                
+
                 break;
 
             //Normalの場合
@@ -395,6 +420,20 @@ public class MapAreaGenerate : MonoBehaviour
                 //難易度Normal用の隠れる地点を表示
                 SettingNormalHideObject(true);
 
+
+                //難易度Normal用の敵の位置が設定されている場合
+                if (normalBaseEnemyTransformArray.Length != 0)
+                {
+                    //難易度Normal用に敵をを表示
+                    for (int i = 0; i < normalBaseEnemyTransformArray.Length; i++)
+                    {
+                        normalBaseEnemyTransformArray[i].gameObject.SetActive(true);
+                    }
+
+                    //難易度Normal用の敵の位置を設定
+                    baseEnemyTransformArray = normalBaseEnemyTransformArray;
+                }
+
                 break;
 
             //Nightmareの場合
@@ -405,6 +444,41 @@ public class MapAreaGenerate : MonoBehaviour
 
                 //難易度Normal用の隠れる地点を非表示にする
                 SettingNormalHideObject(false);
+
+
+                //難易度Nightmare用の敵の位置が設定されている場合
+                if (nightmareBaseEnemyTransformArray.Length != 0)
+                {
+                    //難易度Nightmare用に敵をを表示
+                    for (int i = 0; i < nightmareBaseEnemyTransformArray.Length; i++)
+                    {
+                        nightmareBaseEnemyTransformArray[i].gameObject.SetActive(true);
+                    }
+
+                    //難易度Nightmare用の敵の位置を設定
+                    baseEnemyTransformArray = nightmareBaseEnemyTransformArray;
+                }
+
+                break;
+
+
+            default:
+                Debug.Log("その他の難易度(デバッグ用)");
+
+                //難易度Normal用の敵の位置が設定されている場合
+                if (normalBaseEnemyTransformArray.Length != 0)
+                {
+                    //難易度Normal用に敵をを表示
+                    for (int i = 0; i < normalBaseEnemyTransformArray.Length; i++)
+                    {
+                        normalBaseEnemyTransformArray[i].gameObject.SetActive(true);
+                    }
+
+                    //難易度Normal用の敵の位置を設定
+                    baseEnemyTransformArray = normalBaseEnemyTransformArray;
+                }
+
+                
 
                 break;
         }

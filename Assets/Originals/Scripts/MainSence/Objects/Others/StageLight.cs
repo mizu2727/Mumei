@@ -44,7 +44,6 @@ public class StageLight : MonoBehaviour
 
     void Start()
     {
-
         //ステージライトフラグがオフの場合
         if (!isLitLight) 
         {
