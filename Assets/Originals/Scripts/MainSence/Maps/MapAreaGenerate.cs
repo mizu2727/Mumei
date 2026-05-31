@@ -464,7 +464,7 @@ public class MapAreaGenerate : MonoBehaviour
 
             default:
                 Debug.Log("その他の難易度(デバッグ用)");
-
+                /*
                 //難易度Easy用の敵の位置が設定されている場合
                 if (easyBaseEnemyTransformArray.Length != 0)
                 {
@@ -477,7 +477,9 @@ public class MapAreaGenerate : MonoBehaviour
                     //難易度Easy用の敵の位置を設定
                     baseEnemyTransformArray = easyBaseEnemyTransformArray;
                 }
-                /*
+                */
+
+                
                 //難易度Normal用の敵の位置が設定されている場合
                 if (normalBaseEnemyTransformArray.Length != 0)
                 {
@@ -490,7 +492,7 @@ public class MapAreaGenerate : MonoBehaviour
                     //難易度Normal用の敵の位置を設定
                     baseEnemyTransformArray = normalBaseEnemyTransformArray;
                 }
-                */
+                
 
                 
 

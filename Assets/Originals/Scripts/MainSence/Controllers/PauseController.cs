@@ -622,6 +622,7 @@ public class PauseController : MonoBehaviour
         //マウスカーソルを表示し、固定を解除
         ViewMouseCorsor();
 
+        /*
         //現在のシーン名を取得し、その名前によって一時停止するBGMを決める
         switch (SceneManager.GetActiveScene().name) 
         {
@@ -654,6 +655,7 @@ public class PauseController : MonoBehaviour
                 Debug.LogWarning("その他のシーン名");
                 break;
         };
+        */
 
         //再生中の効果音を全て一時停止し、ボタンSEを流す
         //PlayerのSE一時停止
@@ -725,7 +727,7 @@ public class PauseController : MonoBehaviour
                 }
             }
 
-
+            /*
             //現在のシーン名を取得し、その名前によって一時停止解除するBGMを決める
             switch (SceneManager.GetActiveScene().name)
             {
@@ -758,6 +760,7 @@ public class PauseController : MonoBehaviour
                     Debug.LogWarning("その他のシーン名(UnPauseBGM)");
                     break;
             };
+            */
 
             //MusicController.instance.UnPauseBGM();
         }
