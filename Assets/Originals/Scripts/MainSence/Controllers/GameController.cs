@@ -61,7 +61,7 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// マウス/ゲームパッドの右スティックの感度最大値
     /// </summary>
-    private float maxLookSensitivity = 20f;
+    private float maxLookSensitivity = 15f;
 
 
     [Header("Playerの使用アイテムインベントリパネル関連")]
