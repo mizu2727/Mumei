@@ -121,8 +121,20 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         set => dashSpeed = value;
     }
 
-    [Header("検知範囲")]
-    [SerializeField] private float enemyDetectionRange;
+
+    [Header("難易度Easyの場合のプレイヤーを視野できる距離(直接調整すること)")]
+    [SerializeField] private float easyEnemyDetectionRange;
+
+    [Header("難易度Normalの場合のプレイヤーを視野できる距離(直接調整すること)")]
+    [SerializeField] private float normalEnemyDetectionRange;
+
+    [Header("難易度Nightmareの場合のプレイヤーを視野できる距離(直接調整すること)")]
+    [SerializeField] private float nightmareEnemyDetectionRange;
+
+    /// <summary>
+    /// プレイヤーを視野できる距離
+    /// </summary>
+    private float enemyDetectionRange;
     [SerializeField]
     public float DetectionRange
     {
@@ -558,10 +570,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private bool isPlayFindPlayerSE;
 
-    [Header("タグ・レイヤー関連")]
-    [SerializeField] string playerTag = "Player";
-    [SerializeField] string wallTag = "Wall";
-    [SerializeField] string doorTag = "Door";
+    /// <summary>
+    /// タグ・レイヤー関連
+    /// </summary>
+    protected const string playerTag = "Player";
+    private const string wallTag = "Wall";
+    private const string doorTag = "Door";
     private const string WallLayer = "Wall";
 
 
@@ -900,6 +914,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                 //ダッシュ移動速度を難易度Easy用に設定
                 dashSpeed = easyDashSpeed;
+
+                //プレイヤーを視野できる距離を難易度Easy用に設定
+                enemyDetectionRange = easyEnemyDetectionRange;
                 break;
 
             //難易度Normal用の場合(デバッグ用にkNoneも追加)
@@ -911,6 +928,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                 //ダッシュ移動速度を難易度Normal用に設定
                 dashSpeed = defaultDashSpeed;
+
+                //プレイヤーを視野できる距離を難易度Normal用に設定
+                enemyDetectionRange = normalEnemyDetectionRange;
                 break;
 
             //難易度Nightmare用の場合
@@ -921,6 +941,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                 //ダッシュ移動速度を難易度Nightmare用に設定
                 dashSpeed = nightmareDashSpeed;
+
+                //プレイヤーを視野できる距離を難易度Nightmare用に設定
+                enemyDetectionRange = nightmareEnemyDetectionRange;
                 break;
         }
     }

@@ -8,8 +8,21 @@ using static GameController;
 /// </summary>
 public class HearingEnemy : BaseEnemy
 {
-    [Header("ダッシュ音の検知範囲")]
-    [SerializeField] private float soundDetectionRange = 50f;
+    [Header("難易度Easyの場合のダッシュ音の検知範囲(直接調整すること)")]
+    [SerializeField] private float easySoundDetectionRange;
+
+    [Header("難易度Normalの場合のダッシュ音の検知範囲(直接調整すること)")]
+    [SerializeField] private float normalSoundDetectionRange;
+
+    [Header("難易度Nightmareの場合のダッシュ音の検知範囲(直接調整すること)")]
+    [SerializeField] private float nightmareSoundDetectionRange;
+
+    /// <summary>
+    /// ダッシュ音の検知範囲
+    /// </summary>
+    private float soundDetectionRange;
+
+
 
     [Header("ダッシュ音の調査時間")]
     [SerializeField] private float soundInvestigateDuration = 10f;
@@ -30,6 +43,10 @@ public class HearingEnemy : BaseEnemy
     private bool isInvestigatingSound = false;
 
 
+    /*
+     * Start()を作成してしまうとエラーが発生するため、ここには使用しないこと。
+     */
+
     protected override async void Update()
     {
         //ゲームがプレイ中でない、またはプレイヤーが死亡している場合
@@ -40,6 +57,35 @@ public class HearingEnemy : BaseEnemy
 
             //処理をスキップ
             return;
+        }
+
+        //難易度に応じてそれぞれの設定を変更する
+        switch (DifficultyLevelController.instance.GetDifficultyLevelStatus())
+        {
+            //難易度Easyの場合
+            case DifficultyLevelController.DifficultyLevel.kEasy:
+
+                //難易度Easyの用ダッシュ音の検知範囲を設定
+                soundDetectionRange = easySoundDetectionRange;
+
+                break;
+
+            //難易度Normalの場合(デバッグ用にkNoneも追加)
+            case DifficultyLevelController.DifficultyLevel.kNormal:
+            case DifficultyLevelController.DifficultyLevel.kNone:
+
+                //難易度Normalの用ダッシュ音の検知範囲を設定
+                soundDetectionRange = normalSoundDetectionRange;
+
+                break;
+
+            //難易度Nightmareの場合
+            case DifficultyLevelController.DifficultyLevel.kNightmare:
+
+                //難易度Nightmareの用ダッシュ音の検知範囲を設定
+                soundDetectionRange = nightmareSoundDetectionRange;
+
+                break;
         }
 
         //プレイヤーとの距離を計算

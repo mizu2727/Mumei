@@ -21,11 +21,6 @@ public class LightVisibilityEnemy : BaseEnemy
     /// </summary>
     RaycastHit playerlightHit;
 
-    /// <summary>
-    /// プレイヤータグ
-    /// </summary>
-    private string playerTag = "Player";
-
     [Header("プレイヤーライト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Transform playerLight;
 
