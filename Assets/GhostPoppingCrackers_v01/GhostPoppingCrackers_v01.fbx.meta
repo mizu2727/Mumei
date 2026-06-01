@@ -3,7 +3,32 @@ guid: ea02cf601892b1e43bef409b54b23752
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cracker_M
+    second: {fileID: 2100000, guid: c86fc348c01b48c43a4b25d06a86a5c7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cracker_M.001
+    second: {fileID: 2100000, guid: 6fc0bf0d3687e9042b707ac2e8e612c1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cracker_M.002
+    second: {fileID: 2100000, guid: 9e29b6eef68ec2042ad0474e3e99cff8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cracker_M.003
+    second: {fileID: 2100000, guid: 14cb1196b73c489438434994f0a2e694, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Cracker_M.004
+    second: {fileID: 2100000, guid: ce95bca749f3c3245b48f24515b49833, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

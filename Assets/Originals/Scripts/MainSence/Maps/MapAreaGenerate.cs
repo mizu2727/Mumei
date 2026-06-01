@@ -45,8 +45,8 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("難易度Easyのスタミナ増強剤格納数")]
     [SerializeField] private int easyStaminaEnhancerCount;
 
-    [Header("デフォルト(難易度Normal)のスタミナ増強剤格納数")]
-    [SerializeField] private int defaultStaminaEnhancerCount;
+    [Header("難易度Normalのスタミナ増強剤格納数")]
+    [SerializeField] private int normalStaminaEnhancerCount;
 
     [Header("難易度Nightmareのスタミナ増強剤格納数")]
     [SerializeField] private int nightmareStaminaEnhancerCount;
@@ -55,6 +55,23 @@ public class MapAreaGenerate : MonoBehaviour
     /// スタミナ増強剤格納数
     /// </summary>
     private int staminaEnhancerCount;
+
+    [Header("クラッカーを格納する(Prefabをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [SerializeField] private List<GameObject> crackerPrefabList;
+
+    [Header("難易度Easyのスタミナクラッカー格納数")]
+    [SerializeField] private int easyCrackerCount;
+
+    [Header("難易度Normalのスタミナクラッカー格納数")]
+    [SerializeField] private int normalCrackerCount;
+
+    [Header("難易度Nightmareのクラッカー格納数")]
+    [SerializeField] private int nightmareCrackerCount;
+
+    /// <summary>
+    /// クラッカー格納数
+    /// </summary>
+    private int crackerCount;
 
     [Header("ダミーアイテムオブジェクトを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
     [SerializeField] private List<GameObject> dammyItemPrefabList;
@@ -258,6 +275,9 @@ public class MapAreaGenerate : MonoBehaviour
         //コンパスを全アイテム格納リストに追加
         shuffledItemPrefabList.AddRange(compassPrefabList);
 
+        //クラッカーを全アイテム格納リストに追加
+        shuffledItemPrefabList.AddRange(crackerPrefabList);
+
         //難易度に応じてアイテムの格納数を変更する
         switch (DifficultyLevelController.instance.GetDifficultyLevelStatus()) 
         {
@@ -266,6 +286,9 @@ public class MapAreaGenerate : MonoBehaviour
 
                 //スタミナ増強剤の格納数を難易度Easy用に設定
                 staminaEnhancerCount = easyStaminaEnhancerCount;
+
+                //クラッカーの格納数を難易度Easy用に設定
+                crackerCount = easyCrackerCount;
                 break;
 
             //難易度Normal用の場合(デバッグ用にkNoneも追加)
@@ -273,13 +296,20 @@ public class MapAreaGenerate : MonoBehaviour
             case DifficultyLevelController.DifficultyLevel.kNone:
 
                 //スタミナ増強剤の格納数をデフォルト用に設定
-                staminaEnhancerCount = defaultStaminaEnhancerCount;
+                staminaEnhancerCount = normalStaminaEnhancerCount;
+
+                //クラッカーの格納数を難易度Normal用に設定
+                crackerCount = normalCrackerCount;
                 break;
 
             //難易度Nightmare用の場合
             case DifficultyLevelController.DifficultyLevel.kNightmare:
+
                 //スタミナ増強剤の格納数を難易度Nightmare用に設定
                 staminaEnhancerCount = nightmareStaminaEnhancerCount;
+
+                //クラッカーの格納数を難易度Nightmare用に設定
+                crackerCount = nightmareCrackerCount;
                 break; 
         }
 
@@ -289,6 +319,13 @@ public class MapAreaGenerate : MonoBehaviour
         {
             //スタミナ増強剤を全アイテム格納リストに追加
             shuffledItemPrefabList.AddRange(staminaEnhancerPrefabList);
+        }
+
+        //クラッカーを指定の数だけ全アイテム格納リストに追加
+        for (int i = 0; i < crackerCount; i++)
+        {
+            //スタミナ増強剤を全アイテム格納リストに追加
+            shuffledItemPrefabList.AddRange(crackerPrefabList);
         }
 
         for (int i = 0; i < shuffledItemPrefabList.Count; i++)

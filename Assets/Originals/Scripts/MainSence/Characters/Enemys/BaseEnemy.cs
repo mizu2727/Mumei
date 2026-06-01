@@ -66,6 +66,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private const string kIsAttackAnimatorParameter = "isAttack";
 
     /// <summary>
+    /// "isDamage"
+    /// </summary>
+    private const string kIsDamageAnimatorParameter = "isDamage";
+
+    /// <summary>
     /// 名前
     /// </summary>
     private string nameJapanese;
@@ -211,6 +216,21 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         get => enemyIsLight;
         set => enemyIsLight = value;
     }
+
+    /// <summary>
+    /// ダメージを受けるフラグ
+    /// </summary>
+    private bool isReceiveDamage;
+
+    /// <summary>
+    /// ダメージカウント
+    /// </summary>
+    private int receiveDamageCount;
+
+    /// <summary>
+    /// 最大ダメージカウント
+    /// </summary>
+    private const int kMaxReceiveDamageCount = 8;
 
     /// <summary>
     /// 死亡メソッド
@@ -590,6 +610,24 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     GameObject gameObjectDoor;
 
     /// <summary>
+    /// ダメージを受けるフラグを取得
+    /// </summary>
+    /// <returns>ダメージを受けるフラグ</returns>
+    public bool GetIsReceiveDamage() 
+    { 
+        return isReceiveDamage;
+    }
+
+    /// <summary>
+    /// ダメージを受けるフラグを設定する
+    /// </summary>
+    /// <param name="valueFlag">ダメージを受けるフラグ</param>
+    public void SetIsReceiveDamage(bool valueFlag)
+    {
+        isReceiveDamage = valueFlag;
+    }
+
+    /// <summary>
     /// 歩行音・ダッシュ音用のaudioSourceを取得
     /// </summary>
     /// <returns>歩行音・ダッシュ音用のaudioSource</returns>
@@ -863,6 +901,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         //rigidbodyを取得
         rigidBody = GetComponent<Rigidbody>();
+
+        //ダメージを受けるフラグを初期化
+        isReceiveDamage = false;
+
+        //ダメージカウントを初期化
+        receiveDamageCount = 0;
 
 
         //彷徨う者の名前のステータスに応じて各設定をする

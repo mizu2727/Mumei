@@ -25,6 +25,7 @@ public class ItemMemo
         "16:崩れたビルの模型:MysteryItem",
         "17:暖炉の模型:MysteryItem",
         "18:プールの模型:MysteryItem",
+        "19:クラッカー:UseItem",
         "994:TestUseItem02,UseItem",
         "995:TestUseItem01,UseItem",
         "996:TestMysteryItem02:MysteryItem",

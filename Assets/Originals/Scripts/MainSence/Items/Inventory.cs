@@ -58,6 +58,16 @@ public class Inventory : MonoBehaviour
     private const int kNoneItemId = 99999;
 
     /// <summary>
+    /// スタミナ増強剤のID
+    /// </summary>
+    private const int kStaminaEnhancerId = 11;
+
+    /// <summary>
+    /// クラッカーのID
+    /// </summary>
+    private const int kCrackerId = 19;
+
+    /// <summary>
     /// アイテムのプレハブのAddressables名
     /// </summary>
     private string keepItemPrefabPath;
@@ -122,11 +132,40 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private const float kSpecifiedStaminaRecoveryRatio = 30.0f;
 
+    /// <summary>
+    /// クラッカー使用フラグ
+    /// </summary>
+    private bool isUseCrackerItem;
+
+    /// <summary>
+    /// クラッカーのRaycastHit情報
+    /// </summary>
+    private RaycastHit crackerRaycast;
+
+    /// <summary>
+    /// クラッカーのRayCastの長さ(飛距離)
+    /// </summary>
+    private const float kCrackerRaycastDistance = 5.0f;
+
+    /// <summary>
+    /// Enemyタグ
+    /// </summary>
+    private const string kEnemyTag = "Enemy";
 
     /// <summary>
     /// Player.cs
     /// </summary>
     private Player player;
+
+    /// <summary>
+    /// BaseEnemy.cs
+    /// </summary>
+    private BaseEnemy baseEnemy;
+
+    /// <summary>
+    /// RaycastHitから取得した彷徨う者
+    /// </summary>
+    private GameObject pickUpEnemy;
 
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -138,9 +177,9 @@ public class Inventory : MonoBehaviour
     private AudioSource audioSourceInventorySE;
 
     /// <summary>
-    /// AudioSource3つ分
+    /// AudioSource4つ分
     /// </summary>
-    private const int kAudioSourceLength03 = 3;
+    private const int kAudioSourceLength = 4;
 
     /// <summary>
     /// デフォルトのAudioSourceのSE音量
@@ -151,6 +190,11 @@ public class Inventory : MonoBehaviour
     /// スタミナ増強剤SEのID
     /// </summary>
     private readonly int useStaminaEnhancerSEid = 12;
+
+    /// <summary>
+    /// クラッカーSEのID
+    /// </summary>
+    private readonly int crackerSEid = 21;
 
     /// <summary>
     /// 不透明色
@@ -260,7 +304,7 @@ public class Inventory : MonoBehaviour
     {
         //すべてのAudioSourceを取得
         var audioSources = GetComponents<AudioSource>();
-        if (audioSources.Length < kAudioSourceLength03)
+        if (audioSources.Length < kAudioSourceLength)
         {
             //3つ目のAudioSourceが不足している場合、追加する
             audioSourceInventorySE = gameObject.AddComponent<AudioSource>();
@@ -272,7 +316,7 @@ public class Inventory : MonoBehaviour
             //3番目のAudioSourceをアイテム使用音用に割り当て
             //(PlayerオブジェクトにこのスクリプトとPlayer.csをアタッチしている。
             //移動音とアイテム取得音の競合を回避する用)
-            audioSourceInventorySE = audioSources[kAudioSourceLength03 - 1];
+            audioSourceInventorySE = audioSources[kAudioSourceLength - 1];
             audioSourceInventorySE.playOnAwake = false;
             audioSourceInventorySE.volume = kDefaultAudioSourceSEVolume;
         }
@@ -469,7 +513,7 @@ public class Inventory : MonoBehaviour
         switch (keepItemId) 
         {
             //スタミナ増強剤
-            case 11:
+            case kStaminaEnhancerId:
                 //スタミナ増強剤SEを再生
                 audioSourceInventorySE.clip = sO_SE.GetSEClip(useStaminaEnhancerSEid);
                 audioSourceInventorySE.loop = false;
@@ -521,6 +565,53 @@ public class Inventory : MonoBehaviour
 
                 //スタミナ増強剤使用フラグをfalseに設定
                 isUseStaminaItem = false;
+                break;
+
+            //クラッカー
+            case kCrackerId:
+
+                Debug.Log("クラッカーを使用した");
+
+                //クラッカーSEを再生
+                audioSourceInventorySE.clip = sO_SE.GetSEClip(crackerSEid);
+                audioSourceInventorySE.loop = false;
+                audioSourceInventorySE.Play();
+
+                //クラッカー使用フラグをオン
+                isUseCrackerItem = true;
+
+                //Raycastをプレイヤーの前方に飛ばす
+                if (Physics.Raycast(Player.instance.transform.position, Player.instance.transform.forward, out crackerRaycast, kCrackerRaycastDistance))
+                {
+                    //RaycastがEnemyタグのオブジェクトに当たった場合
+                    if (crackerRaycast.collider.CompareTag(kEnemyTag))
+                    {
+                        //当たったオブジェクトを取得
+                        pickUpEnemy = crackerRaycast.collider.gameObject;
+
+                        //BaseEnemyコンポーネントを取得
+                        baseEnemy = pickUpEnemy.GetComponent<BaseEnemy>();
+
+                        //彷徨う者がダメージを受けていない状態の場合
+                        if (!baseEnemy.GetIsReceiveDamage()) 
+                        {
+                            //一定時間スタンさせる
+                            baseEnemy.SetIsReceiveDamage(true);
+                        }
+
+                        
+
+
+                        ////BaseEnemyコンポーネントを取得している場合
+                        //if (pickUpEnemy.TryGetComponent<BaseEnemy>(out baseEnemy))
+                        //{
+                        //    //敵を一定時間スタンさせる
+                        //    baseEnemy.StunEnemy(keepItemEffectValue);
+                        //}
+                    }
+                }
+
+
                 break;
 
             //テスト用使用アイテム①
@@ -609,5 +700,6 @@ public class Inventory : MonoBehaviour
         useItemImage.sprite = null;
         useItemImage.color = defaultUseItemImageColor;
         isUseStaminaItem = false;
+        isUseCrackerItem = false;
     }
 }
