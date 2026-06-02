@@ -225,12 +225,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// ダメージカウント
     /// </summary>
-    private int receiveDamageCount;
+    private float receiveDamageCount;
 
     /// <summary>
     /// 最大ダメージカウント
     /// </summary>
-    private const int kMaxReceiveDamageCount = 8;
+    private const float kMaxReceiveDamageCount = 8.0f;
 
     /// <summary>
     /// 死亡メソッド
@@ -934,8 +934,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 nameEnglish = enemyInformation.enemyInformation[2].nameEnglish;
 
                 //TODO予定(SEをアタッチすること):SEのIDを設定。インデックス番号を2に戻すこと
-                walkSEid = enemyInformation.enemyInformation[1].walkSEId;
-                runSEid = enemyInformation.enemyInformation[1].runSEId;
+                walkSEid = enemyInformation.enemyInformation[2].walkSEId;
+                runSEid = enemyInformation.enemyInformation[2].runSEId;
                 findPlayerSEid = enemyInformation.enemyInformation[1].findPlayerSEId;
 
                 break;
@@ -1194,8 +1194,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             Invoke("ChangeDirection", 0.5f); 
         }
 
-        //プレイヤーに触れた場合
-        if (collision.gameObject.CompareTag(playerTag))
+        //プレイヤーに触れた場合&&ダメージを受けていない場合
+        if (collision.gameObject.CompareTag(playerTag) && !isReceiveDamage)
         {
             if (Player.instance != null && !Player.instance.IsDead)
             {
@@ -1225,8 +1225,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private async void OnTriggerEnter(Collider collider)
     {
 
-        //プレイヤーに触れた場合
-        if (collider.gameObject.CompareTag(playerTag))
+        //プレイヤーに触れた場合&&ダメージを受けていない場合
+        if (collider.gameObject.CompareTag(playerTag) && !isReceiveDamage)
         {
             if (Player.instance != null && !Player.instance.IsDead)
             {
@@ -1310,6 +1310,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         {
             Debug.LogWarning($"[{gameObject.name}] Update処理をスキップ: Player={Player.instance}, tagetPoint={targetPoint}");
             navMeshAgent.isStopped = true;
+            return;
+        }
+
+        //ダメージを受けた場合
+        if (isReceiveDamage) 
+        {
+            //ダメージ関連処理開始
+            DamageRelatedProcessing();
+
             return;
         }
 
@@ -1586,6 +1595,47 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
             wasMovingLastFrame = IsMove;
         }        
+    }
+
+    /// <summary>
+    /// ダメージ関連処理
+    /// </summary>
+    private void DamageRelatedProcessing() 
+    {
+        //ダメージ受けている秒数が8秒以下の場合
+        if (receiveDamageCount <= kMaxReceiveDamageCount)
+        {
+            //ダメージを受けている秒数が0秒の場合
+            if (receiveDamageCount == 0) 
+            {
+                Debug.Log("ダメージアニメーション開始");
+
+                //移動アニメーション再生停止
+                animator.SetBool(kIsRunAnimatorParameter, false);
+                animator.SetBool(kIsWalkAnimatorParameter, false);
+
+                //ダメージアニメーション再生
+                animator.SetBool(kIsDamageAnimatorParameter, true);
+
+                //調査状態に移行
+                currentState = EnemyState.Investigate;
+            }
+
+            //ダメージを受けている秒数を加算する
+            receiveDamageCount += Time.deltaTime;
+        }
+        else 
+        {
+            //ダメージアニメーション再生停止
+            animator.SetBool(kIsDamageAnimatorParameter, false);
+
+
+            //ダメージ受けている秒数をリセット
+            receiveDamageCount = 0;
+
+            //ダメージを受けているフラグをオフにする
+            isReceiveDamage　= false;
+        }
     }
 
     /// <summary>

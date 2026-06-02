@@ -143,14 +143,38 @@ public class Inventory : MonoBehaviour
     private RaycastHit crackerRaycast;
 
     /// <summary>
+    /// RaycastからSphereCastへの変換用
+    /// </summary>
+    private bool isRacastHit;
+
+    /// <summary>
     /// クラッカーのRayCastの長さ(飛距離)
     /// </summary>
-    private const float kCrackerRaycastDistance = 5.0f;
+    private const float kCrackerRaycastDistance = 10.0f;
+
+    /// <summary>
+    /// クラッカーの判定の太さ（半径）
+    /// </summary>
+    private const float kCrackerRaycastRadius = 10000.0f;
+
+    /// <summary>
+    /// クラッカー使用時間
+    /// </summary>
+    private float useCrackerTime;
+
+    /// <summary>
+    /// クラッカー使用最大時間
+    /// </summary>
+    private const float kUseCrackerTime = 0.5f;
 
     /// <summary>
     /// Enemyタグ
     /// </summary>
     private const string kEnemyTag = "Enemy";
+
+
+    [Header("検知対象のレイヤー（Enemyを設定すること）")]
+    [SerializeField] private LayerMask enemyLayer;
 
     /// <summary>
     /// Player.cs
@@ -413,6 +437,17 @@ public class Inventory : MonoBehaviour
         //インベントリアイテム使用
         if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0 
             && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden()) UseItem();
+
+
+        //クラッカーを使用していない場合
+        if (!isUseCrackerItem) 
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //クラッカー関連処理
+        CrackerRelatedProcessing();
     }
 
     /// <summary>
@@ -570,7 +605,10 @@ public class Inventory : MonoBehaviour
             //クラッカー
             case kCrackerId:
 
-                Debug.Log("クラッカーを使用した");
+                //アイテムカウントを減少
+                --keepItemCount;
+                useItemCountText.text = keepItemCount.ToString();
+                sO_Item.ReduceUseItem(keepItemId, keepItemCount);
 
                 //クラッカーSEを再生
                 audioSourceInventorySE.clip = sO_SE.GetSEClip(crackerSEid);
@@ -579,39 +617,6 @@ public class Inventory : MonoBehaviour
 
                 //クラッカー使用フラグをオン
                 isUseCrackerItem = true;
-
-                //Raycastをプレイヤーの前方に飛ばす
-                if (Physics.Raycast(Player.instance.transform.position, Player.instance.transform.forward, out crackerRaycast, kCrackerRaycastDistance))
-                {
-                    //RaycastがEnemyタグのオブジェクトに当たった場合
-                    if (crackerRaycast.collider.CompareTag(kEnemyTag))
-                    {
-                        //当たったオブジェクトを取得
-                        pickUpEnemy = crackerRaycast.collider.gameObject;
-
-                        //BaseEnemyコンポーネントを取得
-                        baseEnemy = pickUpEnemy.GetComponent<BaseEnemy>();
-
-                        //彷徨う者がダメージを受けていない状態の場合
-                        if (!baseEnemy.GetIsReceiveDamage()) 
-                        {
-                            //一定時間スタンさせる
-                            baseEnemy.SetIsReceiveDamage(true);
-                        }
-
-                        
-
-
-                        ////BaseEnemyコンポーネントを取得している場合
-                        //if (pickUpEnemy.TryGetComponent<BaseEnemy>(out baseEnemy))
-                        //{
-                        //    //敵を一定時間スタンさせる
-                        //    baseEnemy.StunEnemy(keepItemEffectValue);
-                        //}
-                    }
-                }
-
-
                 break;
 
             //テスト用使用アイテム①
@@ -628,6 +633,86 @@ public class Inventory : MonoBehaviour
                 //Addressablesを使用してプレハブをステージ上に非同期生成
                 await Addressables.InstantiateAsync(keepItemPrefabPath, worldPosition, worldRotation);
                 break;
+        }
+    }
+
+    /// <summary>
+    /// クラッカー関連処理
+    /// </summary>
+    private void CrackerRelatedProcessing() 
+    {
+        //カメラの前方に飛ばした敵検知用のRaycastをSphereCastに変更(Raycastの太さを太くするため)
+        isRacastHit = Physics.SphereCast(Camera.main.transform.position, kCrackerRaycastRadius
+            , Camera.main.transform.forward, out crackerRaycast, kCrackerRaycastDistance, enemyLayer);
+
+        //クラッカー使用時間が一定時間以下の場合
+        if (useCrackerTime <= kUseCrackerTime)
+        {
+            //Raycastが当たった場合
+            if (isRacastHit)
+            {
+                //当たったオブジェクトを取得
+                //pickUpEnemy = crackerRaycast.collider.gameObject;
+                pickUpEnemy = crackerRaycast.transform.gameObject;
+
+                //BaseEnemyコンポーネントを取得
+                baseEnemy = pickUpEnemy.GetComponent<BaseEnemy>();
+
+                //彷徨う者が既にダメージを受けている状態の場合
+                if (baseEnemy.GetIsReceiveDamage())
+                {
+                    //処理をスキップ
+                    return;
+                }
+
+                //一定時間スタンさせる
+                baseEnemy.SetIsReceiveDamage(true);
+                /*
+                //crackerRaycast.collider.CompareTag(kEnemyTag)
+                //RaycastがEnemyタグのオブジェクトに当たった場合
+                if (crackerRaycast.transform.tag == kEnemyTag)
+                {
+                    //当たったオブジェクトを取得
+                    //pickUpEnemy = crackerRaycast.collider.gameObject;
+                    pickUpEnemy = crackerRaycast.transform.gameObject;
+
+                    //BaseEnemyコンポーネントを取得
+                    baseEnemy = pickUpEnemy.GetComponent<BaseEnemy>();
+
+                    //彷徨う者が既にダメージを受けている状態の場合
+                    if (baseEnemy.GetIsReceiveDamage())
+                    {
+                        //処理をスキップ
+                        return;
+                    }
+
+                    //一定時間スタンさせる
+                    baseEnemy.SetIsReceiveDamage(true);
+                }
+                */
+            }
+
+            //当たったRaycastのオブジェクトをSceneビューに表示する
+            if (isRacastHit)
+            {
+                Debug.Log($"クラッカーのRaycastが当たったオブジェクト: {crackerRaycast.collider.gameObject.name}");
+            }
+
+            //クラッカー使用時間を加算
+            useCrackerTime += Time.deltaTime;
+        }
+        else
+        {
+            Debug.Log("クラッカーの効果時間が終了");
+
+            //SphereCastへの変換用フラグをfalseに設定
+            isRacastHit = false;
+
+            //クラッカー使用フラグをオフ
+            isUseCrackerItem = false;
+
+            //クラッカー使用時間をリセット
+            useCrackerTime = 0.0f;
         }
     }
 
@@ -701,5 +786,60 @@ public class Inventory : MonoBehaviour
         useItemImage.color = defaultUseItemImageColor;
         isUseStaminaItem = false;
         isUseCrackerItem = false;
+        useCrackerTime = 0;
+    }
+
+    // --- シーンビュー表示用のデバッグコード ---
+    private void OnDrawGizmos()
+    {
+        // 実行中かつメインカメラが存在するときだけ描画
+        if (Camera.main == null) return;
+
+        Transform camTransform = Camera.main.transform;
+        Vector3 startCenter = camTransform.position;
+        Vector3 direction = camTransform.forward;
+
+        // ギズモの色を設定（半透明の赤）
+        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
+
+        // 1. スタート地点の球体を描画
+        Gizmos.DrawSphere(startCenter, kCrackerRaycastRadius);
+
+        // 2. ヒット状況に応じた終点（または最大距離）の球体と線を描画
+        Vector3 endCenter;
+
+        // アプリケーションが実行中で、実際に実行した結果（isRacastHit）がある場合
+        if (Application.isPlaying)
+        {
+            if (isRacastHit)
+            {
+                // ヒットした場合は、その衝突位置（球体の中心）を終点にする
+                endCenter = startCenter + direction * crackerRaycast.distance;
+                Gizmos.color = new Color(0f, 1f, 0f, 0.4f); // ヒット時は緑に
+            }
+            else
+            {
+                // 外れた場合は最大距離を終点にする
+                endCenter = startCenter + direction * kCrackerRaycastDistance;
+            }
+        }
+        else
+        {
+            // エディタ非実行（停止中）のプレビュー用
+            endCenter = startCenter + direction * kCrackerRaycastDistance;
+        }
+
+        // 終点の球体を描画
+        Gizmos.DrawSphere(endCenter, kCrackerRaycastRadius);
+
+        // スタートと終点をつなぐ線を描画（太さの目安）
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(startCenter, endCenter);
+
+        // 周囲に線を4本引くと、よりカプセル（太さ）っぽく見えます
+        Gizmos.DrawLine(startCenter + camTransform.up * kCrackerRaycastRadius, endCenter + camTransform.up * kCrackerRaycastRadius);
+        Gizmos.DrawLine(startCenter - camTransform.up * kCrackerRaycastRadius, endCenter - camTransform.up * kCrackerRaycastRadius);
+        Gizmos.DrawLine(startCenter + camTransform.right * kCrackerRaycastRadius, endCenter + camTransform.right * kCrackerRaycastRadius);
+        Gizmos.DrawLine(startCenter - camTransform.right * kCrackerRaycastRadius, endCenter - camTransform.right * kCrackerRaycastRadius);
     }
 }
