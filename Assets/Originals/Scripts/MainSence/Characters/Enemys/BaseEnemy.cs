@@ -424,6 +424,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     protected EnemyState currentState = EnemyState.Patrol;
 
     /// <summary>
+    /// 保存用EnemyState
+    /// </summary>
+    protected EnemyState saveEnemyState;
+
+    /// <summary>
     /// プレイヤーの最後の既知の位置
     /// </summary>
     protected Vector3 lastKnownPlayerPosition;
@@ -1608,17 +1613,21 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             //ダメージを受けている秒数が0秒の場合
             if (receiveDamageCount == 0) 
             {
-                Debug.Log("ダメージアニメーション開始");
+                //ダメージアニメーション再生
+                animator.SetBool(kIsDamageAnimatorParameter, true);
+
+                //EnemyStateを保存する
+                saveEnemyState = currentState;
 
                 //移動アニメーション再生停止
                 animator.SetBool(kIsRunAnimatorParameter, false);
                 animator.SetBool(kIsWalkAnimatorParameter, false);
 
-                //ダメージアニメーション再生
-                animator.SetBool(kIsDamageAnimatorParameter, true);
-
                 //調査状態に移行
                 currentState = EnemyState.Investigate;
+
+                //移動停止
+                navMeshAgent.isStopped = true;
             }
 
             //ダメージを受けている秒数を加算する
@@ -1626,8 +1635,26 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
         else 
         {
+            //移動停止解除
+            navMeshAgent.isStopped = false;
+
             //ダメージアニメーション再生停止
             animator.SetBool(kIsDamageAnimatorParameter, false);
+
+            //保存していたEnemyStateがChaseの場合
+
+            if (saveEnemyState == EnemyState.Chase)
+            {
+                //移動アニメーション再生
+                animator.SetBool(kIsRunAnimatorParameter, true);
+                animator.SetBool(kIsWalkAnimatorParameter, false);
+            }
+            else 
+            {
+                //移動アニメーション再生
+                animator.SetBool(kIsRunAnimatorParameter, false);
+                animator.SetBool(kIsWalkAnimatorParameter, IsMove);
+            }
 
 
             //ダメージ受けている秒数をリセット

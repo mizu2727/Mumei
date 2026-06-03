@@ -163,9 +163,9 @@ public class Inventory : MonoBehaviour
     private Vector3 castStartPosition;
 
     /// <summary>
-    /// Raycastの開始位置微調整(カメラの前方)
+    /// Raycastの開始位置微調整(カメラの後方)(敵の至近距離で発動しても当たらない問題を防ぐため要調整)
     /// </summary>
-    private const float kCastStartPositionForward = 1.0f;
+    private const float kCastStartPositionForward = -0.1f;
 
 
     [Header("検知対象のレイヤー（Enemyを設定すること）")]
@@ -628,7 +628,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private void CrackerRelatedProcessing() 
     {
-        //Raycastの開始位置をカメラの前方に設定(クラッカーの範囲にプレイヤー自身が含まれてしまうのを防ぐため)
+        //Raycastの開始位置をカメラの後方に設定(敵の至近距離で発動しても当たらない問題を防ぐため)
         castStartPosition = Camera.main.transform.position + (Camera.main.transform.forward * kCastStartPositionForward);
 
         //カメラの前方に飛ばした敵検知用のRaycastをSphereCastに変更(Raycastの太さを太くするため)
