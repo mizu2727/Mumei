@@ -132,6 +132,20 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private const float kSpecifiedStaminaRecoveryRatio = 30.0f;
 
+
+    [Header("クラッカー使用時のパーティクルシステム(Prefabをアタッチすること)")]
+    [SerializeField] private ParticleSystem crackerParticleSystemPrefab;
+
+    /// <summary>
+    /// クラッカー使用時のパーティクルの表示位置
+    /// </summary>
+    private Vector3 spawnCrackerParticlePosition;
+
+    /// <summary>
+    /// クラッカー使用時のパーティクルシステムのクローン
+    /// </summary>
+    private ParticleSystem spawnedCrackerParticle;
+
     /// <summary>
     /// クラッカー使用フラグ
     /// </summary>
@@ -635,6 +649,17 @@ public class Inventory : MonoBehaviour
         isRacastHit = Physics.SphereCast(castStartPosition, kCrackerRaycastRadius
             , Camera.main.transform.forward, out crackerRaycast, kCrackerRaycastDistance, enemyLayer);
 
+        //クラッカー使用時のパーティクルシステムを表示位置に移動
+        spawnCrackerParticlePosition = Camera.main.transform.position + Camera.main.transform.forward;
+
+        //Prefabからシーン内にパーティクルのクローンを生成する
+        spawnedCrackerParticle = Instantiate(crackerParticleSystemPrefab, spawnCrackerParticlePosition, Quaternion.identity);
+
+        spawnedCrackerParticle.gameObject.SetActive(true);
+
+        //クラッカー使用時のパーティクルシステムを再生
+        spawnedCrackerParticle.Play();
+
         //Raycastが当たった場合
         if (isRacastHit)
         {
@@ -661,6 +686,10 @@ public class Inventory : MonoBehaviour
 
         //クラッカー使用フラグをオフ
         isUseCrackerItem = false;
+
+        //クラッカー使用時のパーティクルシステムの再生が終了したら、パーティクルシステムを破棄するように設定する
+        var mainModule = spawnedCrackerParticle.main;
+        mainModule.stopAction = ParticleSystemStopAction.Destroy;
     }
 
     /// <summary>
@@ -734,7 +763,7 @@ public class Inventory : MonoBehaviour
         isUseStaminaItem = false;
         isUseCrackerItem = false;
     }
-
+    
     /// <summary>
     /// シーンビュー表示用のデバッグコード
     /// </summary>
