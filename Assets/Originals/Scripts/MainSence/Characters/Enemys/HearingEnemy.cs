@@ -23,9 +23,19 @@ public class HearingEnemy : BaseEnemy
     private float soundDetectionRange;
 
 
+    [Header("難易度Easyの場合のダッシュ音の調査時間(直接調整すること)")]
+    [SerializeField] private float easySoundInvestigateDuration;
 
-    [Header("ダッシュ音の調査時間")]
-    [SerializeField] private float soundInvestigateDuration = 10f;
+    [Header("難易度Normalの場合のダッシュ音の調査時間(直接調整すること)")]
+    [SerializeField] private float normalSoundInvestigateDuration;
+
+    [Header("難易度Nightmareの場合のダッシュ音の調査時間(直接調整すること)")]
+    [SerializeField] private float nightmareSoundInvestigateDuration;
+
+    /// <summary>
+    /// ダッシュ音の調査時間
+    /// </summary>
+    private float soundInvestigateDuration;
 
     /// <summary>
     /// 調査時間カウンター
@@ -68,6 +78,9 @@ public class HearingEnemy : BaseEnemy
                 //難易度Easyの用ダッシュ音の検知範囲を設定
                 soundDetectionRange = easySoundDetectionRange;
 
+                //難易度Easyの用ダッシュ音の調査時間を設定
+                soundInvestigateDuration = easySoundInvestigateDuration;
+
                 break;
 
             //難易度Normalの場合(デバッグ用にkNoneも追加)
@@ -77,6 +90,9 @@ public class HearingEnemy : BaseEnemy
                 //難易度Normalの用ダッシュ音の検知範囲を設定
                 soundDetectionRange = normalSoundDetectionRange;
 
+                //難易度Normalの用ダッシュ音の調査時間を設定
+                soundInvestigateDuration = normalSoundInvestigateDuration;
+
                 break;
 
             //難易度Nightmareの場合
@@ -85,14 +101,17 @@ public class HearingEnemy : BaseEnemy
                 //難易度Nightmareの用ダッシュ音の検知範囲を設定
                 soundDetectionRange = nightmareSoundDetectionRange;
 
+                //難易度Nightmareの用ダッシュ音の調査時間を設定
+                soundInvestigateDuration = nightmareSoundInvestigateDuration;
+
                 break;
         }
 
         //プレイヤーとの距離を計算
         float distanceToPlayer = Vector3.Distance(transform.position, targetPoint.position);
 
-        //プレイヤーのダッシュ音を検知
-        if (!isInvestigatingSound && Player.instance.IsDash && !Player.instance.GetIsPlayerHidden()
+        //プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合
+        if ((Player.instance.IsDash || Player.instance.GetIsMakeSound()) && !isInvestigatingSound && !Player.instance.GetIsPlayerHidden()
             && distanceToPlayer <= soundDetectionRange)
         {
             //追従モード以外の場合

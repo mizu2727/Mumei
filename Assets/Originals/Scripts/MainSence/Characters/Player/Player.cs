@@ -210,6 +210,22 @@ public class Player : MonoBehaviour, CharacterInterface
         set => playerIsDash = value;
     }
 
+    /// <summary>
+    /// 音を鳴らすフラグ
+    /// </summary>
+    private bool isMakeSound;
+
+    /// <summary>
+    /// 音を鳴らした時間
+    /// </summary>
+    private float makeSoundTimer = 0f;
+
+    /// <summary>
+    /// 音を鳴らす時間の長さ
+    /// </summary>
+    private const float kMakeSoundDuration = 0.5f;
+
+
     [Header("後ろを向くフラグ(ヒエラルキー上での編集禁止)")]
     [SerializeField] public bool playerIsBackRotate = false;
     [SerializeField]
@@ -397,6 +413,25 @@ public class Player : MonoBehaviour, CharacterInterface
     /// kCharacterControllerRadius(要調整)
     /// </summary>
     private const float kCharacterControllerRadius = 0.9f;
+
+
+    /// <summary>
+    /// 音を鳴らすフラグを取得
+    /// </summary>
+    /// <returns>音を鳴らすフラグ</returns>
+    public bool GetIsMakeSound()
+    {
+        return isMakeSound;
+    }
+
+    /// <summary>
+    /// 音を鳴らすフラグを設定する
+    /// </summary>
+    /// <param name="isMake">音を鳴らすフラグ</param>
+    public void SetIsMakeSound(bool isMake)
+    {
+        isMakeSound = isMake;
+    }
 
 
     /// <summary>
@@ -726,6 +761,12 @@ public class Player : MonoBehaviour, CharacterInterface
 
         //隠れるフラグを初期化
         isHidden = false;
+
+        //音を鳴らすフラグを初期化
+        isMakeSound = false;
+
+        //音を鳴らした時間を初期化
+        makeSoundTimer = 0f;
     }
 
     /// <summary>
@@ -778,6 +819,12 @@ public class Player : MonoBehaviour, CharacterInterface
             //スライダーに値を反映
             ReflectionStaminaSlider();
 
+            //音を鳴らすフラグを初期化
+            isMakeSound = false;
+
+            //音を鳴らした時間を初期化
+            makeSoundTimer = 0f;
+
             //処理をスキップ
             return;
         } 
@@ -811,12 +858,36 @@ public class Player : MonoBehaviour, CharacterInterface
             //移動音を止める
             if (audioSourceSE.isPlaying) StopPlayerSE(audioSourceSE);
 
+            //音を鳴らすフラグを初期化
+            isMakeSound = false;
+
+            //音を鳴らした時間を初期化
+            makeSoundTimer = 0f;
+
             //処理をスキップ
             return;
         }
 
         //ダッシュ判定
         PlayerDashOrWalk();
+
+
+        //音を鳴らすフラグがオンの場合
+        if (isMakeSound) 
+        {
+            //音を鳴らした時間を加算
+            makeSoundTimer += Time.deltaTime;
+
+            //音を鳴らす時間を超えた場合
+            if (makeSoundTimer >= kMakeSoundDuration)
+            {
+                //音を鳴らすフラグを初期化
+                isMakeSound = false;
+                //音を鳴らした時間を初期化
+                makeSoundTimer = 0f;
+            }
+        }
+
 
         //前後左右の入力から、移動のためのベクトルを計算
         float moveX = Input.GetAxis(stringHorizontal);

@@ -660,6 +660,9 @@ public class Inventory : MonoBehaviour
         //クラッカー使用時のパーティクルシステムを再生
         spawnedCrackerParticle.Play();
 
+        //音を鳴らすフラグをtrueに設定
+        Player.instance.SetIsMakeSound(true);
+
         //Raycastが当たった場合
         if (isRacastHit)
         {
