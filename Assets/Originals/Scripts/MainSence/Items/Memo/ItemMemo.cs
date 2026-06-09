@@ -7,7 +7,7 @@ using UnityEngine;
 public class ItemMemo
 {
     string[] itemId_Name_Type = { 
-        "1:ドキュメント:Document" ,
+        "1:ドキュメント(ステージ1用):Document" ,
         "2:睡眠薬:MysteryItem",
         "3:ナイフ:MysteryItem",
         "4:ハンマー:MysteryItem",
@@ -26,6 +26,7 @@ public class ItemMemo
         "17:暖炉の模型:MysteryItem",
         "18:プールの模型:MysteryItem",
         "19:クラッカー:UseItem",
+        "20:ドキュメント(ステージ2用):Document" ,
         "994:TestUseItem02,UseItem",
         "995:TestUseItem01,UseItem",
         "996:TestMysteryItem02:MysteryItem",
