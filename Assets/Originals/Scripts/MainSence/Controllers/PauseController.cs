@@ -622,41 +622,6 @@ public class PauseController : MonoBehaviour
         //マウスカーソルを表示し、固定を解除
         ViewMouseCorsor();
 
-        /*
-        //現在のシーン名を取得し、その名前によって一時停止するBGMを決める
-        switch (SceneManager.GetActiveScene().name) 
-        {
-            //HomeScene
-            case homeScene:
-                //HomeSceneBGMを一時停止
-                MusicController.instance.PauseBGM(HomeController.instance.GetAudioSourceBGM(),
-                    sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
-                break;
-
-            //StageXX
-            case stringStage01:
-            case stringStage02:
-                //現在流れているBGMがステージBGMなのか敵に追われているBGMなのかを判別する
-                if (nowPlayBGMId == EnemyBGMController.instance.GetChasePlayerBGMId())
-                {
-                    //プレイヤーが敵に追われる際のBGMを一時停止
-                    MusicController.instance.PauseBGM(EnemyBGMController.instance.GetAudioSourceBGM(),
-                        sO_BGM.GetBGMClip(EnemyBGMController.instance.GetChasePlayerBGMId()), EnemyBGMController.instance.GetChasePlayerBGMId());
-                }
-                else 
-                {
-                    //Stage01BGMを一時停止
-                    MusicController.instance.PauseBGM(Stage01Controller.instance.GetAudioSourceBGM(),
-                        sO_BGM.GetBGMClip(Stage01Controller.instance.GetCurrentBGMId()), Stage01Controller.instance.GetCurrentBGMId());
-                }
-                break;
-
-            default:
-                Debug.LogWarning("その他のシーン名");
-                break;
-        };
-        */
-
         //再生中の効果音を全て一時停止し、ボタンSEを流す
         //PlayerのSE一時停止
         if (Player.instance != null && Player.instance.audioSourceSE != null)
@@ -726,43 +691,6 @@ public class PauseController : MonoBehaviour
                     }            
                 }
             }
-
-            /*
-            //現在のシーン名を取得し、その名前によって一時停止解除するBGMを決める
-            switch (SceneManager.GetActiveScene().name)
-            {
-                //HomeScene
-                case homeScene:
-                    //HomeSceneBGMを一時停止解除
-                    MusicController.instance.UnPauseBGM(HomeController.instance.GetAudioSourceBGM(),
-                        sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
-                    break;
-
-                //StageXX
-                case stringStage01:
-                case stringStage02:
-                    //現在一時停止しているBGMがステージBGMなのか敵に追われているBGMなのかを判別する
-                    if (nowPlayBGMId == EnemyBGMController.instance.GetChasePlayerBGMId())
-                    {
-                        //プレイヤーが敵に追われる際のBGMを一時停止解除
-                        MusicController.instance.UnPauseBGM(EnemyBGMController.instance.GetAudioSourceBGM(),
-                            sO_BGM.GetBGMClip(EnemyBGMController.instance.GetChasePlayerBGMId()), EnemyBGMController.instance.GetChasePlayerBGMId());
-                    }
-                    else
-                    {
-                        //Stage01BGMを一時停止解除
-                        MusicController.instance.UnPauseBGM(Stage01Controller.instance.GetAudioSourceBGM(),
-                            sO_BGM.GetBGMClip(Stage01Controller.instance.GetCurrentBGMId()), Stage01Controller.instance.GetCurrentBGMId());
-                    }
-                    break;
-
-                default:
-                    Debug.LogWarning("その他のシーン名(UnPauseBGM)");
-                    break;
-            };
-            */
-
-            //MusicController.instance.UnPauseBGM();
         }
         
     }
