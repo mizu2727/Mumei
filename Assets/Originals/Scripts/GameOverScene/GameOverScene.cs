@@ -21,31 +21,6 @@ public class GameOverScene : MonoBehaviour
     private string SceneName;
 
     /// <summary>
-    /// TitleSceneのシーン名
-    /// </summary>
-    const string stringTitleScene = "TitleScene";
-
-    /// <summary>
-    /// Stage01
-    /// </summary>
-    private const string stringStage01 = "Stage01";
-
-    /// <summary>
-    /// Stage02
-    /// </summary>
-    private const string stringStage02 = "Stage02";
-
-    /// <summary>
-    /// Stage03
-    /// </summary>
-    private const string stringStage03 = "Stage03";
-
-    /// <summary>
-    /// Stage04
-    /// </summary>
-    private const string stringStage04 = "Stage04";
-
-    /// <summary>
     /// AudioSource
     /// </summary>
     private AudioSource audioSourceBGM;
@@ -137,25 +112,25 @@ public class GameOverScene : MonoBehaviour
             //ステージ1の場合
             case 1:
                 //SceneNameをStage01に設定
-                SceneName = stringStage01;
+                SceneName = CommonController.instance.GetStringStage01();
                 break;
 
             //ステージ2の場合
             case 2:
                 //SceneNameをStage02に設定
-                SceneName = stringStage02;
+                SceneName = CommonController.instance.GetStringStage02();
                 break;
 
             //ステージ3の場合
             case 3:
                 //SceneNameをStage03に設定
-                SceneName = stringStage03;  
+                SceneName = CommonController.instance.GetStringStage03();  
                 break;
 
             //ステージ4の場合
             case 4:
                 //SceneNameをStage04に設定
-                SceneName = stringStage04;
+                SceneName = CommonController.instance.GetStringStage04();
                 break;
 
             default:
@@ -214,6 +189,6 @@ public class GameOverScene : MonoBehaviour
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
         //TitleSceneをロードする
-        SceneManager.LoadScene(stringTitleScene);
+        SceneManager.LoadScene(CommonController.instance.GetTitleSceneName());
     }
 }

@@ -13,12 +13,12 @@ public class Stage01Controller : MonoBehaviour
     public static Stage01Controller instance;
 
     /// <summary>
-    /// Stage01
+    /// Stage01(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage01 = "Stage01";
 
     /// <summary>
-    /// Stage02
+    /// Stage02(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage02 = "Stage02";
 

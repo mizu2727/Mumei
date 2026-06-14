@@ -60,19 +60,9 @@ public class OperationExplanationController : MonoBehaviour
     private readonly int buttonSEid = 4;
 
     /// <summary>
-    /// TitleSceneのシーン名
-    /// </summary>
-    private const string stringTitleScene = "TitleScene";
-
-    /// <summary>
     /// OpeningSceneのシーン名
     /// </summary>
     private const string stringOpeningScene = "OpeningScene";
-
-    /// <summary>
-    /// HomeScene
-    /// </summary>
-    private const string stringHomeScene = "HomeScene";
 
     /// <summary>
     /// OperationPanelを取得する
@@ -274,14 +264,14 @@ public class OperationExplanationController : MonoBehaviour
         InitializeAudioSource();
 
         //現在のシーン名がTitleSceneの場合||OpeningSceneの場合
-        if (stringTitleScene == SceneManager.GetActiveScene().name || stringOpeningScene == SceneManager.GetActiveScene().name)
+        if (CommonController.instance.GetTitleSceneName() == SceneManager.GetActiveScene().name || stringOpeningScene == SceneManager.GetActiveScene().name)
         {
             //処理をスキップ
             return;
         }
 
         //現在のシーン名がHomeSceneの場合
-        if (stringHomeScene == SceneManager.GetActiveScene().name)
+        if (CommonController.instance.GetHomeSceneName() == SceneManager.GetActiveScene().name)
         {
             //compassTextを非表示にする
             compassText.SetActive(false);

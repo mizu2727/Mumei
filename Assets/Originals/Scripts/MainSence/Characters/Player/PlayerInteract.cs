@@ -87,73 +87,6 @@ public class PlayerInteract : MonoBehaviour
 
 
     /// <summary>
-    /// "Interact"
-    /// </summary>
-    private const string stringInteract = "Interact";
-
-
-    /// <summary>
-    /// Wallタグ
-    /// </summary>
-    private string wallTag = "Wall";
-
-    /// <summary>
-    /// アイテムタグ
-    /// </summary>
-    private string itemTag = "Item";
-
-    /// <summary>
-    /// ドアタグ
-    /// </summary>
-    private string doorTag = "Door";
-
-    /// <summary>
-    /// ゴールタグ
-    /// </summary>
-    private string goalTag = "Goal";
-
-    /// <summary>
-    /// ステージライトタグ
-    /// </summary>
-    private string stageLightTag = "StageLight";
-
-    /// <summary>
-    /// 引き出しタグ
-    /// </summary>
-    private string drawerTag = "Drawer";
-
-    /// <summary>
-    /// 隠れる用オブジェクトタグ
-    /// </summary>
-    private string hiddenObjectTag = "HiddenObject";
-
-    /// <summary>
-    /// その他オブジェクトタグ
-    /// </summary>
-    private string otherStageObjectTag = "OtherStageObject";
-
-    /// <summary>
-    /// アウトラインタグ
-    /// </summary>
-    private string outlineTag = "Outline";
-
-
-    /// <summary>
-    /// デフォルトレイヤー
-    /// </summary>
-    private string defaultLayer = "Default";
-
-    /// <summary>
-    /// アイテムレイヤー
-    /// </summary>
-    private string itemLayer = "Item";
-
-    /// <summary>
-    /// ドアレイヤー
-    /// </summary>
-    private string doorLayer = "Door";
-
-    /// <summary>
     /// ゴールレイヤー
     /// </summary>
     private string goalLayer = "Goal";
@@ -336,7 +269,7 @@ public class PlayerInteract : MonoBehaviour
                 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
             {
                 //隠れる用オブジェクト
-                if (raycastHit.transform.tag == hiddenObjectTag) 
+                if (raycastHit.transform.tag == CommonController.instance.GetHiddenObjectTag()) 
                 {
                     isInteract = true;
 
@@ -359,7 +292,7 @@ public class PlayerInteract : MonoBehaviour
 
 
                 //アイテム
-                if (raycastHit.transform.tag == itemTag)
+                if (raycastHit.transform.tag == CommonController.instance.GetItemTag())
                 {
                     isInteract = true;
 
@@ -447,7 +380,7 @@ public class PlayerInteract : MonoBehaviour
                 }
 
                 //ドア
-                if (raycastHit.transform.tag == doorTag)
+                if (raycastHit.transform.tag == CommonController.instance.GetDoorTag())
                 {
                     isInteract = true;
 
@@ -462,7 +395,7 @@ public class PlayerInteract : MonoBehaviour
                 }
 
                 //ステージライト
-                if (raycastHit.transform.tag == stageLightTag)
+                if (raycastHit.transform.tag == CommonController.instance.GetStageLightTag())
                 {
                     isInteract = true;
 
@@ -477,7 +410,7 @@ public class PlayerInteract : MonoBehaviour
                 }
 
                 //引き出し
-                if (raycastHit.transform.tag == drawerTag)
+                if (raycastHit.transform.tag == CommonController.instance.GetDrawerTag())
                 {
                     isInteract = true;
 
@@ -492,7 +425,7 @@ public class PlayerInteract : MonoBehaviour
                 }
 
                 //ゴール
-                if (raycastHit.transform.tag == goalTag)
+                if (raycastHit.transform.tag == CommonController.instance.GetGoalTag())
                 {
                     isInteract = true;
 
@@ -529,7 +462,7 @@ public class PlayerInteract : MonoBehaviour
     /// <returns>ボタン押下&&振り返り操作オフ(振り返りながら裁きの青玉に触れるとプレイヤーが見えてしまうバグを防ぐため)でtrue</returns>
     bool PlayInteract() 
     {
-        return (Input.GetMouseButtonDown(0) || Input.GetButtonDown(stringInteract))
+        return (Input.GetMouseButtonDown(0) || Input.GetButtonDown(CommonController.instance.GetStringInteract()))
             && !Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl) && !Input.GetKey(KeyCode.Slash);
     }
 
@@ -559,34 +492,34 @@ public class PlayerInteract : MonoBehaviour
         {
             string targetLayer = "";
             //タグに応じて元のレイヤーを決定
-            if (currentObjectTag == itemTag)
+            if (currentObjectTag == CommonController.instance.GetItemTag())
             {
-                targetLayer = itemLayer;
+                targetLayer = CommonController.instance.GetItemLayer();
             }
-            else if (currentObjectTag == doorTag)
+            else if (currentObjectTag == CommonController.instance.GetDoorTag())
             {
-                targetLayer = doorLayer;
+                targetLayer = CommonController.instance.GetDoorLayer();
             }
-            else if (currentObjectTag == goalTag)
+            else if (currentObjectTag == CommonController.instance.GetGoalTag())
             {
                 targetLayer = goalLayer;
             }
-            else if (currentObjectTag == stageLightTag) 
+            else if (currentObjectTag == CommonController.instance.GetStageLightTag()) 
             {
                 targetLayer = stageLightLayer;
             }
-            else if (currentObjectTag == drawerTag)
+            else if (currentObjectTag == CommonController.instance.GetDrawerTag())
             {
                 targetLayer = drawerLayer;
             }
-            else if (currentObjectTag == hiddenObjectTag)
+            else if (currentObjectTag == CommonController.instance.GetHiddenObjectTag())
             {
                 targetLayer = hiddenObjectLayer;
             }
             else
             {
                 Debug.LogWarning($"オブジェクト {currentHighlightedObject.name} のタグ {currentObjectTag} は認識されません。'Default' にフォールバックします。");
-                targetLayer = defaultLayer;
+                targetLayer = CommonController.instance.GetDefaultLayer();
             }
 
             SwitchLayer(currentHighlightedObject, targetLayer);
@@ -607,10 +540,10 @@ public class PlayerInteract : MonoBehaviour
             Camera.main.transform.forward, out raycastHit, distance))
         {
             //壁orドアorゴールorその他オブジェクトに当たった場合
-            if (raycastHit.transform.tag == wallTag ||
-                raycastHit.transform.tag == doorTag ||
-                raycastHit.transform.tag == goalTag ||
-                raycastHit.transform.tag == otherStageObjectTag)
+            if (raycastHit.transform.tag == CommonController.instance.GetWallTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetDoorTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetGoalTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetOtherStageObjectTag())
             {
                 Player.instance.SetIsRaycastHitWall(true);
             }
@@ -620,12 +553,12 @@ public class PlayerInteract : MonoBehaviour
             }
 
             //インタラクト可能なオブジェクトのいずれかに当たった場合
-            if (raycastHit.transform.tag == itemTag ||
-                raycastHit.transform.tag == doorTag ||
-                raycastHit.transform.tag == goalTag ||
-                raycastHit.transform.tag == stageLightTag ||
-                raycastHit.transform.tag == drawerTag ||
-                raycastHit.transform.tag == hiddenObjectTag)
+            if (raycastHit.transform.tag == CommonController.instance.GetItemTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetDoorTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetGoalTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetStageLightTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetDrawerTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetHiddenObjectTag())
             {
                 //Rayがヒットしたオブジェクト
                 GameObject hitObject = raycastHit.transform.gameObject;
@@ -645,7 +578,7 @@ public class PlayerInteract : MonoBehaviour
                     currentObjectTag = currentHighlightedObject.tag;
 
                     //レイヤーをOutlineに変更
-                    SwitchLayer(currentHighlightedObject, outlineTag);
+                    SwitchLayer(currentHighlightedObject, CommonController.instance.GetOutlineTag());
                 }
             }
             else

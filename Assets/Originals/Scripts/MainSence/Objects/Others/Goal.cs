@@ -67,22 +67,22 @@ public class Goal : MonoBehaviour
 
 
     /// <summary>
-    /// Stage01
+    /// Stage01(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage01Scene = "Stage01";
 
     /// <summary>
-    /// Stage02
+    /// Stage02(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage02Scene = "Stage02";
 
     /// <summary>
-    /// Stage03
+    /// Stage03(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage03Scene = "Stage03";
 
     /// <summary>
-    /// Stage04
+    /// Stage04(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage04Scene = "Stage04";
 

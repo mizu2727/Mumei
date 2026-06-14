@@ -50,19 +50,14 @@ public class HiddenObject : MonoBehaviour
 
 
     /// <summary>
-    /// Stage01
+    /// Stage01(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage01 = "Stage01";
 
     /// <summary>
-    /// Stage02
+    /// Stage02(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage02 = "Stage02";
-
-    /// <summary>
-    /// GameClearSceneのシーン名
-    /// </summary>
-    const string stringGameClearScene = "GameClearScene";
 
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -170,7 +165,7 @@ public class HiddenObject : MonoBehaviour
     private void Update()
     {
         //GameClearSceneの場合
-        if (SceneManager.GetActiveScene().name == stringGameClearScene && Player.instance != null) 
+        if (SceneManager.GetActiveScene().name == CommonController.instance.GetGameClearSceneName() && Player.instance != null) 
         {
             //処理をスキップ
             return;

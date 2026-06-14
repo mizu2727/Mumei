@@ -34,10 +34,6 @@ public class LightVisibilityEnemy : BaseEnemy
     /// </summary>
     RaycastHit objectlightHit;
 
-    /// <summary>
-    /// オブジェクトタグ
-    /// </summary>
-    private string otherStageObjectTag = "OtherStageObject";
 
     [Header("ステージ内のオブジェクトライト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Transform objectLight;

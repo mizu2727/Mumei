@@ -678,8 +678,8 @@ public class Player : MonoBehaviour, CharacterInterface
             }
         }
 
-        //Stage01Sceneに遷移した際に位置をリセット
-        if (scene.name == "Stage01Scene")
+        //Stage関連Sceneに遷移した際に位置をリセット
+        if (scene.name == CommonController.instance.GetStringStage01() || scene.name == "Stage02")
         {
             //CharacterControllerを一時的に無効にして位置をリセット
             if (characterController != null)
@@ -800,7 +800,7 @@ public class Player : MonoBehaviour, CharacterInterface
         if (isDebug && Input.GetKeyDown(KeyCode.C))
         {
             Debug.Log("クリア(デバッグモード)");
-            SceneManager.LoadScene("GameClearScene");
+            SceneManager.LoadScene(CommonController.instance.GetGameClearSceneName());
         }
 
         //ストーリーモードでプレイヤーを回転させる

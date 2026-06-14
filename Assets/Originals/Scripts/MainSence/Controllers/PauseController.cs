@@ -171,21 +171,6 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private string defaultItemName = "?????????";
 
-    /// <summary>
-    /// HomeScene
-    /// </summary>
-    private const string homeScene = "HomeScene";
-
-    /// <summary>
-    /// Stage01
-    /// </summary>
-    private const string stringStage01 = "Stage01";
-
-    /// <summary>
-    /// Stage02
-    /// </summary>
-    private const string stringStage02 = "Stage02";
-
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;

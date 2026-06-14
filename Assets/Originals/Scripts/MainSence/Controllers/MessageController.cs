@@ -20,22 +20,6 @@ public class MessageController : MonoBehaviour
     public static MessageController instance;
 
 
-    /// <summary>
-    /// "Interact"
-    /// </summary>
-    private const string stringInteract = "Interact";
-
-    /// <summary>
-    /// HomeScene
-    /// </summary>
-    private const string stringHomeScene = "HomeScene";
-
-    /// <summary>
-    /// GameClearScene
-    /// </summary>
-    private const string stringGameClearScene = "GameClearScene";
-
-
     [Header("メッセージパネル関連")]
     [Header("メッセージパネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject messagePanel;
@@ -428,7 +412,7 @@ public class MessageController : MonoBehaviour
     async UniTask ShowNextMessage() 
     {
         await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) 
-            || Input.GetMouseButtonDown(0) || Input.GetButtonDown(stringInteract));
+            || Input.GetMouseButtonDown(0) || Input.GetButtonDown(CommonController.instance.GetStringInteract()));
 
         //ポーズパネル・ゴールパネルを開いている間は、次のメッセージを進めない
         if (goal != null && PauseController.instance != null) 
@@ -562,7 +546,7 @@ public class MessageController : MonoBehaviour
             }
 
             //SceneがGameClearSceneでない場合(GameClearSceneからデバッグプレイする際に発生するエラーを防ぐため)
-            if (SceneManager.GetActiveScene().name != stringGameClearScene) 
+            if (SceneManager.GetActiveScene().name != CommonController.instance.GetGameClearSceneName()) 
             {
                 //wall_Tutorialを消してゴールオブジェクトが見えるようにする
                 if (HomeController.instance.wall_Tutorial != null && number == kMessageNumber47)
@@ -989,7 +973,7 @@ public class MessageController : MonoBehaviour
                 GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
                 //HomeSceneへ移動
-                SceneManager.LoadScene(stringHomeScene);
+                SceneManager.LoadScene(CommonController.instance.GetHomeSceneName());
 
                 //処理をスキップ
                 return;

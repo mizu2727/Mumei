@@ -19,39 +19,29 @@ public class ChangeSceneZone : MonoBehaviour
     private string nowSceneName;
 
     /// <summary>
-    /// HomeScene
+    /// HomeScene(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringHomeScene = "HomeScene";
 
     /// <summary>
-    /// DemoStage01
-    /// </summary>
-    private const string stringDemoStage01 = "DemoStage01";
-
-    /// <summary>
-    /// Stage01
+    /// Stage01(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage01Scene = "Stage01";
 
     /// <summary>
-    /// Stage02
+    /// Stage02(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage02Scene = "Stage02";
 
     /// <summary>
-    /// Stage03
+    /// Stage03(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage03Scene = "Stage03";
 
     /// <summary>
-    /// Stage04
+    /// Stage04(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage04Scene = "Stage04";
-
-    /// <summary>
-    /// GameClearScene
-    /// </summary>
-    const string stringGameClearScene = "GameClearScene";
 
     /// <summary>
     /// シーン名の配列(0番目のみ空けている)
@@ -66,17 +56,17 @@ public class ChangeSceneZone : MonoBehaviour
     private int stageSceneNameArrayIndex;
 
     /// <summary>
-    /// EasyLevel
+    /// EasyLevel(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringEasyLevel = "EasyLevel";
 
     /// <summary>
-    /// NormalLevel
+    /// NormalLevel(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringNormalLevel = "NormalLevel";
 
     /// <summary>
-    /// NightmareLevel
+    /// NightmareLevel(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringNightmareLevel = "NightmareLevel";
 
@@ -84,11 +74,6 @@ public class ChangeSceneZone : MonoBehaviour
     /// 比較用の最速クリア時間
     /// </summary>
     TimeSpan saveTimeSpan;
-
-    /// <summary>
-    /// "Player"タグ
-    /// </summary>
-    private const string playerTag = "Player";
 
 
     /// <summary>
@@ -139,7 +124,7 @@ public class ChangeSceneZone : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         //プレイヤー以外が触れた場合||プレイヤーが存在しない場合||プレイヤーが死亡している場合
-        if (!collision.gameObject.CompareTag(playerTag) || Player.instance == null || Player.instance.IsDead)
+        if (!collision.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) || Player.instance == null || Player.instance.IsDead)
         {
             //処理をスキップ
             return;
@@ -156,7 +141,7 @@ public class ChangeSceneZone : MonoBehaviour
     private void OnTriggerEnter(Collider collider)
     {
         //プレイヤー以外が触れた場合||プレイヤーが存在しない場合||プレイヤーが死亡している場合
-        if (!collider.gameObject.CompareTag(playerTag) || Player.instance == null || Player.instance.IsDead)
+        if (!collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) || Player.instance == null || Player.instance.IsDead)
         {
             //処理をスキップ
             return;
@@ -191,7 +176,7 @@ public class ChangeSceneZone : MonoBehaviour
                 if (GameController.instance.GetIsDemoPlayFlag())
                 {
                     //デモ版クリアステータス番号を1(通常クリア)にする
-                    saveStageClearStatusArray[stringDemoStage01] = 1;
+                    saveStageClearStatusArray[CommonController.instance.GetDemoStage01SceneName()] = 1;
 
                     //デモ版ステージ1難易度クリアステータス情報を更新する
                     SettingStageDifficultyLevelClearStatus(saveDemoStage01DifficultyLevelClearStatusArray);
@@ -219,7 +204,7 @@ public class ChangeSceneZone : MonoBehaviour
                 Player.instance.DestroyPlayer();
 
                 //画面遷移
-                SceneManager.LoadScene(stringGameClearScene);
+                SceneManager.LoadScene(CommonController.instance.GetGameClearSceneName());
 
 
                 break;
@@ -246,7 +231,7 @@ public class ChangeSceneZone : MonoBehaviour
                 Player.instance.DestroyPlayer();
 
                 //画面遷移
-                SceneManager.LoadScene(stringGameClearScene);
+                SceneManager.LoadScene(CommonController.instance.GetGameClearSceneName());
 
                 break;
 
@@ -272,7 +257,7 @@ public class ChangeSceneZone : MonoBehaviour
                 Player.instance.DestroyPlayer();
 
                 //画面遷移
-                SceneManager.LoadScene(stringGameClearScene);
+                SceneManager.LoadScene(CommonController.instance.GetGameClearSceneName());
 
                 break;
 
@@ -298,7 +283,7 @@ public class ChangeSceneZone : MonoBehaviour
                 Player.instance.DestroyPlayer();
 
                 //画面遷移
-                SceneManager.LoadScene(stringGameClearScene);
+                SceneManager.LoadScene(CommonController.instance.GetGameClearSceneName());
 
                 break;
         }

@@ -297,32 +297,27 @@ public class GameController : MonoBehaviour
     private ViewScene viewScene;
 
     /// <summary>
-    /// TitleSceneのシーン名
-    /// </summary>
-    const string stringTitleScene = "TitleScene";
-
-    /// <summary>
-    /// DemoStage01
+    /// DemoStage01(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringDemoStage01 = "DemoStage01";
 
     /// <summary>
-    /// Stage01
+    /// Stage01(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringStage01 = "Stage01";
 
     /// <summary>
-    /// Stage02
+    /// Stage02(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringStage02 = "Stage02";
 
     /// <summary>
-    /// Stage03
+    /// Stage03(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringStage03 = "Stage03";
 
     /// <summary>
-    /// Stage04
+    /// Stage04(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringStage04 = "Stage04";
 
@@ -332,17 +327,17 @@ public class GameController : MonoBehaviour
     const string stringGameOverScene = "GameOverScene";
 
     /// <summary>
-    /// EasyLevel
+    /// EasyLevel(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringEasyLevel = "EasyLevel";
 
     /// <summary>
-    /// NormalLevel
+    /// NormalLevel(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringNormalLevel = "NormalLevel";
 
     /// <summary>
-    /// NightmareLevel
+    /// NightmareLevel(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringNightmareLevel = "NightmareLevel";
 
@@ -454,7 +449,7 @@ public class GameController : MonoBehaviour
             MusicController.instance.bGMSlider.value = bGMVolume;
 
             //現在のシーン名がTitleSceneの場合(ステージ系シーンへ遷移した際に発生するエラーを防ぐためにこのif分を追加)
-            if (SceneManager.GetActiveScene().name == stringTitleScene) 
+            if (SceneManager.GetActiveScene().name == CommonController.instance.GetTitleSceneName()) 
             {
                 MusicController.instance.OnBGMVolumeChanged(bGMVolume);
             }
@@ -467,7 +462,7 @@ public class GameController : MonoBehaviour
             MusicController.instance.sESlider.value = sEVolume;
 
             //現在のシーン名がTitleSceneの場合(ステージ系シーンへ遷移した際に発生するエラーを防ぐためにこのif分を追加)
-            if (SceneManager.GetActiveScene().name == stringTitleScene)
+            if (SceneManager.GetActiveScene().name == CommonController.instance.GetTitleSceneName())
             {
                 MusicController.instance.OnSEVolumeChanged(sEVolume);
             } 
@@ -754,7 +749,7 @@ public class GameController : MonoBehaviour
         {
             Player.instance.DestroyPlayer();
         }
-        SceneManager.LoadScene(stringTitleScene);
+        SceneManager.LoadScene(CommonController.instance.GetTitleSceneName());
 
         //PauseControllerを削除
         if (PauseController.instance != null)

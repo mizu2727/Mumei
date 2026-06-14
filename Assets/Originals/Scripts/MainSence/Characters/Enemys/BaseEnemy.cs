@@ -595,14 +595,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private bool isPlayFindPlayerSE;
 
-    /// <summary>
-    /// タグ・レイヤー関連
-    /// </summary>
-    protected const string playerTag = "Player";
-    private const string wallTag = "Wall";
-    private const string doorTag = "Door";
-    private const string WallLayer = "Wall";
-
 
     /// <summary>
     /// ドア
@@ -1031,21 +1023,21 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             //Raycastでヒットしたオブジェクトのレイヤーをチェック
             if (Physics.SphereCast(rayOrigin, kSphereCastRadius, directionToPlayer.normalized, out hit, enemyDetectionRange, detectionLayer))
             {
-                if (hit.collider.CompareTag(playerTag))
+                if (hit.collider.CompareTag(CommonController.instance.GetPlayerTag()))
                 {
                     //視線経路上のすべてのオブジェクトをチェック
                     RaycastHit[] hits = Physics.RaycastAll(rayOrigin, directionToPlayer.normalized, distanceToPlayer);
                     foreach (var rayHit in hits)
                     {
                         //壁にヒットした場合
-                        if (rayHit.collider.CompareTag(wallTag))
+                        if (rayHit.collider.CompareTag(CommonController.instance.GetWallTag()))
                         {
                             //プレイヤーの視認失敗
                             return false;
                         }
 
                         //ドアにヒットした場合
-                        if (rayHit.collider.CompareTag(doorTag))
+                        if (rayHit.collider.CompareTag(CommonController.instance.GetDoorTag()))
                         {
                             Door door = rayHit.collider.GetComponent<Door>();
 
@@ -1180,7 +1172,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     {
 
         //壁に触れた場合
-        if (collision.gameObject.layer == LayerMask.NameToLayer(WallLayer) || collision.gameObject.CompareTag(wallTag))
+        if (collision.gameObject.layer == LayerMask.NameToLayer(CommonController.instance.GetWallLayer()) || collision.gameObject.CompareTag(CommonController.instance.GetWallTag()))
         {
             //速度を0に設定して停止させる
             navMeshAgent.velocity = Vector3.zero;
@@ -1200,7 +1192,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //プレイヤーに触れた場合&&ダメージを受けていない場合
-        if (collision.gameObject.CompareTag(playerTag) && !isReceiveDamage)
+        if (collision.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage)
         {
             if (Player.instance != null && !Player.instance.IsDead)
             {
@@ -1210,7 +1202,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //ドアに触れた場合
-        if (collision.gameObject.CompareTag(doorTag))
+        if (collision.gameObject.CompareTag(CommonController.instance.GetDoorTag()))
         {
             gameObjectDoor = collision.gameObject;
             door = gameObjectDoor.GetComponent<Door>();
@@ -1231,7 +1223,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     {
 
         //プレイヤーに触れた場合&&ダメージを受けていない場合
-        if (collider.gameObject.CompareTag(playerTag) && !isReceiveDamage)
+        if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage)
         {
             if (Player.instance != null && !Player.instance.IsDead)
             {
@@ -1241,7 +1233,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //ドアに触れた場合
-        if (collider.gameObject.CompareTag(doorTag))
+        if (collider.gameObject.CompareTag(CommonController.instance.GetDoorTag()))
         {
             gameObjectDoor = collider.gameObject;
             door = gameObjectDoor.GetComponent<Door>();

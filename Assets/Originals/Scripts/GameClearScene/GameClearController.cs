@@ -63,12 +63,6 @@ public class GameClearController : MonoBehaviour
     /// </summary>
     private readonly int gameClearSceneBGMId = 3;
 
-
-    /// <summary>
-    /// TitleSceneのシーン名
-    /// </summary>
-    const string stringTitleScene = "TitleScene";
-
     /// <summary>
     /// オブジェクト破棄時の処理
     /// </summary>
@@ -209,7 +203,7 @@ public class GameClearController : MonoBehaviour
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
         //タイトルへ戻る
-        SceneManager.LoadScene(stringTitleScene);
+        SceneManager.LoadScene(CommonController.instance.GetTitleSceneName());
     }
 
     /// <summary>

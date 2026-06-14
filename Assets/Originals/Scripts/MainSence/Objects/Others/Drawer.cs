@@ -83,17 +83,17 @@ public class Drawer : MonoBehaviour
     [SerializeField] private BoxCollider boxCollider;
 
     /// <summary>
-    /// HomeScene
+    /// HomeScene(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringHomeScene = "HomeScene";
 
     /// <summary>
-    /// Stage01
+    /// Stage01(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage01 = "Stage01";
 
     /// <summary>
-    /// Stage02
+    /// Stage02(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage02 = "Stage02";
 

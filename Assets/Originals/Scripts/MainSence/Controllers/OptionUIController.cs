@@ -90,11 +90,6 @@ public class OptionUIController : MonoBehaviour
     private readonly int buttonSEid = 4;
 
     /// <summary>
-    /// TitleSceneのシーン名
-    /// </summary>
-    private const string stringTitleScene = "TitleScene";
-
-    /// <summary>
     /// オプションパネル閲覧フラグを取得
     /// </summary>
     /// <returns>オプションパネル閲覧フラグ</returns>
@@ -233,7 +228,7 @@ public class OptionUIController : MonoBehaviour
         ChangeLanguagePanel();
 
         //現在のシーン名がTitleSceneの場合
-        if (stringTitleScene == SceneManager.GetActiveScene().name)
+        if (CommonController.instance.GetTitleSceneName() == SceneManager.GetActiveScene().name)
         {
             //説明ボタンを非表示にする
             explanationButton.SetActive(false);
@@ -295,7 +290,7 @@ public class OptionUIController : MonoBehaviour
         ChangeOptionPanel();
 
         //現在のシーン名がTitleSceneの場合
-        if (SceneManager.GetActiveScene().name == stringTitleScene)
+        if (SceneManager.GetActiveScene().name == CommonController.instance.GetTitleSceneName())
         {
             //タイトルパネルを非表示にする
             TitleController.instance.titlePanel.SetActive(false);
@@ -527,7 +522,7 @@ public class OptionUIController : MonoBehaviour
 
 
         //現在のシーン名がTitleSceneの場合
-        if (SceneManager.GetActiveScene().name == stringTitleScene)
+        if (SceneManager.GetActiveScene().name == CommonController.instance.GetTitleSceneName())
         {
             //タイトルパネルを表示にする
             TitleController.instance.titlePanel.SetActive(true);
@@ -665,7 +660,7 @@ public class OptionUIController : MonoBehaviour
     private void ChangeExplanationPanel()
     {
         //現在のシーン名がTitleSceneの場合
-        if (stringTitleScene == SceneManager.GetActiveScene().name)
+        if (CommonController.instance.GetTitleSceneName() == SceneManager.GetActiveScene().name)
         {
             //処理をスキップ
             return;
