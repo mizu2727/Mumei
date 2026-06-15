@@ -26,6 +26,20 @@ public class CommonController : MonoBehaviour
     }
 
     /// <summary>
+    /// OpeningSceneのシーン名
+    /// </summary>
+    private const string stringOpeningScene = "OpeningScene";
+
+    /// <summary>
+    /// OpeningSceneのシーン名を取得する関数
+    /// </summary>
+    /// <returns>OpeningSceneのシーン名</returns>
+    public string GetOpeningSceneName()
+    {
+        return stringOpeningScene;
+    }
+
+    /// <summary>
     /// DemoStage01
     /// </summary>
     private const string stringDemoStage01 = "DemoStage01";
@@ -138,6 +152,20 @@ public class CommonController : MonoBehaviour
         return stringInteract;
     }
 
+
+    /// <summary>
+    /// タグ："Untagged"
+    /// </summary>
+    private const string stringUntaggedTag = "Untagged";
+
+    /// <summary>
+    /// Untaggedタグを取得する関数
+    /// </summary>
+    /// <returns>Untaggedタグ</returns>
+    public string GetStringUntaggedTag()
+    {
+        return stringUntaggedTag;
+    }
 
     /// <summary>
     /// "Player"タグ
@@ -334,6 +362,62 @@ public class CommonController : MonoBehaviour
     public string GetDoorLayer()
     {
         return doorLayer;
+    }
+
+    /// <summary>
+    /// ゴールレイヤー
+    /// </summary>
+    private const string goalLayer = "Goal";
+
+    /// <summary>
+    /// ゴールレイヤーを取得する関数
+    /// </summary>
+    /// <returns>ゴールレイヤー</returns>
+    public string GetGoalLayer()
+    {
+        return goalLayer;
+    }
+
+    /// <summary>
+    /// ステージライトレイヤー
+    /// </summary>
+    private const string stageLightLayer = "StageLight";
+
+    /// <summary>
+    /// ステージライトレイヤーを取得する関数
+    /// </summary>
+    /// <returns>ステージライトレイヤー</returns>
+    public string GetStageLightLayer()
+    {
+        return stageLightLayer;
+    }
+
+    /// <summary>
+    /// 引き出しレイヤー
+    /// </summary>
+    private const string drawerLayer = "Drawer";
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public string GetDrawerLayer()
+    {
+        return drawerLayer;
+    }
+
+    /// <summary>
+    /// 隠れる用オブジェクトレイヤー
+    /// </summary>
+    private const string hiddenObjectLayer = "HiddenObject";
+
+    /// <summary>
+    /// 隠れる用オブジェクトレイヤー
+    /// </summary>
+    /// <returns>隠れる用オブジェクトレイヤー</returns>
+    public string GetHiddenObjectLayer()
+    {
+        return hiddenObjectLayer;
     }
 
 

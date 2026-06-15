@@ -60,11 +60,6 @@ public class OperationExplanationController : MonoBehaviour
     private readonly int buttonSEid = 4;
 
     /// <summary>
-    /// OpeningSceneのシーン名
-    /// </summary>
-    private const string stringOpeningScene = "OpeningScene";
-
-    /// <summary>
     /// OperationPanelを取得する
     /// </summary>
     /// <returns>OperationPanel</returns>
@@ -264,7 +259,8 @@ public class OperationExplanationController : MonoBehaviour
         InitializeAudioSource();
 
         //現在のシーン名がTitleSceneの場合||OpeningSceneの場合
-        if (CommonController.instance.GetTitleSceneName() == SceneManager.GetActiveScene().name || stringOpeningScene == SceneManager.GetActiveScene().name)
+        if (CommonController.instance.GetTitleSceneName() == SceneManager.GetActiveScene().name 
+            || CommonController.instance.GetOpeningSceneName() == SceneManager.GetActiveScene().name)
         {
             //処理をスキップ
             return;

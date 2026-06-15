@@ -85,28 +85,6 @@ public class PlayerInteract : MonoBehaviour
     [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_Item sO_Item;
 
-
-    /// <summary>
-    /// ゴールレイヤー
-    /// </summary>
-    private string goalLayer = "Goal";
-
-    /// <summary>
-    /// ゴールレイヤー
-    /// </summary>
-    private string stageLightLayer = "StageLight";
-
-    /// <summary>
-    /// 引き出しレイヤー
-    /// </summary>
-    private string drawerLayer = "Drawer";
-
-    /// <summary>
-    /// 隠れる用オブジェクトレイヤー
-    /// </summary>
-    private string hiddenObjectLayer = "HiddenObject";
-
-
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
@@ -502,19 +480,19 @@ public class PlayerInteract : MonoBehaviour
             }
             else if (currentObjectTag == CommonController.instance.GetGoalTag())
             {
-                targetLayer = goalLayer;
+                targetLayer = CommonController.instance.GetGoalLayer();
             }
             else if (currentObjectTag == CommonController.instance.GetStageLightTag()) 
             {
-                targetLayer = stageLightLayer;
+                targetLayer = CommonController.instance.GetStageLightLayer();
             }
             else if (currentObjectTag == CommonController.instance.GetDrawerTag())
             {
-                targetLayer = drawerLayer;
+                targetLayer = CommonController.instance.GetDrawerLayer();
             }
             else if (currentObjectTag == CommonController.instance.GetHiddenObjectTag())
             {
-                targetLayer = hiddenObjectLayer;
+                targetLayer = CommonController.instance.GetHiddenObjectLayer();
             }
             else
             {

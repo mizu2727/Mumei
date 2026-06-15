@@ -98,12 +98,6 @@ public class Drawer : MonoBehaviour
     private const string stringStage02 = "Stage02";
 
 
-    /// <summary>
-    /// タグ："Untagged"
-    /// </summary>
-    private const string stringUntaggedTag = "Untagged";
-
-
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
@@ -313,7 +307,7 @@ public class Drawer : MonoBehaviour
         DrawerSE();
 
         //タグをUntaggedに変更(開けた引き出しのoutlineを非表示にするため)
-        this.gameObject.tag = stringUntaggedTag;
+        this.gameObject.tag = CommonController.instance.GetStringUntaggedTag();
     }
 
     /// <summary>

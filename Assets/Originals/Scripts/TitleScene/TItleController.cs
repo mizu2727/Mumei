@@ -21,11 +21,6 @@ public class TitleController : MonoBehaviour
     [Header("タイトルパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public GameObject titlePanel;
 
-    /// <summary>
-    /// OpeningScene
-    /// </summary>
-    private string stringOpeningScene = "OpeningScene";
-
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
 
@@ -142,7 +137,7 @@ public class TitleController : MonoBehaviour
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
         //OpeningSceneをロードする
-        SceneManager.LoadScene(stringOpeningScene);        
+        SceneManager.LoadScene(CommonController.instance.GetStringUntaggedTag());        
     }
 
     /// <summary>
