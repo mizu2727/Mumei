@@ -227,6 +227,13 @@ public class PlayerInteract : MonoBehaviour
         //プレイヤーが隠れている状態でインタラクト操作を行った場合
         if (PlayInteract() && Player.instance.GetIsPlayerHidden() && Time.timeScale != 0)
         {
+            //扉のシーケンスが実行中の場合
+            if (saveHiddenObject == null || saveHiddenObject.GetIsDoorSequenceRunning())
+            {
+                //処理をスキップ
+                return;
+            }
+
             //隠れている状態を解除系の処理
             saveHiddenObject.ShowThePlayer();
 
@@ -257,8 +264,8 @@ public class PlayerInteract : MonoBehaviour
                     //HiddenObjectコンポーネントを取得
                     hiddenObject = targetHiddenObject.GetComponent<HiddenObject>();
 
-                    //hiddenObjectが存在する場合
-                    if (hiddenObject != null) 
+                    //hiddenObjectが存在する場合&&隠れる用オブジェクトのドアシーケンスが実行中でない場合
+                    if (hiddenObject != null && !hiddenObject.GetIsDoorSequenceRunning()) 
                     {
                         //現在使用している隠れる用オブジェクトを保存
                         saveHiddenObject = hiddenObject;

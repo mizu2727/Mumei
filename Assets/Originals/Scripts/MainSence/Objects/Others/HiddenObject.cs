@@ -147,6 +147,15 @@ public class HiddenObject : MonoBehaviour
     private bool isDoorSequenceRunning = false;
 
     /// <summary>
+    /// 扉の開閉シーケンス実行中フラグを取得する
+    /// </summary>
+    /// <returns>扉の開閉シーケンス実行中フラグ</returns>
+    public bool GetIsDoorSequenceRunning()
+    {
+        return isDoorSequenceRunning;
+    }
+
+    /// <summary>
     /// 扉の開閉シーケンスのキャンセルトークンソース
     /// OnDisable時にタスクを安全にキャンセルするために使用する
     /// </summary>
@@ -233,8 +242,10 @@ public class HiddenObject : MonoBehaviour
 
 
         //デバッグ用
+        
         currentHiddenDoorOpenSEid = lockerDoorOpenSEid;
         currentHiddenDoorCloseSEid = lockerDoorCloseSEid;
+        
     }
 
 
@@ -376,12 +387,16 @@ public class HiddenObject : MonoBehaviour
         //playerのローカル回転を初期化
         player.localRotation = Quaternion.identity;
 
-        //プレイヤーが隠れるアニメーションを再生
-        Player.instance.PlayOrStopKneelingAnimation();
+        //ドアが付属していない場合
+        if (!hasDoor) 
+        {
+            //プレイヤーが隠れるアニメーションを再生
+            Player.instance.PlayOrStopKneelingAnimation();
 
-        //隠れたときのSE
-        audioSourceSE.clip = sO_SE.GetSEClip(currentHiddenPlayerSEid);
-        audioSourceSE.PlayOneShot(audioSourceSE.clip);
+            //隠れたときのSE
+            audioSourceSE.clip = sO_SE.GetSEClip(currentHiddenPlayerSEid);
+            audioSourceSE.PlayOneShot(audioSourceSE.clip);
+        }
     }
 
     /// <summary>
@@ -497,9 +512,14 @@ public class HiddenObject : MonoBehaviour
         //プレイヤーが隠れるアニメーションを停止
         Player.instance.PlayOrStopKneelingAnimation();
 
-        //プレイヤーが姿を現すときのSE
-        audioSourceSE.clip = sO_SE.GetSEClip(currentHiddenPlayerSEid);
-        audioSourceSE.PlayOneShot(audioSourceSE.clip);
+        //ドアが付属していない場合
+        if (!hasDoor) 
+        {
+            //プレイヤーが姿を現すときのSE
+            audioSourceSE.clip = sO_SE.GetSEClip(currentHiddenPlayerSEid);
+            audioSourceSE.PlayOneShot(audioSourceSE.clip);
+        }
+
     }
 
     /// <summary>
