@@ -731,8 +731,8 @@ public class MessageController : MonoBehaviour
                 //カナメをワープ
                 Kaname.instance.WarpPostion(1, 0.505f, 7);
 
-                ////チュートリアル用ドキュメントを表示
-                GameController.instance.tutorialDocument.SetActive(true);
+                //チュートリアル用ドキュメントの引き出しを表示
+                GameController.instance.GetTutorialDocumentDrawer().SetActive(true);
 
                 //画面ブラックアウトを解除
                 isBlackOutPanel = false;
@@ -765,9 +765,9 @@ public class MessageController : MonoBehaviour
             {
                 ResetMessage();
 
-                //チュートリアル用ミステリーアイテムを表示
-                GameController.instance.tutorialMysteryItem01.SetActive(true);
-                GameController.instance.tutorialMysteryItem02.SetActive(true);
+                //チュートリアル用ミステリーアイテム関連の引き出しを表示
+                GameController.instance.GetTutorialMysteryItemDrawer01().SetActive(true);
+                GameController.instance.GetTutorialMysteryItemDrawer02().SetActive(true);
 
                 GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
@@ -1126,8 +1126,10 @@ public class MessageController : MonoBehaviour
                 //プレイヤーカメラのX軸回転リセットフラグをfalseに設定
                 PlayerCamera.instance.SetIsResetXRotate(false);
 
-                //チュートリアル用アイテムを非表示
-                GameController.instance.tutorialItems.SetActive(false);
+                //チュートリアル用アイテム関係の引き出しを非表示
+                GameController.instance.GetTutorialDocumentDrawer().SetActive(false);
+                GameController.instance.GetTutorialMysteryItemDrawer01().SetActive(false);
+                GameController.instance.GetTutorialMysteryItemDrawer02().SetActive(false);
 
                 await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 

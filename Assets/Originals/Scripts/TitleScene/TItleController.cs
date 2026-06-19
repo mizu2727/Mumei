@@ -137,7 +137,7 @@ public class TitleController : MonoBehaviour
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
         //OpeningScene‚ğƒ[ƒh‚·‚é
-        SceneManager.LoadScene(CommonController.instance.GetStringUntaggedTag());        
+        SceneManager.LoadScene(CommonController.instance.GetOpeningSceneName());        
     }
 
     /// <summary>

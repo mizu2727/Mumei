@@ -906,6 +906,9 @@ public class PauseController : MonoBehaviour
             //UIのレイヤーを手前側にする
             documentInventoryPanel.transform.SetAsLastSibling();
 
+            //テキスト内容を変更する
+            SettingLanguageText();
+
             //表示
             documentInventoryPanel.SetActive(true);
 
@@ -928,6 +931,9 @@ public class PauseController : MonoBehaviour
     {
         if (isDocumentExplanationPanel)
         {
+            //テキスト内容を変更する
+            SettingLanguageText();
+
             //表示
             documentExplanationPanel.SetActive(true);
         }
@@ -984,6 +990,9 @@ public class PauseController : MonoBehaviour
             //UIのレイヤーを手前側にする
             mysteryItemInventoryPanel.transform.SetAsLastSibling();
 
+            //テキスト内容を変更する
+            SettingLanguageText();
+
             //表示
             mysteryItemInventoryPanel.SetActive(true);
         }
@@ -1021,6 +1030,9 @@ public class PauseController : MonoBehaviour
     {
         if (isMysteryItemExplanationPanel)
         {
+            //テキスト内容を変更する
+            SettingLanguageText();
+
             //表示
             mysteryItemExplanationPanel.SetActive(true);
         }

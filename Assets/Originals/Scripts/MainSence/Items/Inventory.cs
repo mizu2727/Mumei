@@ -502,7 +502,10 @@ public class Inventory : MonoBehaviour
 
             //アイテム名と説明文を設定
             useItemNameText.text = itemName;
-            useItemExplanationText.text = description;          
+            useItemExplanationText.text = description;
+
+            //アイテム名と説明文の言語を設定する
+            SettingLanguageText();
         }
         else
         {

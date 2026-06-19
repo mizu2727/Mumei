@@ -29,15 +29,40 @@ public class GameController : MonoBehaviour
     [Header("メッセージテキスト(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public Text messageText;
 
-    [Header("チュートリアル用ドキュメント")]
-    [SerializeField] public GameObject tutorialDocument;
+    [Header("チュートリアル用ドキュメント引き出し")]
+    [SerializeField] private GameObject tutorialDocumentDrawer;
 
-    [Header("チュートリアル用ミステリーアイテム関連")]
-    [SerializeField] public GameObject tutorialMysteryItem01;
-    [SerializeField] public GameObject tutorialMysteryItem02;
+    /// <summary>
+    /// ドキュメントが入った引き出しを取得する
+    /// </summary>
+    /// <returns>ドキュメントが入った引き出し</returns>
+    public GameObject GetTutorialDocumentDrawer() 
+    {
+        return tutorialDocumentDrawer;
+    }
 
-    [Header("チュートリアル用アイテム親オブジェクト")]
-    [SerializeField] public GameObject tutorialItems;
+    [Header("チュートリアル用ミステリーアイテム引き出し関連")]
+    [SerializeField] private GameObject tutorialMysteryItemDrawer01;
+    [SerializeField] private GameObject tutorialMysteryItemDrawer02;
+
+    /// <summary>
+    /// チュートリアル用ミステリーアイテム引き出し01を取得する
+    /// </summary>
+    /// <returns>チュートリアル用ミステリーアイテム引き出し01</returns>
+    public GameObject GetTutorialMysteryItemDrawer01() 
+    {
+        return tutorialMysteryItemDrawer01;
+    }
+
+    /// <summary>
+    /// チュートリアル用ミステリーアイテム引き出し02を取得する
+    /// </summary>
+    /// <returns>チュートリアル用ミステリーアイテム引き出し02</returns>
+    public GameObject GetTutorialMysteryItemDrawer02() 
+    {
+        return tutorialMysteryItemDrawer02;
+    }
+
 
     [Header("チュートリアル用引き出しオブジェクト")]
     [SerializeField] private GameObject tutorialDrawer;
@@ -772,32 +797,25 @@ public class GameController : MonoBehaviour
             messageText = null;
         }
 
-        //チュートリアル用ドキュメントが存在する場合
-        if (tutorialDocument != null)
+        //チュートリアル用ドキュメント引き出しが存在する場合
+        if (tutorialDocumentDrawer != null)
         {
-            //チュートリアル用ドキュメントをnullに設定
-            tutorialDocument = null;
+            //チュートリアル用ドキュメント引き出しをnullに設定
+            tutorialDocumentDrawer = null;
         }
 
-        //チュートリアル用ミステリーアイテム01が存在する場合
-        if (tutorialMysteryItem01 != null)
+        //チュートリアル用ミステリーアイテム引き出し01が存在する場合
+        if (tutorialMysteryItemDrawer01 != null)
         {
-            //チュートリアル用ミステリーアイテム01をnullに設定
-            tutorialMysteryItem01 = null;
+            //チュートリアル用ミステリーアイテム引き出し01をnullに設定
+            tutorialMysteryItemDrawer01 = null;
         }
 
-        //チュートリアル用ミステリーアイテム02が存在する場合
-        if (tutorialMysteryItem02 != null)
+        //チュートリアル用ミステリーアイテム引き出し02が存在する場合
+        if (tutorialMysteryItemDrawer02 != null)
         {
-            //チュートリアル用ミステリーアイテム02をnullに設定
-            tutorialMysteryItem02 = null;
-        }
-
-        //チュートリアル用アイテム親オブジェクトが存在する場合
-        if (tutorialItems != null)
-        {
-            //チュートリアル用アイテム親オブジェクトをnullに設定
-            tutorialItems = null;
+            //チュートリアル用ミステリーアイテム引き出し02をnullに設定
+            tutorialMysteryItemDrawer02 = null;
         }
 
         //チュートリアル用引き出しオブジェクトが存在する場合
