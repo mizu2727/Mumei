@@ -33,13 +33,13 @@ public class MapAreaGenerate : MonoBehaviour
     /// </summary>
     private Item item;
 
-    [Header("ドキュメントとミステリーアイテムを格納する(Prefabをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [Header("ドキュメントとミステリーアイテムを格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> documentAndMysteryItemPrefabList;
 
-    [Header("コンパスを格納する(Prefabをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [Header("コンパスを格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> compassPrefabList;
 
-    [Header("スタミナ増強剤を格納する(Prefabをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [Header("スタミナ増強剤を格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> staminaEnhancerPrefabList;
 
     [Header("難易度Easyのスタミナ増強剤格納数")]
@@ -56,7 +56,7 @@ public class MapAreaGenerate : MonoBehaviour
     /// </summary>
     private int staminaEnhancerCount;
 
-    [Header("クラッカーを格納する(Prefabをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [Header("クラッカーを格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> crackerPrefabList;
 
     [Header("難易度Easyのスタミナクラッカー格納数")]
@@ -73,7 +73,7 @@ public class MapAreaGenerate : MonoBehaviour
     /// </summary>
     private int crackerCount;
 
-    [Header("ダミーアイテムオブジェクトを格納する(ヒエラルキー上のアイテムをアタッチすること。空のEmptyPrefabも格納すること。)")]
+    [Header("ダミーアイテムオブジェクトを格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> dammyItemPrefabList;
 
     /// <summary>
