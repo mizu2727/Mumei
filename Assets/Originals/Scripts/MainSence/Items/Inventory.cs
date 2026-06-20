@@ -255,6 +255,7 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private const double kViewMessageSeconds = 3.0;
 
+
     /// <summary>
     /// ƒAƒCƒeƒ€IDŠÇ—‚ğæ“¾
     /// </summary>

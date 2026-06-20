@@ -6,6 +6,10 @@ using Unity.VisualScripting;
 
 public class HiddenObject : MonoBehaviour
 {
+    /*---------------------------------------------
+     * プレイヤー関連
+     --------------------------------------------*/
+
     /// <summary>
     /// プレイヤーの位置
     /// </summary>
@@ -36,6 +40,8 @@ public class HiddenObject : MonoBehaviour
     /// </summary>
     private const float hideDistance = 2.0f;
 
+
+
     /// <summary>
     /// 時間カウント
     /// </summary>
@@ -52,6 +58,10 @@ public class HiddenObject : MonoBehaviour
     private bool isStartCountTime = false;
 
 
+    /*---------------------------------------------
+     * ステージ名関連
+     --------------------------------------------*/
+
     /// <summary>
     /// Stage01(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
@@ -67,6 +77,10 @@ public class HiddenObject : MonoBehaviour
     /// </summary>
     private const string stringStage03 = "Stage03";
 
+
+    /*---------------------------------------------
+     * SE関連
+     --------------------------------------------*/
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -96,7 +110,6 @@ public class HiddenObject : MonoBehaviour
     /// </summary>
     private int currentHiddenDoorCloseSEid;
 
-
     /// <summary>
     /// チェストに隠れる時のSEのID
     /// </summary>
@@ -118,6 +131,10 @@ public class HiddenObject : MonoBehaviour
     private readonly int lockerDoorCloseSEid = 23;
 
 
+    /*---------------------------------------------
+     * 扉付きオブジェクト関連
+     --------------------------------------------*/
+
     [Header("扉付きオブジェクト設定(ヒエラルキー上で設定すること)")]
     [SerializeField] private bool hasDoor = false;
 
@@ -133,12 +150,16 @@ public class HiddenObject : MonoBehaviour
     [Header("ドアを閉じる角度(ヒエラルキー上で設定すること)")]
     [SerializeField] private float closeDirenctionValue = 0.0f;
 
-
     [Header("扉が完全に開くまでの待機時間（秒）(ヒエラルキー上で設定すること)")]
     [SerializeField] private float doorOpenWaitTime = 0.5f;
 
     [Header("扉が完全に閉まるまでの待機時間（秒）(ヒエラルキー上で設定すること)")]
     [SerializeField] private float doorCloseWaitTime = 0.5f;
+
+    /// <summary>
+    /// 隠れた後のクールタイム（秒）
+    /// </summary>
+    private const float hideWaitTime = 1.0f;
 
     /// <summary>
     /// 扉の開閉シーケンス実行中フラグ
@@ -259,6 +280,9 @@ public class HiddenObject : MonoBehaviour
 
         //時間カウントを初期化
         countTime = 0.0f;
+
+        //扉の開閉シーケンス実行中フラグをオフにする
+        isDoorSequenceRunning = false;
     }
 
 

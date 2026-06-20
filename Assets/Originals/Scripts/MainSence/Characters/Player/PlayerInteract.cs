@@ -122,6 +122,24 @@ public class PlayerInteract : MonoBehaviour
     private string currentObjectTag;
 
 
+    /*---------------------------
+    * 隠れた後のクールタイム処理関連
+    --------------------------*/
+
+    /// <summary>
+    /// 隠れた後のクールタイム（秒）
+    /// </summary>
+    private const float kHideWaitTime = 1.0f;
+
+    /// <summary>
+    /// 隠れた後のクールタイムカウント
+    /// </summary>
+    private float countHideWaitTime;
+
+    /// <summary>
+    /// 隠れた後のクールタイムカウントスタートフラグ
+    /// </summary>
+    private bool isStartHideWaitCountTime = false;
 
 
 
@@ -136,6 +154,13 @@ public class PlayerInteract : MonoBehaviour
 
         //アイテムデータをリセット(デバッグ時以外でもリセットを行うのかは要検討)
         if (isDebugResetItem) sO_Item.ResetItems();
+
+
+        //隠れた後のクールタイムカウントスタートフラグをオフにする
+        isStartHideWaitCountTime = false;
+
+        //隠れた後のクールタイムカウントを初期化
+        countHideWaitTime = 0.0f;
     }
 
 
@@ -209,6 +234,22 @@ public class PlayerInteract : MonoBehaviour
 
     private void Update()
     {
+        //隠れた後のクールタイムカウントスタートフラグがオン場合&&隠れた後のクールタイム時間カウントが指定時間以内の場合
+        //インタラクト操作を連打して隠れた後に誤って隠れるモーションが解除されるのを防ぐための処理
+        if (isStartHideWaitCountTime && countHideWaitTime < kHideWaitTime)
+        {
+            //隠れた後のクールタイムカウントをカウント
+            countHideWaitTime += Time.deltaTime;
+        }
+        else
+        {
+            //隠れた後のクールタイムカウントスタートフラグをオフにする
+            isStartHideWaitCountTime = false;
+
+            //隠れた後のクールタイムカウントを初期化
+            countHideWaitTime = 0.0f;
+        }
+
         //Rayを可視化
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward, Color.green, 3);
 
@@ -225,7 +266,7 @@ public class PlayerInteract : MonoBehaviour
     async void Interact() 
     {
         //プレイヤーが隠れている状態でインタラクト操作を行った場合
-        if (PlayInteract() && Player.instance.GetIsPlayerHidden() && Time.timeScale != 0)
+        if (PlayInteract() && Player.instance.GetIsPlayerHidden() && Time.timeScale != 0 && !isStartHideWaitCountTime)
         {
             //扉のシーケンスが実行中の場合
             if (saveHiddenObject == null || saveHiddenObject.GetIsDoorSequenceRunning())
@@ -267,6 +308,9 @@ public class PlayerInteract : MonoBehaviour
                     //hiddenObjectが存在する場合&&隠れる用オブジェクトのドアシーケンスが実行中でない場合
                     if (hiddenObject != null && !hiddenObject.GetIsDoorSequenceRunning()) 
                     {
+                        //隠れた後のクールタイムカウントスタートフラグをオンにする
+                        isStartHideWaitCountTime = true;
+
                         //現在使用している隠れる用オブジェクトを保存
                         saveHiddenObject = hiddenObject;
 
