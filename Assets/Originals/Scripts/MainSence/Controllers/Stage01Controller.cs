@@ -23,6 +23,11 @@ public class Stage01Controller : MonoBehaviour
     private const string stringStage02 = "Stage02";
 
     /// <summary>
+    /// Stage03(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
+    /// </summary>
+    private const string stringStage03 = "Stage03";
+
+    /// <summary>
     /// 時間計測フラグ
     /// </summary>
     private bool isTimer;
@@ -49,6 +54,11 @@ public class Stage01Controller : MonoBehaviour
     /// Stage02BGMのID
     /// </summary>
     private readonly int stage02BGMId = 3;
+
+    /// <summary>
+    /// Stage03BGMのID
+    /// </summary>
+    private readonly int stage03BGMId = 6;
 
     /// <summary>
     /// 経過時間
@@ -180,10 +190,7 @@ public class Stage01Controller : MonoBehaviour
 
     void Start()
     {
-        //プレイヤーをスタート地点へワープ
-        Player.instance.PlayerWarp(0,0,0);
-
-        //現在のシーン名を取得し、その名前によってシーンステータスとSteageBGMをを決める
+        //現在のシーン名を取得し、その名前によって処理を決める
         switch (SceneManager.GetActiveScene().name)
         {
             //Stage01
@@ -194,6 +201,9 @@ public class Stage01Controller : MonoBehaviour
                 //Stage01BGMを設定する
                 currentBGMId = stage01BGMId;
 
+                //プレイヤーをスタート地点へワープ
+                Player.instance.PlayerWarp(0, 0, 0);
+
                 break;
 
             //Stage02
@@ -203,6 +213,22 @@ public class Stage01Controller : MonoBehaviour
 
                 //Stage02BGMを設定する
                 currentBGMId = stage02BGMId;
+
+                //プレイヤーをスタート地点へワープ
+                Player.instance.PlayerWarp(0, 0, 0);
+
+                break;
+
+            //Stage03
+            case stringStage03:
+                //シーンステータスをkStage03に設定
+                GameController.instance.SetViewScene(ViewScene.kStage03);
+
+                //Stage03BGMを設定する
+                currentBGMId = stage03BGMId;
+
+                //プレイヤーをスタート地点へワープ
+                Player.instance.PlayerWarp(0, 0, -5);
 
                 break;
 

@@ -314,6 +314,11 @@ public class GameController : MonoBehaviour
         /// Stage02
         /// </summary>
         kStage02,
+
+        /// <summary>
+        /// Stage03
+        /// </summary>
+        kStage03,
     }
 
     /// <summary>
