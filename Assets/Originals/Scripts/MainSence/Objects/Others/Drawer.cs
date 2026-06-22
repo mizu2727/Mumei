@@ -40,7 +40,7 @@ public class Drawer : MonoBehaviour
     /// <summary>
     /// デフォルトの引き出しを閉じた時のアイテムのローカルポジション
     /// </summary>
-    private Vector3 defaultCloseItemPosition = new Vector3(-0.03f, 0.0f, -0.23f);
+    private Vector3 defaultCloseItemPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
     /// <summary>
     /// 引き出しを閉じた時のアイテムのローカルポジション01
@@ -51,6 +51,11 @@ public class Drawer : MonoBehaviour
     /// 引き出しを閉じた時のアイテムのローカルポジション02
     /// </summary>
     private Vector3 closeItemPosition02 = new Vector3(0.2351f, -0.0498f, 0f);
+
+    /// <summary>
+    /// ステージ3　机の中のアイテムのローカルポジション
+    /// </summary>
+    private Vector3 stage03DeskItemPosition = new Vector3(0.0f, -0.0003f, 0.0002f);
 
 
     /// <summary>
@@ -96,6 +101,11 @@ public class Drawer : MonoBehaviour
     /// Stage02(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage02 = "Stage02";
+
+    /// <summary>
+    /// Stage03(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
+    /// </summary>
+    private const string stringStage03 = "Stage03";
 
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
@@ -172,8 +182,11 @@ public class Drawer : MonoBehaviour
     void Start()
     {
         isOpenDrawer = false;
-        boxCollider.enabled = true;
 
+        if (boxCollider)
+        {
+            boxCollider.enabled = true;
+        }
 
         //メッシュ部分のTransformのlocalPositionを初期化
         if (drawerMeshTransform != null)
@@ -217,6 +230,10 @@ public class Drawer : MonoBehaviour
 
                 case stringStage02:
                     defaultCloseItemPosition = closeItemPosition02;
+                    break;
+
+                case stringStage03:
+                    defaultCloseItemPosition = stage03DeskItemPosition;
                     break;
             }
 
