@@ -3,6 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class Drawer : MonoBehaviour
 {
+    /*--------------------------------------
+    * 引き出し・引き出し内のアイテム関連の変数
+    ---------------------------------------*/
+
     /// <summary>
     /// 引き出しの外枠
     /// </summary>
@@ -87,6 +91,11 @@ public class Drawer : MonoBehaviour
     [Header("引き出しの戸のBoxCollider")]
     [SerializeField] private BoxCollider boxCollider;
 
+
+    /*--------------------------------------
+    * シーン名関連の変数
+    ---------------------------------------*/
+
     /// <summary>
     /// HomeScene(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
@@ -107,6 +116,10 @@ public class Drawer : MonoBehaviour
     /// </summary>
     private const string stringStage03 = "Stage03";
 
+
+    /*--------------------------------------
+    * SE関連の変数
+    ---------------------------------------*/
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;

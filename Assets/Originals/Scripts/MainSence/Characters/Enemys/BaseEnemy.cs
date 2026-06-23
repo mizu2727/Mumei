@@ -1207,7 +1207,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             gameObjectDoor = collision.gameObject;
             door = gameObjectDoor.GetComponent<Door>();
 
-            if (!door.isNeedKeyDoor && !door.isOpenDoor)
+            if (!door.GetIsNeedKeyDoor() && !door.isOpenDoor)
             {
                 //ドアを開ける
                 door.OpenDoor();
@@ -1238,7 +1238,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             gameObjectDoor = collider.gameObject;
             door = gameObjectDoor.GetComponent<Door>();
 
-            if (!door.isNeedKeyDoor && !door.isOpenDoor)
+            if (!door.GetIsNeedKeyDoor() && !door.isOpenDoor)
             {
                 //ドアを開ける
                 door.OpenDoor();
