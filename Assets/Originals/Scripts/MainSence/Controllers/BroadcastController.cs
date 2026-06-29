@@ -82,6 +82,13 @@ public class BroadcastController : MonoBehaviour
             return;
         }
 
+        //ノイズ再生秒数が0の場合
+        if (broadcastNoiseCount == 0) 
+        {
+            //放送スピーカーをランダムに抽出する処理
+            ChooseRandomBroadcastNumber();
+        }
+
         //TODO
     }
 
@@ -90,6 +97,17 @@ public class BroadcastController : MonoBehaviour
     /// </summary>
     private void ChooseRandomBroadcastNumber() 
     {
-        //TODO
+        //放送スピーカーをランダムに抽出する
+        saveBroadcastSpeakerListNumber = Random.Range(0, broadcastSpeakerList.Count - 1);
+
+        //ランダムに抽出した放送スピーカーが前回と同じ場合
+        if (saveBroadcastSpeakerListNumber == lastSaveBroadcastSpeakerListNumber) 
+        {
+            //再度ランダムに抽出する
+            ChooseRandomBroadcastNumber();
+        }
+
+        //前回保存した放送スピーカーリスト関連番号を更新する
+        lastSaveBroadcastSpeakerListNumber = saveBroadcastSpeakerListNumber;
     }
 }
