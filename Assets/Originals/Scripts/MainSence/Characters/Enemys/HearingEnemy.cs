@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using static GameController;
@@ -51,6 +52,11 @@ public class HearingEnemy : BaseEnemy
     /// ダッシュ音を調査するフラグ
     /// </summary>
     private bool isInvestigatingSound = false;
+
+    /// <summary>
+    /// 放送スピーカー音を調査するフラグ
+    /// </summary>
+    private bool isInvestigatingBroadcastSound = false;
 
 
     /*
@@ -110,6 +116,54 @@ public class HearingEnemy : BaseEnemy
         //プレイヤーとの距離を計算
         float distanceToPlayer = Vector3.Distance(transform.position, targetPoint.position);
 
+        //放送スピーカーとの距離を計算し、範囲内のスピーカーを検知する
+        if (!isInvestigatingSound && !isInvestigatingBroadcastSound
+            && BroadcastController.instance != null)
+        {
+            List<Transform> speakerTransformList = BroadcastController.instance.GetBroadcastSpeakerTransformList();
+
+            float closestDistance = float.MaxValue;
+            Transform closestSpeaker = null;
+
+            foreach (Transform speakerTransform in speakerTransformList)
+            {
+                if (speakerTransform == null) continue;
+
+                float distanceToSpeaker = Vector3.Distance(transform.position, speakerTransform.position);
+
+                if (distanceToSpeaker < closestDistance)
+                {
+                    closestDistance = distanceToSpeaker;
+                    closestSpeaker = speakerTransform;
+                }
+            }
+
+            //最も近いスピーカーが検知範囲内にある場合、調査状態に移行
+            if (closestSpeaker != null && closestDistance <= soundDetectionRange)
+            {
+                //追従モード以外の場合
+                if (currentState != EnemyState.Chase)
+                {
+                    //ノイズ画面を表示
+                    noiseScreenPanel.SetActive(true);
+                    Debug.Log("放送スピーカー音を検知したため、ノイズ画面を表示");
+                }
+
+                Debug.Log("放送スピーカー音を検知");
+
+                //最も近いスピーカーの位置を記録
+                lastHeardSoundPosition = closestSpeaker.position;
+                isInvestigatingBroadcastSound = true;
+                soundInvestigateTimer = 0f;
+
+                //放送スピーカー音を検知した場合、調査状態に移行
+                currentState = EnemyState.Investigate;
+
+                //スピーカーの位置へ移動
+                navMeshAgent.SetDestination(lastHeardSoundPosition);
+            }
+        }
+
         //プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合
         if ((Player.instance.IsDash || Player.instance.GetIsMakeSound()) && !isInvestigatingSound && !Player.instance.GetIsPlayerHidden()
             && distanceToPlayer <= soundDetectionRange)
@@ -140,6 +194,8 @@ public class HearingEnemy : BaseEnemy
             //ノイズ画面を非表示
             noiseScreenPanel.SetActive(false);
         }
+
+        //TODO:
 
         //状態ごとの処理
         switch (currentState)

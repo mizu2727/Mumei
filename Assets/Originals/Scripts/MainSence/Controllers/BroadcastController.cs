@@ -22,6 +22,15 @@ public class BroadcastController : MonoBehaviour
     private List<Transform> broadcastSpeakerTransformList = new();
 
     /// <summary>
+    /// 放送スピーカーの位置のリストを取得する関数
+    /// </summary>
+    /// <returns>放送スピーカーの位置のリスト</returns>
+    public List<Transform> GetBroadcastSpeakerTransformList() 
+    {
+        return broadcastSpeakerTransformList;
+    }
+
+    /// <summary>
     /// 保存用放送スピーカーリスト関連番号
     /// </summary>
     private int saveBroadcastSpeakerListNumber;
