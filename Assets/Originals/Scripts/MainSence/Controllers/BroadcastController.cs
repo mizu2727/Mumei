@@ -85,11 +85,30 @@ public class BroadcastController : MonoBehaviour
         //ノイズ再生秒数が0の場合
         if (broadcastNoiseCount == 0) 
         {
-            //放送スピーカーをランダムに抽出する処理
+            //放送スピーカーをランダムに抽出する
             ChooseRandomBroadcastNumber();
         }
 
-        //TODO
+        //ノイズ再生中ではない場合
+        if (!isBroadcastNoiseFlag) 
+        {
+            //指定の放送スピーカーからノイズを流す
+            PlayBroadcastNoise();
+        }
+
+        //ノイズ再生中の場合
+        if (isBroadcastNoiseFlag) 
+        {
+            //ノイズが流れる秒数を加算する
+            CountBroadcastNoise();
+        }
+
+        //ノイズ再生中の場合&&ノイズが流れる秒数が最大秒数を超えた場合
+        if (isBroadcastNoiseFlag && broadcastNoiseCount > kMaxBroadcastNoiseCount) 
+        {
+            //指定の放送スピーカーのノイズを停止する
+            StopBroadcastNoise();
+        }
     }
 
     /// <summary>
@@ -109,5 +128,51 @@ public class BroadcastController : MonoBehaviour
 
         //前回保存した放送スピーカーリスト関連番号を更新する
         lastSaveBroadcastSpeakerListNumber = saveBroadcastSpeakerListNumber;
+    }
+
+    /// <summary>
+    /// 指定の放送スピーカーからノイズを流す処理
+    /// </summary>
+    private void PlayBroadcastNoise() 
+    {
+        //放送スピーカーを取得する
+        broadcastSpeaker = broadcastSpeakerList[saveBroadcastSpeakerListNumber].GetComponent<BroadcastSpeaker>();
+
+        //取得した放送スピーカーのノイズを再生する
+        broadcastSpeaker.SetIsBroadcastNoise(true);
+
+        //ノイズ再生中フラグをtrueにする
+        isBroadcastNoiseFlag = true;
+    }
+
+    /// <summary>
+    /// ノイズが流れる秒数を加算する処理
+    /// </summary>
+    private void CountBroadcastNoise() 
+    {
+        //ノイズが流れる秒数が最大秒数以下の場合
+        if (broadcastNoiseCount <= kMaxBroadcastNoiseCount) 
+        {
+            //ノイズが流れる秒数を加算する
+            broadcastNoiseCount += Time.deltaTime;
+        }
+    }
+
+    /// <summary>
+    /// 指定の放送スピーカーのノイズを停止する処理
+    /// </summary>
+    private void StopBroadcastNoise() 
+    {
+        //放送中のスピーカーを取得する
+        broadcastSpeaker = broadcastSpeakerList[saveBroadcastSpeakerListNumber].GetComponent<BroadcastSpeaker>();
+
+        //取得した放送スピーカーのノイズを停止する
+        broadcastSpeaker.SetIsBroadcastNoise(false);
+
+        //ノイズ再生秒数を0にする
+        broadcastNoiseCount = 0.0f;
+
+        //ノイズ再生中フラグをfalseにする
+        isBroadcastNoiseFlag = false;
     }
 }
