@@ -13,7 +13,7 @@ public class BroadcastController : MonoBehaviour
     /// </summary>
     private BroadcastSpeaker broadcastSpeaker;
 
-    [Header("放送スピーカーリスト")]
+    [Header("放送スピーカーリスト(必ず2つ以上アタッチすること)")]
     [SerializeField] private List<GameObject> broadcastSpeakerList;
 
     /// <summary>
@@ -126,7 +126,7 @@ public class BroadcastController : MonoBehaviour
     private void ChooseRandomBroadcastNumber() 
     {
         //放送スピーカーをランダムに抽出する
-        saveBroadcastSpeakerListNumber = Random.Range(0, broadcastSpeakerList.Count - 1);
+        saveBroadcastSpeakerListNumber = Random.Range(0, broadcastSpeakerList.Count);
 
         //ランダムに抽出した放送スピーカーが前回と同じ場合
         if (saveBroadcastSpeakerListNumber == lastSaveBroadcastSpeakerListNumber) 

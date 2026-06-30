@@ -10,8 +10,18 @@ public class BroadcastRange : MonoBehaviour
     /// </summary>
     [SerializeField] private BroadcastSpeaker broadcastSpeaker;
 
+    private void OnTriggerEnter(Collider collider)
+    {
+        //プレイヤーが範囲内に存在し、かつ放送ノイズが流れている場合
+        if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag())
+            && broadcastSpeaker.GetIsBroadcastNoise())
+        {
+            //プレイヤーが放送ノイズを聞いている状態にする
+            broadcastSpeaker.SetIsListeningBroadcast(true);
+        }
+    }
 
-    void OnTriggerStay(Collider collider) 
+    private void OnTriggerStay(Collider collider) 
     {
         //プレイヤーが範囲内に存在し、かつ放送ノイズが流れている場合
         if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) 
@@ -22,7 +32,7 @@ public class BroadcastRange : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider collider) 
+    private void OnTriggerExit(Collider collider) 
     {
         //プレイヤーが範囲外に出た場合
         if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag())) 

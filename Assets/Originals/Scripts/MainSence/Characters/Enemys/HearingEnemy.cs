@@ -138,8 +138,11 @@ public class HearingEnemy : BaseEnemy
                 }
             }
 
-            //最も近いスピーカーが検知範囲内にある場合、調査状態に移行
-            if (closestSpeaker != null && closestDistance <= soundDetectionRange)
+            //スピーカーのコンポーネントを取得
+            BroadcastSpeaker speaker = closestSpeaker != null ? closestSpeaker.GetComponent<BroadcastSpeaker>() : null;
+
+            //最も近いスピーカーが検知範囲内にある場合&&そのスピーカーの放送ノイズを聞いているフラグがオンの場合、調査状態に移行
+            if (closestSpeaker != null && closestDistance <= soundDetectionRange && speaker != null && speaker.GetIsListeningBroadcast())
             {
                 //追従モード以外の場合
                 if (currentState != EnemyState.Chase)
@@ -211,8 +214,8 @@ public class HearingEnemy : BaseEnemy
             //調査状態
             case EnemyState.Investigate:
 
-                //ダッシュ音調査中の場合
-                if (isInvestigatingSound)
+                //ダッシュ音調査中、または放送スピーカー音調査中の場合
+                if (isInvestigatingSound || isInvestigatingBroadcastSound)
                 {
                     //歩行アニメーション再生
                     animator.SetBool(kIsRunAnimatorParameter, false);
@@ -228,6 +231,7 @@ public class HearingEnemy : BaseEnemy
                         currentState = EnemyState.Chase;
                         lastKnownPlayerPosition = targetPoint.position;
                         isInvestigatingSound = false;
+                        isInvestigatingBroadcastSound = false;
 
                         //画面を赤く表示
                         playerFoundPanel.SetActive(true);
@@ -240,6 +244,7 @@ public class HearingEnemy : BaseEnemy
                     {
                         currentState = EnemyState.Patrol;
                         isInvestigatingSound = false;
+                        isInvestigatingBroadcastSound = false;
                         isAlertMode = false;
 
                         Debug.Log("調査状態から通常徘徊状態へ02");
@@ -249,6 +254,7 @@ public class HearingEnemy : BaseEnemy
                     {
                         currentState = EnemyState.Alert;
                         isInvestigatingSound = false;
+                        isInvestigatingBroadcastSound = false;
 
                         //画面を元に戻す
                         playerFoundPanel.SetActive(false);
