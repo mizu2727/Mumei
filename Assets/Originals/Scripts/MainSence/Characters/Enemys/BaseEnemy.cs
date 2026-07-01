@@ -1174,6 +1174,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //壁に触れた場合
         if (collision.gameObject.layer == LayerMask.NameToLayer(CommonController.instance.GetWallLayer()) || collision.gameObject.CompareTag(CommonController.instance.GetWallTag()))
         {
+            //追従状態の場合、
+            if (currentState == EnemyState.Chase)
+            {
+                //NavMeshAgent自体の経路探索に任せるため、以下の強制停止処理をスキップする
+                return;
+            }
+
             //速度を0に設定して停止させる
             navMeshAgent.velocity = Vector3.zero;
 
