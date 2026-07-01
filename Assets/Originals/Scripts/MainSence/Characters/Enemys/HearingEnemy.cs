@@ -54,6 +54,26 @@ public class HearingEnemy : BaseEnemy
     private bool isInvestigatingSound = false;
 
     /// <summary>
+    /// 難易度Easyの場合の特定の放送SEの検知範囲
+    /// </summary>
+    private const float easyBroadcastSoundDetectionRange = 80;
+
+    /// <summary>
+    /// 難易度Normalの場合の特定の放送SEの検知範囲
+    /// </summary>
+    private const float normalBroadcastSoundDetectionRange = 100;
+
+    /// <summary>
+    /// 難易度Nightmareの場合の特定の放送SEの検知範囲
+    /// </summary>
+    private const float nightmareBroadcastSoundDetectionRange = 120;
+
+    /// <summary>
+    /// 特定の放送SEの検知範囲
+    /// </summary>
+    private float broadcastSoundDetectionRange;
+
+    /// <summary>
     /// 放送スピーカー音を調査するフラグ
     /// </summary>
     private bool isInvestigatingBroadcastSound = false;
@@ -87,6 +107,9 @@ public class HearingEnemy : BaseEnemy
                 //難易度Easyの用ダッシュ音の調査時間を設定
                 soundInvestigateDuration = easySoundInvestigateDuration;
 
+                //難易度Easyの用特定の放送SEの検知範囲を設定
+                broadcastSoundDetectionRange = easyBroadcastSoundDetectionRange;
+
                 break;
 
             //難易度Normalの場合(デバッグ用にkNoneも追加)
@@ -99,6 +122,9 @@ public class HearingEnemy : BaseEnemy
                 //難易度Normalの用ダッシュ音の調査時間を設定
                 soundInvestigateDuration = normalSoundInvestigateDuration;
 
+                //難易度Normalの用特定の放送SEの検知範囲を設定
+                broadcastSoundDetectionRange = normalBroadcastSoundDetectionRange;
+
                 break;
 
             //難易度Nightmareの場合
@@ -110,6 +136,9 @@ public class HearingEnemy : BaseEnemy
                 //難易度Nightmareの用ダッシュ音の調査時間を設定
                 soundInvestigateDuration = nightmareSoundInvestigateDuration;
 
+                //難易度Nightmareの用特定の放送SEの検知範囲を設定
+                broadcastSoundDetectionRange = nightmareBroadcastSoundDetectionRange;
+
                 break;
         }
 
@@ -120,38 +149,51 @@ public class HearingEnemy : BaseEnemy
         if (!isInvestigatingSound && !isInvestigatingBroadcastSound
             && BroadcastController.instance != null)
         {
+            //放送スピーカーのTransformのリストを取得
             List<Transform> speakerTransformList = BroadcastController.instance.GetBroadcastSpeakerTransformList();
 
+            //最も近いスピーカーを見つけるための変数
             float closestDistance = float.MaxValue;
             Transform closestSpeaker = null;
 
+            //放送スピーカーのTransformのリストをループして、最も近いスピーカーを見つける
             foreach (Transform speakerTransform in speakerTransformList)
             {
-                if (speakerTransform == null) continue;
+                //放送スピーカーのTransformがnullの場合
+                if (speakerTransform == null) 
+                { 
+                    //スキップ
+                    continue;
+                }
 
-                float distanceToSpeaker = Vector3.Distance(transform.position, speakerTransform.position);
+                //各スピーカーのコンポーネントを取得
+                BroadcastSpeaker currentSpeaker = speakerTransform.GetComponent<BroadcastSpeaker>();
 
-                if (distanceToSpeaker < closestDistance)
+                //特定の放送が流れているスピーカーのみを対象にする
+                if (currentSpeaker != null && currentSpeaker.GetIsListeningBroadcast()) 
                 {
-                    closestDistance = distanceToSpeaker;
-                    closestSpeaker = speakerTransform;
+                    //スピーカーとの距離を計算
+                    float distanceToSpeaker = Vector3.Distance(transform.position, speakerTransform.position);
+
+                    //特定の放送が流れているスピーカーとの距離をログ出力
+                    Debug.Log($"[デバッグ] 特定の放送中のスピーカー({speakerTransform.name})との距離: {distanceToSpeaker} (検知範囲: {broadcastSoundDetectionRange})");
+
+                    //最も近いスピーカーを更新
+                    if (distanceToSpeaker < closestDistance)
+                    {
+                        closestDistance = distanceToSpeaker;
+                        closestSpeaker = speakerTransform;
+                    }
                 }
             }
 
             //スピーカーのコンポーネントを取得
             BroadcastSpeaker speaker = closestSpeaker != null ? closestSpeaker.GetComponent<BroadcastSpeaker>() : null;
 
-            //最も近いスピーカーが検知範囲内にある場合&&そのスピーカーの放送ノイズを聞いているフラグがオンの場合、調査状態に移行
-            if (closestSpeaker != null && closestDistance <= soundDetectionRange && speaker != null && speaker.GetIsListeningBroadcast())
+            //最も近いスピーカーが検知範囲内にある場合&&そのスピーカーの放送ノイズを聞いているフラグがオンの場合&&プレイヤーが隠れていない場合、調査状態に移行
+            if (closestSpeaker != null && closestDistance <= broadcastSoundDetectionRange && speaker != null 
+                && speaker.GetIsListeningBroadcast() && !Player.instance.GetIsPlayerHidden())
             {
-                //追従モード以外の場合
-                if (currentState != EnemyState.Chase)
-                {
-                    //ノイズ画面を表示
-                    noiseScreenPanel.SetActive(true);
-                    Debug.Log("放送スピーカー音を検知したため、ノイズ画面を表示");
-                }
-
                 Debug.Log("放送スピーカー音を検知");
 
                 //最も近いスピーカーの位置を記録
@@ -184,6 +226,7 @@ public class HearingEnemy : BaseEnemy
             //音の位置を記録
             lastHeardSoundPosition = targetPoint.position;
             isInvestigatingSound = true;
+            isInvestigatingBroadcastSound = false;
             soundInvestigateTimer = 0f;
 
             //ダッシュ音を検知した場合、調査状態に移行

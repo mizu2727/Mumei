@@ -52,6 +52,11 @@ public class BroadcastSpeaker : MonoBehaviour
         isListeningBroadcast = value;
     }
 
+    /// <summary>
+    /// 特定の放送の音量を設定するための定数
+    /// </summary>
+    private const float kListeningBroadcastSoundVolume = 0.85f;
+
 
     /*--------------------------------------
     * プレイヤー関連の変数
@@ -207,34 +212,36 @@ public class BroadcastSpeaker : MonoBehaviour
         {
             //指定の放送用のSE
             currentSE = sO_SE.GetSEClip(broadcastSEid);
-
-            Debug.Log("特定の放送を流す");
         }
         else
         {
             //放送ノイズSE
             currentSE = sO_SE.GetSEClip(broadcastNoiseSEid);
-
-            //Debug.Log("放送ノイズを流す");
         }
 
         //プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, targetPoint.position);
 
         //距離に基づく音量計算
-        float volume = CalculateVolumeBasedOnDistance(distance);
-
-        //PlayOneShotを使用して、移動音と競合しないように単発再生
-        //audioSourceSE.PlayOneShot(currentSE, volume);
-
-        //音量を設定
-        audioSourceSE.volume = volume;
+        float volume = isListeningBroadcast ? kListeningBroadcastSoundVolume : CalculateVolumeBasedOnDistance(distance);
 
         //現在再生中のクリップと異なる、または再生されていない場合のみ再生を開始する
         if (audioSourceSE.clip != currentSE || !audioSourceSE.isPlaying) 
         {
+            //現在のクリップを停止してから新しいクリップを設定
+            audioSourceSE.Stop();
             audioSourceSE.clip = currentSE;
+
+            //音量を設定
+            audioSourceSE.volume = volume;
+
+            //放送系のSEを再生する
             audioSourceSE.Play();
+        }
+        else
+        {
+            //音量を設定
+            audioSourceSE.volume = volume;
         }
     }
 
