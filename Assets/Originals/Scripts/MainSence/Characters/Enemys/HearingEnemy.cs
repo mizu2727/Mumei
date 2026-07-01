@@ -190,9 +190,10 @@ public class HearingEnemy : BaseEnemy
             //スピーカーのコンポーネントを取得
             BroadcastSpeaker speaker = closestSpeaker != null ? closestSpeaker.GetComponent<BroadcastSpeaker>() : null;
 
-            //最も近いスピーカーが検知範囲内にある場合&&そのスピーカーの放送ノイズを聞いているフラグがオンの場合&&プレイヤーが隠れていない場合、調査状態に移行
+            //最も近いスピーカーが検知範囲内にある場合&&そのスピーカーの放送ノイズを聞いているフラグがオンの場合
+            //&&プレイヤーが隠れていない場合&&追従モード以外の場合、調査状態に移行
             if (closestSpeaker != null && closestDistance <= broadcastSoundDetectionRange && speaker != null 
-                && speaker.GetIsListeningBroadcast() && !Player.instance.GetIsPlayerHidden())
+                && speaker.GetIsListeningBroadcast() && !Player.instance.GetIsPlayerHidden() && currentState != EnemyState.Chase)
             {
                 Debug.Log("放送スピーカー音を検知");
 
