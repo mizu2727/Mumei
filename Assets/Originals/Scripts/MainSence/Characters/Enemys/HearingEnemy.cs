@@ -146,8 +146,8 @@ public class HearingEnemy : BaseEnemy
         float distanceToPlayer = Vector3.Distance(transform.position, targetPoint.position);
 
         //放送スピーカーとの距離を計算し、範囲内のスピーカーを検知する
-        if (!isInvestigatingSound && !isInvestigatingBroadcastSound
-            && BroadcastController.instance != null)
+        if (!isInvestigatingSound && !isInvestigatingBroadcastSound && BroadcastController.instance != null
+            && currentState != EnemyState.Investigate && currentState != EnemyState.Chase)
         {
             //放送スピーカーのTransformのリストを取得
             List<Transform> speakerTransformList = BroadcastController.instance.GetBroadcastSpeakerTransformList();
@@ -176,7 +176,7 @@ public class HearingEnemy : BaseEnemy
                     float distanceToSpeaker = Vector3.Distance(transform.position, speakerTransform.position);
 
                     //特定の放送が流れているスピーカーとの距離をログ出力
-                    Debug.Log($"[デバッグ] 特定の放送中のスピーカー({speakerTransform.name})との距離: {distanceToSpeaker} (検知範囲: {broadcastSoundDetectionRange})");
+                    //Debug.Log($"[デバッグ] 特定の放送中のスピーカー({speakerTransform.name})との距離: {distanceToSpeaker} (検知範囲: {broadcastSoundDetectionRange})");
 
                     //最も近いスピーカーを更新
                     if (distanceToSpeaker < closestDistance)
@@ -193,7 +193,8 @@ public class HearingEnemy : BaseEnemy
             //最も近いスピーカーが検知範囲内にある場合&&そのスピーカーの放送ノイズを聞いているフラグがオンの場合
             //&&プレイヤーが隠れていない場合&&追従モード以外の場合、調査状態に移行
             if (closestSpeaker != null && closestDistance <= broadcastSoundDetectionRange && speaker != null 
-                && speaker.GetIsListeningBroadcast() && !Player.instance.GetIsPlayerHidden() && currentState != EnemyState.Chase)
+                && speaker.GetIsListeningBroadcast() && !Player.instance.GetIsPlayerHidden() 
+                && currentState != EnemyState.Investigate && currentState != EnemyState.Chase)
             {
                 Debug.Log("放送スピーカー音を検知");
 
@@ -210,17 +211,13 @@ public class HearingEnemy : BaseEnemy
             }
         }
 
-        //プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合
+        //(プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合)&&追従モード以外の場合
+        //プレイヤー追従時にダッシュ音を検知してしまうと追従状態から調査状態に移行してしまうため、追従モード以外の場合に限定する
         if ((Player.instance.IsDash || Player.instance.GetIsMakeSound()) && !isInvestigatingSound && !Player.instance.GetIsPlayerHidden()
-            && distanceToPlayer <= soundDetectionRange)
+            && distanceToPlayer <= soundDetectionRange && currentState != EnemyState.Chase)
         {
-            //追従モード以外の場合
-            if (currentState != EnemyState.Chase)
-            {
-                //ノイズ画面を表示
-                noiseScreenPanel.SetActive(true);
-                Debug.Log("ダッシュ音を検知したため、ノイズ画面を表示");
-            }
+            //ノイズ画面を表示
+            noiseScreenPanel.SetActive(true);
 
             Debug.Log("ダッシュ音を検知");
 

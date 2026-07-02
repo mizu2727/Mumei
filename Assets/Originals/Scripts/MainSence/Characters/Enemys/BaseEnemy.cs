@@ -412,10 +412,25 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
    /// </summary>
     public enum EnemyState
     {
-        Patrol,      // 通常徘徊
-        Alert,       // 警戒（プレイヤー発見、視線なし）
-        Chase,       // 追従（プレイヤー視認）
-        Investigate,  // 調査（プレイヤーを見失った位置に向かう）
+        /// <summary>
+        /// 通常徘徊
+        /// </summary>
+        Patrol,
+
+        /// <summary>
+        /// 警戒（プレイヤー発見、視線なし）
+        /// </summary>
+        Alert,
+
+        /// <summary>
+        ///  追従（プレイヤー視認）
+        /// </summary>
+        Chase,
+
+        /// <summary>
+        /// 調査（プレイヤーを見失った位置に向かう）
+        /// </summary>
+        Investigate,
     }
 
     /// <summary>
