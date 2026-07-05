@@ -1,8 +1,32 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static GameController;
 
 public class Drawer : MonoBehaviour
 {
+    /*--------------------------------------
+    * 引き出しタイプ関連の変数
+    ---------------------------------------*/
+
+    [Header("引き出しの種類(ヒエラルキー上から直接編集すること)")]
+    public DrawerType drawerType;
+
+    /// <summary>
+    /// 引き出しの種類
+    /// </summary>
+    public enum DrawerType
+    {
+        /// <summary>
+        /// 通常の引き出し
+        /// </summary>
+        Normal,
+
+        /// <summary>
+        /// 生徒机
+        /// </summary>
+        StudentDesk,
+    }
+
     /*--------------------------------------
     * 引き出し・引き出し内のアイテム関連の変数
     ---------------------------------------*/
@@ -54,12 +78,17 @@ public class Drawer : MonoBehaviour
     /// <summary>
     /// 引き出しを閉じた時のアイテムのローカルポジション02
     /// </summary>
-    private Vector3 closeItemPosition02 = new Vector3(0.2351f, -0.0498f, 0f);
+    private Vector3 closeItemPosition02 = new Vector3(0.2351f, -0.0498f, 0.0f);
 
     /// <summary>
-    /// ステージ3　机の中のアイテムのローカルポジション
+    /// ステージ3　棚の中のアイテムのローカルポジション(通常の引き出しタイプ)
     /// </summary>
-    private Vector3 stage03DeskItemPosition = new Vector3(0.0f, -0.0003f, 0.0002f);
+    private Vector3 stage03NormalDrawerItemPosition = new Vector3(0.0f, 0.0f, -0.05f);
+
+    /// <summary>
+    /// ステージ3　生徒机の中のアイテムのローカルポジション
+    /// </summary>
+    private Vector3 stage03StudentDeskItemPosition = new Vector3(0.0f, -0.0003f, 0.0002f);
 
 
     /// <summary>
@@ -246,7 +275,19 @@ public class Drawer : MonoBehaviour
                     break;
 
                 case stringStage03:
-                    defaultCloseItemPosition = stage03DeskItemPosition;
+
+                    //引き出しの種類が通常の場合
+                    if (drawerType == DrawerType.Normal)
+                    {
+                        //通常の引き出しタイプのアイテムのローカルポジションを設定
+                        defaultCloseItemPosition = stage03NormalDrawerItemPosition;
+                    }
+                    //引き出しの種類が生徒机の場合
+                    else if (drawerType == DrawerType.StudentDesk)
+                    {
+                        //生徒机の引き出しタイプのアイテムのローカルポジションを設定
+                        defaultCloseItemPosition = stage03StudentDeskItemPosition;
+                    }
                     break;
             }
 
