@@ -287,8 +287,9 @@ public class PlayerInteract : MonoBehaviour
 
         RaycastHit raycastHit;
 
-        //Cameraから飛ばしているRayにオブジェクトが当たった場合
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out raycastHit, distance))
+        //Cameraから飛ばしているRayにオブジェクトが当たった場合(Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignoreでトリガーコライダーは無視する)
+        //(BroadcastRangeのトリガーコライダーに当たってしまうのを防ぐため)
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out raycastHit, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
         {
             //Rayにオブジェクトが当たった状態&&インタラクト操作を行う&&プレイヤーが隠れていない場合
             if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0
@@ -438,6 +439,7 @@ public class PlayerInteract : MonoBehaviour
                     if (stageLight != null) stageLight.LitStageLight();
                 }
 
+
                 //引き出し
                 if (raycastHit.transform.tag == CommonController.instance.GetDrawerTag())
                 {
@@ -564,9 +566,10 @@ public class PlayerInteract : MonoBehaviour
     {
         RaycastHit raycastHit;
 
-        //Cameraから飛ばしているRayにオブジェクトが当たった場合
+        //Cameraから飛ばしているRayにオブジェクトが当たった場合(Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignoreでトリガーコライダーは無視する)
+        //(BroadcastRangeのトリガーコライダーに当たってしまうのを防ぐため)
         if (Physics.Raycast(Camera.main.transform.position,
-            Camera.main.transform.forward, out raycastHit, distance))
+            Camera.main.transform.forward, out raycastHit, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
         {
             //壁orドアorゴールorその他オブジェクトに当たった場合
             if (raycastHit.transform.tag == CommonController.instance.GetWallTag() ||
