@@ -25,6 +25,11 @@ public class Drawer : MonoBehaviour
         /// 生徒机
         /// </summary>
         StudentDesk,
+
+        /// <summary>
+        /// スライドドア式の引き出し
+        /// </summary>
+        SlideDoorDrawer,
     }
 
     /*--------------------------------------
@@ -89,6 +94,11 @@ public class Drawer : MonoBehaviour
     /// ステージ3　生徒机の中のアイテムのローカルポジション
     /// </summary>
     private Vector3 stage03StudentDeskItemPosition = new Vector3(0.0f, -0.0003f, 0.0002f);
+
+    /// <summary>
+    /// ステージ3　スライドドア式の引き出しの中のアイテムのローカルポジション
+    /// </summary>
+    private Vector3 stage03SlideDoorDrawerItemPosition = new Vector3(0.0f, -0.0003f, 0.0002f);
 
 
     /// <summary>
@@ -287,6 +297,11 @@ public class Drawer : MonoBehaviour
                     {
                         //生徒机の引き出しタイプのアイテムのローカルポジションを設定
                         defaultCloseItemPosition = stage03StudentDeskItemPosition;
+                    }
+                    else if (drawerType == DrawerType.SlideDoorDrawer)
+                    {
+                        //スライドドア式の引き出しタイプのアイテムのローカルポジションを設定
+                        defaultCloseItemPosition = stage03SlideDoorDrawerItemPosition;
                     }
                     break;
             }
