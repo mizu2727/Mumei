@@ -2,6 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using static GameController;
 
 public class Door : MonoBehaviour
 {
@@ -44,6 +45,25 @@ public class Door : MonoBehaviour
     /* -------------------------
     * スライド式ドア関連
     * -------------------------*/
+
+    [Header("ドアのスライドタイプ(ヒエラルキー上から直接編集すること)")]
+    public SlideType slideType;
+
+    /// <summary>
+    /// スライドタイプの列挙型
+    /// </summary>
+    public enum SlideType
+    {
+        /// <summary>
+        /// 縦
+        /// </summary>
+        Vertical,
+
+        /// <summary>
+        /// 横
+        /// </summary>
+        Beside,
+    }
 
     [Header("スライド式ドアフラグ(ONにすると横スライド開閉になる)")]
     [SerializeField] private bool isSlidingDoor = false;
@@ -216,6 +236,7 @@ public class Door : MonoBehaviour
         {
             //開閉位置をスタート時のローカルX軸方向を基準に事前計算
             slideClosedPosition = transform.position;
+
             slideOpenPosition = transform.position + transform.up * slideDistance;//transform.up…スライドドアの素材の元々の向きが正常でないため
         }
     }
