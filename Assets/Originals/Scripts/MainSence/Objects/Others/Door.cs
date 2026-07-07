@@ -237,7 +237,20 @@ public class Door : MonoBehaviour
             //開閉位置をスタート時のローカルX軸方向を基準に事前計算
             slideClosedPosition = transform.position;
 
-            slideOpenPosition = transform.position + transform.up * slideDistance;//transform.up…スライドドアの素材の元々の向きが正常でないため
+            //スライドが縦方向の場合
+            if (slideType == SlideType.Vertical) 
+            {
+                //スライドドアの素材の元々の向きが正常でないため、transform.upを使用してスライド方向を計算
+                slideOpenPosition = transform.position + transform.up * slideDistance;
+            }
+            //スライドが横方向の場合
+            else if (slideType == SlideType.Beside) 
+            {
+                //transform.rightを使用してスライド方向を計算
+                slideOpenPosition = transform.position + transform.right * slideDistance;
+            }
+
+
         }
     }
 
