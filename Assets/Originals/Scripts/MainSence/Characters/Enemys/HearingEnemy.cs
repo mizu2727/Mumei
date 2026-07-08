@@ -199,11 +199,16 @@ public class HearingEnemy : BaseEnemy
                 Debug.Log("放送スピーカー音を検知");
 
                 //最も近いスピーカーの位置を記録
-                lastHeardSoundPosition = closestSpeaker.position;
+                //lastHeardSoundPosition = closestSpeaker.position;
+
+                //プレイヤーの位置へ移動
+                lastHeardSoundPosition = targetPoint.position;
+
+                
                 isInvestigatingBroadcastSound = true;
                 soundInvestigateTimer = 0f;
 
-                //放送スピーカー音を検知した場合、調査状態に移行
+                //調査状態に移行
                 currentState = EnemyState.Investigate;
 
                 //スピーカーの位置へ移動
