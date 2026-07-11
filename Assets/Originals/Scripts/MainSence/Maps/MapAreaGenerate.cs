@@ -110,6 +110,15 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("敵の位置(ヒエラルキー上からのアタッチ禁止。格納結果確認用。ステージライトとの距離測定で必要)")]
     [SerializeField] private Transform[] baseEnemyTransformArray;
 
+    /// <summary>
+    /// 敵の位置の配列を取得
+    /// </summary>
+    /// <returns>敵の位置の配列</returns>
+    public Transform[] GetBaseEnemyTransformArray()
+    {
+        return baseEnemyTransformArray;
+    }
+
 
     [Header("Easy用の隠れる地点のTransform配列(ヒエラルキー上のHiddeObjectをアタッチすること)")]
     [SerializeField] private Transform[] easyHideObject;
@@ -118,14 +127,8 @@ public class MapAreaGenerate : MonoBehaviour
     [SerializeField] private Transform[] normalHideObject;
 
 
-    /// <summary>
-    /// 敵の位置の配列を取得
-    /// </summary>
-    /// <returns>敵の位置の配列</returns>
-    public Transform[] GetBaseEnemyTransformArray() 
-    {
-        return baseEnemyTransformArray;
-    }
+    [Header("Bake後に表示したいオブジェクト(Prefabをアタッチすること。)")]
+    [SerializeField] private List<GameObject> lastViewObjectPrefabList;
 
     /// <summary>
     /// オブジェクトが破壊された際に呼ばれる関数
@@ -202,6 +205,16 @@ public class MapAreaGenerate : MonoBehaviour
             }
         }
 
+        for (int i = 0; i < lastViewObjectPrefabList.Count; i++)
+        {
+            //Bake後表示用オブジェクトが存在する場合
+            if (lastViewObjectPrefabList[i] != null)
+            {
+                //Bake後表示用オブジェクトをnullに設定
+                lastViewObjectPrefabList[i] = null;
+            }
+        }
+
         //インスタンスが存在する場合
         if (instance == this)
         {
@@ -237,7 +250,19 @@ public class MapAreaGenerate : MonoBehaviour
         //難易度に応じてオブジェクトを表示/非表示するメソッド
         SettingViewObjects();
 
+        //NavMeshを生成する
         stageGround.Build(navMeshSurface);
+
+        //Bake後に表示したいオブジェクトを表示する
+        for (int i = 0; i < lastViewObjectPrefabList.Count; i++)
+        {
+            //Bake後に表示したいオブジェクトが存在する場合&&Bake後に表示したいオブジェクトが非表示の場合
+            if (lastViewObjectPrefabList[i] != null && !lastViewObjectPrefabList[i].activeSelf)
+            {
+                //Bake後に表示したいオブジェクトを表示する
+                lastViewObjectPrefabList[i].SetActive(true);
+            }
+        }
     }
 
 

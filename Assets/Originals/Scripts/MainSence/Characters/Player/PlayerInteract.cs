@@ -295,6 +295,9 @@ public class PlayerInteract : MonoBehaviour
             if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0
                 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
             {
+                //デバッグ用にオブジェクト名を表示
+                //Debug.Log("RaycastHit Object: " + raycastHit.transform.name);
+
                 //隠れる用オブジェクト
                 if (raycastHit.transform.tag == CommonController.instance.GetHiddenObjectTag()) 
                 {
