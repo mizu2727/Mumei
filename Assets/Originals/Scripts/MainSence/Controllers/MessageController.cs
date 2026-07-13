@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,6 +9,7 @@ using UnityEngine.UI;
 using static GameController;
 using static LanguageController;
 using static UnityEngine.Rendering.DebugUI;
+using TMPro;
 
 /// <summary>
 /// メッセージ管理クラス
@@ -25,7 +27,7 @@ public class MessageController : MonoBehaviour
     [SerializeField] private GameObject messagePanel;
 
     [Header("メッセージテキスト(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] public Text messageText;
+    [SerializeField] private TMP_Text messageText;
 
 
     [Header("会話している人の名前を表示するパネル(ヒエラルキー上からアタッチする必要がある)")]
@@ -177,16 +179,7 @@ public class MessageController : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //messageTextを設定
-        if (messageText == null)
-        {
-            Debug.LogWarning("MessageControllerのmessageTextがnullのため、messageText = messageTextを実行");
-            messageText = GameController.instance.messageText;
-        }
-
-        if (messageText != null) messageText = GameController.instance.messageText;
-        else Debug.LogError("GameControllerのmessageTextが設定されていません");
-
+        //messageTextがnullの場合、エラーを出力
         if (messageText == null)
         {
             Debug.LogError("MessageControllerのmessageTextがnull");
@@ -386,18 +379,59 @@ public class MessageController : MonoBehaviour
         isWrite = true;
 
         //毎回テキストをクリアしてから書き始める
-        messageText.text = ""; 
+        messageText.text = "";
+
+        //TextMeshProRubyコンポーネントがアタッチされているか確認
+        var rubyComponent = messageText.GetComponent<TMP_Ruby.TextMeshProRuby>();
 
         for (int i = 0; i < s.Length; i++)
         {
             //書き込み速度が0の場合、一気に表示
             if (writeSpeed <= 0)
             {
-                messageText.text = s;
+                //TextMeshProRubyコンポーネントがアタッチされている場合
+                if (rubyComponent != null)
+                {
+                    //TextMeshProRubyコンポーネントにテキストを設定
+                    rubyComponent.Text = s;
+                }
+                //TextMeshProRubyコンポーネントがアタッチされていない場合
+                else
+                {
+                    //メッセージテキストにテキストを設定
+                    messageText.text = s;
+                }
                 break;
             }
 
-            messageText.text += s.Substring(i, 1);
+            // 現在の進行度までの文字列を切り出す
+            string currentText = s.Substring(0, i + 1);
+
+            // タグの途中で区切られると表示が崩れるのを防ぐため、
+            // もし直前がタグの開始文字 '<' で、閉じ文字 '>' がまだ来ていない場合は演出をスキップして一気にタグの終わりまで進める
+            if (currentText.Contains("<") && !currentText.EndsWith(">"))
+            {
+                int closingTagIndex = s.IndexOf('>', i);
+                if (closingTagIndex != -1)
+                {
+                    i = closingTagIndex;
+                    currentText = s.Substring(0, i + 1);
+                }
+            }
+
+            //TextMeshProRubyコンポーネントがアタッチされている場合
+            if (rubyComponent != null)
+            {
+                //TextMeshProRubyを通してテキストを適用する
+                rubyComponent.Text = currentText;
+            }
+            //TextMeshProRubyコンポーネントがアタッチされていない場合
+            else
+            {
+                //メッセージテキストにテキストを適用する
+                messageText.text = currentText;
+            }
+
             await UniTask.Delay(TimeSpan.FromSeconds(writeSpeed));
         }
         isWrite = false;

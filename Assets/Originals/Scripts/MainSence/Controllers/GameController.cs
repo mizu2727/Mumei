@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.SceneManagement;
@@ -25,9 +26,6 @@ public class GameController : MonoBehaviour
 
     [Header("ゲームモードのステータス(ヒエラルキー上からの編集禁止)")]
     public GameModeStatus gameModeStatus;
-
-    [Header("メッセージテキスト(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] public Text messageText;
 
     [Header("チュートリアル用ドキュメント引き出し")]
     [SerializeField] private GameObject tutorialDocumentDrawer;
@@ -795,13 +793,6 @@ public class GameController : MonoBehaviour
     /// </summary>
     private void OnDestroy() 
     {
-        //メッセージテキストが存在する場合
-        if (messageText != null)
-        {
-            //メッセージテキストをnullに設定
-            messageText = null;
-        }
-
         //チュートリアル用ドキュメント引き出しが存在する場合
         if (tutorialDocumentDrawer != null)
         {
