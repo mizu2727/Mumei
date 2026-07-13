@@ -29,6 +29,16 @@ public class ScreenAspect : MonoBehaviour
     const int kCoustomResolutionY01 = 768;
 
     /// <summary>
+    /// 画面解像度1280*780のX部分
+    /// </summary>
+    const int kCoustomResolutionX01_01 = 1280;
+
+    /// <summary>
+    /// 画面解像度1280*780のY部分
+    /// </summary>
+    const int kCoustomResolutionY01_01 = 780;
+
+    /// <summary>
     /// 画面解像度1280*1024のX部分
     /// </summary>
     const int kCoustomResolutionX02 = 1280;
@@ -91,7 +101,7 @@ public class ScreenAspect : MonoBehaviour
     /// <summary>
     /// 画面解像度X配列
     /// </summary>
-    int[] ResolutionXArray = { kCoustomResolutionX01, kCoustomResolutionX02
+    int[] ResolutionXArray = { kCoustomResolutionX01, kCoustomResolutionX01_01, kCoustomResolutionX02
             , kCoustomResolutionX03, kDefaultResolutionX
             , kDefaultResolutionX, kCoustomResolutionX06
             , kCoustomResolutionX07, kCoustomResolutionX08};
@@ -99,7 +109,7 @@ public class ScreenAspect : MonoBehaviour
     /// <summary>
     /// 画面解像度Y配列
     /// </summary>
-    int[] ResolutionYArray = { kCoustomResolutionY01, kCoustomResolutionY02
+    int[] ResolutionYArray = { kCoustomResolutionY01, kCoustomResolutionY01_01, kCoustomResolutionY02
             , kCoustomResolutionY03, kDefaultResolutionY
             , kCoustomResolutionY03, kCoustomResolutionY06
             , kCoustomResolutionY07, kCoustomResolutionY08};
@@ -112,7 +122,7 @@ public class ScreenAspect : MonoBehaviour
     /// <summary>
     /// デフォルトの解像度の配列インデックス番号
     /// </summary>
-    int kDefaultResolutionArrayIndex = 3;
+    int kDefaultResolutionArrayIndex = 4;
 
     /// <summary>
     /// 解像度の配列インデックス番号を設定
