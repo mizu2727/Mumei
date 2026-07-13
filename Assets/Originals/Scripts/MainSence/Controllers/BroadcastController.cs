@@ -56,6 +56,34 @@ public class BroadcastController : MonoBehaviour
     private bool isBroadcastNoiseFlag;
 
 
+    private void OnDestroy() 
+    {
+        //シングルトンパターンの破棄
+        if (instance == this) 
+        {
+            instance = null;
+        }
+
+        //放送スピーカーの位置のリストをnullに設定する
+        for (int i = 0; i < broadcastSpeakerTransformList.Count; i++)
+        {
+            if (broadcastSpeakerTransformList[i] != null)
+            {
+                broadcastSpeakerTransformList[i] = null;
+            }
+        }
+
+        //放送スピーカーリストをnullに設定する
+        for (int i = 0; i < broadcastSpeakerList.Count; i++)
+        {
+            if (broadcastSpeakerList[i] != null)
+            {
+                broadcastSpeakerList[i] = null;
+            }
+        }
+    }
+
+
     private void Awake()
     {
         //シングルトンパターンの実装

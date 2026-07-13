@@ -63,12 +63,9 @@ public class BroadcastSpeaker : MonoBehaviour
     ---------------------------------------*/
 
     /// <summary>
-    /// プレイヤー
+    /// 放送スピーカーとの距離を測定したいオブジェクト
     /// </summary>
-    private Player player;
-
-    [Header("放送スピーカーとの距離を測定したいオブジェクトをアタッチ(ヒエラルキー上のプレイヤーをアタッチすること)")]
-    [SerializeField] public Transform targetPoint;
+    private Transform targetPoint;
 
     /*--------------------------------------
     * SE関連の変数
@@ -162,10 +159,37 @@ public class BroadcastSpeaker : MonoBehaviour
     }
 
 
+    private void OnDestroy() 
+    {
+        //シーン遷移時にAudioSourceを再設定するための関数登録解除
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
+
+        //targetPointが存在する場合
+        if (targetPoint != null)
+        {
+            //targetPointをnullに設定
+            targetPoint = null;
+        }
+    }
+
+
     void Start()
     {
         //AudioSourceの初期化
         InitializeAudioSource();
+
+        //PlayerシングルトンからTransformを取得
+        //(シーン遷移した後にプレイヤーのtransformがnullになるエラーを防止する用)
+        if (Player.instance != null)
+        {
+            targetPoint = Player.instance.transform;
+        }
+        else
+        {
+            Debug.LogWarning("Player.instanceが見つかりません。シーンにPlayerオブジェクトが存在することを確認してください。");
+        }
 
         //フラグの初期化
         isBroadcastNoise = false;

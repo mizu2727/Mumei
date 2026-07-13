@@ -10,6 +10,16 @@ public class BroadcastRange : MonoBehaviour
     /// </summary>
     [SerializeField] private BroadcastSpeaker broadcastSpeaker;
 
+
+    private void OnDestroy() 
+    {
+        //放送スピーカーの破棄
+        if (broadcastSpeaker != null) 
+        {
+            broadcastSpeaker = null;
+        }
+    }
+
     private void OnTriggerEnter(Collider collider)
     {
         //プレイヤーが範囲内に存在し、かつ放送ノイズが流れている場合
