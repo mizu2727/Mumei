@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using TMP_Ruby;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
-using TMPro;
 
 public class DifficultyLevelController : MonoBehaviour
 {
@@ -82,6 +83,11 @@ public class DifficultyLevelController : MonoBehaviour
 
     [Header("難易度説明テキスト(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private TMP_Text difficultyLevelExplanationText;
+
+    /// <summary>
+    /// 難易度説明テキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby difficultyLevelExplanationTextRubyComponent;
 
     [Header("ステージクリア情報パネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject stageClearInformationPanel;

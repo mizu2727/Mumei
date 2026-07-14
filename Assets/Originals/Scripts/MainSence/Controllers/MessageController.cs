@@ -3,7 +3,6 @@ using System;
 using System.Threading;
 using TMP_Ruby;
 using TMPro;
-using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
