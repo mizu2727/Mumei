@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
+using TMPro;
 
 public class DifficultyLevelController : MonoBehaviour
 {
@@ -80,7 +81,7 @@ public class DifficultyLevelController : MonoBehaviour
     [SerializeField] private GameObject difficultyLevelExplanationPanel;
 
     [Header("難易度説明テキスト(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] private Text difficultyLevelExplanationText;
+    [SerializeField] private TMP_Text difficultyLevelExplanationText;
 
     [Header("ステージクリア情報パネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject stageClearInformationPanel;

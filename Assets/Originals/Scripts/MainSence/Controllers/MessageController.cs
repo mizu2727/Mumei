@@ -1,6 +1,8 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using TMP_Ruby;
+using TMPro;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -9,7 +11,6 @@ using UnityEngine.UI;
 using static GameController;
 using static LanguageController;
 using static UnityEngine.Rendering.DebugUI;
-using TMPro;
 
 /// <summary>
 /// メッセージ管理クラス
@@ -29,6 +30,10 @@ public class MessageController : MonoBehaviour
     [Header("メッセージテキスト(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private TMP_Text messageText;
 
+    /// <summary>
+    /// メッセージテキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby messageTextRubyComponent;
 
     [Header("会話している人の名前を表示するパネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject speakerNamePanel;
@@ -382,7 +387,7 @@ public class MessageController : MonoBehaviour
         messageText.text = "";
 
         //TextMeshProRubyコンポーネントがアタッチされているか確認
-        var rubyComponent = messageText.GetComponent<TMP_Ruby.TextMeshProRuby>();
+        messageTextRubyComponent = messageText.GetComponent<TMP_Ruby.TextMeshProRuby>();
 
         for (int i = 0; i < s.Length; i++)
         {
@@ -390,10 +395,10 @@ public class MessageController : MonoBehaviour
             if (writeSpeed <= 0)
             {
                 //TextMeshProRubyコンポーネントがアタッチされている場合
-                if (rubyComponent != null)
+                if (messageTextRubyComponent != null)
                 {
                     //TextMeshProRubyコンポーネントにテキストを設定
-                    rubyComponent.Text = s;
+                    messageTextRubyComponent.Text = s;
                 }
                 //TextMeshProRubyコンポーネントがアタッチされていない場合
                 else
@@ -420,10 +425,10 @@ public class MessageController : MonoBehaviour
             }
 
             //TextMeshProRubyコンポーネントがアタッチされている場合
-            if (rubyComponent != null)
+            if (messageTextRubyComponent != null)
             {
                 //TextMeshProRubyを通してテキストを適用する
-                rubyComponent.Text = currentText;
+                messageTextRubyComponent.Text = currentText;
             }
             //TextMeshProRubyコンポーネントがアタッチされていない場合
             else

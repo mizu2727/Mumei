@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using TMP_Ruby;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -41,10 +43,20 @@ public class PauseController : MonoBehaviour
     [SerializeField] private GameObject documentExplanationPanel;
 
     [Header("ドキュメント名称テキスト(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private Text documentNameText;
+    [SerializeField] private TMP_Text documentNameText;
+
+    /// <summary>
+    /// ドキュメント名称テキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby documentNameTextRubyComponent;
 
     [Header("ドキュメント説明欄テキスト(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private Text documentExplanationText;
+    [SerializeField] private TMP_Text documentExplanationText;
+
+    /// <summary>
+    /// ドキュメント説明欄テキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby documentExplanationTextRubyComponent;
 
 
     [Header("ミステリーアイテムパネル関連")]
@@ -55,13 +67,13 @@ public class PauseController : MonoBehaviour
     [SerializeField] private Button[] mysteryItemNameButton;
 
     [Header("ミステリーアイテム名称テキスト(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private Text[] mysteryItemNameText;
+    [SerializeField] private TMP_Text[] mysteryItemNameText;
 
     [Header("ミステリーアイテム画像(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Image[] mysteryItemImage;
 
     [Header("ミステリーアイテム説明欄テキスト(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private Text[] mysteryItemExplanationText;
+    [SerializeField] private TMP_Text[] mysteryItemExplanationText;
 
     [Header("ミステリーアイテム説明欄パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject mysteryItemExplanationPanel;
@@ -274,11 +286,25 @@ public class PauseController : MonoBehaviour
             viewItemsPanel = null;
         }
 
+        //documentNameTextRubyComponentが存在する場合
+        if (documentNameTextRubyComponent != null)
+        {
+            //documentNameTextRubyComponentをnullにする
+            documentNameTextRubyComponent = null;
+        }
+
         //documentNameTextが存在する場合
         if (documentNameText != null)
         {
             //documentNameTextをnullにする
             documentNameText = null;
+        }
+
+        //documentExplanationTextRubyComponentが存在する場合
+        if (documentExplanationTextRubyComponent != null)
+        {
+            //documentExplanationTextRubyComponentをnullにする
+            documentExplanationTextRubyComponent = null;
         }
 
         //documentExplanationTextが存在する場合
@@ -965,8 +991,14 @@ public class PauseController : MonoBehaviour
         keepDocumentBookID = documentId;
 
         //シーン内で取得したドキュメントオブジェクトの名前を保存
-        documentNameText = documentNameText.GetComponent<Text>();
+        documentNameTextRubyComponent = documentNameText.GetComponent<TMP_Ruby.TextMeshProRuby>();
+        documentNameTextRubyComponent.Text = documentName;
+
+        //TODO削除予定
+        /*
+        documentNameText = documentNameText.GetComponent<TMP_Text>();
         documentNameText.text = documentName;
+        */
     }
 
     /// <summary>
@@ -976,8 +1008,14 @@ public class PauseController : MonoBehaviour
     public void ChangeDocumentExplanationText(string documentDescription)
     {
         //シーン内で取得したドキュメントオブジェクトの説明を保存
-        documentExplanationText = documentExplanationText.GetComponent<Text>();
+        documentExplanationTextRubyComponent = documentExplanationText.GetComponent<TMP_Ruby.TextMeshProRuby>();
+        documentExplanationTextRubyComponent.Text = documentDescription;
+
+        //TODO削除予定
+        /*
+        documentExplanationText = documentExplanationText.GetComponent<TMP_Text>();
         documentExplanationText.text = documentDescription;
+        */
     }
 
     /// <summary>

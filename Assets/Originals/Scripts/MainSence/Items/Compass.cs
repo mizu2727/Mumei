@@ -1,3 +1,5 @@
+using TMP_Ruby;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,10 +26,20 @@ public class Compass : MonoBehaviour
     [SerializeField] private GameObject compassTextPanel;
 
     [Header("CompassNameText(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] private Text CompassNameText;
-    
+    [SerializeField] private TMP_Text CompassNameText;
+
+    /// <summary>
+    /// コンパス名称をTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby CompassNameTextRubyComponent;
+
     [Header("CompassExplanationText(ヒエラルキー上からアタッチする必要がある)")]
-    [SerializeField] private Text CompassExplanationText;
+    [SerializeField] private TMP_Text CompassExplanationText;
+
+    /// <summary>
+    /// コンパス説明をTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby CompassExplanationTextRubyComponent;
 
     /// <summary>
     /// コンパス関係を表示・非表示するフラグ
@@ -75,11 +87,25 @@ public class Compass : MonoBehaviour
             compassArrowImage = null;
         }
 
+        //CompassNameTextRubyComponentが存在する場合
+        if (CompassNameTextRubyComponent != null)
+        {
+            //CompassNameTextRubyComponentをnullに設定
+            CompassNameTextRubyComponent = null;
+        }
+
         //CompassNameTextが存在する場合
         if (CompassNameText != null)
         {
             //CompassNameTextをnullに設定
             CompassNameText = null;
+        }
+
+        //CompassExplanationTextRubyComponentが存在する場合
+        if (CompassExplanationText != null) 
+        {
+            //CompassExplanationTextRubyComponentをnullに設定
+            CompassExplanationTextRubyComponent = null;
         }
 
         //CompassExplanationTextが存在する場合
@@ -226,5 +252,13 @@ public class Compass : MonoBehaviour
                 CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeEnglish;
                 break;
         }
+
+        //TextMeshProRubyコンポーネントを取得して、変数に保存する
+        CompassNameTextRubyComponent = CompassNameText.GetComponent<TextMeshProRuby>();
+        CompassExplanationTextRubyComponent = CompassExplanationText.GetComponent<TextMeshProRuby>();
+
+        //テキストを設定する
+        CompassNameTextRubyComponent.Text = CompassNameText.text;
+        CompassExplanationTextRubyComponent.Text = CompassExplanationText.text;
     }
 }
