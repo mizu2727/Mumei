@@ -58,6 +58,11 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private TextMeshProRuby documentExplanationTextRubyComponent;
 
+    /// <summary>
+    /// デフォルトのドキュメント名称テキストサイズ
+    /// </summary>
+    private const int kDefultDocumentNameTextSize = 14;
+
 
     [Header("ミステリーアイテムパネル関連")]
     [Header("ミステリーアイテム確認パネル(ヒエラルキー上からアタッチすること)")]
@@ -69,11 +74,26 @@ public class PauseController : MonoBehaviour
     [Header("ミステリーアイテム名称テキスト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private TMP_Text[] mysteryItemNameText;
 
+    /// <summary>
+    /// ミステリーアイテム名称テキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby[] mysteryItemNameTextRubyComponent;
+
+    /// <summary>
+    /// デフォルトのミステリーアイテム名称テキストサイズ
+    /// </summary>
+    private const int kDefultMysteryItemNameTextSize = 14;
+
     [Header("ミステリーアイテム画像(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Image[] mysteryItemImage;
 
     [Header("ミステリーアイテム説明欄テキスト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private TMP_Text[] mysteryItemExplanationText;
+
+    /// <summary>
+    /// ミステリーアイテム説明欄テキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby[] mysteryItemExplanationTextRubyComponent;
 
     [Header("ミステリーアイテム説明欄パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject mysteryItemExplanationPanel;
@@ -328,6 +348,16 @@ public class PauseController : MonoBehaviour
             documentInventoryPanel = null;
         }
 
+        for (int i = 0; i < mysteryItemExplanationTextRubyComponent.Length; i++)
+        {
+            //mysteryItemExplanationTextRubyComponentが存在する場合
+            if (mysteryItemExplanationTextRubyComponent[i] != null)
+            {
+                //mysteryItemExplanationTextRubyComponentをnullにする
+                mysteryItemExplanationTextRubyComponent[i] = null;
+            }
+        }
+
         for (int i = 0; i < mysteryItemExplanationText.Length; i++)
         {
             //mysteryItemExplanationTextが存在する場合
@@ -335,6 +365,16 @@ public class PauseController : MonoBehaviour
             {
                 //mysteryItemExplanationTextをnullにする
                 mysteryItemExplanationText[i] = null;
+            }
+        }
+
+        for (int i = 0; i < mysteryItemNameTextRubyComponent.Length; i++)
+        {
+            //mysteryItemNameTextRubyComponentが存在する場合
+            if (mysteryItemNameTextRubyComponent[i] != null)
+            {
+                //mysteryItemNameTextRubyComponentをnullにする
+                mysteryItemNameTextRubyComponent[i] = null;
             }
         }
 
@@ -506,6 +546,17 @@ public class PauseController : MonoBehaviour
 
         //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
         audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
+
+
+        //ドキュメントオブジェクトのTextMeshProRubyコンポーネントを取得する
+        documentNameTextRubyComponent = documentNameText.GetComponent<TMP_Ruby.TextMeshProRuby>();
+
+        //ドキュメント名称サイズを初期化する
+        documentNameText.fontSize = kDefultDocumentNameTextSize;
+
+        //ドキュメント名称を初期化
+        documentNameText.text = defaultItemName;
+        documentNameTextRubyComponent.Text = documentNameText.text;
 
         //パネルを初期状態で非表示にする
         //フラグ値を初期化
@@ -814,6 +865,7 @@ public class PauseController : MonoBehaviour
             if (mysteryItemExplanationText.Length > 0)
             {
                 mysteryItemExplanationText[i].text = "";
+                mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
             }
         }
     }
@@ -991,14 +1043,8 @@ public class PauseController : MonoBehaviour
         keepDocumentBookID = documentId;
 
         //シーン内で取得したドキュメントオブジェクトの名前を保存
-        documentNameTextRubyComponent = documentNameText.GetComponent<TMP_Ruby.TextMeshProRuby>();
-        documentNameTextRubyComponent.Text = documentName;
-
-        //TODO削除予定
-        /*
-        documentNameText = documentNameText.GetComponent<TMP_Text>();
         documentNameText.text = documentName;
-        */
+        documentNameTextRubyComponent.Text = documentNameText.text;
     }
 
     /// <summary>
@@ -1009,13 +1055,8 @@ public class PauseController : MonoBehaviour
     {
         //シーン内で取得したドキュメントオブジェクトの説明を保存
         documentExplanationTextRubyComponent = documentExplanationText.GetComponent<TMP_Ruby.TextMeshProRuby>();
-        documentExplanationTextRubyComponent.Text = documentDescription;
-
-        //TODO削除予定
-        /*
-        documentExplanationText = documentExplanationText.GetComponent<TMP_Text>();
         documentExplanationText.text = documentDescription;
-        */
+        documentExplanationTextRubyComponent.Text = documentExplanationText.text;
     }
 
     /// <summary>
@@ -1050,12 +1091,18 @@ public class PauseController : MonoBehaviour
                 mysteryItemImage[0].enabled = false;
             }
 
+            //mysteryItemExplanationTextRubyComponentを初期化
+            mysteryItemExplanationTextRubyComponent = new TMP_Ruby.TextMeshProRuby[mysteryItemExplanationText.Length];
+
             //説明テキストが重なるのを防止するため、全ての説明テキストを一旦クリアする
             for (int i = 0; i < mysteryItemExplanationText.Length; i++)
             {
                 if (mysteryItemExplanationText.Length > 0)
                 {
+                    //コンポーネントを取得して配列に格納する
+                    mysteryItemExplanationTextRubyComponent[i] = mysteryItemExplanationText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
                     mysteryItemExplanationText[i].text = "";
+                    mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
                 }
             }
         }
@@ -1086,8 +1133,11 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private void InitializeMysteryItemUI()
     {
+        //mysteryItemNameTextRubyComponentを初期化
+        mysteryItemNameTextRubyComponent = new TMP_Ruby.TextMeshProRuby[mysteryItemNameText.Length];
+
         //nullチェック
-        if (mysteryItemNameButton == null || mysteryItemNameText == null)
+        if (mysteryItemNameButton == null || mysteryItemNameText == null || mysteryItemNameTextRubyComponent == null)
         {
             Debug.LogError("mysteryItemNameButton or mysteryItemNameText is not assigned!");
             return;
@@ -1102,9 +1152,23 @@ public class PauseController : MonoBehaviour
             //クリックイベントを追加
             mysteryItemNameButton[i].onClick.AddListener(() => OnClickedMysteryItemNameButton(index));
 
+            //ミステリーアイテム名称のサイズを初期化する
+            mysteryItemNameText[i].fontSize = kDefultMysteryItemNameTextSize;
+
             //入手していないアイテム名の初期表示を"?????????"にする
             mysteryItemNameText[i].text = defaultItemName;
+
         }
+
+
+        for (int i = 0; i < mysteryItemNameTextRubyComponent.Length; i++) 
+        {
+            ////mysteryItemNameTextRubyComponentに入手していないアイテム名の初期表示"?????????"を代入
+            mysteryItemNameTextRubyComponent[i] = mysteryItemNameText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
+            mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
+        }
+
+        //mysteryItemExplanationTextRubyComponent初期化処理は、ChangeViewMysteryItemPanel()内で先に実行している。
     }
 
     /// <summary>
@@ -1148,6 +1212,7 @@ public class PauseController : MonoBehaviour
                         if (mysteryItemExplanationText.Length > 0)
                         {
                             mysteryItemExplanationText[i].text = "";
+                            mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
                         }
                     }
                     
@@ -1176,7 +1241,8 @@ public class PauseController : MonoBehaviour
                             Debug.LogWarning("その他の言語ステータス");
                             break;
                     }
-                    
+
+                    mysteryItemExplanationTextRubyComponent[0].Text = mysteryItemExplanationText[0].text;
                 }
 
                 //画像を更新
@@ -1261,6 +1327,7 @@ public class PauseController : MonoBehaviour
                 {
                     //ボタンに表示されるテキストを"?????????"からミステリーアイテム名に変更する
                     mysteryItemNameText[i].text = itemName;
+                    mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
 
                     //ボタンクリックを有効
                     mysteryItemNameButton[i].interactable = true;
@@ -1269,6 +1336,7 @@ public class PauseController : MonoBehaviour
                     {
                         //説明欄テキストにミステリーアイテム説明を反映させる
                         mysteryItemExplanationText[i].text = mysteryItemExplanations[i];
+                        mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
                     }
 
                     if (i < mysteryItemImage.Length)
@@ -1284,6 +1352,7 @@ public class PauseController : MonoBehaviour
 
                     //ボタンに表示されるテキストを"?????????"にする
                     mysteryItemNameText[i].text = defaultItemName;
+                    mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
 
                     //ボタンクリックを無効
                     mysteryItemNameButton[i].interactable = false;
@@ -1292,6 +1361,7 @@ public class PauseController : MonoBehaviour
                     {
                         //説明欄テキストを空にする
                         mysteryItemExplanationText[i].text = "";
+                        mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
                     }
 
                     if (i < mysteryItemImage.Length)
@@ -1306,6 +1376,7 @@ public class PauseController : MonoBehaviour
             {
                 //ボタンに表示されるテキストを"?????????"にする
                 mysteryItemNameText[i].text = defaultItemName;
+                mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
 
                 //ボタンクリックを無効
                 mysteryItemNameButton[i].interactable = false;
@@ -1314,6 +1385,7 @@ public class PauseController : MonoBehaviour
                 {
                     //説明欄テキストを空にする
                     mysteryItemExplanationText[i].text = "";
+                    mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
                 }
 
                 if (i < mysteryItemImage.Length)
@@ -1369,7 +1441,14 @@ public class PauseController : MonoBehaviour
                     Debug.LogWarning("その他の言語ステータス");
                     break;
             }
-            
+
+
+            //TextMeshProRubyコンポーネントにドキュメント名称を設定する
+            documentNameTextRubyComponent.Text = documentNameText.text;
+
+
+            //TextMeshProRubyコンポーネントにドキュメント説明文を設定する
+            documentExplanationTextRubyComponent.Text = documentExplanationText.text;
         }
 
         for (int i = 0; i < mysteryItemIds.Count; i++)
@@ -1425,6 +1504,12 @@ public class PauseController : MonoBehaviour
                     }   
                     break;
             }
+
+            //TextMeshProRubyコンポーネントにミステリーアイテム名称を設定する
+            mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
+
+            //TextMeshProRubyコンポーネントにミステリーアイテム説明文を設定する
+            mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
         }
     }
 

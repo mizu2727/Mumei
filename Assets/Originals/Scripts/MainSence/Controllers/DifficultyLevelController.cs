@@ -303,6 +303,13 @@ public class DifficultyLevelController : MonoBehaviour
             stageClearInformationPanel = null;
         }
 
+        //difficultyLevelExplanationTextRubyComponentが存在する場合
+        if (difficultyLevelExplanationTextRubyComponent != null)
+        {
+            //difficultyLevelExplanationTextRubyComponentをnullにする(メモリリークを防ぐため)
+            difficultyLevelExplanationTextRubyComponent = null;
+        }
+
         //difficultyLevelExplanationTextが存在する場合
         if (difficultyLevelExplanationText != null)
         {
@@ -418,6 +425,17 @@ public class DifficultyLevelController : MonoBehaviour
                 if (difficultyLevelExplanationText == null) 
                 {
                     Debug.LogError("DifficultyLevelExplanationTextがアタッチされていません。");
+                }
+
+                //難易度説明テキストのTextMeshProRubyコンポーネントが存在しない場合
+                if (difficultyLevelExplanationText == null) 
+                {
+                    Debug.LogError("DifficultyLevelExplanationTextにTextMeshProRubyコンポーネントがアタッチされていません。");
+                }
+                else 
+                {
+                    //難易度説明テキストのTextMeshProRubyコンポーネントを取得して保存する
+                    difficultyLevelExplanationTextRubyComponent = difficultyLevelExplanationText.GetComponent<TMP_Ruby.TextMeshProRuby>();
                 }
 
                 //Easyクリアアイコンが存在しない場合
@@ -869,6 +887,8 @@ public class DifficultyLevelController : MonoBehaviour
     {
         //説明文をリセット
         difficultyLevelExplanationText.text = "";
+        difficultyLevelExplanationTextRubyComponent.Text = difficultyLevelExplanationText.text;
+
 
         //難易度説明欄パネルを非表示にする
         isDifficultyLevelExplanationPanel = false;
@@ -906,6 +926,10 @@ public class DifficultyLevelController : MonoBehaviour
                 Debug.LogError("言語ステータスが正しい値ではないため、難易度説明文を表示することができません。");
                 break;
         }
+
+        //TextMeshProRubyコンポーネントに説明文を設定する
+        difficultyLevelExplanationTextRubyComponent.Text = difficultyLevelExplanationText.text;
+
 
         //難易度説明欄パネルを表示にする
         isDifficultyLevelExplanationPanel = true;
