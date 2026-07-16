@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 using static GameController;
 
 public class LanguageController : MonoBehaviour
@@ -50,14 +51,26 @@ public class LanguageController : MonoBehaviour
         kEnglish,
     }
 
+    
+
     [Header("ボタン配下内のテキストを格納(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Text[] buttonTextArray;
+
+    /// <summary>
+    /// buttonTextArrayと同じGameObjectから取得したTMP_Text版(実行時に自動生成)
+    /// </summary>
+    private TMP_Text[] buttonTMPTextArray;
 
     [Header("ボタンメッセージ番号を記載(ヒエラルキー上から記載すること)")]
     [SerializeField] public int[] buttonTextNumberArray;
 
     [Header("通常のテキストを格納(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public Text[] uITextArray;
+
+    /// <summary>
+    /// uITextArrayと同じGameObjectから取得したTMP_Text版(実行時に自動生成)
+    /// </summary>
+    private TMP_Text[] uITMPTextArray;
 
     [Header("通常テキスト番号を記載(ヒエラルキー上から記載すること)")]
     [SerializeField] public int[] uITextNumberArray;
@@ -137,6 +150,144 @@ public class LanguageController : MonoBehaviour
         audioSourceSE.playOnAwake = false;
     }
 
+    /// <summary>
+    /// buttonTextArray / uITextArrayの各GameObjectについて、
+    /// レガシーのTextコンポーネントを削除し、TextMeshProUGUIを新規アタッチする。
+    /// 変換後のTMP_TextはbuttonTMPTextArray / uITMPTextArrayに格納する。
+    /// </summary>
+    private void InitializeTMPTextArrays()
+    {
+        buttonTMPTextArray = new TMP_Text[buttonTextArray.Length];
+        for (int i = 0; i < buttonTextArray.Length; i++)
+        {
+            if (buttonTextArray[i] == null)
+            {
+                Debug.LogError($"buttonTextArray[{i}] がnullです！ Inspectorでアタッチし忘れています。");
+                continue;
+            }
+            buttonTMPTextArray[i] = ReplaceTextWithTMP(buttonTextArray[i]);
+        }
+
+        uITMPTextArray = new TMP_Text[uITextArray.Length];
+        for (int i = 0; i < uITextArray.Length; i++)
+        {
+            if (uITextArray[i] == null)
+            {
+                Debug.LogError($"uITextArray[{i}] がnullです！ Inspectorでアタッチし忘れています。");
+                continue;
+            }
+            uITMPTextArray[i] = ReplaceTextWithTMP(uITextArray[i]);
+        }
+    }
+
+    /// <summary>
+    /// レガシーのTextコンポーネントを削除し、同じGameObjectにTextMeshProUGUIを追加する。
+    /// 削除前にtext・fontSize・color・alignmentなどの設定値を退避し、TMP側へ引き継ぐ。
+    /// </summary>
+    /// <param name="legacyText">変換対象のTextコンポーネント</param>
+    /// <returns>アタッチされたTMP_Text(TextMeshProUGUI)</returns>
+    private TMP_Text ReplaceTextWithTMP(Text legacyText)
+    {
+        if (legacyText == null)
+        {
+            Debug.LogError("ReplaceTextWithTMP に null が渡されました");
+            return null;
+        }
+
+        GameObject targetObject = legacyText.gameObject;
+
+        //Textの設定値を退避する
+        string text = legacyText.text;
+        int fontSize = legacyText.fontSize;
+        Color color = legacyText.color;
+        FontStyle fontStyle = legacyText.fontStyle;
+        TextAnchor alignment = legacyText.alignment;
+        bool raycastTarget = legacyText.raycastTarget;
+
+        // Textコンポーネントを即座に削除する
+        DestroyImmediate(legacyText);
+
+        //TextMeshProUGUIコンポーネントを追加する
+        TextMeshProUGUI tmpText = targetObject.AddComponent<TextMeshProUGUI>();
+
+        //退避した設定値をTMP側へ反映する
+        tmpText.text = text;
+        tmpText.fontSize = fontSize;
+        tmpText.color = color;
+        tmpText.fontStyle = ConvertFontStyle(fontStyle);
+        tmpText.alignment = ConvertAlignment(alignment);
+        tmpText.raycastTarget = raycastTarget;
+
+        return tmpText;
+    }
+
+    /// <summary>
+    /// レガシーのTextAnchorをTMPのTextAlignmentOptionsへ変換する
+    /// </summary>
+    /// <param name="anchor">レガシーの整列設定</param>
+    /// <returns>TMP用の整列設定</returns>
+    private TextAlignmentOptions ConvertAlignment(TextAnchor anchor)
+    {
+        switch (anchor)
+        {
+            case TextAnchor.UpperLeft: 
+
+                return TextAlignmentOptions.TopLeft;
+
+            case TextAnchor.UpperCenter: 
+                
+                return TextAlignmentOptions.Top;
+
+            case TextAnchor.UpperRight: 
+                
+                return TextAlignmentOptions.TopRight;
+
+            case TextAnchor.MiddleLeft: 
+                
+                return TextAlignmentOptions.Left;
+
+            case TextAnchor.MiddleCenter: 
+                
+                return TextAlignmentOptions.Center;
+
+            case TextAnchor.MiddleRight: 
+                
+                return TextAlignmentOptions.Right;
+
+            case TextAnchor.LowerLeft: 
+                
+                return TextAlignmentOptions.BottomLeft;
+
+            case TextAnchor.LowerCenter: 
+                
+                return TextAlignmentOptions.Bottom;
+
+            case TextAnchor.LowerRight: 
+                
+                return TextAlignmentOptions.BottomRight;
+
+            default: 
+                
+                return TextAlignmentOptions.Center;
+        }
+    }
+
+    /// <summary>
+    /// レガシーのFontStyleをTMPのFontStylesへ変換する
+    /// </summary>
+    /// <param name="style">レガシーのフォントスタイル</param>
+    /// <returns>TMP用のフォントスタイル</returns>
+    private FontStyles ConvertFontStyle(FontStyle style)
+    {
+        switch (style)
+        {
+            case FontStyle.Bold: return FontStyles.Bold;
+            case FontStyle.Italic: return FontStyles.Italic;
+            case FontStyle.BoldAndItalic: return FontStyles.Bold | FontStyles.Italic;
+            default: return FontStyles.Normal;
+        }
+    }
+
     private void Awake()
     {
         //シングルトンの実装
@@ -149,11 +300,16 @@ public class LanguageController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        
     }
 
     private void Start()
     {
         InitializeAudioSource();
+
+        //Text型の配列から、同じGameObjectに付いているTMP_Textを取得して配列化する
+        InitializeTMPTextArrays();
 
         //言語を設定する
         SettingLanguageText();
@@ -174,27 +330,39 @@ public class LanguageController : MonoBehaviour
             case LanguageStatus.kJapanese:
 
                 //ボタンテキストを日本語に変更する
-                for (int i = 0; i < buttonTextArray.Length; i++)
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
                 {
-                    buttonTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageJapanese;
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageJapanese;
                 }
 
                 //ボタンサイズを日本語用に変更する
-                for (int i = 0; i < buttonTextArray.Length; i++)
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
                 {
-                    buttonTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeJapanese;
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeJapanese;
+                }
+
+                //ボタンフォントを日本語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetJapaneseFont();
                 }
 
                 //UIテキストを日本語に変更する
-                for (int i = 0; i < uITextArray.Length; i++)
+                for (int i = 0; i < uITMPTextArray.Length; i++)
                 {
-                    uITextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageJapanese;
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageJapanese;
                 }
 
                 //UIサイズを日本語用に変更する
-                for (int i = 0; i < uITextArray.Length; i++)
+                for (int i = 0; i < uITMPTextArray.Length; i++)
                 {
-                    uITextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeJapanese;
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeJapanese;
+                }
+
+                //UIフォントを日本語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetJapaneseFont();
                 }
 
                 break;
@@ -203,27 +371,39 @@ public class LanguageController : MonoBehaviour
             case LanguageStatus.kEnglish:
 
                 //ボタンテキストを英語に変更する
-                for (int i = 0; i < buttonTextArray.Length; i++)
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
                 {
-                    buttonTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageEnglish;
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageEnglish;
                 }
 
                 //ボタンサイズを英語用に変更する
-                for (int i = 0; i < buttonTextArray.Length; i++)
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
                 {
-                    buttonTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeEnglish;
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeEnglish;
+                }
+
+                //ボタンフォントを英語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetEnglishFont();
                 }
 
                 //UIテキストを英語に変更する
-                for (int i = 0; i < uITextArray.Length; i++)
+                for (int i = 0; i < uITMPTextArray.Length; i++)
                 {
-                    uITextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageEnglish;
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageEnglish;
                 }
 
                 //UIサイズを英語用に変更する
-                for (int i = 0; i < uITextArray.Length; i++)
+                for (int i = 0; i < uITMPTextArray.Length; i++)
                 {
-                    uITextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeEnglish;
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeEnglish;
+                }
+
+                //UIフォントを英語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetEnglishFont();
                 }
 
                 break;

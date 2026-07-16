@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -420,6 +421,30 @@ public class CommonController : MonoBehaviour
         return hiddenObjectLayer;
     }
 
+
+    [Header("日本語用フォント(TMP_FontAssetをアタッチ)")]
+    [SerializeField] private TMP_FontAsset japaneseFont;
+
+    /// <summary>
+    /// 日本語用フォントを取得する関数
+    /// </summary>
+    /// <returns>日本語用フォント</returns>
+    public TMP_FontAsset GetJapaneseFont()
+    {
+        return japaneseFont;
+    }
+
+    [Header("英語用フォント(TMP_FontAssetをアタッチ)")]
+    [SerializeField] private TMP_FontAsset englishFont;
+
+    /// <summary>
+    /// 英語用フォントを取得する関数
+    /// </summary>
+    /// <returns>英語用フォント</returns>
+    public TMP_FontAsset GetEnglishFont()
+    {
+        return englishFont;
+    }
 
     private void Awake()
     {
