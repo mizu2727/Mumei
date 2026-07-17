@@ -446,6 +446,16 @@ public class CommonController : MonoBehaviour
         return englishFont;
     }
 
+    /// <summary>
+    /// ボタンの文字の色
+    /// </summary>
+    private Color kButtonTextColor = new Color (200, 200, 200, 255);
+
+    /// <summary>
+    /// マウスカーソルにボタンが重なった時のボタンの文字の色
+    /// </summary>
+    private Color kButtonTextColorMouseOver = Color.yellow;
+
     private void Awake()
     {
         //インスタンス生成
@@ -456,4 +466,40 @@ public class CommonController : MonoBehaviour
         }
         else Destroy(this.gameObject);
     }
+
+    /// <summary>
+    /// ボタンの文字の色を変更する関数
+    /// </summary>
+    /// <param name="targetButtonTextNumber">対象のボタン番号</param>
+    public void ChangeButtonTextColor(int targetButtonTextNumber)
+    {
+        for (int i = 0; i < LanguageController.instance.GetButtonTextNumberArray().Length; i++)
+        {
+            //指定の番号が存在する場合
+            if (LanguageController.instance.GetButtonTextNumberArray()[i] == targetButtonTextNumber)
+            {
+                //その番号と一致するボタンの文字の色を変更
+                LanguageController.instance.GetButtonTMPTextArray()[i].color = kButtonTextColorMouseOver;
+                Debug.Log("ボタンの文字の色を変更しました。対象のボタン番号：" + targetButtonTextNumber);
+            }
+        }
+    }
+
+    /// <summary>
+    /// ボタンの文字の色を元に戻す関数
+    /// </summary>
+    /// <param name="targetButtonTextNumber">対象のボタン番号</param>
+    public void ReturnButtonTextColor(int targetButtonTextNumber)
+    {
+        for (int i = 0; i < LanguageController.instance.GetButtonTextNumberArray().Length; i++)
+        {
+            //指定の番号が存在する場合
+            if (LanguageController.instance.GetButtonTextNumberArray()[i] == targetButtonTextNumber)
+            {
+                //その番号と一致するボタンの文字の色を元に戻す
+                LanguageController.instance.GetButtonTMPTextArray()[i].color = kButtonTextColor;
+            }
+        }
+    }
+
 }

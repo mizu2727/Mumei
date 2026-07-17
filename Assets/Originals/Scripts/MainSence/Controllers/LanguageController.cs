@@ -57,6 +57,11 @@ public class LanguageController : MonoBehaviour
     [SerializeField] public Text[] buttonTextArray;
 
     /// <summary>
+    /// buttonTextArrayと同じGameObjectから取得したTMP_Text版(実行時に自動生成)
+    /// </summary>
+    private TMP_Text[] buttonTMPTextArray;
+
+    /// <summary>
     /// ボタン配下内のテキスト配列を取得する
     /// </summary>
     /// <returns>ボタン配下内のテキスト配列</returns>
@@ -64,11 +69,6 @@ public class LanguageController : MonoBehaviour
     {
         return buttonTMPTextArray;
     }
-
-    /// <summary>
-    /// buttonTextArrayと同じGameObjectから取得したTMP_Text版(実行時に自動生成)
-    /// </summary>
-    private TMP_Text[] buttonTMPTextArray;
 
 
     [Header("ボタンメッセージ番号を記載(ヒエラルキー上から記載すること)")]
