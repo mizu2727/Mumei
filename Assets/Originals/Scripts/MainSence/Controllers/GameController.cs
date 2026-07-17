@@ -478,6 +478,31 @@ public class GameController : MonoBehaviour
             BrightnessAdjustmentController.instance.RestoreBrightnessValue(brightnessValue);
         }
 
+        //OperationExplanationControllerが存在する場合(シーン遷移毎に値が復元されないと初期値に戻ってしまうため必須)
+        if (OperationExplanationController.instance != null)
+        {
+            //OperationPanelが存在する場合
+            if (OperationExplanationController.instance.GetOperationPanel() != null)
+            {
+                //OperationPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewOperationPanel(isSaveSelfViewOperationPanel);
+            }
+
+            //UseItemTextPanelが存在する場合
+            if (OperationExplanationController.instance.GetUseItemTextPanel() != null)
+            {
+                //UseItemTextPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewUseItemTextPanel(isSaveSelfViewUseItemTextPanel);
+            }
+
+            //CompassTextPanelが存在する場合
+            if (OperationExplanationController.instance.GetCompassTextPanel() != null)
+            {
+                //CompassTextPanel手動閲覧フラグを保存した値に設定
+                OperationExplanationController.instance.SetIsSelfViewCompassTextPanel(isSaveSelfViewCompassTextPanel);
+            }
+        }
+
         //BGMスライダーが存在する場合
         if (MusicController.instance.bGMSlider != null)
         {
