@@ -132,7 +132,7 @@ public class GameController : MonoBehaviour
     public static float sEVolume = 1;
 
     [Header("セーブする明るさの値")]
-    public static float brightnessValue = 0.075f;
+    public static float brightnessValue = 0.0f;
 
     [Header("セーブするフルスクリーンフラグ値")]
     public static bool isFullScreen = true;
@@ -470,6 +470,14 @@ public class GameController : MonoBehaviour
             mouseSensitivitySlider.value = lookSensitivity;
         }
 
+        //明るさスライダーが存在する場合(シーン遷移毎に値が復元されないと消えてしまうため必須)
+        if (BrightnessAdjustmentController.instance != null
+            && BrightnessAdjustmentController.instance.brightnessAdjustmentSlider != null)
+        {
+            //明るさスライダーの最小・最大値を確定させてから保存されていた明るさ値をスライダーに設定する
+            BrightnessAdjustmentController.instance.RestoreBrightnessValue(brightnessValue);
+        }
+
         //BGMスライダーが存在する場合
         if (MusicController.instance.bGMSlider != null)
         {
@@ -557,23 +565,11 @@ public class GameController : MonoBehaviour
         if (MusicController.instance.sESlider) MusicController.instance.sESlider.maxValue = MusicController.instance.GetMaxSESliderVolume();
 
 
-        ////TODO(Start関数内に記載した方が良い？):明るさ調整スライダーが存在する場合
+        //明るさ調整スライダーが存在する場合
         if (BrightnessAdjustmentController.instance.brightnessAdjustmentSlider != null)
         {
             //明るさを保存した値に設定
-            BrightnessAdjustmentController.instance.brightnessAdjustmentSlider.value = brightnessValue;
-            Debug.Log("ロードした明るさの値:" + brightnessValue);
-        }
-
-
-        //Fog欄内・明るさスライダーの最大値と最小値を設定
-        if (BrightnessAdjustmentController.instance.brightnessAdjustmentSlider) 
-        {
-            //Environmentタブ内のOtherSettings内のFog欄内を設定
-            BrightnessAdjustmentController.instance.ApplyCustomFogSettings();
-
-            //明るさのスライダーに関する設定
-            BrightnessAdjustmentController.instance.ApplyBrightnessAdjustmentSlider();
+            BrightnessAdjustmentController.instance.RestoreBrightnessValue(brightnessValue);
         }
 
 

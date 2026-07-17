@@ -144,4 +144,36 @@ public class BrightnessAdjustmentController : MonoBehaviour
         //brightnessValue = RenderSettings.fogDensity;
         brightnessValue = brightnessAdjustmentSlider.value;
     }
+
+
+    /// <summary>
+    /// 保存されている明るさの値をスライダーへ復元する
+    /// (起動時・シーン遷移時に呼び出すこと)
+    /// </summary>
+    /// <param name="value">復元する明るさの値(GameController.brightnessValue)</param>
+    public void RestoreBrightnessValue(float value)
+    {
+        //スライダーが存在しない場合
+        if (brightnessAdjustmentSlider == null) 
+        {
+            //処理をスキップ
+            return; 
+        }
+
+        /*
+         * 下記の順序で処理することが重要
+         * 1: ApplyBrightnessAdjustmentSlider()で明るさスライダーの最小・最大値を確定させる
+         * 2:保存されていた明るさの値を設定する
+         * 3: ApplyCustomFogSettings()でFog欄内の設定を適用する
+         */
+
+        //明るさスライダーの最小・最大値を設定
+        ApplyBrightnessAdjustmentSlider();
+
+        //その後に保存されていた値を設定
+        brightnessAdjustmentSlider.value = value;
+
+        //Fog欄内の設定を適用
+        ApplyCustomFogSettings();
+    }
 }
