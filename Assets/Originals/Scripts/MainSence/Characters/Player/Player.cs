@@ -263,6 +263,10 @@ public class Player : MonoBehaviour, CharacterInterface
     private bool isNearHidePoint = false;
 
 
+    /*-------------------------------------------------------------
+     * €–SŠÖ˜A
+     -------------------------------------------------------------*/
+
     /// <summary>
     /// €–Só‘Ôƒ‚[ƒh
     /// </summary>

@@ -117,6 +117,11 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private const int kDefaultKeepItemEffectValue = 0;
 
+
+    /*-------------------------------------------------------------
+     * スタミナ関連
+     -------------------------------------------------------------*/
+
     /// <summary>
     /// スタミナ増強剤使用フラグ
     /// </summary>
@@ -132,6 +137,20 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private const float kSpecifiedStaminaRecoveryRatio = 30.0f;
 
+    /// <summary>
+    /// スタミナ増強剤使用時間
+    /// </summary>
+    private float staminaUseTime;
+
+    /// <summary>
+    /// スタミナゲージの元の色を保存する変数
+    /// </summary>
+    private Color keepStaminaColor;
+
+
+    /*-------------------------------------------------------------
+    * クラッカー関連
+    -------------------------------------------------------------*/
 
     [Header("クラッカー使用時のパーティクルシステム(Prefabをアタッチすること)")]
     [SerializeField] private ParticleSystem crackerParticleSystemPrefab;
@@ -184,6 +203,7 @@ public class Inventory : MonoBehaviour
 
     [Header("検知対象のレイヤー（Enemyを設定すること）")]
     [SerializeField] private LayerMask enemyLayer;
+
 
     /// <summary>
     /// Player.cs
@@ -440,13 +460,43 @@ public class Inventory : MonoBehaviour
 
         //インベントリをリセット
         ResetInventoryItem();
+
+        //スタミナ関連の初期化(ResetInventoryItem関数内に記載すると、スタミナ増強剤が1→0へ変化した際にスタミナ増強剤使用時間が減少しないバグが発生するため)
+        //スタミナ増強剤使用時間を0に設定
+        staminaUseTime = 0.0f;
+
+        //スタミナ増強剤使用フラグをfalseに設定
+        isUseStaminaItem = false;
     }
 
     void Update()
     {
         //インベントリアイテム使用
-        if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0 
-            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden()) UseItem();
+        if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0
+            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
+        {
+            //アイテム使用
+            UseItem();
+        }
+
+        //スタミナ増強剤使用中の場合
+        if (isUseStaminaItem) 
+        {
+            //スタミナ増強剤使用時間が残っている場合
+            if (0 < staminaUseTime)
+            {
+                //スタミナ増強剤使用時間を減少させる
+                staminaUseTime -= Time.deltaTime;
+
+                Debug.Log($"スタミナ増強剤使用時間: {staminaUseTime:F2}秒");
+            }
+            //スタミナ増強剤使用時間が0以下になった場合
+            else
+            {
+                //スタミナ増強剤の効果を終了する処理
+                EndStaminaEffect();
+            }
+        }
     }
 
     /// <summary>
@@ -556,25 +606,13 @@ public class Inventory : MonoBehaviour
                 audioSourceInventorySE.loop = false;
                 audioSourceInventorySE.Play();
 
-                //スタミナ効果が適用中の場合
-                if (isUseStaminaItem)
-                {
-                    //アイテムカウントを減少
-                    --keepItemCount;
-                    useItemCountText.text = keepItemCount.ToString();
-                    sO_Item.ReduceUseItem(keepItemId, keepItemCount);
-
-                    //処理をスキップ
-                    return;
-                }
-
                 //アイテムカウントを減少
                 --keepItemCount;
                 useItemCountText.text = keepItemCount.ToString();
                 sO_Item.ReduceUseItem(keepItemId, keepItemCount);
 
                 //スタミナゲージの元の色を保存
-                Color keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
+                keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
 
                 //スタミナ消費率を12.5%に変更
                 Player.instance.SetStaminaConsumeRatio(kSpecifiedStaminaConsumeRatio);
@@ -588,20 +626,8 @@ public class Inventory : MonoBehaviour
                 //スタミナ増強剤使用フラグをtrueに設定
                 isUseStaminaItem = true;
 
-                //効果時間待機
-                await UniTask.Delay(TimeSpan.FromSeconds(keepItemEffectValue));
-
-                //スタミナ消費率を元に戻す
-                Player.instance.SetStaminaConsumeRatio(Player.instance.GetDefaultStaminaConsumeRatio());
-
-                //スタミナ回復値を元に戻す
-                Player.instance.SetStaminaRecoveryRatio(Player.instance.GetStaminaRecoveryRatio());
-
-                //スタミナゲージの色を元に戻す
-                Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = keepStaminaColor;
-
-                //スタミナ増強剤使用フラグをfalseに設定
-                isUseStaminaItem = false;
+                //スタミナ増強剤使用時間を加算
+                staminaUseTime += keepItemEffectValue;                
                 break;
 
             //クラッカー
@@ -639,6 +665,29 @@ public class Inventory : MonoBehaviour
                 await Addressables.InstantiateAsync(keepItemPrefabPath, worldPosition, worldRotation);
                 break;
         }
+    }
+
+    /// <summary>
+    /// スタミナ増強剤の効果を終了する処理
+    /// </summary>
+    private void EndStaminaEffect() 
+    {
+        //スタミナ消費率を元に戻す
+        Player.instance.SetStaminaConsumeRatio(Player.instance.GetDefaultStaminaConsumeRatio());
+
+        //スタミナ回復値を元に戻す
+        Player.instance.SetStaminaRecoveryRatio(Player.instance.GetStaminaRecoveryRatio());
+
+        //スタミナゲージの色を元に戻す
+        Player.instance.staminaSlider.fillRect.GetComponent<Image>().color = keepStaminaColor;
+
+        //スタミナ増強剤使用時間を0に設定
+        staminaUseTime = 0.0f; 
+
+        //スタミナ増強剤使用フラグをfalseに設定
+        isUseStaminaItem = false;
+
+        Debug.Log("スタミナ増強剤の効果が終了しました");
     }
 
     /// <summary>
@@ -767,7 +816,6 @@ public class Inventory : MonoBehaviour
         keepItemSpawnRotation = defaultItemSpawnRotation;
         useItemImage.sprite = null;
         useItemImage.color = defaultUseItemImageColor;
-        isUseStaminaItem = false;
         isUseCrackerItem = false;
     }
     
