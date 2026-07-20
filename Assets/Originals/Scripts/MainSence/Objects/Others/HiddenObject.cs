@@ -1,11 +1,34 @@
-using UnityEngine;
-using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using static Player;
 
 public class HiddenObject : MonoBehaviour
 {
+    /*---------------------------------------------
+     * 隠れる状態モード関連
+     --------------------------------------------*/
+
+    /// <summary>
+    /// 隠れる状態モード
+    /// </summary>
+    private HideMode hideMode;
+
+    enum HideMode
+    {
+        /// <summary>
+        /// 何もない
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// 隠れるモードを開始
+        /// </summary>
+        StartHide,       
+    }
+
     /*---------------------------------------------
      * プレイヤー関連
      --------------------------------------------*/
@@ -145,21 +168,21 @@ public class HiddenObject : MonoBehaviour
     [SerializeField] private GameObject doorObject;
 
     [Header("ドアを開ける角度(ヒエラルキー上で設定すること)")]
-    [SerializeField] private float openDirenctionValue = 90.0f;
+    [SerializeField] private float openDirenctionValue;
 
     [Header("ドアを閉じる角度(ヒエラルキー上で設定すること)")]
-    [SerializeField] private float closeDirenctionValue = 0.0f;
+    [SerializeField] private float closeDirenctionValue;
 
     [Header("扉が完全に開くまでの待機時間（秒）(ヒエラルキー上で設定すること)")]
-    [SerializeField] private float doorOpenWaitTime = 0.5f;
+    [SerializeField] private float doorOpenWaitTime;
 
     [Header("扉が完全に閉まるまでの待機時間（秒）(ヒエラルキー上で設定すること)")]
-    [SerializeField] private float doorCloseWaitTime = 0.5f;
+    [SerializeField] private float doorCloseWaitTime;
 
     /// <summary>
-    /// 隠れた後のクールタイム（秒）
+    /// ドア開閉時間
     /// </summary>
-    private const float hideWaitTime = 1.0f;
+    private float doorMoveTime;
 
     /// <summary>
     /// 扉の開閉シーケンス実行中フラグ
@@ -275,6 +298,12 @@ public class HiddenObject : MonoBehaviour
         //AudioSourceの初期化
         InitializeAudioSource();
 
+        //隠れる状態モードを初期化
+        hideMode = HideMode.None;
+
+        //ドア開閉時間を初期化
+        doorMoveTime = 0.0f;
+
         //時間カウントスタートフラグをオフにする
         isStartCountTime = false;
 
@@ -297,6 +326,20 @@ public class HiddenObject : MonoBehaviour
 
         //プレイヤーとの距離を計算
         distanceToPlayer = Vector3.Distance(transform.position, Player.instance.transform.position);
+
+        //隠れるモード開始する場合
+        if (hideMode == HideMode.StartHide) 
+        {
+            //ドア開閉時間をカウント
+            doorMoveTime += Time.deltaTime;
+
+            //ドアが完全に開いた場合
+            if (doorMoveTime >= doorOpenWaitTime && Player.instance.GetDieMode() != DieMode.Die) 
+            {
+                //ドアが付属している場合のプレイヤーが隠れる処理を実行
+                HiddenPlayerImmediate();
+            }
+        }
 
         //カウントスタートフラグがオフの場合
         if (!isStartCountTime) 
@@ -335,15 +378,14 @@ public class HiddenObject : MonoBehaviour
         //ドアが付属している場合
         if (hasDoor)
         {
-            //扉の開閉シーケンスフラグがオンの場合
-            if (isDoorSequenceRunning) 
+            if (hideMode == HideMode.None && Player.instance.GetDieMode() != DieMode.Die) 
             {
-                //処理をスキップ
-                return; 
-            }
+                //隠れる状態モードを隠れるモード開始に設定
+                hideMode = HideMode.StartHide;
 
-            //扉の開閉シーケンスを開始するフラグをオンにする
-            HiddenPlayerWithDoorAsync().Forget();
+                //扉を開ける
+                SetDoorOpen(true, openDirenctionValue);
+            }
         }
         else
         {
@@ -412,7 +454,7 @@ public class HiddenObject : MonoBehaviour
         player.localRotation = Quaternion.identity;
 
         //ドアが付属していない場合
-        if (!hasDoor) 
+        if (!hasDoor)
         {
             //プレイヤーが隠れるアニメーションを再生
             Player.instance.PlayOrStopKneelingAnimation();
@@ -421,50 +463,17 @@ public class HiddenObject : MonoBehaviour
             audioSourceSE.clip = sO_SE.GetSEClip(currentHiddenPlayerSEid);
             audioSourceSE.PlayOneShot(audioSourceSE.clip);
         }
-    }
-
-    /// <summary>
-    /// プレイヤーが隠れる処理（扉あり）
-    /// 扉を開ける → プレイヤーを隠す → 扉を閉める、の順でシーケンス実行する
-    /// </summary>
-    private async UniTaskVoid HiddenPlayerWithDoorAsync()
-    {
-        //扉の開閉シーケンス実行中フラグをオンにする
-        isDoorSequenceRunning = true;
-
-        //前回のトークンを破棄し新しいトークンを発行する
-        doorCts?.Cancel();
-        doorCts?.Dispose();
-        doorCts = new CancellationTokenSource();
-        CancellationToken token = doorCts.Token;
-
-        try
+        else 
         {
-            //扉を開ける
-            SetDoorOpen(true, openDirenctionValue);
-
-            await UniTask.Delay(
-                System.TimeSpan.FromSeconds(doorOpenWaitTime),
-                cancellationToken: token);
-
-            //プレイヤーを隠す
-            HiddenPlayerImmediate();
-
             //扉を閉める
             SetDoorOpen(false, closeDirenctionValue);
+        }
 
-            await UniTask.Delay(
-                System.TimeSpan.FromSeconds(doorCloseWaitTime),
-                cancellationToken: token);
-        }
-        catch (System.OperationCanceledException)
-        {
-            //オブジェクト破棄やシーン遷移によるキャンセルは正常系のため何もしない
-        }
-        finally
-        {
-            isDoorSequenceRunning = false;
-        }
+        //ドア開閉時間を初期化
+        doorMoveTime = 0.0f;
+
+        //隠れる状態モードを初期化
+        hideMode = HideMode.None;
     }
 
 

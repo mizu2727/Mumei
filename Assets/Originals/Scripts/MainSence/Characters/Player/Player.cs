@@ -262,6 +262,43 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     private bool isNearHidePoint = false;
 
+
+    /// <summary>
+    /// 死亡状態モード
+    /// </summary>
+    private DieMode dieMode;
+
+    public enum DieMode
+    {
+        /// <summary>
+        /// 何もない
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// 死亡モード
+        /// </summary>
+        Die,
+    }
+
+    /// <summary>
+    /// 死亡状態モードを取得
+    /// </summary>
+    /// <returns>死亡状態モード</returns>
+    public DieMode GetDieMode()
+    {
+        return dieMode;
+    }
+
+    /// <summary>
+    /// 死亡状態モードを設定
+    /// </summary>
+    /// <param name="mode">死亡状態モード</param>
+    public void SetDieMode(DieMode mode)
+    {
+        dieMode = mode;
+    }
+
     /// <summary>
     /// 死亡
     /// </summary>

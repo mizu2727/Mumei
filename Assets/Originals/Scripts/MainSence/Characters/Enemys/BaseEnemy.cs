@@ -8,6 +8,7 @@ using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
+using static Player;
 using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 
@@ -245,6 +246,26 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     protected Rigidbody rigidBody;
 
+
+    /// <summary>
+    /// 攻撃状態モード
+    /// </summary>
+    private AttackMode attackMode;
+
+    enum AttackMode
+    {
+        /// <summary>
+        /// 何もない
+        /// </summary>
+        None,
+
+        /// <summary>
+        /// 攻撃モード開始
+        /// </summary>
+        StartAttack,
+    }
+
+
     /// <summary>
     /// プレイヤーを攻撃するメソッド
     /// </summary>
@@ -268,10 +289,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// プレイヤーを攻撃するメソッド
     /// </summary>
-    private async UniTask AttackPlayer()
+    private async void AttackPlayer()
     {
-        //プレイヤーが既に死亡している場合||既に攻撃している場合は何もしない
-        if (Player.instance.IsDead || isAttack || Player.instance == null || PlayerCamera.instance == null) return;
+        //プレイヤーが既に死亡している場合||既に攻撃している場合
+        if (Player.instance.IsDead || isAttack || Player.instance == null || PlayerCamera.instance == null) 
+        {
+            //処理をスキップ
+            return; 
+        }
 
         //攻撃フラグをtrueに設定
         isAttack = true;
@@ -911,6 +936,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //攻撃フラグの初期化
         isAttack = false;
 
+        //攻撃状態モードを初期化
+        attackMode = AttackMode.None;
+
         //rigidbodyを取得
         rigidBody = GetComponent<Rigidbody>();
 
@@ -1183,7 +1211,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// オブジェクトのコリジョンと衝突した場合の処理
     /// </summary>
     /// <param name="collision">衝突したオブジェクトのコリジョン</param>
-    private async void OnCollisionEnter(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
 
         //壁に触れた場合
@@ -1213,13 +1241,16 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             Invoke("ChangeDirection", 0.5f); 
         }
 
-        //プレイヤーに触れた場合&&ダメージを受けていない場合
-        if (collision.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage)
+        //プレイヤーに触れた場合&&ダメージを受けていない場合&&プレイヤーが隠れていない場合
+        if (collision.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage && !Player.instance.GetIsPlayerHidden())
         {
             if (Player.instance != null && !Player.instance.IsDead)
             {
-                //プレイヤーを攻撃
-                await AttackPlayer();
+                //攻撃モードを開始する
+                attackMode = AttackMode.StartAttack;
+
+                //プレイヤーの死亡状態モードを死亡へ設定
+                Player.instance.SetDieMode(DieMode.Die);
             }
         }
 
@@ -1241,16 +1272,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// オブジェクトのコライダーを貫通した場合の処理
     /// </summary>
     /// <param name="collider">貫通したオブジェクトのコライダー</param>
-    private async void OnTriggerEnter(Collider collider)
+    private void OnTriggerEnter(Collider collider)
     {
 
-        //プレイヤーに触れた場合&&ダメージを受けていない場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage)
+        //プレイヤーに触れた場合&&ダメージを受けていない場合&&プレイヤーが隠れていない場合
+        if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage && !Player.instance.GetIsPlayerHidden())
         {
             if (Player.instance != null && !Player.instance.IsDead)
             {
-                //プレイヤーを攻撃
-                await AttackPlayer();
+                //攻撃モードを開始する
+                attackMode = AttackMode.StartAttack;
+
+                //プレイヤーの死亡状態モードを死亡へ設定
+                Player.instance.SetDieMode(DieMode.Die);
             }
         }
 
@@ -1337,6 +1371,15 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         {
             //ダメージ関連処理開始
             DamageRelatedProcessing();
+
+            return;
+        }
+
+        //攻撃モードが開始された場合
+        if (attackMode == AttackMode.StartAttack) 
+        {
+            //プレイヤーを攻撃
+            AttackPlayer();
 
             return;
         }

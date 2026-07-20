@@ -83,7 +83,7 @@ public class HearingEnemy : BaseEnemy
      * Start()を作成してしまうとエラーが発生するため、ここには使用しないこと。
      */
 
-    protected override async void Update()
+    protected override  void Update()
     {
         //ゲームがプレイ中でない、またはプレイヤーが死亡している場合
         if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame || Player.instance == null 

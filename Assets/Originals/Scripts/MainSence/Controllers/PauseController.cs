@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
+using static Player;
 
 /// <summary>
 /// ポーズ画面管理クラス
@@ -592,7 +593,7 @@ public class PauseController : MonoBehaviour
     {
         //PキーorZキーorEscapeキーでポーズ/ポーズ解除
         if ((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Escape)) 
-            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) TogglePause();
+            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.GetDieMode() != DieMode.Die) TogglePause();
     }
 
     /// <summary>
