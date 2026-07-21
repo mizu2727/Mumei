@@ -335,7 +335,7 @@ public class LanguageController : MonoBehaviour
         //言語を設定する
         SettingLanguageText();
 
-        //ボタンのホバーイベントを設定する
+        //ボタンのホバー・クリックイベントを設定する
         CommonController.instance.SetupButtonHoverEvents();
     }
 

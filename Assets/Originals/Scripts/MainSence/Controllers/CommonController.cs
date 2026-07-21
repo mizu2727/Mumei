@@ -506,7 +506,7 @@ public class CommonController : MonoBehaviour
     }
 
     /// <summary>
-    /// ボタンのホバーイベントを設定する関数
+    /// ボタンのホバー・クリックイベントを設定する関数
     /// </summary>
     public void SetupButtonHoverEvents()
     {
@@ -547,7 +547,7 @@ public class CommonController : MonoBehaviour
             //ボタン番号を取得
             int buttonNumber = numberArray[i];
 
-            // 4.PointerEnter（マウスホバー時）のイベント作成と登録
+            //4.PointerEnter（マウスホバー時）のイベント作成と登録
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
             entryEnter.callback.AddListener((data) => {
@@ -555,13 +555,21 @@ public class CommonController : MonoBehaviour
             });
             trigger.triggers.Add(entryEnter);
 
-            // 5.PointerExit（マウス外れた時）のイベント作成と登録
+            //5.PointerExit（マウス外れた時）のイベント作成と登録
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((data) => {
                 ReturnButtonTextColor(buttonNumber);
             });
             trigger.triggers.Add(entryExit);
+
+            //6.PointerClick（ボタン押下時）のイベント作成と登録
+            EventTrigger.Entry entryClick = new EventTrigger.Entry();
+            entryClick.eventID = EventTriggerType.PointerClick;
+            entryClick.callback.AddListener((data) => {
+                ReturnButtonTextColor(buttonNumber);
+            });
+            trigger.triggers.Add(entryClick);
         }
     }
 }
