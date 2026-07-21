@@ -1,5 +1,8 @@
+using System.Xml;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// 共通の変数や関数を管理するクラス
@@ -449,12 +452,13 @@ public class CommonController : MonoBehaviour
     /// <summary>
     /// ボタンの文字の色
     /// </summary>
-    private Color kButtonTextColor = new Color (200, 200, 200, 255);
+    private Color kButtonTextColor = new Color(200f / 255f, 200f / 255f, 200f / 255f, 1f);
 
     /// <summary>
     /// マウスカーソルにボタンが重なった時のボタンの文字の色
     /// </summary>
-    private Color kButtonTextColorMouseOver = Color.yellow;
+    //private Color kButtonTextColorMouseOver = Color.yellow;
+    private Color kButtonTextColorMouseOver = new Color(239f / 255f, 227f / 255f, 26f / 255f, 1f);
 
     private void Awake()
     {
@@ -480,7 +484,6 @@ public class CommonController : MonoBehaviour
             {
                 //その番号と一致するボタンの文字の色を変更
                 LanguageController.instance.GetButtonTMPTextArray()[i].color = kButtonTextColorMouseOver;
-                Debug.Log("ボタンの文字の色を変更しました。対象のボタン番号：" + targetButtonTextNumber);
             }
         }
     }
@@ -502,4 +505,63 @@ public class CommonController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// ボタンのホバーイベントを設定する関数
+    /// </summary>
+    public void SetupButtonHoverEvents()
+    {
+        //ボタンの TextMeshProUGUI 配列と番号配列を取得
+        var textArray = LanguageController.instance.GetButtonTMPTextArray();
+        var numberArray = LanguageController.instance.GetButtonTextNumberArray();
+
+        for (int i = 0; i < textArray.Length; i++)
+        {
+            //TextMeshProUGUIがnullの場合
+            if (textArray[i] == null) 
+            {
+                //処理をスキップして次のループへ
+                continue; 
+            }
+
+            //1. TextMeshProUGUIのRaycast Targetは常にオフにしておく（ボタンのクリック判定の邪魔にならないようにしたいため）
+            textArray[i].raycastTarget = false;
+
+            //2. 親オブジェクトからButtonコンポーネントを取得。()内にtrueを指定することで、非アクティブな親オブジェクトも検索対象に含める
+            Button parentButton = textArray[i].GetComponentInParent<Button>(true);
+            //親オブジェクトが存在しない場合
+            if (parentButton == null) 
+            {
+                //処理をスキップして次のループへ
+                continue;
+            }
+
+            // 3.親オブジェクトにEventTriggerが無ければ追加
+            EventTrigger trigger = parentButton.gameObject.GetComponent<EventTrigger>();
+            //EventTriggerが存在しない場合
+            if (trigger == null)
+            {
+                //EventTriggerを追加
+                trigger = parentButton.gameObject.AddComponent<EventTrigger>();
+            }
+
+            //ボタン番号を取得
+            int buttonNumber = numberArray[i];
+
+            // 4.PointerEnter（マウスホバー時）のイベント作成と登録
+            EventTrigger.Entry entryEnter = new EventTrigger.Entry();
+            entryEnter.eventID = EventTriggerType.PointerEnter;
+            entryEnter.callback.AddListener((data) => {
+                ChangeButtonTextColor(buttonNumber);
+            });
+            trigger.triggers.Add(entryEnter);
+
+            // 5.PointerExit（マウス外れた時）のイベント作成と登録
+            EventTrigger.Entry entryExit = new EventTrigger.Entry();
+            entryExit.eventID = EventTriggerType.PointerExit;
+            entryExit.callback.AddListener((data) => {
+                ReturnButtonTextColor(buttonNumber);
+            });
+            trigger.triggers.Add(entryExit);
+        }
+    }
 }
