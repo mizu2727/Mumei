@@ -318,7 +318,7 @@ public class HiddenObject : MonoBehaviour
     private void Update()
     {
         //GameClearSceneの場合
-        if (SceneManager.GetActiveScene().name == CommonController.instance.GetGameClearSceneName() && Player.instance != null) 
+        if (SceneManager.GetActiveScene().name == CommonController.instance.GetGameClearSceneName() && Player.instance == null) 
         {
             //処理をスキップ
             return;

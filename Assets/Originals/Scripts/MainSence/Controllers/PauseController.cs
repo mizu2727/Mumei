@@ -349,45 +349,59 @@ public class PauseController : MonoBehaviour
             documentInventoryPanel = null;
         }
 
-        for (int i = 0; i < mysteryItemExplanationTextRubyComponent.Length; i++)
+        if (mysteryItemExplanationTextRubyComponent != null) 
         {
-            //mysteryItemExplanationTextRubyComponentが存在する場合
-            if (mysteryItemExplanationTextRubyComponent[i] != null)
+            for (int i = 0; i < mysteryItemExplanationTextRubyComponent.Length; i++)
             {
-                //mysteryItemExplanationTextRubyComponentをnullにする
-                mysteryItemExplanationTextRubyComponent[i] = null;
+                //mysteryItemExplanationTextRubyComponentが存在する場合
+                if (mysteryItemExplanationTextRubyComponent[i] != null)
+                {
+                    //mysteryItemExplanationTextRubyComponentをnullにする
+                    mysteryItemExplanationTextRubyComponent[i] = null;
+                }
             }
         }
 
-        for (int i = 0; i < mysteryItemExplanationText.Length; i++)
+        if (mysteryItemExplanationText != null) 
         {
-            //mysteryItemExplanationTextが存在する場合
-            if (mysteryItemExplanationText[i] != null)
+            for (int i = 0; i < mysteryItemExplanationText.Length; i++)
             {
-                //mysteryItemExplanationTextをnullにする
-                mysteryItemExplanationText[i] = null;
+                //mysteryItemExplanationTextが存在する場合
+                if (mysteryItemExplanationText[i] != null)
+                {
+                    //mysteryItemExplanationTextをnullにする
+                    mysteryItemExplanationText[i] = null;
+                }
             }
         }
 
-        for (int i = 0; i < mysteryItemNameTextRubyComponent.Length; i++)
+        if (mysteryItemNameTextRubyComponent != null)
         {
-            //mysteryItemNameTextRubyComponentが存在する場合
-            if (mysteryItemNameTextRubyComponent[i] != null)
+            for (int i = 0; i < mysteryItemNameTextRubyComponent.Length; i++)
             {
-                //mysteryItemNameTextRubyComponentをnullにする
-                mysteryItemNameTextRubyComponent[i] = null;
+                //mysteryItemNameTextRubyComponentが存在する場合
+                if (mysteryItemNameTextRubyComponent[i] != null)
+                {
+                    //mysteryItemNameTextRubyComponentをnullにする
+                    mysteryItemNameTextRubyComponent[i] = null;
+                }
             }
         }
 
-        for (int i = 0; i < mysteryItemNameText.Length; i++) 
+
+        if (mysteryItemNameText != null) 
         {
-            //mysteryItemNameTextが存在する場合
-            if (mysteryItemNameText[i] != null)
+            for (int i = 0; i < mysteryItemNameText.Length; i++)
             {
-                //mysteryItemNameTextをnullにする
-                mysteryItemNameText[i] = null;
+                //mysteryItemNameTextが存在する場合
+                if (mysteryItemNameText[i] != null)
+                {
+                    //mysteryItemNameTextをnullにする
+                    mysteryItemNameText[i] = null;
+                }
             }
         }
+
 
         for (int i = 0; i < mysteryItemImage.Length; i++)
         {
@@ -548,17 +562,20 @@ public class PauseController : MonoBehaviour
         //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
         audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
 
+        if (documentNameText != null) 
+        {
+            //ドキュメントオブジェクトのTextMeshProRubyコンポーネントを取得する
+            documentNameTextRubyComponent = documentNameText.GetComponent<TMP_Ruby.TextMeshProRuby>();
 
-        //ドキュメントオブジェクトのTextMeshProRubyコンポーネントを取得する
-        documentNameTextRubyComponent = documentNameText.GetComponent<TMP_Ruby.TextMeshProRuby>();
+            //ドキュメント名称サイズを初期化する
+            documentNameText.fontSize = kDefultDocumentNameTextSize;
 
-        //ドキュメント名称サイズを初期化する
-        documentNameText.fontSize = kDefultDocumentNameTextSize;
+            //ドキュメント名称を初期化
+            documentNameText.text = defaultItemName;
+            documentNameTextRubyComponent.Text = documentNameText.text;
+        }
 
-        //ドキュメント名称を初期化
-        documentNameText.text = defaultItemName;
-        documentNameTextRubyComponent.Text = documentNameText.text;
-
+        
         //パネルを初期状態で非表示にする
         //フラグ値を初期化
         isPause = false;
