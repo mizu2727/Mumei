@@ -312,20 +312,26 @@ public class HiddenObject : MonoBehaviour
 
         //扉の開閉シーケンス実行中フラグをオフにする
         isDoorSequenceRunning = false;
+
+        if (Player.instance.transform != null) 
+        {
+            //プレイヤーのTransformを取得
+            player = Player.instance.transform;
+        }
     }
 
 
     private void Update()
     {
         //GameClearSceneの場合
-        if (SceneManager.GetActiveScene().name == CommonController.instance.GetGameClearSceneName() && Player.instance == null) 
+        if (SceneManager.GetActiveScene().name == CommonController.instance.GetGameClearSceneName() || player == null || Player.instance.transform == null) 
         {
             //処理をスキップ
             return;
         }
 
         //プレイヤーとの距離を計算
-        distanceToPlayer = Vector3.Distance(transform.position, Player.instance.transform.position);
+        distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
 
         //隠れるモード開始する場合
         if (hideMode == HideMode.StartHide) 

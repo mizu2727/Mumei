@@ -487,8 +487,6 @@ public class Inventory : MonoBehaviour
             {
                 //スタミナ増強剤使用時間を減少させる
                 staminaUseTime -= Time.deltaTime;
-
-                Debug.Log($"スタミナ増強剤使用時間: {staminaUseTime:F2}秒");
             }
             //スタミナ増強剤使用時間が0以下になった場合
             else
