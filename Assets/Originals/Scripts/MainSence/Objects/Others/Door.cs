@@ -42,12 +42,37 @@ public class Door : MonoBehaviour
     [SerializeField] float closeDirenctionValue = 0.0f;
 
 
+    [Header("ドアの回転軸タイプ(ヒエラルキー上から直接編集すること)")]
+    public DoorRotateType doorRotateType;
+
+    /// <summary>
+    /// ドアの回転軸タイプの列挙型
+    /// </summary>
+    public enum DoorRotateType
+    {
+        /// <summary>
+        /// X軸回転
+        /// </summary>
+        DoorRotateX,
+
+        /// <summary>
+        /// Y軸回転
+        /// </summary>
+        DoorRotateY,
+
+        /// <summary>
+        /// Z軸回転
+        /// </summary>
+        DoorRotateZ,
+    }
+
+
     /* -------------------------
     * スライド式ドア関連
     * -------------------------*/
 
-    [Header("ドアのスライドタイプ(ヒエラルキー上から直接編集すること)")]
-    public SlideType slideType;
+    [Header("スライドドアのタイプ(ヒエラルキー上から直接編集すること)")]
+    public SlideType slideDoorType;
 
     /// <summary>
     /// スライドタイプの列挙型
@@ -57,12 +82,12 @@ public class Door : MonoBehaviour
         /// <summary>
         /// 縦
         /// </summary>
-        Vertical,
+        VerticalSlideDoor,
 
         /// <summary>
         /// 横
         /// </summary>
-        Beside,
+        BesideSlideDoor,
     }
 
     [Header("スライド式ドアフラグ(ONにすると横スライド開閉になる)")]
@@ -240,13 +265,13 @@ public class Door : MonoBehaviour
             slideClosedPosition = transform.position;
 
             //スライドが縦方向の場合
-            if (slideType == SlideType.Vertical) 
+            if (slideDoorType == SlideType.VerticalSlideDoor) 
             {
                 //スライドドアの素材の元々の向きが正常でないため、transform.upを使用してスライド方向を計算
                 slideOpenPosition = transform.position + transform.up * slideDistance;
             }
             //スライドが横方向の場合
-            else if (slideType == SlideType.Beside) 
+            else if (slideDoorType == SlideType.BesideSlideDoor) 
             {
                 //transform.rightを使用してスライド方向を計算
                 slideOpenPosition = transform.position + transform.right * slideDistance;
@@ -321,7 +346,23 @@ public class Door : MonoBehaviour
         else
         {
             //回転ドア：従来の回転処理
-            transform.Rotate(0, openDirenctionValue, 0);
+            switch (doorRotateType)
+            {
+                case DoorRotateType.DoorRotateX:
+                    //X軸回転
+                    transform.Rotate(openDirenctionValue, 0, 0);
+                    break;
+
+                case DoorRotateType.DoorRotateY:
+                    //Y軸回転(デフォルト)
+                    transform.Rotate(0, openDirenctionValue, 0);
+                    break;
+
+                case DoorRotateType.DoorRotateZ:
+                    //Z軸回転
+                    transform.Rotate(0, 0, openDirenctionValue);
+                    break;
+            }
         }
 
         DoorSE();
@@ -343,7 +384,23 @@ public class Door : MonoBehaviour
         else
         {
             //回転ドア：従来の回転処理
-            transform.Rotate(0, closeDirenctionValue, 0);
+            switch (doorRotateType)
+            {
+                case DoorRotateType.DoorRotateX:
+                    //X軸回転
+                    transform.Rotate(closeDirenctionValue, 0, 0);
+                    break;
+
+                case DoorRotateType.DoorRotateY:
+                    //Y軸回転(デフォルト)
+                    transform.Rotate(0, closeDirenctionValue, 0);
+                    break;
+
+                case DoorRotateType.DoorRotateZ:
+                    //Z軸回転
+                    transform.Rotate(0, 0, closeDirenctionValue);
+                    break;
+            }
         }
 
         DoorSE();
