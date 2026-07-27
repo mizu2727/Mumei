@@ -42,6 +42,31 @@ public class StageLight : MonoBehaviour
     /// </summary>
     private float blinkTimer = 0f;
 
+
+    private void OnDestroy()
+    {
+        //ライトプレハブが存在する場合
+        if (lightPrefab != null) 
+        {
+            //ライトプレハブを破棄する
+            lightPrefab = null;
+        }
+
+        //パーティクルシステムプレハブが存在する場合
+        if (particleSystemPrefab != null) 
+        {
+            //パーティクルシステムプレハブを破棄する
+            particleSystemPrefab = null;
+        }
+
+        //電球本体オブジェクトプレハブが存在する場合
+        if (lightBulbPrefab != null) 
+        {
+            //電球本体オブジェクトプレハブを破棄する
+            lightBulbPrefab = null;
+        }
+    }
+
     void Start()
     {
         //ステージライトフラグがオフの場合
