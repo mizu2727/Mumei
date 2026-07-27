@@ -927,9 +927,13 @@ public class PauseController : MonoBehaviour
         //テキスト内容を変更する
         SettingLanguageText();
 
-        //ドキュメントの説明を表示
-        isDocumentExplanationPanel = true;
-        ChangeViewDocumentExplanationPanel();
+        //ドキュメントを入手している場合
+        if (keepDocumentBookID != defaultDocumentBookID) 
+        {
+            //ドキュメントの説明を表示
+            isDocumentExplanationPanel = true;
+            ChangeViewDocumentExplanationPanel();
+        }
 
         //入手したドキュメントがチュートリアル用の場合
         if (keepDocumentBookID == documentBook_TutorialID) 
