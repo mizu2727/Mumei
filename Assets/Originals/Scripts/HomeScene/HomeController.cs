@@ -119,6 +119,37 @@ public class HomeController : MonoBehaviour
         InitializeAudioSource();
     }
 
+    private void OnDestroy() 
+    {
+        //BGM音量変更時のイベント登録解除
+        MusicController.OnBGMVolumeChangedEvent -= UpdateBGMVolume;
+
+
+        //wall_Tutorialが存在する場合
+        if (wall_Tutorial != null) 
+        {
+            //wall_Tutorialをnullに設定
+            wall_Tutorial = null;
+        }
+
+        //wall_EndTutorialが存在する場合
+        if (wall_EndTutorial != null) 
+        {
+            //wall_EndTutorialをnullに設定
+            wall_EndTutorial = null;
+        }
+
+        //returnToTitlePanelが存在する場合
+        if (returnToTitlePanel != null) 
+        {
+            //returnToTitlePanelをnullに設定
+            returnToTitlePanel = null;
+        }
+
+
+
+    }
+
     /// <summary>
     /// AudioSourceの初期化
     /// </summary>
