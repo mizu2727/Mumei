@@ -1,6 +1,8 @@
+using GLTFast.Schema;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using static GameController;
 
 /// <summary>
@@ -113,7 +115,7 @@ public class HomeController : MonoBehaviour
     /// </summary>
     /// <param name="scene"></param>
     /// <param name="mode"></param>
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode)
     {
         //AudioSourceの初期化
         InitializeAudioSource();
@@ -124,30 +126,75 @@ public class HomeController : MonoBehaviour
         //BGM音量変更時のイベント登録解除
         MusicController.OnBGMVolumeChangedEvent -= UpdateBGMVolume;
 
+        //wall_Tutorialを安全に削除
+        DestroySafe(ref wall_Tutorial);
 
-        //wall_Tutorialが存在する場合
-        if (wall_Tutorial != null) 
+        //wall_EndTutorialを安全に削除
+        DestroySafe(ref wall_EndTutorial);
+
+        //returnToTitlePanelを安全に削除
+        DestroySafe(ref returnToTitlePanel);
+
+        //itemPrefabListが存在する場合
+        if (itemPrefabList != null)
         {
-            //wall_Tutorialをnullに設定
-            wall_Tutorial = null;
+            //itemPrefabListの要素を削除
+            for (int i = 0; i < itemPrefabList.Count; i++)
+            {
+                if (itemPrefabList[i] != null)
+                {
+                    itemPrefabList[i] = null;
+                }
+            }
+            itemPrefabList.Clear();
         }
 
-        //wall_EndTutorialが存在する場合
-        if (wall_EndTutorial != null) 
+        //itemPointが存在する場合
+        if (itemPoint != null)
         {
-            //wall_EndTutorialをnullに設定
-            wall_EndTutorial = null;
+            //itemPointの要素を削除
+            for (int i = 0; i < itemPoint.Length; i++)
+            {
+                if (itemPoint[i] != null)
+                {
+                    itemPoint[i] = null;
+                }
+            }
+            itemPoint = null;
         }
 
-        //returnToTitlePanelが存在する場合
-        if (returnToTitlePanel != null) 
+        //インスタンスが存在する場合
+        if (instance != null)
         {
-            //returnToTitlePanelをnullに設定
-            returnToTitlePanel = null;
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
         }
+    }
 
-
-
+    /// <summary>
+    /// オブジェクト等を安全に破棄する関数
+    /// </summary>
+    /// <typeparam name="T">型のテンプレート</typeparam>
+    /// <param name="obj">オブジェクト</param>
+    /// <param name="t">リセット数値</param>
+    private void DestroySafe<T>(ref T obj, float t = 0) where T : Object
+    {
+        if (obj != null)
+        {
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+            {
+                Object.Destroy(obj, t);
+            }
+            else
+            {
+                Object.DestroyImmediate(obj);
+            }
+#else
+            Object.Destroy(obj, t);
+#endif
+            obj = null;
+        }
     }
 
     /// <summary>

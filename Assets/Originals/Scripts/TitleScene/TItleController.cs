@@ -8,6 +8,9 @@ using static GameController;
 using UnityEditor;
 #endif
 
+/// <summary>
+/// タイトル画面を管理するクラス
+/// </summary>
 public class TitleController : MonoBehaviour
 {
     /// <summary>
@@ -73,6 +76,55 @@ public class TitleController : MonoBehaviour
     {
         //AudioSourceの初期化
         InitializeAudioSource();
+    }
+
+    /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy()
+    {
+        //BGM音量変更時のイベント登録解除
+        MusicController.OnBGMVolumeChangedEvent -= UpdateBGMVolume;
+
+        //titlesCanvasを安全に削除
+        DestroySafe(ref titlesCanvas);
+
+        //titlePanelを安全に削除
+        DestroySafe(ref titlePanel);
+
+        //インスタンスが存在する場合
+        if (instance != null)
+        {
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
+        }
+    }
+
+
+    /// <summary>
+    /// オブジェクト等を安全に破棄する関数
+    /// </summary>
+    /// <typeparam name="T">型のテンプレート</typeparam>
+    /// <param name="obj">オブジェクト</param>
+    /// <param name="t">リセット数値</param>
+    private void DestroySafe<T>(ref T obj, float t = 0) where T : Object
+    {
+        if (obj != null)
+        {
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+            {
+                Object.Destroy(obj, t);
+            }
+            else
+            {
+                Object.DestroyImmediate(obj);
+            }
+#else
+            Object.Destroy(obj, t);
+#endif
+            obj = null;
+        }
     }
 
     /// <summary>
@@ -157,32 +209,5 @@ public class TitleController : MonoBehaviour
 #else
         Application.Quit();
 #endif
-    }
-
-    /// <summary>
-    /// オブジェクト破棄時の処理
-    /// </summary>
-    private void OnDestroy()
-    {
-        //titlesCanvasが存在する場合
-        if (titlesCanvas != null) 
-        {
-            //titlesCanvasをnullにする
-            titlesCanvas = null;
-        }
-
-        //titlePanelが存在する場合
-        if (titlePanel != null) 
-        {
-            //titlePanelをnullにする
-            titlePanel = null;
-        }
-
-        //インスタンスが存在する場合
-        if (instance == this)
-        {
-            //インスタンスをnullにする(メモリリークを防ぐため)
-            instance = null;
-        }
     }
 }

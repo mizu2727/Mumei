@@ -551,6 +551,110 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
+    /// オブジェクト破棄時の処理
+    /// </summary>
+    private void OnDestroy()
+    {
+        //チュートリアル用ドキュメント引き出しが存在する場合
+        if (tutorialDocumentDrawer != null)
+        {
+            //チュートリアル用ドキュメント引き出しをnullに設定
+            tutorialDocumentDrawer = null;
+        }
+
+        //チュートリアル用ミステリーアイテム引き出し01が存在する場合
+        if (tutorialMysteryItemDrawer01 != null)
+        {
+            //チュートリアル用ミステリーアイテム引き出し01をnullに設定
+            tutorialMysteryItemDrawer01 = null;
+        }
+
+        //チュートリアル用ミステリーアイテム引き出し02が存在する場合
+        if (tutorialMysteryItemDrawer02 != null)
+        {
+            //チュートリアル用ミステリーアイテム引き出し02をnullに設定
+            tutorialMysteryItemDrawer02 = null;
+        }
+
+        //チュートリアル用引き出しオブジェクトが存在する場合
+        if (tutorialDrawer != null)
+        {
+            //チュートリアル用引き出しオブジェクトをnullに設定
+            tutorialDrawer = null;
+        }
+
+        //スタミナSliderが存在する場合
+        if (staminaSlider != null)
+        {
+            //スタミナSliderをnullに設定
+            staminaSlider = null;
+        }
+
+        //マウス感度Sliderが存在する場合
+        if (mouseSensitivitySlider != null)
+        {
+            //マウス感度Sliderをnullに設定
+            mouseSensitivitySlider = null;
+        }
+
+        //使用アイテムパネルが存在する場合
+        if (useItemPanel != null)
+        {
+            //使用アイテムパネルをnullに設定
+            useItemPanel = null;
+        }
+
+        //使用アイテム所持カウントテキストが存在する場合
+        if (useItemCountText != null)
+        {
+            //使用アイテム所持カウントテキストをnullに設定
+            useItemCountText = null;
+        }
+
+        //使用アイテム画像が存在する場合
+        if (useItemImage != null)
+        {
+            //使用アイテム画像をnullに設定
+            useItemImage = null;
+        }
+
+        //使用アイテムテキスト確認パネルが存在する場合
+        if (useItemTextPanel != null)
+        {
+            //使用アイテムテキスト確認パネルをnullに設定
+            useItemTextPanel = null;
+        }
+
+        //使用アイテム名テキストが存在する場合
+        if (useItemNameText != null)
+        {
+            //使用アイテム名テキストをnullに設定
+            useItemNameText = null;
+        }
+
+        //使用アイテム説明テキストが存在する場合
+        if (useItemExplanationText != null)
+        {
+            //使用アイテム説明テキストをnullに設定
+            useItemExplanationText = null;
+        }
+
+        //ブラックアウトパネルが存在する場合
+        if (blackOutPanel != null)
+        {
+            //ブラックアウトパネルをnullに設定
+            blackOutPanel = null;
+        }
+
+        //画面解像度テキストが存在する場合
+        if (resolutionText != null)
+        {
+            //画面解像度テキストをnullに設定
+            resolutionText = null;
+        }
+    }
+
+    /// <summary>
     /// パラメーターリセット
     /// </summary>
     public void ResetParams() 
@@ -806,110 +910,5 @@ public class GameController : MonoBehaviour
             PauseController.instance.DestroyController();
         }
 
-    }
-
-
-    /// <summary>
-    /// オブジェクト破棄時の処理
-    /// </summary>
-    private void OnDestroy() 
-    {
-        //チュートリアル用ドキュメント引き出しが存在する場合
-        if (tutorialDocumentDrawer != null)
-        {
-            //チュートリアル用ドキュメント引き出しをnullに設定
-            tutorialDocumentDrawer = null;
-        }
-
-        //チュートリアル用ミステリーアイテム引き出し01が存在する場合
-        if (tutorialMysteryItemDrawer01 != null)
-        {
-            //チュートリアル用ミステリーアイテム引き出し01をnullに設定
-            tutorialMysteryItemDrawer01 = null;
-        }
-
-        //チュートリアル用ミステリーアイテム引き出し02が存在する場合
-        if (tutorialMysteryItemDrawer02 != null)
-        {
-            //チュートリアル用ミステリーアイテム引き出し02をnullに設定
-            tutorialMysteryItemDrawer02 = null;
-        }
-
-        //チュートリアル用引き出しオブジェクトが存在する場合
-        if (tutorialDrawer != null)
-        {
-            //チュートリアル用引き出しオブジェクトをnullに設定
-            tutorialDrawer = null;
-        }
-
-        //スタミナSliderが存在する場合
-        if (staminaSlider != null)
-        {
-            //スタミナSliderをnullに設定
-            staminaSlider = null;
-        }
-
-        //マウス感度Sliderが存在する場合
-        if (mouseSensitivitySlider != null)
-        {
-            //マウス感度Sliderをnullに設定
-            mouseSensitivitySlider = null;
-        }
-
-        //使用アイテムパネルが存在する場合
-        if (useItemPanel != null)
-        {
-            //使用アイテムパネルをnullに設定
-            useItemPanel = null;
-        }
-
-        //使用アイテム所持カウントテキストが存在する場合
-        if (useItemCountText != null)
-        {
-            //使用アイテム所持カウントテキストをnullに設定
-            useItemCountText = null;
-        }
-
-        //使用アイテム画像が存在する場合
-        if (useItemImage != null)
-        {
-            //使用アイテム画像をnullに設定
-            useItemImage = null;
-        }
-
-        //使用アイテムテキスト確認パネルが存在する場合
-        if (useItemTextPanel != null)
-        {
-            //使用アイテムテキスト確認パネルをnullに設定
-            useItemTextPanel = null;
-        }
-
-        //使用アイテム名テキストが存在する場合
-        if (useItemNameText != null)
-        {
-            //使用アイテム名テキストをnullに設定
-            useItemNameText = null;
-        }
-
-        //使用アイテム説明テキストが存在する場合
-        if (useItemExplanationText != null)
-        {
-            //使用アイテム説明テキストをnullに設定
-            useItemExplanationText = null;
-        }
-
-        //ブラックアウトパネルが存在する場合
-        if (blackOutPanel != null)
-        {
-            //ブラックアウトパネルをnullに設定
-            blackOutPanel = null;
-        }
-
-        //画面解像度テキストが存在する場合
-        if (resolutionText != null)
-        {
-            //画面解像度テキストをnullに設定
-            resolutionText = null;
-        }
     }
 }
