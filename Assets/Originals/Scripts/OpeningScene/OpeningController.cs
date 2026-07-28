@@ -11,8 +11,31 @@ public class OpeningController : MonoBehaviour
     /// </summary>
     public static OpeningController instance;
 
+
+    private void OnDestroy() 
+    {
+        //インスタンスが存在する場合
+        if (instance != null)
+        {
+            //インスタンスをnullにする(メモリリークを防ぐため)
+            instance = null;
+        }
+    }
+
     void Awake()
     {
+        //インスタンスがnullの場合
+        if (instance == null)
+        {
+            //インスタンス生成
+            instance = this;
+        }
+        else
+        {
+            //ゲームオブジェクト破棄
+            Destroy(gameObject);
+        }
+
         //シーンステータスをkOpeningSceneに設定
         GameController.instance.SetViewScene(ViewScene.kOpeningScene);
 
