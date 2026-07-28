@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public class MusicController : MonoBehaviour
 {
     /// <summary>
@@ -225,6 +226,9 @@ public class MusicController : MonoBehaviour
         }
     }
 
+    /*-----------------------------------------
+     *エラー防止のため、 DestroySafe<T>は使用しない
+     -----------------------------------------*/
 
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
