@@ -143,6 +143,13 @@ public class Goal : MonoBehaviour
             //ゴールパネルをnullにする
             GoalPanel = null;
         }
+        
+        //ゴール壁が存在する場合
+        if (goalWall != null) 
+        {
+            //ゴール壁をnullにする
+            goalWall = null;
+        }
     }
 
     private void Start()

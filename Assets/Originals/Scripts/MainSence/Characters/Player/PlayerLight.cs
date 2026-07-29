@@ -56,7 +56,7 @@ public class PlayerLight : MonoBehaviour
     /// <summary>
     /// オブジェクトが破壊された際に呼ばれる関数
     /// </summary>
-    void OnDestroy() 
+    private void OnDestroy() 
     {
         //cameraTransformが存在する場合
         if (cameraTransform != null) 
