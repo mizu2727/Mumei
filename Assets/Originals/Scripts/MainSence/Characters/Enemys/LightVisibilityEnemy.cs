@@ -59,6 +59,45 @@ public class LightVisibilityEnemy : BaseEnemy
     private float lightInvestigateTimer = 0f;
 
 
+    private void OnDestroy()
+    {
+        //viewLightObjectを安全に削除
+        DestroySafe(ref viewLightObject);
+
+        //playerLightを安全に削除
+        DestroySafe(ref playerLight);
+
+        //objectLightを安全に削除
+        DestroySafe(ref objectLight);
+    }
+
+    /// <summary>
+    /// オブジェクト等を安全に破棄する関数
+    /// </summary>
+    /// <typeparam name="T">型のテンプレート</typeparam>
+    /// <param name="obj">オブジェクト</param>
+    /// <param name="t">リセット数値</param>
+    private void DestroySafe<T>(ref T obj, float t = 0) where T : Object
+    {
+        if (obj != null)
+        {
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+            {
+                Object.Destroy(obj, t);
+            }
+            else
+            {
+                Object.DestroyImmediate(obj);
+            }
+#else
+            Object.Destroy(obj, t);
+#endif
+            obj = null;
+        }
+    }
+
+
     protected override async void Update() 
     {
         //ゲームがプレイ中でない、またはプレイヤーが死亡している場合

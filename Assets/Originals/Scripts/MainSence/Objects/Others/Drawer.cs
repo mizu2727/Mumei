@@ -215,6 +215,51 @@ public class Drawer : MonoBehaviour
         InitializeAudioSource();
     }
 
+
+    private void OnDestroy() 
+    {
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
+
+        //drawerMeshTransformを安全に削除
+        DestroySafe(ref drawerMeshTransform);
+
+        //drawerItemTransformを安全に削除
+        DestroySafe(ref drawerItemTransform);
+
+        //itemPlacementPointを安全に削除
+        DestroySafe(ref itemPlacementPoint);
+
+        //boxColliderを安全に削除
+        DestroySafe(ref boxCollider);
+    }
+
+    /// <summary>
+    /// オブジェクト等を安全に破棄する関数
+    /// </summary>
+    /// <typeparam name="T">型のテンプレート</typeparam>
+    /// <param name="obj">オブジェクト</param>
+    /// <param name="t">リセット数値</param>
+    private void DestroySafe<T>(ref T obj, float t = 0) where T : Object
+    {
+        if (obj != null)
+        {
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+            {
+                Object.Destroy(obj, t);
+            }
+            else
+            {
+                Object.DestroyImmediate(obj);
+            }
+#else
+            Object.Destroy(obj, t);
+#endif
+            obj = null;
+        }
+    }
+
     /// <summary>
     /// AudioSourceの初期化
     /// </summary>
