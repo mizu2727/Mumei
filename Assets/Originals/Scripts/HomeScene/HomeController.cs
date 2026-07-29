@@ -34,9 +34,6 @@ public class HomeController : MonoBehaviour
     private readonly int homeSceneBGMId = 1;
 
 
-    [Header("タイトルへ戻るボタン(ヒエラルキー上からアタッチすること(バグNo.Er001への一時的な措置))")]
-    [SerializeField] private GameObject returnToTitlePanel;
-
 
     [Header("wall_Tutorial(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] public GameObject wall_Tutorial;
@@ -131,9 +128,6 @@ public class HomeController : MonoBehaviour
 
         //wall_EndTutorialを安全に削除
         DestroySafe(ref wall_EndTutorial);
-
-        //returnToTitlePanelを安全に削除
-        DestroySafe(ref returnToTitlePanel);
 
         //itemPrefabListが存在する場合
         if (itemPrefabList != null)
@@ -238,9 +232,6 @@ public class HomeController : MonoBehaviour
 
         //全てのBGMの状態をStopに変更
         sO_BGM.StopAllBGM();
-
-        //バグNo.Er001への一時的な措置
-        returnToTitlePanel.SetActive(false);
     }
 
     private void Start()

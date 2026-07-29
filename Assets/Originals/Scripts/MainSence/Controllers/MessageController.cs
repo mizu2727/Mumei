@@ -237,6 +237,8 @@ public class MessageController : MonoBehaviour
     private void Awake()
     {
         //インスタンス生成
+        instance = this;
+        /*
         if (instance == null)
         {
             instance = this;
@@ -246,6 +248,7 @@ public class MessageController : MonoBehaviour
         {
             DestroyController();
         }
+        */
 
         //CancellationTokenSourceを初期化
         cts = new CancellationTokenSource();
@@ -1033,7 +1036,7 @@ public class MessageController : MonoBehaviour
             if (systemMessage.systemMessage[number].isTutorialStatus == 4) 
             {
                 //ドキュメント(チュートリアル版)入手したらメッセージを勧める
-                await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag());
+                await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag(), cancellationToken: cts.Token);
                 GameController.instance.SetIsTutorialNextMessageFlag(false);
 
                 //プレイヤー効果音を停止
@@ -1054,8 +1057,10 @@ public class MessageController : MonoBehaviour
             if (systemMessage.systemMessage[number].isTutorialStatus == 5) 
             {
                 //ドキュメント(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag() && !PauseController.instance.isPause
-                    && !PauseController.instance.isViewItemsPanel && !OptionUIController.instance.GetIsOptionPanel());
+                await UniTask.WaitUntil(() => PauseController.instance != null && GameController.instance.GetIsTutorialNextMessageFlag() 
+                    && !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel 
+                    && OptionUIController.instance != null && !OptionUIController.instance.GetIsOptionPanel()
+                    , cancellationToken: cts.Token);
                 GameController.instance.SetIsTutorialNextMessageFlag(false);
 
                 //プレイヤー効果音を停止
@@ -1075,7 +1080,8 @@ public class MessageController : MonoBehaviour
             if (systemMessage.systemMessage[number].isTutorialStatus == 6) 
             {
                 //ミステリーアイテム(チュートリアル版)入手したらメッセージを勧める
-                await UniTask.WaitUntil(() => PauseController.instance.isGetHammer_Tutorial && PauseController.instance.isGetRope_Tutorial);
+                await UniTask.WaitUntil(() => PauseController.instance != null && PauseController.instance.isGetHammer_Tutorial 
+                    && PauseController.instance.isGetRope_Tutorial, cancellationToken: cts.Token);
 
                 //プレイヤー効果音を停止
                 MusicController.instance.StopSE(Player.instance.audioSourceSE);
@@ -1094,8 +1100,10 @@ public class MessageController : MonoBehaviour
             if (systemMessage.systemMessage[number].isTutorialStatus == 7) 
             {
                 //ミステリーアイテム(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                await UniTask.WaitUntil(() => !PauseController.instance.isPause && !PauseController.instance.isViewItemsPanel
-                    && PauseController.instance.isViewMysteryItem_Tutorial && !OptionUIController.instance.GetIsOptionPanel());
+                await UniTask.WaitUntil(() => PauseController.instance != null && !PauseController.instance.isPause 
+                    && !PauseController.instance.isViewItemsPanel && PauseController.instance.isViewMysteryItem_Tutorial 
+                    && OptionUIController.instance != null && !OptionUIController.instance.GetIsOptionPanel()
+                    , cancellationToken: cts.Token);
                 PauseController.instance.isViewMysteryItem_Tutorial = false;
                 ResetMessage();
 
@@ -1453,6 +1461,8 @@ public class MessageController : MonoBehaviour
             goal = null;
         }
 
+
+        CancelAsyncTasks();
 
         //もしこのインスタンスがシングルトンインスタンス自身であれば、staticな参照をクリアする
         if (instance == this)
