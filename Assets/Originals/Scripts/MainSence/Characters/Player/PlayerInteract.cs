@@ -11,33 +11,35 @@ using static GameController;
 
 public class PlayerInteract : MonoBehaviour
 {
-    [Header("インタラクトできる距離")]
-    [SerializeField]  public float distance = 3f;
+    /// <summary>
+    /// インタラクトできる距離
+    /// </summary>
+    private float distance = 3f;
 
     /// <summary>
     /// 拾ったアイテム
     /// </summary>
-    GameObject pickUpItem;
+    private GameObject pickUpItem;
 
     /// <summary>
     /// 開閉したいドア
     /// </summary>
-    GameObject interactDoor;
+    private GameObject interactDoor;
 
     /// <summary>
     /// 点けたいステージライト
     /// </summary>
-    GameObject interactStageLight;
+    private GameObject interactStageLight;
 
     /// <summary>
     /// 開閉したい引き出し
     /// </summary>
-    GameObject interactDrawer;
+    private GameObject interactDrawer;
 
     /// <summary>
     /// 隠れたいオブジェクト
     /// </summary>
-    GameObject targetHiddenObject;
+    private GameObject targetHiddenObject;
 
 
     /// <summary>
@@ -145,8 +147,7 @@ public class PlayerInteract : MonoBehaviour
 
     private void Start()
     {
-
-
+        //インタラクトフラグを初期化
         isInteract = false;
 
         //AudioSourceの初期化
@@ -263,7 +264,7 @@ public class PlayerInteract : MonoBehaviour
     /// <summary>
     /// インタラクト処理
     /// </summary>
-    async void Interact() 
+    private async void Interact() 
     {
         //プレイヤーが隠れている状態でインタラクト操作を行った場合
         if (PlayInteract() && Player.instance.GetIsPlayerHidden() && Time.timeScale != 0 && !isStartHideWaitCountTime)
@@ -320,6 +321,9 @@ public class PlayerInteract : MonoBehaviour
 
                         //プレイヤーが隠れる処理を実行
                         hiddenObject.HiddenPlayer();
+
+                        //処理を終了
+                        return;
                     }
                 }
 
@@ -352,6 +356,9 @@ public class PlayerInteract : MonoBehaviour
 
                             //フラッシュライト関係のメッセージを表示
                             MessageController.instance.ShowInventoryMessage(4);
+
+                            //処理を終了
+                            return;
                         }
                         //対象アイテムがコンパスの場合
                         else if (item.GetItemType() == ItemType.Compass)
@@ -361,6 +368,9 @@ public class PlayerInteract : MonoBehaviour
 
                             //拾ったアイテムをステージ上から削除
                             DestroyItem(pickUpItem);
+
+                            //処理を終了
+                            return;
                         }
                         //対象アイテムがドキュメントorミステリーアイテムの場合
                         else if ((item.GetItemType() == ItemType.Document) || (item.GetItemType() == ItemType.MysteryItem))
@@ -379,18 +389,25 @@ public class PlayerInteract : MonoBehaviour
                                 //拾ったアイテムをステージ上から削除
                                 DestroyItem(pickUpItem);
                             }
+
+                            //処理を終了
+                            return;
                         }
                         //対象アイテムがプレイヤーが使用できるアイテムの場合
                         else if (item.GetItemType() == ItemType.UseItem)
                         {
                             //インベントリに空きがあるかを確認
-                            if ((Inventory.instance.GetKeepItemId() == 99999) || (Inventory.instance.GetKeepItemId() == item.GetId()))
+                            if ((Inventory.instance.GetKeepItemId() == CommonController.instance.GetKNoneItemId()) 
+                                || (Inventory.instance.GetKeepItemId() == item.GetId()))
                             {
                                 //インベントリに追加
                                 sO_Item.AddUseItem(item);
 
                                 //拾ったアイテムをステージ上から削除
                                 DestroyItem(pickUpItem);
+
+                                //処理を終了
+                                return;
                             }
                             //インベントリのアイテムがいっぱいの場合の処理
                             else
@@ -400,7 +417,15 @@ public class PlayerInteract : MonoBehaviour
 
                                 await UniTask.Delay(TimeSpan.FromSeconds(3));
 
-                                MessageController.instance.ResetMessage();
+                                //メッセージコントローラーが存在する場合
+                                if (MessageController.instance != null)
+                                {
+                                    //メッセージをリセット
+                                    MessageController.instance.ResetMessage();
+                                }
+
+                                //処理を終了
+                                return;
                             }
                         }
 
@@ -425,6 +450,9 @@ public class PlayerInteract : MonoBehaviour
 
                     //対象のドアを開閉
                     if (door != null) door.DoorSystem();
+
+                    //処理を終了
+                    return;
                 }
 
                 //ステージライト
@@ -440,6 +468,9 @@ public class PlayerInteract : MonoBehaviour
 
                     //対象のステージライトを点灯
                     if (stageLight != null) stageLight.LitStageLight();
+
+                    //処理を終了
+                    return;
                 }
 
 
@@ -456,6 +487,9 @@ public class PlayerInteract : MonoBehaviour
 
                     //対象の引き出しを開閉
                     if (drawer != null) drawer.DrawerSystem();
+
+                    //処理を終了
+                    return;
                 }
 
                 //ゴール
@@ -476,6 +510,9 @@ public class PlayerInteract : MonoBehaviour
                         //goal.isGoalPanelがtrueのままになってしまうバグを防ぐ
                         goal.isGoalPanel = false;
                     }
+
+                    //処理を終了
+                    return;
                 }
             }
         }
@@ -494,7 +531,7 @@ public class PlayerInteract : MonoBehaviour
     /// Interact…"joystick button 5"を割り当てている。コントローラーではRボタンになる
     /// </summary>
     /// <returns>ボタン押下&&振り返り操作オフ(振り返りながら裁きの青玉に触れるとプレイヤーが見えてしまうバグを防ぐため)でtrue</returns>
-    bool PlayInteract() 
+    private bool PlayInteract() 
     {
         return (Input.GetMouseButtonDown(0) || Input.GetButtonDown(CommonController.instance.GetStringInteract()))
             && !Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.RightControl) && !Input.GetKey(KeyCode.Slash);
@@ -506,7 +543,7 @@ public class PlayerInteract : MonoBehaviour
     /// </summary>
     /// <param name="obj">対象オブジェクト</param>
     /// <param name="layerName">レイヤー名</param>
-    void SwitchLayer(GameObject obj, string layerName)
+    private void SwitchLayer(GameObject obj, string layerName)
     {
         int layer = LayerMask.NameToLayer(layerName);
         if (layer == -1)
@@ -516,11 +553,11 @@ public class PlayerInteract : MonoBehaviour
         }
         obj.layer = layer;
     }
- 
+
     /// <summary>
     /// 現在のオブジェクトのレイヤーを元に戻す
     /// </summary>
-    void ResetLayer()
+    private void ResetLayer()
     {
         if (currentHighlightedObject != null)
         {
@@ -565,7 +602,7 @@ public class PlayerInteract : MonoBehaviour
     /// <summary>
     /// インタラクト可能なオブジェクトを強調表示する処理
     /// </summary>
-    void HighlightObject()
+    private void HighlightObject()
     {
         RaycastHit raycastHit;
 
@@ -591,7 +628,7 @@ public class PlayerInteract : MonoBehaviour
             if (raycastHit.transform.tag == CommonController.instance.GetItemTag() ||
                 raycastHit.transform.tag == CommonController.instance.GetDoorTag() ||
                 raycastHit.transform.tag == CommonController.instance.GetGoalTag() ||
-                raycastHit.transform.tag == CommonController.instance.GetStageLightTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetStageLightTag()||
                 raycastHit.transform.tag == CommonController.instance.GetDrawerTag() ||
                 raycastHit.transform.tag == CommonController.instance.GetHiddenObjectTag())
             {
@@ -633,7 +670,7 @@ public class PlayerInteract : MonoBehaviour
     /// ドキュメントのゲームオブジェクトをシーンのフィールド上から削除する
     /// </summary>
     /// <param name="pickUpItem">入手アイテム</param>
-    void DestroyDocument(GameObject pickUpItem)
+    private void DestroyDocument(GameObject pickUpItem)
     {
         if (audioSourceItemSE != null && sO_SE.GetSEClip(getDocumentSEid) != null)
         {
@@ -658,7 +695,7 @@ public class PlayerInteract : MonoBehaviour
     /// 入手アイテムのゲームオブジェクトをシーンのフィールド上から削除する
     /// </summary>
     /// <param name="pickUpItem">入手アイテム</param>
-    void DestroyItem(GameObject pickUpItem) 
+    private void DestroyItem(GameObject pickUpItem) 
     {
         if (audioSourceItemSE != null && sO_SE.GetSEClip(getItemSEid) != null)
         {

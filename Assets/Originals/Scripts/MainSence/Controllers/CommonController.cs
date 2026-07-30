@@ -158,6 +158,25 @@ public class CommonController : MonoBehaviour
 
 
     /// <summary>
+    /// アイテム未所持時のID
+    /// </summary>
+    private const int kNoneItemId = 99999;
+
+    /// <summary>
+    /// アイテム未所持時のIDを取得する関数
+    /// </summary>
+    /// <returns>アイテム未所持時のID</returns>
+    public int GetKNoneItemId()
+    {
+        return kNoneItemId;
+    }
+
+
+    /*--------------------------------------------------------------------------------------
+     * タグ関連
+     --------------------------------------------------------------------------------------*/
+
+    /// <summary>
     /// タグ："Untagged"
     /// </summary>
     private const string stringUntaggedTag = "Untagged";
@@ -312,6 +331,10 @@ public class CommonController : MonoBehaviour
     }
 
 
+    /*--------------------------------------------------------------------------------------
+     * レイヤー関連
+     --------------------------------------------------------------------------------------*/
+
     /// <summary>
     /// デフォルトレイヤー
     /// </summary>
@@ -424,6 +447,10 @@ public class CommonController : MonoBehaviour
         return hiddenObjectLayer;
     }
 
+
+    /*--------------------------------------------------------------------------------------
+     * 文字フォント・色関連
+     --------------------------------------------------------------------------------------*/
 
     [Header("日本語用フォント(TMP_FontAssetをアタッチ)")]
     [SerializeField] private TMP_FontAsset japaneseFont;

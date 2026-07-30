@@ -53,11 +53,6 @@ public class Inventory : MonoBehaviour
     private int keepItemId;
 
     /// <summary>
-    /// アイテム未所持時のID
-    /// </summary>
-    private const int kNoneItemId = 99999;
-
-    /// <summary>
     /// スタミナ増強剤のID
     /// </summary>
     private const int kStaminaEnhancerId = 11;
@@ -521,7 +516,7 @@ public class Inventory : MonoBehaviour
     public void GetItem(int id, string path, Vector3 position, Quaternion rotation, Sprite icon, string itemName, string description,int count, int effectValue)
     {
         //インベントリに新規追加する処理
-        if (keepItemId == kNoneItemId)
+        if (keepItemId == CommonController.instance.GetKNoneItemId())
         {
 
             //アイテムidを設定
@@ -752,7 +747,7 @@ public class Inventory : MonoBehaviour
     public void SettingLanguageText() 
     {
         //使用アイテムを所持していない場合
-        if (keepItemId == kNoneItemId) 
+        if (keepItemId == CommonController.instance.GetKNoneItemId()) 
         {
             //処理をスキップ
             return;
@@ -803,7 +798,7 @@ public class Inventory : MonoBehaviour
     void ResetInventoryItem() 
     {
         //それぞれの変数の値・フラグ値を初期化する
-        keepItemId = kNoneItemId;
+        keepItemId = CommonController.instance.GetKNoneItemId();
         keepItemCount = kMinKeepItemCount;
         keepItemEffectValue = kDefaultKeepItemEffectValue;
         useItemCountText.text = keepItemCount.ToString();
