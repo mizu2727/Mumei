@@ -540,6 +540,50 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] private LayerMask detectionLayer;
 
 
+    /*----------------------
+     * 階段関連の処理
+     ---------------------*/
+
+    [Header("階段関連")]
+    /// <summary>
+    /// 階段レイヤー
+    /// </summary>
+    private LayerMask stairsLayer;
+    
+
+    [Header("視線の上下ピッチ角度の補間速度(要調整)")]
+    [SerializeField] private float sightPitchSmoothSpeed = 5.0f;
+
+    /// <summary>
+    /// 階段に乗っているかどうかのフラグ
+    /// </summary>
+    private bool isOnStairs = false;
+
+    /// <summary>
+    /// 現在の視線の上下ピッチ角度(度)
+    /// </summary>
+    private float currentSightPitchAngle = 0f;
+
+    /// <summary>
+    /// 傾斜サンプリング用の前後オフセット距離
+    /// </summary>
+    private const float kStairsSampleOffset = 10.0f;
+
+    /// <summary>
+    /// 傾斜サンプリング用のレイキャスト距離
+    /// </summary>
+    private const float kStairsSampleRayLength = 10.0f;
+
+    /// <summary>
+    /// 階段に触れている際の視線の高さ
+    /// </summary>
+    private const float kChganeLineOfSight = 1.5f;
+
+
+    /*----------------------
+     * SE関連の処理
+     ---------------------*/
+
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
 
@@ -892,6 +936,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //モデルの回転を初期化
         transform.rotation = Quaternion.identity;
 
+        //階段レイヤーを取得
+        stairsLayer = LayerMask.GetMask(CommonController.instance.GetStairGroundLayer());
+
         //NavMesh上に配置されているか確認
         if (!navMeshAgent.isOnNavMesh)
         {
@@ -1049,8 +1096,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         Vector3 directionToPlayer = targetPoint.position - transform.position;
         distanceToPlayer = directionToPlayer.magnitude;
 
+
+        //視線の上下ピッチ角度を反映した方向(階段昇降時は傾斜に沿って上下に傾く)
+        Vector3 sightForward = Quaternion.AngleAxis(currentSightPitchAngle, transform.right) * transform.forward;
+
         //角度を計算
-        float angle = Vector3.Angle(transform.forward, directionToPlayer.normalized);
+        //TODO削除
+        //float angle = Vector3.Angle(transform.forward, directionToPlayer.normalized);
+        float angle = Vector3.Angle(sightForward, directionToPlayer.normalized);
 
         //プレイヤーが視野角内にいる&&検知範囲内にいる場合
         if (distanceToPlayer <= enemyDetectionRange && angle <= fieldOfViewAngle * 0.5f)
@@ -1266,7 +1319,32 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 door.OpenDoor();
             }
         }
+
+        //階段に接触した場合
+        if (collision.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+
+            Debug.Log("階段に接触しました。");
+
+            //階段昇降処理を開始
+            isOnStairs = true;
+        }
     }
+
+
+    private void OnCollisionExit(Collision collision)
+    {
+        //階段から離れた場合
+        if (collision.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+
+            Debug.Log("階段から離れました。");
+
+            //階段昇降処理を終了(視線ピッチを平常状態へ戻す)
+            isOnStairs = false;
+        }
+    }
+
 
     /// <summary>
     /// オブジェクトのコライダーを貫通した場合の処理
@@ -1300,7 +1378,50 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 door.OpenDoor();
             }
         }
+
+        //階段に接触した場合
+        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+
+            Debug.Log("階段に接触しました。TriggerEnter");
+
+            //階段昇降処理を開始
+            isOnStairs = true;
+        }
     }
+
+    /// <summary>
+    /// オブジェクトのコライダー内に触れている場合の処理
+    /// </summary>
+    /// <param name="collider">離れたオブジェクトのコライダー</param>
+    private void OnTriggerStay(Collider collider)
+    {
+        //階段に触れている場合
+        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+            Debug.Log("階段に接触中。OnTriggerStay");
+
+            //階段昇降処理を終了(視線ピッチを平常状態へ戻す)
+            isOnStairs = true;
+        }
+    }
+
+    /// <summary>
+    /// オブジェクトのコライダーから離れた場合の処理
+    /// </summary>
+    /// <param name="collider">離れたオブジェクトのコライダー</param>
+    private void OnTriggerExit(Collider collider)
+    {
+        //階段から離れた場合
+        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+            Debug.Log("階段から離れました。TriggerEnter");
+
+            //階段昇降処理を終了(視線ピッチを平常状態へ戻す)
+            isOnStairs = false;
+        }
+    }
+
 
     /// <summary>
     /// 方向転換
@@ -1348,6 +1469,55 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
     }
 
+
+    /// <summary>
+    /// 敵の前後の地面(階段)の高さの差から視線の上下ピッチ角度を算出する
+    /// </summary>
+    /// <returns>算出したピッチ角度(度)。傾斜を検出できない場合は0</returns>
+    private float CalculateStairsSightPitch()
+    {
+
+        
+
+        //前方・後方のサンプリング位置(足元の高さ+少し上からレイを飛ばす)
+        Vector3 forwardSamplePos = transform.position + transform.forward * kStairsSampleOffset + Vector3.up * kChganeLineOfSight;
+        Vector3 backwardSamplePos = transform.position - transform.forward * kStairsSampleOffset + Vector3.up * kChganeLineOfSight;
+
+        //前後それぞれの地面(階段)の高さを取得
+        bool hitForward = Physics.Raycast(forwardSamplePos, Vector3.down, out RaycastHit forwardHit, kStairsSampleRayLength, stairsLayer);
+        bool hitBackward = Physics.Raycast(backwardSamplePos, Vector3.down, out RaycastHit backwardHit, kStairsSampleRayLength, stairsLayer);
+
+        Debug.Log($"[Stairs] isOnStairs={isOnStairs} | hitF={hitForward} hitB={hitBackward} | fwdY={forwardHit.point.y:F3} bwdY={backwardHit.point.y:F3}");
+
+        //前後どちらかの地面を検出できない場合は傾斜なしとする
+        if (!hitForward || !hitBackward)
+        {
+            return 0f;
+        }
+
+        //前後の高低差からピッチ角度を算出
+        float heightDifference = forwardHit.point.y - backwardHit.point.y;
+        float pitchAngle = Mathf.Atan2(heightDifference, kStairsSampleOffset * 2f) * Mathf.Rad2Deg;
+
+
+        Debug.Log($"[Stairs] heightDiff={heightDifference:F3} → pitch={pitchAngle:F2}°");
+
+        return pitchAngle;
+    }
+
+    /// <summary>
+    /// 階段昇降時の視線の上下ピッチ角度を更新する
+    /// (階段の昇降移動自体はNavMeshAgentに任せ、ここではプレイヤー検知用の視線角度のみを更新する)
+    /// </summary>
+    private void UpdateStairsSightPitch()
+    {
+        //階段に乗っている場合は傾斜から算出した角度、乗っていない場合は0度を目標角度にする
+        float targetPitchAngle = isOnStairs ? CalculateStairsSightPitch() : 0f;
+
+        //目標角度へ滑らかに補間
+        currentSightPitchAngle = Mathf.Lerp(currentSightPitchAngle, targetPitchAngle, Time.deltaTime * sightPitchSmoothSpeed);
+    }
+
     protected virtual async void Update()
     {
 
@@ -1386,6 +1556,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         //移動中かどうかを判定
         IsMove = IsEnemyMoving();
+
+        //階段昇降時の視線上下ピッチ角度を更新
+        UpdateStairsSightPitch();
 
         //プレイヤーとの距離を測定
         float distance = Vector3.Distance(transform.position, targetPoint.position);
@@ -1730,8 +1903,20 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //視野範囲の可視化
         Gizmos.color = Color.green;
         float halfFOV = fieldOfViewAngle * 0.5f;
+
+        //視線の上下ピッチ角度を反映した基準方向(階段昇降時の傾き確認用)
+        Vector3 sightForwardGizmo = Application.isPlaying
+            ? Quaternion.AngleAxis(currentSightPitchAngle, transform.right) * transform.forward
+            : transform.forward;
+
+        Vector3 leftRay = Quaternion.Euler(0, -halfFOV, 0) * sightForwardGizmo * enemyDetectionRange;
+        Vector3 rightRay = Quaternion.Euler(0, halfFOV, 0) * sightForwardGizmo * enemyDetectionRange;
+
+        /*
         Vector3 leftRay = Quaternion.Euler(0, -halfFOV, 0) * transform.forward * enemyDetectionRange;
         Vector3 rightRay = Quaternion.Euler(0, halfFOV, 0) * transform.forward * enemyDetectionRange;
+        */
+
         Gizmos.DrawRay(transform.position + Vector3.up * 1.5f, leftRay);
         Gizmos.DrawRay(transform.position + Vector3.up * 1.5f, rightRay);
 

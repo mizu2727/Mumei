@@ -42,6 +42,7 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
+
     [Header("プレイヤーモデルのGameObject(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public GameObject[] playerBodys;
 
@@ -930,6 +931,9 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
 
+        
+
+
         //前後左右の入力から、移動のためのベクトルを計算
         float moveX = Input.GetAxis(stringHorizontal);
         float moveZ = Input.GetAxis(stringVertical);
@@ -966,8 +970,8 @@ public class Player : MonoBehaviour, CharacterInterface
         {
             moveDirection = move * speed;
 
-            // 接地時にY方向の移動をリセット
-            moveDirection.y = 0f;
+            //接地時にY方向の移動をリセット(階段を素早く降りるため、Yを負の数値にする必要がある。)
+            moveDirection.y = -Gravity;
         }
         else
         {

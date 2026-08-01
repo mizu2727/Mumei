@@ -219,6 +219,20 @@ public class CommonController : MonoBehaviour
     }
 
     /// <summary>
+    /// "StairGround"タグ
+    /// </summary>
+    private const string stairGroundTag = "StairGround";
+
+    /// <summary>
+    /// "StairGround"タグを取得する関数
+    /// </summary>
+    /// <returns>"StairGround"タグ</returns>
+    public string GetStairGroundTag()
+    {
+        return stairGroundTag;
+    }
+
+    /// <summary>
     /// "Door"タグ
     /// </summary>
     private const string doorTag = "Door";
@@ -347,6 +361,20 @@ public class CommonController : MonoBehaviour
     public string GetDefaultLayer()
     {
         return defaultLayer;
+    }
+
+    /// <summary>
+    /// 階段レイヤー
+    /// </summary>
+    private const string stairGroundLayer = "StairGround";
+
+    /// <summary>
+    /// 階段レイヤーを取得する関数
+    /// </summary>
+    /// <returns>階段レイヤー</returns>
+    public string GetStairGroundLayer()
+    {
+        return stairGroundLayer;
     }
 
     /// <summary>
