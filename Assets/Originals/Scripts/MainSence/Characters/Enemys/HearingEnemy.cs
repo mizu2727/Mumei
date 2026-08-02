@@ -24,6 +24,12 @@ public class HearingEnemy : BaseEnemy
     private float soundDetectionRange;
 
 
+    /// <summary>
+    /// 音が届く最大高さ差（Y軸制限）
+    /// </summary>
+    private const float maxSoundVerticalRange = 10.0f;
+
+
     [Header("難易度Easyの場合のダッシュ音の調査時間(直接調整すること)")]
     [SerializeField] private float easySoundInvestigateDuration;
 
@@ -172,6 +178,17 @@ public class HearingEnemy : BaseEnemy
                 //特定の放送が流れているスピーカーのみを対象にする
                 if (currentSpeaker != null && currentSpeaker.GetIsListeningBroadcast()) 
                 {
+                    //Y軸の高さ差を取得
+                    float heightDiff = Mathf.Abs(transform.position.y - speakerTransform.position.y);
+
+                    //高さ制限を超えている場合
+                    if (heightDiff > maxSoundVerticalRange)
+                    {
+                        //処理をスキップ
+                        continue;
+                    }
+
+
                     //スピーカーとの距離を計算
                     float distanceToSpeaker = Vector3.Distance(transform.position, speakerTransform.position);
 
@@ -198,9 +215,6 @@ public class HearingEnemy : BaseEnemy
             {
                 Debug.Log("放送スピーカー音を検知");
 
-                //最も近いスピーカーの位置を記録
-                //lastHeardSoundPosition = closestSpeaker.position;
-
                 //プレイヤーの位置へ移動
                 lastHeardSoundPosition = targetPoint.position;
 
@@ -216,10 +230,14 @@ public class HearingEnemy : BaseEnemy
             }
         }
 
+
+        // Y軸の高さ差を計算
+        float heightDifferenceToPlayer = Mathf.Abs(transform.position.y - targetPoint.position.y);
+
         //(プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合)&&追従モード以外の場合
         //プレイヤー追従時にダッシュ音を検知してしまうと追従状態から調査状態に移行してしまうため、追従モード以外の場合に限定する
         if ((Player.instance.IsDash || Player.instance.GetIsMakeSound()) && !isInvestigatingSound && !Player.instance.GetIsPlayerHidden()
-            && distanceToPlayer <= soundDetectionRange && currentState != EnemyState.Chase)
+            && distanceToPlayer <= soundDetectionRange && heightDifferenceToPlayer <= maxSoundVerticalRange && currentState != EnemyState.Chase)
         {
             //ノイズ画面を表示
             noiseScreenPanel.SetActive(true);
