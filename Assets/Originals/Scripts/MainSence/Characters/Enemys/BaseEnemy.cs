@@ -532,6 +532,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     [SerializeField] private float fieldOfViewAngle = 60f;
 
     /// <summary>
+    /// 敵の視線の高さ（プレイヤー検知、階段判定、ギズモ描画で共通使用）
+    /// </summary>
+    private const float kEyeHeight = 1.5f;
+
+
+    /// <summary>
     /// SphereCastの球の半径
     /// </summary>
     private const float kSphereCastRadius = 0.1f;
@@ -549,7 +555,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// 階段レイヤー
     /// </summary>
     private LayerMask stairsLayer;
-    
 
     [Header("視線の上下ピッチ角度の補間速度(要調整)")]
     [SerializeField] private float sightPitchSmoothSpeed = 5.0f;
@@ -562,22 +567,17 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 現在の視線の上下ピッチ角度(度)
     /// </summary>
-    private float currentSightPitchAngle = 0f;
+    private float currentSightPitchAngle;
 
     /// <summary>
-    /// 傾斜サンプリング用の前後オフセット距離
+    /// 傾斜サンプリング用の前後オフセット距離。急な階段でもレイが階段内に収まるよう、前後のサンプリング距離を短めに設定（前後nメートル）
     /// </summary>
-    private const float kStairsSampleOffset = 0.8f;
+    private const float kStairsSampleOffset = 0.4f;
 
     /// <summary>
-    /// 傾斜サンプリング用のレイキャスト距離
+    /// 高低差があっても確実に地面（階段）に届くレイの長さ
     /// </summary>
-    private const float kStairsSampleRayLength = 15.0f;
-
-    /// <summary>
-    /// 階段に触れている際の視線の高さ（足元からnメートル上から照射して埋没を防ぐ）
-    /// </summary>
-    private const float kChganeLineOfSight = 1.5f;
+    private const float kStairsEayLength = 5.0f;
 
 
     /*----------------------
@@ -1096,13 +1096,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         Vector3 directionToPlayer = targetPoint.position - transform.position;
         distanceToPlayer = directionToPlayer.magnitude;
 
-
         //視線の上下ピッチ角度を反映した方向(階段昇降時は傾斜に沿って上下に傾く)
         Vector3 sightForward = Quaternion.AngleAxis(currentSightPitchAngle, transform.right) * transform.forward;
 
         //角度を計算
-        //TODO削除
-        //float angle = Vector3.Angle(transform.forward, directionToPlayer.normalized);
         float angle = Vector3.Angle(sightForward, directionToPlayer.normalized);
 
         //プレイヤーが視野角内にいる&&検知範囲内にいる場合
@@ -1111,7 +1108,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             RaycastHit hit;
 
             //視線の開始位置(敵の視線の高さ)
-            Vector3 rayOrigin = transform.position + Vector3.up * 1.5f;
+            Vector3 rayOrigin = transform.position + Vector3.up * kEyeHeight;
 
             //プレイヤーの中心
             Vector3 targetPosition = targetPoint.position + Vector3.up * 0.5f;
@@ -1376,9 +1373,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //階段に接触した場合
         if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
         {
-
-            Debug.Log("階段に接触しました。TriggerEnter");
-
             //階段昇降処理を開始
             isOnStairs = true;
         }
@@ -1393,9 +1387,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //階段に触れている場合
         if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
         {
-            Debug.Log("階段に接触中。OnTriggerStay");
-
-            //階段昇降処理を終了(視線ピッチを平常状態へ戻す)
+            //階段昇降処理を開始
             isOnStairs = true;
         }
     }
@@ -1409,8 +1401,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //階段から離れた場合
         if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
         {
-            Debug.Log("階段から離れました。TriggerExit");
-
             //階段昇降処理を終了(視線ピッチを平常状態へ戻す)
             isOnStairs = false;
         }
@@ -1465,48 +1455,63 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
 
     /// <summary>
-    /// 敵の前後の地面(階段)の高さの差から視線Aの上下ピッチ角度を算出する
+    /// 階段昇降時の傾斜（前後の高低差）から、視線を上下させるピッチ角度（度）を算出する
     /// </summary>
-    /// <returns>算出したピッチ角度(度)。傾斜を検出できない場合は0</returns>
+    /// <returns>算出したピッチ角度（上向きはマイナス値、下向きはプラス値、傾斜なしは0f）</returns>
     private float CalculateStairsSightPitch()
     {
-        float eyeHeight = 1.5f;
-        float sampleOffset = 0.4f;
-        float rayLength = 5.0f;
+        // --- 照射位置の算出 ---
+        // 敵の現在位置から目線の高さ（+Y）をベースに、前方および後方へオフセットした位置
+        Vector3 forwardSamplePos = transform.position + transform.forward * kStairsSampleOffset + Vector3.up * kEyeHeight;
+        Vector3 backwardSamplePos = transform.position - transform.forward * kStairsSampleOffset + Vector3.up * kEyeHeight;
 
-        Vector3 forwardSamplePos = transform.position + transform.forward * sampleOffset + Vector3.up * eyeHeight;
-        Vector3 backwardSamplePos = transform.position - transform.forward * sampleOffset + Vector3.up * eyeHeight;
+        // --- レイキャストの実行 ---
+        // 前後それぞれの位置から真下（Vector3.down）に向けて階段レイヤー（stairsLayer）へ照射
+        bool hitForward = Physics.Raycast(forwardSamplePos, Vector3.down, out RaycastHit forwardHit, kStairsEayLength, stairsLayer);
+        bool hitBackward = Physics.Raycast(backwardSamplePos, Vector3.down, out RaycastHit backwardHit, kStairsEayLength, stairsLayer);
 
-        bool hitForward = Physics.Raycast(forwardSamplePos, Vector3.down, out RaycastHit forwardHit, rayLength, stairsLayer);
-        bool hitBackward = Physics.Raycast(backwardSamplePos, Vector3.down, out RaycastHit backwardHit, rayLength, stairsLayer);
-
-        // 両方ヒットした場合
+        // ==========================================
+        // メイン処理：前後のレイが両方ヒットした場合
+        // ==========================================
         if (hitForward && hitBackward)
         {
-            // 符号を反転（backward - forward）して、上り階段でマイナス（上向き）にする
+            // 高低差（Y座標の差）を計算
+            // ※上り階段（前方が高い）の際、視線を「上（マイナス角度）」に向けるため backward - forward の順で引く
             float heightDifference = backwardHit.point.y - forwardHit.point.y;
-            float horizontalDistance = sampleOffset * 2f;
+
+            // 前後のサンプリング点同士の水平距離（前後 sampleOffset × 2）
+            float horizontalDistance = kStairsSampleOffset * 2f;
+
+            // アークタンジェント（Atan2）で高さと底辺から角度（ラジアン）を求め、Rad2Degで「度」に変換して返す
             return Mathf.Atan2(heightDifference, horizontalDistance) * Mathf.Rad2Deg;
         }
 
-        // 予備処理（片方ヒット時）
-        Vector3 centerSamplePos = transform.position + Vector3.up * eyeHeight;
-        bool hitCenter = Physics.Raycast(centerSamplePos, Vector3.down, out RaycastHit centerHit, rayLength, stairsLayer);
+        // ==========================================
+        // 予備処理：階段の登り口・降り口などで片方しかヒットしなかった場合
+        // ==========================================
+        // 敵の足元直下（中央）の射出位置を設定してレイキャストを実行
+        Vector3 centerSamplePos = transform.position + Vector3.up * kEyeHeight;
+        bool hitCenter = Physics.Raycast(centerSamplePos, Vector3.down, out RaycastHit centerHit, kStairsEayLength, stairsLayer);
 
         if (hitCenter)
         {
+            // 前方だけヒットしている場合（階段の降り口や踊り場への入り口など）
             if (hitForward)
             {
+                // 中央と前方の高低差から角度を算出
                 float heightDiff = centerHit.point.y - forwardHit.point.y;
-                return Mathf.Atan2(heightDiff, sampleOffset) * Mathf.Rad2Deg;
+                return Mathf.Atan2(heightDiff, kStairsSampleOffset) * Mathf.Rad2Deg;
             }
+            // 後方だけヒットしている場合（階段の登り口など）
             else if (hitBackward)
             {
+                //後方と中央の高低差から角度を算出
                 float heightDiff = backwardHit.point.y - centerHit.point.y;
-                return Mathf.Atan2(heightDiff, sampleOffset) * Mathf.Rad2Deg;
+                return Mathf.Atan2(heightDiff, kStairsSampleOffset) * Mathf.Rad2Deg;
             }
         }
 
+        // どのレイキャストも有効な判定にならなかった場合は傾斜なし（0度）とする
         return 0f;
     }
 
@@ -1905,26 +1910,26 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private void OnDrawGizmos()
     {
-        // 視野範囲の可視化
+        //視野範囲の可視化
         Gizmos.color = Color.green;
         float halfFOV = fieldOfViewAngle * 0.5f;
 
-        // 1. 敵の現在の向き（Y軸回転）に、視線のピッチ角（X軸回転）を合成したQuat（回転）を作る
+        //1. 敵の現在の向き（Y軸回転）に、視線のピッチ角（X軸回転）を合成したQuat（回転）を作る
         float pitch = Application.isPlaying ? currentSightPitchAngle : 0f;
         Quaternion sightRotation = transform.rotation * Quaternion.Euler(pitch, 0, 0);
 
-        // 2. 合成した回転から左右の視野角（±halfFOV）を計算
+        //2. 合成した回転から左右の視野角（±halfFOV）を計算
         Vector3 leftRay = (sightRotation * Quaternion.Euler(0, -halfFOV, 0)) * Vector3.forward * enemyDetectionRange;
         Vector3 rightRay = (sightRotation * Quaternion.Euler(0, halfFOV, 0)) * Vector3.forward * enemyDetectionRange;
 
-        // 視線の開始位置（目線の高さ）
-        Vector3 eyePosition = transform.position + Vector3.up * 1.5f;
+        //視線の開始位置（目線の高さ）
+        Vector3 eyePosition = transform.position + Vector3.up * kEyeHeight;
 
-        // 描画
+        //描画
         Gizmos.DrawRay(eyePosition, leftRay);
         Gizmos.DrawRay(eyePosition, rightRay);
 
-        // SphereCastの範囲
+        //SphereCastの範囲
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(eyePosition, kSphereCastRadius);
 
