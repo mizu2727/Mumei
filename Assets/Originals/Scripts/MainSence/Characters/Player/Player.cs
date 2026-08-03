@@ -42,6 +42,16 @@ public class Player : MonoBehaviour, CharacterInterface
         }
     }
 
+    /// <summary>
+    /// デフォルトのCharacterControllerのStepOffset
+    /// </summary>
+    private const float kDefaultCharacterControllerStepOffset = 0.3f;
+
+    /// <summary>
+    /// 階段昇降時のCharacterControllerのStepOffset
+    /// </summary>
+    private const float kStairStepOffset = 0.75f;
+
 
     [Header("プレイヤーモデルのGameObject(ヒエラルキー上からアタッチすること)")]
     [SerializeField] public GameObject[] playerBodys;
@@ -1235,6 +1245,32 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        //階段に接触した場合
+        if (collision.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+            Debug.Log("階段に接触しました。CharacterControllerのstepOffsetを変更します。");
+
+            //階段の段差を登れるようにする
+            characterController.stepOffset = kStairStepOffset;
+        }
+    }
+
+
+    private void OnCollisionExit(Collision collision)
+    {
+        //階段から離れた場合
+        if (collision.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+            Debug.Log("階段から離れました。CharacterControllerのstepOffsetをデフォルト値に戻します。");
+
+            //characterControllerのstepOffsetをデフォルト値に戻す
+            characterController.stepOffset = kDefaultCharacterControllerStepOffset;
+        }
+    }
+
+
     /// <summary>
     /// オブジェクトのコライダーを貫通した場合の処理
     /// </summary>
@@ -1255,6 +1291,15 @@ public class Player : MonoBehaviour, CharacterInterface
                 //コライダーを無効化
                 ignoreObject.GetMeshCollider().enabled = false;
             }
+        }
+
+        //階段に接触した場合
+        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+            Debug.Log("階段に接触しました。CharacterControllerのstepOffsetを変更します。");
+
+            //階段の段差を登れるようにする
+            characterController.stepOffset = kStairStepOffset; 
         }
     }
 
@@ -1278,6 +1323,16 @@ public class Player : MonoBehaviour, CharacterInterface
                 //コライダーを有効化
                 ignoreObject.GetMeshCollider().enabled = true;
             }
+        }
+
+
+        //階段から離れた場合
+        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        {
+            Debug.Log("階段から離れました。CharacterControllerのstepOffsetをデフォルト値に戻します。");
+
+            //characterControllerのstepOffsetをデフォルト値に戻す
+            characterController.stepOffset = kDefaultCharacterControllerStepOffset;
         }
     }
 }
