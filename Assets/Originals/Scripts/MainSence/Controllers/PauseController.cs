@@ -106,8 +106,19 @@ public class PauseController : MonoBehaviour
     [Header("ポーズフラグ(ヒエラルキー上からの編集禁止)")]
     public bool isPause = false;
 
-    [Header("アイテム確認パネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
-    public bool isViewItemsPanel = false;
+    /// <summary>
+    /// アイテム確認パネル閲覧フラグ
+    /// </summary>
+    private bool isViewItemsPanel = false;
+
+    /// <summary>
+    /// アイテム確認パネル閲覧フラグを取得する
+    /// </summary>
+    /// <returns>アイテム確認パネル閲覧フラグ</returns>
+    public bool GetIsViewItemsPanel()
+    {
+        return isViewItemsPanel;
+    }
 
     /// <summary>
     /// 感度設定パネル閲覧フラグ
@@ -119,8 +130,19 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private bool isViewAudioAdjustmentPanel = false;
 
-    [Header("タイトルへ戻るパネル閲覧フラグ(ヒエラルキー上からの編集禁止)")]
-    public bool isReturnToTitlePanel = false;
+    /// <summary>
+    /// タイトルへ戻るパネル閲覧フラグ
+    /// </summary>
+    private bool isReturnToTitlePanel = false;
+
+    /// <summary>
+    /// タイトルへ戻るパネル閲覧フラグを取得する
+    /// </summary>
+    /// <returns>タイトルへ戻るパネル閲覧フラグ</returns>
+    public bool IsReturnToTitlePanel()
+    {
+        return isReturnToTitlePanel;
+    }
 
     /// <summary>
     /// ドキュメントパネル閲覧フラグ
