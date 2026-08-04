@@ -50,7 +50,17 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 階段昇降時のCharacterControllerのStepOffset
     /// </summary>
-    private const float kStairStepOffset = 0.75f;
+    private const float kStairStepOffset = 1.5f;
+
+    /// <summary>
+    /// デフォルトのCharacterControllerのSlopeLimit
+    /// </summary>
+    private const float kDefaultCharacterControllerSlopeLimit = 45.0f;
+
+    /// <summary>
+    /// 階段昇降時のCharacterControllerのSlopeLimit
+    /// </summary>
+    private const float kStairSlopeLimit = 60.0f;
 
 
     [Header("プレイヤーモデルのGameObject(ヒエラルキー上からアタッチすること)")]
@@ -1245,28 +1255,24 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
 
-    private void OnCollisionEnter(Collision collision)
+    /// <summary>
+    /// CharacterControllerがオブジェクトに衝突した際に呼ばれるイベント
+    /// </summary>
+    /// <param name="hit">衝突情報</param>
+    private void OnControllerColliderHit(ControllerColliderHit hit)
     {
         //階段に接触した場合
-        if (collision.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        if (hit.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
         {
-            Debug.Log("階段に接触しました。CharacterControllerのstepOffsetを変更します。");
-
-            //階段の段差を登れるようにする
+            //階段の段差を登れるようにする(階段のワールド座標の位置によってはコライダーが引っかかって登れない現象を防ぐため)
             characterController.stepOffset = kStairStepOffset;
+            characterController.slopeLimit = kStairSlopeLimit;
         }
-    }
-
-
-    private void OnCollisionExit(Collision collision)
-    {
-        //階段から離れた場合
-        if (collision.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
+        else 
         {
-            Debug.Log("階段から離れました。CharacterControllerのstepOffsetをデフォルト値に戻します。");
-
-            //characterControllerのstepOffsetをデフォルト値に戻す
+            //characterControllerのstepOffsetとslopeLimitをデフォルト値に戻す
             characterController.stepOffset = kDefaultCharacterControllerStepOffset;
+            characterController.slopeLimit = kDefaultCharacterControllerSlopeLimit;
         }
     }
 
@@ -1292,15 +1298,6 @@ public class Player : MonoBehaviour, CharacterInterface
                 ignoreObject.GetMeshCollider().enabled = false;
             }
         }
-
-        //階段に接触した場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
-        {
-            Debug.Log("階段に接触しました。CharacterControllerのstepOffsetを変更します。");
-
-            //階段の段差を登れるようにする
-            characterController.stepOffset = kStairStepOffset; 
-        }
     }
 
     /// <summary>
@@ -1323,16 +1320,6 @@ public class Player : MonoBehaviour, CharacterInterface
                 //コライダーを有効化
                 ignoreObject.GetMeshCollider().enabled = true;
             }
-        }
-
-
-        //階段から離れた場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
-        {
-            Debug.Log("階段から離れました。CharacterControllerのstepOffsetをデフォルト値に戻します。");
-
-            //characterControllerのstepOffsetをデフォルト値に戻す
-            characterController.stepOffset = kDefaultCharacterControllerStepOffset;
         }
     }
 }
