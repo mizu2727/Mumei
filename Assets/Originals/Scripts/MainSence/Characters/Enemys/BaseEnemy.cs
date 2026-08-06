@@ -376,6 +376,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //NavmeshAgentの回転を無効にする
         navMeshAgent.updateRotation = false;
 
+        //Rigidbodyの物理挙動(慣性や当たり判定の押し出し)で位置がズレるのを防ぐ
+        rigidBody.isKinematic = true;
+
         //Rigidbodyの回転を固定する
         rigidBody.freezeRotation = true;
 
@@ -384,6 +387,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         //プレイヤーの正面方向（カメラ/プレイヤーが向いている方向）を取得
         Vector3 forward = Player.instance.transform.forward;
+
+        //Y成分(上下の傾き)を無視して水平方向のみにする
+        //(壁際でPlayer.instance.transform.LookAt()が実行されると、forwardに縦方向の傾きが乗ってしまい、
+        //その状態でtargetPosition.yを敵の高さに上書きすると、水平距離が1.5mより短くなって位置がズレる)
+        forward.y = 0f;
 
         //正規化
         forward = forward.normalized;
