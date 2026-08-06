@@ -650,6 +650,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private float minSoundDistance = 50f;
 
     /// <summary>
+    /// 音が届く最大高さ差（Y軸制限）
+    /// </summary>
+    protected const float maxSoundVerticalRange = 10.0f;
+
+    /// <summary>
     /// 最大音量
     /// </summary>
     private const float maxVolume = 1.0f;
@@ -1959,6 +1964,17 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <returns>音量</returns>
     private float CalculateVolumeBasedOnDistance(float distance)
     {
+        //プレイヤーとの高さの差を測定
+        float heightDifference = Mathf.Abs(transform.position.y - targetPoint.position.y);
+
+        //高さの差が音が届く最大高さ差を超えている場合
+        if (heightDifference > maxSoundVerticalRange)
+        {
+            //最小音量(音が届かない)
+            return minVolume;
+        }
+
+
         if (distance <= maxSoundDistance)
         {
             //最大音量
