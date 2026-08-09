@@ -557,32 +557,40 @@ public class MessageController : MonoBehaviour
 
                 //簡体字中国語の場合
                 case LanguageStatus.kSimplifiedChinese:
+
                     //メッセージテキストのフォントサイズを簡体字中国語用に設定
                     messageText.fontSize = talkMessage.talkMessage[number].messageSizeChinese01;
+
                     //エクセルデータ型.リスト型[番号].カラム名
                     Write(talkMessage.talkMessage[number].messageChinese01);
                     break;
 
                 //繁体字中国語の場合
                 case LanguageStatus.kTraditionalChinese:
+
                     //メッセージテキストのフォントサイズを繁体字中国語用に設定
                     messageText.fontSize = talkMessage.talkMessage[number].messageSizeChinese02;
+
                     //エクセルデータ型.リスト型[番号].カラム名
                     Write(talkMessage.talkMessage[number].messageChinese02);
                     break;
 
                 //スペイン語の場合
                 case LanguageStatus.kSpanish:
+
                     //メッセージテキストのフォントサイズをスペイン語用に設定
                     messageText.fontSize = talkMessage.talkMessage[number].messageSizeSpanish;
+
                     //エクセルデータ型.リスト型[番号].カラム名
                     Write(talkMessage.talkMessage[number].messageSpanish);
                     break;
 
                 //ポルトガル語の場合
                 case LanguageStatus.kPortuguese:
+
                     //メッセージテキストのフォントサイズをポルトガル語用に設定
                     messageText.fontSize = talkMessage.talkMessage[number].messageSizePortuguese;
+
                     //エクセルデータ型.リスト型[番号].カラム名
                     Write(talkMessage.talkMessage[number].messagePortuguese);
                     break;
@@ -1575,7 +1583,7 @@ public class MessageController : MonoBehaviour
                 break;
 
             //簡体字中国語
-            case LanguageStatus.kSpanish:
+            case LanguageStatus.kSimplifiedChinese:
 
                 //メッセージテキストのフォントサイズを簡体字中国語用に設定
                 messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeChinese01;
@@ -1585,7 +1593,7 @@ public class MessageController : MonoBehaviour
                 break;
 
             //繁体字中国語
-            case LanguageStatus.kPortuguese:
+            case LanguageStatus.kTraditionalChinese:
 
                 //メッセージテキストのフォントサイズを繁体字中国語用に設定
                 messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeChinese02;
@@ -1595,7 +1603,7 @@ public class MessageController : MonoBehaviour
                 break;
 
             //スペイン語
-            case LanguageStatus.kTraditionalChinese:
+            case LanguageStatus.kSpanish:
 
                 //メッセージテキストのフォントサイズをスペイン語用に設定
                 messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeSpanish;
@@ -1605,7 +1613,7 @@ public class MessageController : MonoBehaviour
                 break;
 
             //ポルトガル語
-            case LanguageStatus.kSimplifiedChinese:
+            case LanguageStatus.kPortuguese:
 
                 //メッセージテキストのフォントサイズをポルトガル語用に設定
                 messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizePortuguese;
