@@ -49,6 +49,26 @@ public class LanguageController : MonoBehaviour
         /// 英語
         /// </summary>
         kEnglish,
+
+        /// <summary>
+        /// 簡体字中国語
+        /// </summary>
+        kSimplifiedChinese,
+
+        /// <summary>
+        /// 繁体字中国語
+        /// </summary>
+        kTraditionalChinese,
+
+        /// <summary>
+        /// スペイン語
+        /// </summary>
+        kSpanish,
+
+        /// <summary>
+        /// ポルトガル語
+        /// </summary>
+        kPortuguese,
     }
 
     
@@ -431,6 +451,8 @@ public class LanguageController : MonoBehaviour
                 }
 
                 break;
+
+            
         }
 
         //アイテムのテキスト関連を設定する

@@ -504,6 +504,54 @@ public class CommonController : MonoBehaviour
         return englishFont;
     }
 
+    [Header("簡体字中国語用フォント(TMP_FontAssetをアタッチ)")]
+    [SerializeField] private TMP_FontAsset simplifiedChineseFont;
+
+    /// <summary>
+    /// 簡体字中国語用フォントを取得する関数
+    /// </summary>
+    /// <returns>簡体字中国語用フォント</returns>
+    public TMP_FontAsset GetSimplifiedChinese()
+    {
+        return simplifiedChineseFont;
+    }
+
+    [Header("繁体字中国語用フォント(TMP_FontAssetをアタッチ)")]
+    [SerializeField] private TMP_FontAsset traditionalChineseFont;
+
+    /// <summary>
+    /// 繁体字中国語用フォントを取得する関数
+    /// </summary>
+    /// <returns>繁体字中国語用フォント</returns>
+    public TMP_FontAsset GetTraditionalChinese()
+    {
+        return traditionalChineseFont;
+    }
+
+    [Header("スペイン語用フォント(TMP_FontAssetをアタッチ)")]
+    [SerializeField] private TMP_FontAsset spanishFont;
+
+    /// <summary>
+    /// スペイン語用フォントを取得する関数
+    /// </summary>
+    /// <returns>スペイン語用フォント</returns>
+    public TMP_FontAsset GetSpanish()
+    {
+        return spanishFont;
+    }
+
+    [Header("ポルトガル語用フォント(TMP_FontAssetをアタッチ)")]
+    [SerializeField] private TMP_FontAsset portugueseFont;
+
+    /// <summary>
+    /// ポルトガル語用フォントを取得する関数
+    /// </summary>
+    /// <returns>ポルトガル語用フォント</returns>
+    public TMP_FontAsset GetPortuguese()
+    {
+        return portugueseFont;
+    }
+
     /// <summary>
     /// ボタンの文字の色
     /// </summary>
