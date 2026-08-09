@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+ï»¿using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
 using TMP_Ruby;
@@ -12,149 +12,149 @@ using static LanguageController;
 using static UnityEngine.Rendering.DebugUI;
 
 /// <summary>
-/// ƒƒbƒZ[ƒWŠÇ—ƒNƒ‰ƒX
+/// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç®¡ç†ã‚¯ãƒ©ã‚¹
 /// </summary>
 public class MessageController : MonoBehaviour
 {
     /// <summary>
-    /// ƒCƒ“ƒXƒ^ƒ“ƒX
+    /// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
     /// </summary>
     public static MessageController instance;
 
 
-    [Header("ƒƒbƒZ[ƒWƒpƒlƒ‹ŠÖ˜A")]
-    [Header("ƒƒbƒZ[ƒWƒpƒlƒ‹(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚çƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«é–¢é€£")]
+    [Header("ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] private GameObject messagePanel;
 
-    [Header("ƒƒbƒZ[ƒWƒeƒLƒXƒg(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚çƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆ(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] private TMP_Text messageText;
 
     /// <summary>
-    /// ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ğTextMeshProRubyƒRƒ“ƒ|[ƒlƒ“ƒg‚É•ÏŠ·‚µ‚Ä•Û‘¶‚·‚é•Ï”
+    /// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã‚’TextMeshProRubyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã«å¤‰æ›ã—ã¦ä¿å­˜ã™ã‚‹å¤‰æ•°
     /// </summary>
     private TextMeshProRuby messageTextRubyComponent;
 
-    [Header("‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğ•\¦‚·‚éƒpƒlƒ‹(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚çƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¡¨ç¤ºã™ã‚‹ãƒ‘ãƒãƒ«(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] private GameObject speakerNamePanel;
 
-    [Header("‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğ•\¦‚·‚éƒeƒLƒXƒg(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚çƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¡¨ç¤ºã™ã‚‹ãƒ†ã‚­ã‚¹ãƒˆ(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] private Text speakerNameText;
 
 
-    [Header("–¼‘OŠm”Fƒpƒlƒ‹(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚çƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("åå‰ç¢ºèªãƒ‘ãƒãƒ«(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] private GameObject CheckInputNamePanel;
 
-    [Header("–¼‘OŠm”FƒeƒLƒXƒg(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚çƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("åå‰ç¢ºèªãƒ†ã‚­ã‚¹ãƒˆ(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] private Text CheckInputNameText;
 
-    [Header("ƒƒbƒZ[ƒW‚ğ‘‚­ƒXƒs[ƒhB”’l‚ª¬‚³‚¢‚Ù‚Ç‘f‘‚­‘‚­")]
+    [Header("ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ›¸ãã‚¹ãƒ”ãƒ¼ãƒ‰ã€‚æ•°å€¤ãŒå°ã•ã„ã»ã©ç´ æ—©ãæ›¸ã")]
     [SerializeField] private float writeSpeed = 0;
 
     /// <summary>
-    /// ƒƒbƒZ[ƒW‘‚«“r’†ƒtƒ‰ƒO
+    /// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸æ›¸ãé€”ä¸­ãƒ•ãƒ©ã‚°
     /// </summary>
     private bool isWrite = false;
 
-    [Header("ƒVƒXƒeƒ€ƒƒbƒZ[ƒW(Prefab‚ğƒAƒ^ƒbƒ`)")]
+    [Header("ã‚·ã‚¹ãƒ†ãƒ ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(Prefabã‚’ã‚¢ã‚¿ãƒƒãƒ)")]
     [SerializeField] private SystemMessage systemMessage;
 
-    [Header("ƒVƒXƒeƒ€ƒƒbƒZ[ƒW•\¦‹@”\(Prefab‚ğƒAƒ^ƒbƒ`)")]
+    [Header("ã‚·ã‚¹ãƒ†ãƒ ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºæ©Ÿèƒ½(Prefabã‚’ã‚¢ã‚¿ãƒƒãƒ)")]
     [SerializeField] private ShowSystemMessage showSystemMessage;
 
-    [Header("‰ï˜bƒƒbƒZ[ƒW(Prefab‚ğƒAƒ^ƒbƒ`)")]
+    [Header("ä¼šè©±ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(Prefabã‚’ã‚¢ã‚¿ãƒƒãƒ)")]
     [SerializeField] private TalkMessage talkMessage;
 
     /// <summary>
-    /// 2”Ô–Ú‚ÌƒƒbƒZ[ƒW”Ô†
+    /// 2ç•ªç›®ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·
     /// </summary>
     private const int kTakeMessageNumber2 = 2;
 
     /// <summary>
-    /// 47”Ô–Ú‚ÌƒƒbƒZ[ƒW”Ô†
+    /// 47ç•ªç›®ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·
     /// </summary>
     private const int kMessageNumber47 = 47;
 
     /// <summary>
-    /// "ƒJƒiƒ"
+    /// "ã‚«ãƒŠãƒ¡"
     /// </summary>
-    private const string kSpeakerNameKanane = "ƒJƒiƒ";
+    private const string kSpeakerNameKanane = "ã‚«ãƒŠãƒ¡";
 
-    [Header("‰ï˜bƒƒbƒZ[ƒW•\¦‹@”\(Prefab‚ğƒAƒ^ƒbƒ`)")]
+    [Header("ä¼šè©±ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºæ©Ÿèƒ½(Prefabã‚’ã‚¢ã‚¿ãƒƒãƒ)")]
     [SerializeField] private ShowTalkMessage showTalkMessage;
 
-    [Header("ƒS[ƒ‹ƒƒbƒZ[ƒW(Prefab‚ğƒAƒ^ƒbƒ`)")]
+    [Header("ã‚´ãƒ¼ãƒ«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(Prefabã‚’ã‚¢ã‚¿ãƒƒãƒ)")]
     [SerializeField] private GoalMessage goalMessage;
 
-    [Header("ƒvƒŒƒCƒ„[‚Ì–¼‘O“ü—Í(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚çƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åå‰å…¥åŠ›(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] public InputField inputPlayerNameField;
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[‚ÌTransform•Û‘¶—p
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®Transformä¿å­˜ç”¨
     /// </summary>
     private Quaternion savePlayerQuaternion;
 
-    [Header("ƒS[ƒ‹(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚çƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("ã‚´ãƒ¼ãƒ«(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] public Goal goal;
 
 
-    [Header("ƒCƒ“ƒxƒ“ƒgƒŠƒƒbƒZ[ƒW(Prefab‚ğƒAƒ^ƒbƒ`)")]
+    [Header("ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªãƒ¡ãƒƒã‚»ãƒ¼ã‚¸(Prefabã‚’ã‚¢ã‚¿ãƒƒãƒ)")]
     [SerializeField] private InventoryMessage inventoryMessage;
 
-    [Header("ƒƒbƒZ[ƒWƒpƒlƒ‹ƒtƒ‰ƒO(ƒqƒGƒ‰ƒ‹ƒL[ã‚©‚ç‚Ì•ÒW‹Ö~)")]
+    [Header("ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«ãƒ•ãƒ©ã‚°(ãƒ’ã‚¨ãƒ©ãƒ«ã‚­ãƒ¼ä¸Šã‹ã‚‰ã®ç·¨é›†ç¦æ­¢)")]
     public bool isMessagePanel = false;
 
     /// <summary>
-    /// ‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğ•\¦‚·‚éƒtƒ‰ƒO
+    /// ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¡¨ç¤ºã™ã‚‹ãƒ•ãƒ©ã‚°
     /// </summary>
     private bool isViewSpeakerNamePanel = false;
 
     /// <summary>
-    /// ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌF‚ğÔF‚É•ÏX‚·‚éƒtƒ‰ƒO
+    /// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®è‰²ã‚’èµ¤è‰²ã«å¤‰æ›´ã™ã‚‹ãƒ•ãƒ©ã‚°
     /// </summary>
     private bool isChangeMessageTextColorRed = false;
 
     /// <summary>
-    /// ƒuƒ‰ƒbƒNƒAƒEƒgƒtƒ‰ƒO
+    /// ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆãƒ•ãƒ©ã‚°
     /// </summary>
     private bool isBlackOutPanel = false;
 
-    [Header("BGMƒf[ƒ^(‹¤’Ê‚ÌScriptableObject‚ğƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("BGMãƒ‡ãƒ¼ã‚¿(å…±é€šã®ScriptableObjectã‚’ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] public SO_BGM sO_BGM;
 
-    [Header("SEƒf[ƒ^(‹¤’Ê‚ÌScriptableObject‚ğƒAƒ^ƒbƒ`‚·‚é•K—v‚ª‚ ‚é)")]
+    [Header("SEãƒ‡ãƒ¼ã‚¿(å…±é€šã®ScriptableObjectã‚’ã‚¢ã‚¿ãƒƒãƒã™ã‚‹å¿…è¦ãŒã‚ã‚‹)")]
     [SerializeField] public SO_SE sO_SE;
 
     /// <summary>
-    /// noiseSE—paudioSourceSE
+    /// noiseSEç”¨audioSourceSE
     /// </summary>
     private AudioSource audioSourceSE;
 
     /// <summary>
-    /// ƒmƒCƒY‰¹‚ÌID
+    /// ãƒã‚¤ã‚ºéŸ³ã®ID
     /// </summary>
     private readonly int noiseSEid = 9;
 
 
     /// <summary>
-    /// ”ñ“¯Šúƒ^ƒXƒN‚ÌƒLƒƒƒ“ƒZƒ‹—p•Ï”
-    /// ƒ`ƒ…[ƒgƒŠƒAƒ‹“à‚ÌUniTaskˆ—‘Ò‹@’†‚Éƒ|[ƒY‰æ–Ê‚©‚çƒ^ƒCƒgƒ‹‚Ö–ß‚éÛ‚ÌmessageText‚ÅMissingReferenceExceptionƒGƒ‰[‚ª‹N‚±‚é‚Ì‚ğ–h~‚·‚é—p
+    /// éåŒæœŸã‚¿ã‚¹ã‚¯ã®ã‚­ãƒ£ãƒ³ã‚»ãƒ«ç”¨å¤‰æ•°
+    /// ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«å†…ã®UniTaskå‡¦ç†å¾…æ©Ÿä¸­ã«ãƒãƒ¼ã‚ºç”»é¢ã‹ã‚‰ã‚¿ã‚¤ãƒˆãƒ«ã¸æˆ»ã‚‹éš›ã®messageTextã§MissingReferenceExceptionã‚¨ãƒ©ãƒ¼ãŒèµ·ã“ã‚‹ã®ã‚’é˜²æ­¢ã™ã‚‹ç”¨
     /// </summary>
     private CancellationTokenSource cts;
 
 
     /// <summary>
-    /// ƒuƒ‰ƒbƒNƒAƒEƒgƒtƒ‰ƒO‚ğæ“¾
+    /// ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆãƒ•ãƒ©ã‚°ã‚’å–å¾—
     /// </summary>
-    /// <returns>ƒuƒ‰ƒbƒNƒAƒEƒgƒtƒ‰ƒO</returns>
+    /// <returns>ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆãƒ•ãƒ©ã‚°</returns>
     public bool GetIsBlackOutPanel() 
     {
         return isBlackOutPanel;
     }
 
     /// <summary>
-    /// ƒuƒ‰ƒbƒNƒAƒEƒgƒtƒ‰ƒO‚ğİ’è
+    /// ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆãƒ•ãƒ©ã‚°ã‚’è¨­å®š
     /// </summary>
-    /// <param name="flag">ƒuƒ‰ƒbƒNƒAƒEƒgƒtƒ‰ƒO</param>
+    /// <param name="flag">ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆãƒ•ãƒ©ã‚°</param>
     public void SetIsBlackOutPanel(bool flag) 
     {
         isBlackOutPanel = flag;
@@ -162,41 +162,41 @@ public class MessageController : MonoBehaviour
 
     private void OnEnable()
     {
-        //sceneLoaded‚ÉuOnSceneLoadedvŠÖ”‚ğ’Ç‰Á
+        //sceneLoadedã«ã€ŒOnSceneLoadedã€é–¢æ•°ã‚’è¿½åŠ 
         SceneManager.sceneLoaded += OnSceneLoaded;
 
-        //SE‰¹—Ê•ÏX‚ÌƒCƒxƒ“ƒg“o˜^
+        //SEéŸ³é‡å¤‰æ›´æ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆç™»éŒ²
         MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
     {
-        //ƒV[ƒ“‘JˆÚ‚Éİ’è‚·‚é‚½‚ß‚ÌŠÖ”“o˜^‰ğœ
+        //ã‚·ãƒ¼ãƒ³é·ç§»æ™‚ã«è¨­å®šã™ã‚‹ãŸã‚ã®é–¢æ•°ç™»éŒ²è§£é™¤
         SceneManager.sceneLoaded -= OnSceneLoaded;
 
-        //SE‰¹—Ê•ÏX‚ÌƒCƒxƒ“ƒg“o˜^‰ğœ
+        //SEéŸ³é‡å¤‰æ›´æ™‚ã®ã‚¤ãƒ™ãƒ³ãƒˆç™»éŒ²è§£é™¤
         MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
 
-        //”ñ“¯Šúƒ^ƒXƒN‚ğƒLƒƒƒ“ƒZƒ‹
+        //éåŒæœŸã‚¿ã‚¹ã‚¯ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«
         CancelAsyncTasks(); 
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        //messageText‚ªnull‚Ìê‡AƒGƒ‰[‚ğo—Í
+        //messageTextãŒnullã®å ´åˆã€ã‚¨ãƒ©ãƒ¼ã‚’å‡ºåŠ›
         if (messageText == null)
         {
-            Debug.LogError("MessageController‚ÌmessageText‚ªnull");
+            Debug.LogError("MessageControllerã®messageTextãŒnull");
         }
 
-        //AudioSource‚Ì‰Šú‰»
+        //AudioSourceã®åˆæœŸåŒ–
         InitializeAudioSource();
     }
 
     /// <summary>
-    /// SE‰¹—Ê‚ğ0`1‚Ö•ÏX
+    /// SEéŸ³é‡ã‚’0ï½1ã¸å¤‰æ›´
     /// </summary>
-    /// <param name="volume">‰¹—Ê</param>
+    /// <param name="volume">éŸ³é‡</param>
     private void UpdateSEVolume(float volume)
     {
         if (audioSourceSE != null)
@@ -206,7 +206,7 @@ public class MessageController : MonoBehaviour
     }
 
     /// <summary>
-    /// AudioSource‚Ì‰Šú‰»
+    /// AudioSourceã®åˆæœŸåŒ–
     /// </summary>
     private void InitializeAudioSource()
     {
@@ -217,12 +217,12 @@ public class MessageController : MonoBehaviour
             audioSourceSE.playOnAwake = false;
         }
 
-        //MusicController‚Åİ’è‚³‚ê‚Ä‚¢‚éSE—p‚ÌAudioMixerGroup‚ğİ’è‚·‚é
+        //MusicControllerã§è¨­å®šã•ã‚Œã¦ã„ã‚‹SEç”¨ã®AudioMixerGroupã‚’è¨­å®šã™ã‚‹
         audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
     }
 
     /// <summary>
-    /// ƒg[ƒNƒ“‚ğƒLƒƒƒ“ƒZƒ‹‚µ‚Ä”ñ“¯Šúƒ^ƒXƒN‚ğ’†’f
+    /// ãƒˆãƒ¼ã‚¯ãƒ³ã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ã¦éåŒæœŸã‚¿ã‚¹ã‚¯ã‚’ä¸­æ–­
     /// </summary>
     public void CancelAsyncTasks()
     {
@@ -236,7 +236,7 @@ public class MessageController : MonoBehaviour
 
     private void Awake()
     {
-        //ƒCƒ“ƒXƒ^ƒ“ƒX¶¬
+        //ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆ
         instance = this;
         /*
         if (instance == null)
@@ -250,10 +250,10 @@ public class MessageController : MonoBehaviour
         }
         */
 
-        //CancellationTokenSource‚ğ‰Šú‰»
+        //CancellationTokenSourceã‚’åˆæœŸåŒ–
         cts = new CancellationTokenSource();
 
-        //ƒƒbƒZ[ƒWƒŠƒZƒbƒg
+        //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒªã‚»ãƒƒãƒˆ
         ResetMessage();
 
         
@@ -273,149 +273,149 @@ public class MessageController : MonoBehaviour
             CheckInputNameText.text = "";
         }
 
-        //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌF‚ğÔF‚É•ÏX‚·‚éƒtƒ‰ƒO‚ğ‰Šú‰»
+        //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®è‰²ã‚’èµ¤è‰²ã«å¤‰æ›´ã™ã‚‹ãƒ•ãƒ©ã‚°ã‚’åˆæœŸåŒ–
         isChangeMessageTextColorRed = false;
 
-        //ƒuƒ‰ƒbƒNƒAƒEƒgƒpƒlƒ‹”ñ•\¦
+        //ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆãƒ‘ãƒãƒ«éè¡¨ç¤º
         isBlackOutPanel = false;
     }
 
     private void Start()
     {
-        //MusicController‚ÌAwakeŠÖ”‚Ìˆ—Œã‚ÉŒÄ‚Î‚ê‚é‚æ‚¤‚É‚·‚é‚½‚ßA
-        //StartŠÖ”“à‚ÅAudioSource‚ğæ“¾‚·‚é
+        //MusicControllerã®Awakeé–¢æ•°ã®å‡¦ç†å¾Œã«å‘¼ã°ã‚Œã‚‹ã‚ˆã†ã«ã™ã‚‹ãŸã‚ã€
+        //Starté–¢æ•°å†…ã§AudioSourceã‚’å–å¾—ã™ã‚‹
 
-        //AudioSource‚Ì‰Šú‰»
+        //AudioSourceã®åˆæœŸåŒ–
         InitializeAudioSource();
     }
 
     /// <summary>
-    /// ƒƒbƒZ[ƒWƒpƒlƒ‹‚Ì•\¦E”ñ•\¦
+    /// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«ã®è¡¨ç¤ºãƒ»éè¡¨ç¤º
     /// </summary>
     public void ViewMessagePanel()
     {
         if (isMessagePanel)
         {
-            //•\¦
+            //è¡¨ç¤º
             messagePanel.SetActive(true);
         }
         else
         {
-            //”ñ•\¦
+            //éè¡¨ç¤º
             messagePanel.SetActive(false);
         }
     }
 
     /// <summary>
-    /// ‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğ•\¦‚·‚éƒpƒlƒ‹‚Ì•\¦E”ñ•\¦
+    /// ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¡¨ç¤ºã™ã‚‹ãƒ‘ãƒãƒ«ã®è¡¨ç¤ºãƒ»éè¡¨ç¤º
     /// </summary>
     public void ViewSpeakerNamePanel()
     {
-        //speakerNamePanel‚ªnull‚Ìê‡
+        //speakerNamePanelãŒnullã®å ´åˆ
         if (speakerNamePanel == null) 
         {
-            //ˆ—‚ğƒXƒLƒbƒv
+            //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
             return;
         }
 
         if (isViewSpeakerNamePanel)
         {
-            //•\¦
+            //è¡¨ç¤º
             speakerNamePanel.SetActive(true);
         }
         else
         {
-            //”ñ•\¦
+            //éè¡¨ç¤º
             speakerNamePanel.SetActive(false);
         }
     }
 
     /// <summary>
-    /// ƒuƒ‰ƒbƒNƒAƒEƒgƒpƒlƒ‹‚Ì•\¦E”ñ•\¦
+    /// ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆãƒ‘ãƒãƒ«ã®è¡¨ç¤ºãƒ»éè¡¨ç¤º
     /// </summary>
     public void ViewBlackOutPanel()
     {
         if (isBlackOutPanel)
         {
-            //•\¦
+            //è¡¨ç¤º
             GameController.instance.blackOutPanel.SetActive(true);
         }
         else
         {
-            //”ñ•\¦
+            //éè¡¨ç¤º
             GameController.instance.blackOutPanel.SetActive(false);
         }
     }
 
     /// <summary>
-    /// ƒƒbƒZ[ƒW‚ğƒŠƒZƒbƒg
+    /// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’ãƒªã‚»ãƒƒãƒˆ
     /// </summary>
     public void ResetMessage()
     {
-        //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ğƒŠƒZƒbƒg
+        //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã‚’ãƒªã‚»ãƒƒãƒˆ
         messageText.color = Color.white;
         messageText.text = "";
 
-        //ƒƒbƒZ[ƒWƒpƒlƒ‹‚ğ”ñ•\¦
+        //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«ã‚’éè¡¨ç¤º
         isMessagePanel = false;
         ViewMessagePanel();
 
 
-        //speakerNameText‚ª‘¶İ‚·‚éê‡
+        //speakerNameTextãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (speakerNameText != null)
         {
-            //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğƒŠƒZƒbƒg
+            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’ãƒªã‚»ãƒƒãƒˆ
             speakerNameText.color = Color.white;
             speakerNameText.text = "";
         }
 
-        //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘Oƒpƒlƒ‹‚ğ”ñ•\¦
+        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ãƒ‘ãƒãƒ«ã‚’éè¡¨ç¤º
         isViewSpeakerNamePanel = false;
         ViewSpeakerNamePanel();
     }
 
     /// <summary>
-    /// ƒeƒLƒXƒg‚ğˆê•¶š‚¸‚Â•\¦
+    /// ãƒ†ã‚­ã‚¹ãƒˆã‚’ä¸€æ–‡å­—ãšã¤è¡¨ç¤º
     /// </summary>
-    /// <param name="s">ƒeƒLƒXƒg</param>
+    /// <param name="s">ãƒ†ã‚­ã‚¹ãƒˆ</param>
     async void Write(string s)
     {
-        //Šù‚É‘‚«‚İ’†‚Ìê‡‚ÍA‰½‚à‚µ‚È‚¢
+        //æ—¢ã«æ›¸ãè¾¼ã¿ä¸­ã®å ´åˆã¯ã€ä½•ã‚‚ã—ãªã„
         if (isWrite) return;
 
         isWrite = true;
 
-        //–ˆ‰ñƒeƒLƒXƒg‚ğƒNƒŠƒA‚µ‚Ä‚©‚ç‘‚«n‚ß‚é
+        //æ¯å›ãƒ†ã‚­ã‚¹ãƒˆã‚’ã‚¯ãƒªã‚¢ã—ã¦ã‹ã‚‰æ›¸ãå§‹ã‚ã‚‹
         messageText.text = "";
 
-        //TextMeshProRubyƒRƒ“ƒ|[ƒlƒ“ƒg‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚é‚©Šm”F
+        //TextMeshProRubyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹ã‹ç¢ºèª
         messageTextRubyComponent = messageText.GetComponent<TMP_Ruby.TextMeshProRuby>();
 
         for (int i = 0; i < s.Length; i++)
         {
-            //‘‚«‚İ‘¬“x‚ª0‚Ìê‡Aˆê‹C‚É•\¦
+            //æ›¸ãè¾¼ã¿é€Ÿåº¦ãŒ0ã®å ´åˆã€ä¸€æ°—ã«è¡¨ç¤º
             if (writeSpeed <= 0)
             {
-                //TextMeshProRubyƒRƒ“ƒ|[ƒlƒ“ƒg‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚éê‡
+                //TextMeshProRubyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹å ´åˆ
                 if (messageTextRubyComponent != null)
                 {
-                    //TextMeshProRubyƒRƒ“ƒ|[ƒlƒ“ƒg‚ÉƒeƒLƒXƒg‚ğİ’è
+                    //TextMeshProRubyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã«ãƒ†ã‚­ã‚¹ãƒˆã‚’è¨­å®š
                     messageTextRubyComponent.Text = s;
                 }
-                //TextMeshProRubyƒRƒ“ƒ|[ƒlƒ“ƒg‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚È‚¢ê‡
+                //TextMeshProRubyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ãªã„å ´åˆ
                 else
                 {
-                    //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÉƒeƒLƒXƒg‚ğİ’è
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã«ãƒ†ã‚­ã‚¹ãƒˆã‚’è¨­å®š
                     messageText.text = s;
                 }
                 break;
             }
 
-            // Œ»İ‚Ìis“x‚Ü‚Å‚Ì•¶š—ñ‚ğØ‚èo‚·
+            // ç¾åœ¨ã®é€²è¡Œåº¦ã¾ã§ã®æ–‡å­—åˆ—ã‚’åˆ‡ã‚Šå‡ºã™
             string currentText = s.Substring(0, i + 1);
 
-            // ƒ^ƒO‚Ì“r’†‚Å‹æØ‚ç‚ê‚é‚Æ•\¦‚ª•ö‚ê‚é‚Ì‚ğ–h‚®‚½‚ßA
-            // ‚à‚µ’¼‘O‚ªƒ^ƒO‚ÌŠJn•¶š '<' ‚ÅA•Â‚¶•¶š '>' ‚ª‚Ü‚¾—ˆ‚Ä‚¢‚È‚¢ê‡‚Í‰‰o‚ğƒXƒLƒbƒv‚µ‚Äˆê‹C‚Éƒ^ƒO‚ÌI‚í‚è‚Ü‚Åi‚ß‚é
+            // ã‚¿ã‚°ã®é€”ä¸­ã§åŒºåˆ‡ã‚‰ã‚Œã‚‹ã¨è¡¨ç¤ºãŒå´©ã‚Œã‚‹ã®ã‚’é˜²ããŸã‚ã€
+            // ã‚‚ã—ç›´å‰ãŒã‚¿ã‚°ã®é–‹å§‹æ–‡å­— '<' ã§ã€é–‰ã˜æ–‡å­— '>' ãŒã¾ã æ¥ã¦ã„ãªã„å ´åˆã¯æ¼”å‡ºã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¦ä¸€æ°—ã«ã‚¿ã‚°ã®çµ‚ã‚ã‚Šã¾ã§é€²ã‚ã‚‹
             if (currentText.Contains("<") && !currentText.EndsWith(">"))
             {
                 int closingTagIndex = s.IndexOf('>', i);
@@ -426,16 +426,16 @@ public class MessageController : MonoBehaviour
                 }
             }
 
-            //TextMeshProRubyƒRƒ“ƒ|[ƒlƒ“ƒg‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚éê‡
+            //TextMeshProRubyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ã‚‹å ´åˆ
             if (messageTextRubyComponent != null)
             {
-                //TextMeshProRuby‚ğ’Ê‚µ‚ÄƒeƒLƒXƒg‚ğ“K—p‚·‚é
+                //TextMeshProRubyã‚’é€šã—ã¦ãƒ†ã‚­ã‚¹ãƒˆã‚’é©ç”¨ã™ã‚‹
                 messageTextRubyComponent.Text = currentText;
             }
-            //TextMeshProRubyƒRƒ“ƒ|[ƒlƒ“ƒg‚ªƒAƒ^ƒbƒ`‚³‚ê‚Ä‚¢‚È‚¢ê‡
+            //TextMeshProRubyã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆãŒã‚¢ã‚¿ãƒƒãƒã•ã‚Œã¦ã„ãªã„å ´åˆ
             else
             {
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÉƒeƒLƒXƒg‚ğ“K—p‚·‚é
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã«ãƒ†ã‚­ã‚¹ãƒˆã‚’é©ç”¨ã™ã‚‹
                 messageText.text = currentText;
             }
 
@@ -446,8 +446,8 @@ public class MessageController : MonoBehaviour
 
 
     /// <summary>
-    /// ƒXƒy[ƒXƒL[EEnterƒL[E¶ƒNƒŠƒbƒNERƒ{ƒ^ƒ“‰Ÿ‰º‚ÅŸ‚ÌƒƒbƒZ[ƒW‚ğ•\¦
-    /// Interactc"joystick button 5"‚ğŠ„‚è“–‚Ä‚Ä‚¢‚éBƒRƒ“ƒgƒ[ƒ‰[‚Å‚ÍRƒ{ƒ^ƒ“‚É‚È‚é
+    /// ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ãƒ»Enterã‚­ãƒ¼ãƒ»å·¦ã‚¯ãƒªãƒƒã‚¯ãƒ»Rãƒœã‚¿ãƒ³æŠ¼ä¸‹ã§æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
+    /// Interactâ€¦"joystick button 5"ã‚’å‰²ã‚Šå½“ã¦ã¦ã„ã‚‹ã€‚ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã§ã¯Rãƒœã‚¿ãƒ³ã«ãªã‚‹
     /// </summary>
     /// <returns></returns>
     async UniTask ShowNextMessage() 
@@ -455,7 +455,7 @@ public class MessageController : MonoBehaviour
         await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) 
             || Input.GetMouseButtonDown(0) || Input.GetButtonDown(CommonController.instance.GetStringInteract()));
 
-        //ƒ|[ƒYƒpƒlƒ‹EƒS[ƒ‹ƒpƒlƒ‹‚ğŠJ‚¢‚Ä‚¢‚éŠÔ‚ÍAŸ‚ÌƒƒbƒZ[ƒW‚ği‚ß‚È‚¢
+        //ãƒãƒ¼ã‚ºãƒ‘ãƒãƒ«ãƒ»ã‚´ãƒ¼ãƒ«ãƒ‘ãƒãƒ«ã‚’é–‹ã„ã¦ã„ã‚‹é–“ã¯ã€æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’é€²ã‚ãªã„
         if (goal != null && PauseController.instance != null) 
         {
             if (PauseController.instance.isPause || goal.isGoalPanel)
@@ -466,41 +466,41 @@ public class MessageController : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒƒbƒZ[ƒWŒn‚ÌF‚ğ•ÏX‚·‚é
+    /// ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç³»ã®è‰²ã‚’å¤‰æ›´ã™ã‚‹
     /// </summary>
     private void ChangeTextColor(int num) 
     {
-        //˜b‚µ‚Ä‚¢‚él‚ªƒJƒiƒ‚Ìê‡||talkMessage‚Ì”Ô†‚ª2‚Ìê‡
+        //è©±ã—ã¦ã„ã‚‹äººãŒã‚«ãƒŠãƒ¡ã®å ´åˆ||talkMessageã®ç•ªå·ãŒ2ã®å ´åˆ
         if (talkMessage.talkMessage[num].speakerName == kSpeakerNameKanane
             || talkMessage.talkMessage[num].number == kTakeMessageNumber2)
         {
-            //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌF‚ğÔF‚É•ÏX‚·‚éƒtƒ‰ƒO‚ªfalse‚Ìê‡
+            //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®è‰²ã‚’èµ¤è‰²ã«å¤‰æ›´ã™ã‚‹ãƒ•ãƒ©ã‚°ãŒfalseã®å ´åˆ
             if (!isChangeMessageTextColorRed) 
             {
-                //•¶Í‚ÌF‚ğƒVƒAƒ“F‚Éİ’è
+                //æ–‡ç« ã®è‰²ã‚’ã‚·ã‚¢ãƒ³è‰²ã«è¨­å®š
                 messageText.color = Color.cyan;
             }
 
-            //speakerNameText‚ª‘¶İ‚·‚éê‡
+            //speakerNameTextãŒå­˜åœ¨ã™ã‚‹å ´åˆ
             if (speakerNameText != null)
             {
-                //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚Ì•\¦‚ğƒVƒAƒ“F‚Éİ’è
+                //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã®è¡¨ç¤ºã‚’ã‚·ã‚¢ãƒ³è‰²ã«è¨­å®š
                 speakerNameText.color = Color.cyan;
             }
         }
         else
         {
-            //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌF‚ğÔF‚É•ÏX‚·‚éƒtƒ‰ƒO‚ªfalse‚Ìê‡
+            //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®è‰²ã‚’èµ¤è‰²ã«å¤‰æ›´ã™ã‚‹ãƒ•ãƒ©ã‚°ãŒfalseã®å ´åˆ
             if (!isChangeMessageTextColorRed)
             {
-                //•¶Í‚ÌF‚ğ”’F‚Éİ’è
+                //æ–‡ç« ã®è‰²ã‚’ç™½è‰²ã«è¨­å®š
                 messageText.color = Color.white;
             }
 
-            //speakerNameText‚ª‘¶İ‚·‚éê‡
+            //speakerNameTextãŒå­˜åœ¨ã™ã‚‹å ´åˆ
             if (speakerNameText != null)
             {
-                //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚Ì•\¦‚ğ”’F‚Éİ’è
+                //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã®è¡¨ç¤ºã‚’ç™½è‰²ã«è¨­å®š
                 speakerNameText.color = Color.white;
             }
         }
@@ -508,88 +508,150 @@ public class MessageController : MonoBehaviour
 
 
     /// <summary>
-    /// ‰ï˜bƒƒbƒZ[ƒW‚ğ•\¦
+    /// ä¼šè©±ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
     /// </summary>
-    /// <param name="number">‰ï˜b”Ô†</param>
+    /// <param name="number">ä¼šè©±ç•ªå·</param>
     /// <returns></returns>
     public async UniTask ShowTalkMessage(int number)
     {
-        //Šù‚ÉƒƒbƒZ[ƒW‚ğ‘‚¢‚Ä‚é“r’†‚Å‚ ‚éê‡‚ÍAˆÈ~‚Ìˆ—‚ğ’†’f
+        //æ—¢ã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ›¸ã„ã¦ã‚‹é€”ä¸­ã§ã‚ã‚‹å ´åˆã¯ã€ä»¥é™ã®å‡¦ç†ã‚’ä¸­æ–­
         if (isWrite)
         {
-            //‘‚«‚İ‘¬“x‚ğã‚°‚Ä‚‘¬•\¦
+            //æ›¸ãè¾¼ã¿é€Ÿåº¦ã‚’ä¸Šã’ã¦é«˜é€Ÿè¡¨ç¤º
             writeSpeed = 0; 
             return;
         }
 
-        //‘O‚ÌƒƒbƒZ[ƒW‚ª‘‚¢‚Ä‚é“r’†‚Å‚ ‚é‚©‚ğ”»’fB‘‚«“r’†‚È‚çtrue
+        //å‰ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒæ›¸ã„ã¦ã‚‹é€”ä¸­ã§ã‚ã‚‹ã‹ã‚’åˆ¤æ–­ã€‚æ›¸ãé€”ä¸­ãªã‚‰true
         if (Time.timeScale == 1)
         {
-            //ƒƒbƒZ[ƒWƒpƒlƒ‹‚ğ•\¦
+            //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«ã‚’è¡¨ç¤º
             isMessagePanel = true;
             ViewMessagePanel();
 
-            //ƒƒbƒZ[ƒWŒn‚ÌƒeƒLƒXƒg‚ÌF‚ğ•ÏX
+            //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç³»ã®ãƒ†ã‚­ã‚¹ãƒˆã®è‰²ã‚’å¤‰æ›´
             ChangeTextColor(number);
 
-            //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+            //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
             switch (LanguageController.instance.GetLanguageStatus())
             {
-                //“ú–{Œê‚Ìê‡
+                //æ—¥æœ¬èªã®å ´åˆ
                 case LanguageStatus.kJapanese:
 
-                    //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ“ú–{Œê—p‚Éİ’è
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’æ—¥æœ¬èªç”¨ã«è¨­å®š
                     messageText.fontSize = talkMessage.talkMessage[number].messageSizeJapanese;
 
-                    //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                     Write(talkMessage.talkMessage[number].message);
                     break;
 
-                //‰pŒê‚Ìê‡
+                //è‹±èªã®å ´åˆ
                 case LanguageStatus.kEnglish:
 
-                    //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ‰pŒê—p‚Éİ’è
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è‹±èªç”¨ã«è¨­å®š
                     messageText.fontSize = talkMessage.talkMessage[number].messageSizeEnglish;
 
-                    //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                     Write(talkMessage.talkMessage[number].messageEnglish);
                     break;
 
-                //‚»‚êˆÈŠO‚Ìê‡
+                //ç°¡ä½“å­—ä¸­å›½èªã®å ´åˆ
+                case LanguageStatus.kSimplifiedChinese:
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç°¡ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizeChinese01;
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                    Write(talkMessage.talkMessage[number].messageChinese01);
+                    break;
+
+                //ç¹ä½“å­—ä¸­å›½èªã®å ´åˆ
+                case LanguageStatus.kTraditionalChinese:
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç¹ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizeChinese02;
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                    Write(talkMessage.talkMessage[number].messageChinese02);
+                    break;
+
+                //ã‚¹ãƒšã‚¤ãƒ³èªã®å ´åˆ
+                case LanguageStatus.kSpanish:
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ã‚¹ãƒšã‚¤ãƒ³èªç”¨ã«è¨­å®š
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizeSpanish;
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                    Write(talkMessage.talkMessage[number].messageSpanish);
+                    break;
+
+                //ãƒãƒ«ãƒˆã‚¬ãƒ«èªã®å ´åˆ
+                case LanguageStatus.kPortuguese:
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ãƒãƒ«ãƒˆã‚¬ãƒ«èªç”¨ã«è¨­å®š
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizePortuguese;
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                    Write(talkMessage.talkMessage[number].messagePortuguese);
+                    break;
+
+                //ãã‚Œä»¥å¤–ã®å ´åˆ
                 default:
-                    Debug.LogError("‘z’è‚µ‚Ä‚¢‚È‚¢Œ¾ŒêƒXƒe[ƒ^ƒX‚Å‚·");
+                    Debug.LogError("æƒ³å®šã—ã¦ã„ãªã„è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§ã™");
                     break;
             }
 
 
-            //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğ•\¦
+            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¡¨ç¤º
             isViewSpeakerNamePanel = true;
             ViewSpeakerNamePanel();
 
-            //speakerNameText‚ª‘¶İ‚·‚éê‡
+            //speakerNameTextãŒå­˜åœ¨ã™ã‚‹å ´åˆ
             if (speakerNameText != null) 
             {
-                //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+                //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
                 switch (LanguageController.instance.GetLanguageStatus()) 
                 {
+                    //æ—¥æœ¬èªã®å ´åˆ
                     case LanguageStatus.kJapanese:
 
-                    //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğİ’è
-                    speakerNameText.text = talkMessage.talkMessage[number].speakerName;
-                    break;
+                        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerName;
+                        break;
 
+                    //è‹±èªã®å ´åˆ
                     case LanguageStatus.kEnglish:
 
-                    //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğİ’è
-                    speakerNameText.text = talkMessage.talkMessage[number].speakerNameEnglish;
+                        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerNameEnglish;
+                        break;
+
+                    //ç°¡ä½“å­—ä¸­å›½èªã®å ´åˆ
+                    case LanguageStatus.kSimplifiedChinese:
+
+                        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerNameChinese01;
+                        break;
+
+                    //ç¹ä½“å­—ä¸­å›½èªã®å ´åˆ
+                    case LanguageStatus.kTraditionalChinese:
+
+                        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerNameChinese02;
+                        break;
+
+                    //ã‚¹ãƒšã‚¤ãƒ³èªã®å ´åˆ
+                    case LanguageStatus.kSpanish:
+
+                        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerNameSpanish;
+                        break;
+
+                    //ãƒãƒ«ãƒˆã‚¬ãƒ«èªã®å ´åˆ
+                    case LanguageStatus.kPortuguese:
+
+                        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerNamePortuguese;
                         break;
                 }
             }
 
-            //Scene‚ªGameClearScene‚Å‚È‚¢ê‡(GameClearScene‚©‚çƒfƒoƒbƒOƒvƒŒƒC‚·‚éÛ‚É”­¶‚·‚éƒGƒ‰[‚ğ–h‚®‚½‚ß)
+            //SceneãŒGameClearSceneã§ãªã„å ´åˆ(GameClearSceneã‹ã‚‰ãƒ‡ãƒãƒƒã‚°ãƒ—ãƒ¬ã‚¤ã™ã‚‹éš›ã«ç™ºç”Ÿã™ã‚‹ã‚¨ãƒ©ãƒ¼ã‚’é˜²ããŸã‚)
             if (SceneManager.GetActiveScene().name != CommonController.instance.GetGameClearSceneName()) 
             {
-                //wall_Tutorial‚ğÁ‚µ‚ÄƒS[ƒ‹ƒIƒuƒWƒFƒNƒg‚ªŒ©‚¦‚é‚æ‚¤‚É‚·‚é
+                //wall_Tutorialã‚’æ¶ˆã—ã¦ã‚´ãƒ¼ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒè¦‹ãˆã‚‹ã‚ˆã†ã«ã™ã‚‹
                 if (HomeController.instance.wall_Tutorial != null && number == kMessageNumber47)
                 {
                     HomeController.instance.wall_Tutorial.SetActive(false);
@@ -599,32 +661,32 @@ public class MessageController : MonoBehaviour
             await ShowNextMessage();
 
 
-            //Œã‚ë‚ğU‚èŒü‚­ƒXƒe[ƒ^ƒX‚ª1‚Ìê‡
+            //å¾Œã‚ã‚’æŒ¯ã‚Šå‘ãã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒ1ã®å ´åˆ
             if (talkMessage.talkMessage[number].isplayerBackRotateStatus == 1) 
             {
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚Æ‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘OƒeƒLƒXƒg‚ğƒŠƒZƒbƒg
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã¨ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ãƒ†ã‚­ã‚¹ãƒˆã‚’ãƒªã‚»ãƒƒãƒˆ
                 messageText.text = "";
                 speakerNameText.text = "";
 
-                //Œã‚ë‚ğU‚è•Ô‚é
+                //å¾Œã‚ã‚’æŒ¯ã‚Šè¿”ã‚‹
                 Player.instance.playerIsBackRotate = true;
 
                 await UniTask.Delay(TimeSpan.FromSeconds(talkMessage.talkMessage[number].waitTime));
 
-                //Ÿ‚ÌƒƒbƒZ[ƒW”Ô†‚Ö
+                //æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·ã¸
                 number++;
 
-                //ƒvƒŒƒCƒ„[‚Ì‰ñ“]‚ğ•Û‘¶
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å›è»¢ã‚’ä¿å­˜
                 savePlayerQuaternion = Player.instance.transform.rotation;
 
-                //ƒXƒy[ƒXƒL[‰Ÿ‰º‚ÅŸ‚ÌƒƒbƒZ[ƒW‚ğ‘‚­
+                //ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼æŠ¼ä¸‹ã§æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ›¸ã
                 showTalkMessage.ShowGameTalkMessage(number);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //isPlaySoundNoiseStatus‚ª1‚Ìê‡
+            //isPlaySoundNoiseStatusãŒ1ã®å ´åˆ
             if (talkMessage.talkMessage[number].isPlaySoundNoiseStatus == 1)
             {
                 messageText.text = "";
@@ -633,41 +695,71 @@ public class MessageController : MonoBehaviour
 
                 await UniTask.Delay(TimeSpan.FromSeconds(1));
 
-                //BGM‚ğˆê’â~‚µ‚ÄƒmƒCƒY‚ğ—¬‚·
+                //BGMã‚’ä¸€æ™‚åœæ­¢ã—ã¦ãƒã‚¤ã‚ºã‚’æµã™
                 MusicController.instance.PauseBGM(HomeController.instance.GetAudioSourceBGM(),
                     sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
 
                 audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
                 MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌF‚ğÔF‚É•ÏX‚·‚éƒtƒ‰ƒO‚ğtrue‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®è‰²ã‚’èµ¤è‰²ã«å¤‰æ›´ã™ã‚‹ãƒ•ãƒ©ã‚°ã‚’trueã«è¨­å®š
                 isChangeMessageTextColorRed = true;
 
-                //•¶š‚ÌF‚ğÔF‚Éİ’è
+                //æ–‡å­—ã®è‰²ã‚’èµ¤è‰²ã«è¨­å®š
                 messageText.color = Color.red;
 
-                //ƒƒbƒZ[ƒWŒn‚ÌƒeƒLƒXƒg‚ÌF‚ğ•ÏX
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç³»ã®ãƒ†ã‚­ã‚¹ãƒˆã®è‰²ã‚’å¤‰æ›´
                 ChangeTextColor(number);
 
-                //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚µ‚Ä•\¦‚·‚é
+                //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã—ã¦è¡¨ç¤ºã™ã‚‹
                 SettingLanguageTalkMessage(number);
 
-                //speakerNameText‚ª‘¶İ‚·‚éê‡
+                //speakerNameTextãŒå­˜åœ¨ã™ã‚‹å ´åˆ
                 if (speakerNameText != null)
                 {
-                    //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+                    //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
                     switch (LanguageController.instance.GetLanguageStatus())
                     {
+                        //æ—¥æœ¬èª
                         case LanguageStatus.kJapanese:
 
-                            //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğİ’è
+                            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
                             speakerNameText.text = talkMessage.talkMessage[number].speakerName;
                             break;
 
+                        //è‹±èª
                         case LanguageStatus.kEnglish:
 
-                            //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘O‚ğİ’è
+                            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
                             speakerNameText.text = talkMessage.talkMessage[number].speakerNameEnglish;
+                            break;
+
+                        //ç°¡ä½“å­—ä¸­å›½èª
+                        case LanguageStatus.kSimplifiedChinese:
+
+                            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerNameChinese01;
+                            break;
+
+                        //ç¹ä½“å­—ä¸­å›½èª
+                        case LanguageStatus.kTraditionalChinese:
+
+                            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerNameChinese02;
+                            break;
+
+                        //ã‚¹ãƒšã‚¤ãƒ³èª
+                        case LanguageStatus.kSpanish:
+
+                            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerNameSpanish;
+                            break;
+
+                        //ãƒãƒ«ãƒˆã‚¬ãƒ«èª
+                        case LanguageStatus.kPortuguese:
+
+                            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ã‚’è¨­å®š
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerNamePortuguese;
                             break;
                     }
                 }
@@ -676,12 +768,12 @@ public class MessageController : MonoBehaviour
 
                 await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                //BGM‚Ìˆê’â~‚ğ‰ğœ
+                //BGMã®ä¸€æ™‚åœæ­¢ã‚’è§£é™¤
                 MusicController.instance.UnPauseBGM(HomeController.instance.GetAudioSourceBGM(),
                     sO_BGM.GetBGMClip(HomeController.instance.GetHomeSceneBGMId()), HomeController.instance.GetHomeSceneBGMId());
 
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌF‚ğÔF‚É•ÏX‚·‚éƒtƒ‰ƒO‚ğfalse‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®è‰²ã‚’èµ¤è‰²ã«å¤‰æ›´ã™ã‚‹ãƒ•ãƒ©ã‚°ã‚’falseã«è¨­å®š
                 isChangeMessageTextColorRed = false;
 
                 messageText.text = "";
@@ -690,20 +782,20 @@ public class MessageController : MonoBehaviour
 
                 showTalkMessage.ShowGameTalkMessage(number);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //isPlaySoundNoiseStatus‚ª2‚Ìê‡
+            //isPlaySoundNoiseStatusãŒ2ã®å ´åˆ
             if (talkMessage.talkMessage[number].isPlaySoundNoiseStatus == 2) 
             {
                 messageText.text = "";
 
-                //BGM‚ğ~‚ß‚é
+                //BGMã‚’æ­¢ã‚ã‚‹
                 MusicController.instance.StopBGM(GameClearController.instance.GetAudioSourceBGM(),
                     sO_BGM.GetBGMClip(GameClearController.instance.GetGameClearSceneBGMId()), GameClearController.instance.GetGameClearSceneBGMId());
 
-                //‰æ–Êƒuƒ‰ƒbƒNƒAƒEƒg
+                //ç”»é¢ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆ
                 isBlackOutPanel = true;
                 ViewBlackOutPanel();
 
@@ -711,14 +803,14 @@ public class MessageController : MonoBehaviour
 
                 number++;
 
-                //ƒmƒCƒY‚ğ—¬‚·
+                //ãƒã‚¤ã‚ºã‚’æµã™
                 audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
                 MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
-                //•¶š‚ÌF‚ğÔF‚Éİ’è
+                //æ–‡å­—ã®è‰²ã‚’èµ¤è‰²ã«è¨­å®š
                 messageText.color = Color.red;
 
-                //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚µ‚Ä•\¦‚·‚é
+                //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã—ã¦è¡¨ç¤ºã™ã‚‹
                 SettingLanguageTalkMessage(number);
 
                 await ShowNextMessage();
@@ -727,68 +819,68 @@ public class MessageController : MonoBehaviour
 
                 ResetMessage();
 
-                //ƒQ[ƒ€ƒNƒŠƒAƒpƒlƒ‹‚ğ•\¦
+                //ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢ãƒ‘ãƒãƒ«ã‚’è¡¨ç¤º
                 GameClearController.instance.ViewGameClearUI();
 
-                //‰æ–Êƒuƒ‰ƒbƒNƒAƒEƒg‚ğ‰ğœ
+                //ç”»é¢ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆã‚’è§£é™¤
                 isBlackOutPanel = false;
                 ViewBlackOutPanel();
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //‘Ò‚¿ŠÔ‚ğ”­¶‚³‚¹‚éƒXƒe[ƒ^ƒX‚ª1‚Ìê‡
+            //å¾…ã¡æ™‚é–“ã‚’ç™ºç”Ÿã•ã›ã‚‹ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒ1ã®å ´åˆ
             if (talkMessage.talkMessage[number].isWaitStatus == 1) 
             {
                 messageText.text = "";
 
-                //w’è‚Ì•b”ŠÔ‘Ò‹@
+                //æŒ‡å®šã®ç§’æ•°é–“å¾…æ©Ÿ
                 await UniTask.Delay(TimeSpan.FromSeconds(talkMessage.talkMessage[number].waitTime));
 
                 number++;
 
-                //ƒXƒy[ƒXƒL[‰Ÿ‰º‚ÅŸ‚ÌƒƒbƒZ[ƒW‚ğ‘‚­
+                //ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼æŠ¼ä¸‹ã§æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ›¸ã
                 showTalkMessage.ShowGameTalkMessage(number);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹ƒtƒ‰ƒO‚ª1‚Ìê‡
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ãƒ•ãƒ©ã‚°ãŒ1ã®å ´åˆ
             if (talkMessage.talkMessage[number].isTutorialStatus == 1) 
             {
-                //‰ï˜bI—¹‚µ‚Äƒ`ƒ…[ƒgƒŠƒAƒ‹‚É“ü‚é
+                //ä¼šè©±çµ‚äº†ã—ã¦ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ã«å…¥ã‚‹
                 ResetMessage();
 
                 await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                //‰æ–Ê‚ğƒuƒ‰ƒbƒNƒAƒEƒg
+                //ç”»é¢ã‚’ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆ
                 isBlackOutPanel = true;
                 ViewBlackOutPanel();
 
                 await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                //ƒJƒiƒ‚ğƒ[ƒv
+                //ã‚«ãƒŠãƒ¡ã‚’ãƒ¯ãƒ¼ãƒ—
                 Kaname.instance.WarpPostion(1, 0.505f, 7);
 
-                //ƒ`ƒ…[ƒgƒŠƒAƒ‹—pƒhƒLƒ…ƒƒ“ƒg‚Ìˆø‚«o‚µ‚ğ•\¦
+                //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç”¨ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆã®å¼•ãå‡ºã—ã‚’è¡¨ç¤º
                 GameController.instance.GetTutorialDocumentDrawer().SetActive(true);
 
-                //‰æ–Êƒuƒ‰ƒbƒNƒAƒEƒg‚ğ‰ğœ
+                //ç”»é¢ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆã‚’è§£é™¤
                 isBlackOutPanel = false;
                 ViewBlackOutPanel();
 
                 await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                //ƒVƒXƒeƒ€ƒƒbƒZ[ƒW
+                //ã‚·ã‚¹ãƒ†ãƒ ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
                 showSystemMessage.ShowGameSystemMessage(talkMessage.talkMessage[number].showSystemMessageNumber);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹ƒtƒ‰ƒO‚ª2‚Ìê‡
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ãƒ•ãƒ©ã‚°ãŒ2ã®å ´åˆ
             if (talkMessage.talkMessage[number].isTutorialStatus == 2) 
             {
                 ResetMessage();
@@ -797,16 +889,16 @@ public class MessageController : MonoBehaviour
 
                 showSystemMessage.ShowGameSystemMessage(talkMessage.talkMessage[number].showSystemMessageNumber);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹ƒtƒ‰ƒO‚ª3‚Ìê‡
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ãƒ•ãƒ©ã‚°ãŒ3ã®å ´åˆ
             if (talkMessage.talkMessage[number].isTutorialStatus == 3)
             {
                 ResetMessage();
 
-                //ƒ`ƒ…[ƒgƒŠƒAƒ‹—pƒ~ƒXƒeƒŠ[ƒAƒCƒeƒ€ŠÖ˜A‚Ìˆø‚«o‚µ‚ğ•\¦
+                //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç”¨ãƒŸã‚¹ãƒ†ãƒªãƒ¼ã‚¢ã‚¤ãƒ†ãƒ é–¢é€£ã®å¼•ãå‡ºã—ã‚’è¡¨ç¤º
                 GameController.instance.GetTutorialMysteryItemDrawer01().SetActive(true);
                 GameController.instance.GetTutorialMysteryItemDrawer02().SetActive(true);
 
@@ -814,36 +906,36 @@ public class MessageController : MonoBehaviour
 
                 showSystemMessage.ShowGameSystemMessage(12);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //‰ï˜bI—¹ƒpƒ^[ƒ“‚»‚Ì1‚Ìê‡
+            //ä¼šè©±çµ‚äº†ãƒ‘ã‚¿ãƒ¼ãƒ³ãã®1ã®å ´åˆ
             if (talkMessage.talkMessage[number].isEndStatus == 1) 
             {
                 ResetMessage();
 
-                //ƒ`ƒ…[ƒgƒŠƒAƒ‹—pˆø‚«o‚µ‚ğ•\¦
+                //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç”¨å¼•ãå‡ºã—ã‚’è¡¨ç¤º
                 GameController.instance.GetTutorialDrawer().SetActive(true);
 
-                //ƒvƒŒƒCƒ„[ƒJƒƒ‰‚Ì‰ñ“]‚ğŒ³‚É–ß‚·
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚«ãƒ¡ãƒ©ã®å›è»¢ã‚’å…ƒã«æˆ»ã™
                 PlayerCamera.instance.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
                 PlayerCamera.instance.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 
-                //ƒQ[ƒ€ƒ‚[ƒhƒXƒe[ƒ^ƒX‚ğInGame‚Éİ’è
+                //ã‚²ãƒ¼ãƒ ãƒ¢ãƒ¼ãƒ‰ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’InGameã«è¨­å®š
                 GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒuƒ‰ƒbƒNƒAƒEƒgŠÖ˜AƒXƒe[ƒ^ƒX‚ª2‚Ìê‡
+            //ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆé–¢é€£ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒ2ã®å ´åˆ
             if (talkMessage.talkMessage[number].isBlackOutStatus == 2) 
             {
                 messageText.text = "";
                 number++;
 
-                //‰æ–Êƒuƒ‰ƒbƒNƒAƒEƒg‚ğ‰ğœ
+                //ç”»é¢ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆã‚’è§£é™¤
                 isBlackOutPanel = false;
                 ViewBlackOutPanel();
 
@@ -851,110 +943,190 @@ public class MessageController : MonoBehaviour
 
                 showTalkMessage.ShowGameTalkMessage(number);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒƒbƒZ[ƒW”Ô†‚É‘Î‰‚µ‚Ä‚¢‚éƒƒbƒZ[ƒW‚ğ‹LÚ•Ÿ‚ÌƒƒbƒZ[ƒW”Ô†‚ğ—pˆÓ
+            //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·ã«å¯¾å¿œã—ã¦ã„ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¨˜è¼‰ï¼†æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·ã‚’ç”¨æ„
             messageText.text = "";
             number++;
 
-            //ƒXƒy[ƒXƒL[‰Ÿ‰º‚ÅŸ‚ÌƒƒbƒZ[ƒW‚ğ‘‚­
+            //ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼æŠ¼ä¸‹ã§æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ›¸ã
             showTalkMessage.ShowGameTalkMessage(number);
         }
     }
 
     /// <summary>
-    /// ‰ï˜bƒƒbƒZ[ƒW‚ÌŒ¾Œê‚ğİ’è
+    /// ä¼šè©±ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¨€èªã‚’è¨­å®š
     /// </summary>
-    /// <param name="number">ƒƒbƒZ[ƒW”Ô†</param>
+    /// <param name="number">ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·</param>
     private void SettingLanguageTalkMessage(int number)
     {
-        //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+        //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
         switch (LanguageController.instance.GetLanguageStatus())
         {
-            //“ú–{Œê‚Ìê‡
+            //æ—¥æœ¬èª
             case LanguageStatus.kJapanese:
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ“ú–{Œê—p‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’æ—¥æœ¬èªç”¨ã«è¨­å®š
                 messageText.fontSize = talkMessage.talkMessage[number].messageSizeJapanese;
 
-                //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                 Write(talkMessage.talkMessage[number].message);
                 break;
 
-            //‰pŒê‚Ìê‡
+            //è‹±èª
             case LanguageStatus.kEnglish:
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ‰pŒê—p‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è‹±èªç”¨ã«è¨­å®š
                 messageText.fontSize = talkMessage.talkMessage[number].messageSizeEnglish;
 
-                //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                 Write(talkMessage.talkMessage[number].messageEnglish);
                 break;
 
-            //‚»‚êˆÈŠO‚Ìê‡
+            //ç°¡ä½“å­—ä¸­å›½èª
+            case LanguageStatus.kSimplifiedChinese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç°¡ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizeChinese01;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(talkMessage.talkMessage[number].messageChinese01);
+                break;
+
+            //ç¹ä½“å­—ä¸­å›½èª
+            case LanguageStatus.kTraditionalChinese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç¹ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizeChinese02;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(talkMessage.talkMessage[number].messageChinese02);
+                break;
+
+            //ã‚¹ãƒšã‚¤ãƒ³èª
+            case LanguageStatus.kSpanish:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ã‚¹ãƒšã‚¤ãƒ³èªç”¨ã«è¨­å®š
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizeSpanish;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(talkMessage.talkMessage[number].messageSpanish);
+                break;
+
+            //ãƒãƒ«ãƒˆã‚¬ãƒ«èª
+            case LanguageStatus.kPortuguese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ãƒãƒ«ãƒˆã‚¬ãƒ«èªç”¨ã«è¨­å®š
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizePortuguese;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(talkMessage.talkMessage[number].messagePortuguese);
+                break;
+
+            //ãã‚Œä»¥å¤–ã®å ´åˆ
             default:
-                Debug.LogError("‘z’è‚µ‚Ä‚¢‚È‚¢Œ¾ŒêƒXƒe[ƒ^ƒX‚Å‚·");
+                Debug.LogError("æƒ³å®šã—ã¦ã„ãªã„è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§ã™");
                 break;
         }
     }
 
     /// <summary>
-    /// ƒVƒXƒeƒ€ƒƒbƒZ[ƒW‚ğ•\¦
+    /// ã‚·ã‚¹ãƒ†ãƒ ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
     /// </summary>
-    /// <param name="number">ƒƒbƒZ[ƒW”Ô†</param>
+    /// <param name="number">ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·</param>
     /// <returns></returns>
     public async UniTask ShowSystemMessage(int number)
     {
-        //Šù‚ÉƒƒbƒZ[ƒW‚ğ‘‚¢‚Ä‚é“r’†‚Å‚ ‚éê‡‚ÍAˆÈ~‚Ìˆ—‚ğ’†’f
+        //æ—¢ã«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ›¸ã„ã¦ã‚‹é€”ä¸­ã§ã‚ã‚‹å ´åˆã¯ã€ä»¥é™ã®å‡¦ç†ã‚’ä¸­æ–­
         if (isWrite)
         {
-            //‘‚«‚İ‘¬“x‚ğã‚°‚Ä‚‘¬•\¦
+            //æ›¸ãè¾¼ã¿é€Ÿåº¦ã‚’ä¸Šã’ã¦é«˜é€Ÿè¡¨ç¤º
             writeSpeed = 0; 
             return;
         }
 
-        //‘O‚ÌƒƒbƒZ[ƒW‚ª‘‚¢‚Ä‚é“r’†‚Å‚ ‚é‚©‚ğ”»’fB‘‚«“r’†‚È‚çtrue
+        //å‰ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãŒæ›¸ã„ã¦ã‚‹é€”ä¸­ã§ã‚ã‚‹ã‹ã‚’åˆ¤æ–­ã€‚æ›¸ãé€”ä¸­ãªã‚‰true
         if (Time.timeScale == 1)
         {
-            //ƒƒbƒZ[ƒWƒpƒlƒ‹‚ğ•\¦
+            //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«ã‚’è¡¨ç¤º
             isMessagePanel = true;
             ViewMessagePanel();
 
-            //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+            //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
             switch (LanguageController.instance.GetLanguageStatus())
             {
-                //“ú–{Œê‚Ìê‡
+                //æ—¥æœ¬èª
                 case LanguageStatus.kJapanese:
 
-                    //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ“ú–{Œê—p‚Éİ’è
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’æ—¥æœ¬èªç”¨ã«è¨­å®š
                     messageText.fontSize = systemMessage.systemMessage[number].messageSizeJapanese;
 
-                    //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                     Write(systemMessage.systemMessage[number].message);
                     break;
 
-                //‰pŒê‚Ìê‡
+                //è‹±èª
                 case LanguageStatus.kEnglish:
 
-                    //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ‰pŒê—p‚Éİ’è
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è‹±èªç”¨ã«è¨­å®š
                     messageText.fontSize = systemMessage.systemMessage[number].messageSizeEnglish;
 
-                    //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                     Write(systemMessage.systemMessage[number].messageEnglish);
                     break;
 
-                //‚»‚êˆÈŠO‚Ìê‡
+                //ç°¡ä½“å­—ä¸­å›½èª
+                case LanguageStatus.kSimplifiedChinese:
+
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç°¡ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizeChinese01;
+
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                    Write(systemMessage.systemMessage[number].messageChinese01);
+                    break;
+
+                //ç¹ä½“å­—ä¸­å›½èª
+                case LanguageStatus.kTraditionalChinese:
+
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç¹ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizeChinese02;
+
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                    Write(systemMessage.systemMessage[number].messageChinese02);
+                    break;
+
+                //ã‚¹ãƒšã‚¤ãƒ³èª
+                case LanguageStatus.kSpanish:
+
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ã‚¹ãƒšã‚¤ãƒ³èªç”¨ã«è¨­å®š
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizeSpanish;
+
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                    Write(systemMessage.systemMessage[number].messageSpanish);
+                    break;
+
+                //ãƒãƒ«ãƒˆã‚¬ãƒ«èª
+                case LanguageStatus.kPortuguese:
+
+                    //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ãƒãƒ«ãƒˆã‚¬ãƒ«èªç”¨ã«è¨­å®š
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizePortuguese;
+
+                    //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                    Write(systemMessage.systemMessage[number].messagePortuguese);
+                    break;
+
+                //ãã‚Œä»¥å¤–ã®å ´åˆ
                 default:
-                    Debug.LogError("‘z’è‚µ‚Ä‚¢‚È‚¢Œ¾ŒêƒXƒe[ƒ^ƒX‚Å‚·");
+                    Debug.LogError("æƒ³å®šã—ã¦ã„ãªã„è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§ã™");
                     break;
             }
 
-            //InputPlayerNameField‚ÉŠÖ‚·‚éƒXƒe[ƒ^ƒX‚ª1‚Ìê‡
+            //InputPlayerNameFieldã«é–¢ã™ã‚‹ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒ1ã®å ´åˆ
             if (systemMessage.systemMessage[number].isInputPlayerNameFieldStatus == 1)
             {
-                //–¼‘O“ü—ÍUI‚ğ•\¦
+                //åå‰å…¥åŠ›UIã‚’è¡¨ç¤º
                 await ShowNextMessage();
 
                 ResetMessage();
@@ -964,24 +1136,24 @@ public class MessageController : MonoBehaviour
 
                 inputPlayerNameField.gameObject.SetActive(true);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //InputPlayerNameField‚ÉŠÖ‚·‚éƒXƒe[ƒ^ƒX‚ª2‚Ìê‡
+            //InputPlayerNameFieldã«é–¢ã™ã‚‹ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãŒ2ã®å ´åˆ
             if (systemMessage.systemMessage[number].isInputPlayerNameFieldStatus == 2) 
             {
-                //–¼‘O“ü—Í§ŒÀ‚Éˆø‚Á‚©‚©‚Á‚½Œã‚ÉA‚à‚¤ˆê“x–¼‘O“ü—ÍUI‚ğ•\¦
+                //åå‰å…¥åŠ›åˆ¶é™ã«å¼•ã£ã‹ã‹ã£ãŸå¾Œã«ã€ã‚‚ã†ä¸€åº¦åå‰å…¥åŠ›UIã‚’è¡¨ç¤º
                 await ShowNextMessage();
 
                 ResetMessage();
                 showSystemMessage.ShowGameSystemMessage(systemMessage.systemMessage[number].showSystemMessageNumber);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //isPlaySoundNoiseStatus‚ª3‚Ìê‡
+            //isPlaySoundNoiseStatusãŒ3ã®å ´åˆ
             if (systemMessage.systemMessage[number].isPlaySoundNoiseStatus == 3) 
             {
                 await ShowNextMessage();
@@ -992,11 +1164,11 @@ public class MessageController : MonoBehaviour
 
                 await UniTask.Delay(TimeSpan.FromSeconds(2));
 
-                //ƒmƒCƒY‚ğ—¬‚·
+                //ãƒã‚¤ã‚ºã‚’æµã™
                 audioSourceSE.clip = sO_SE.GetSEClip(noiseSEid);
                 MusicController.instance.PlayMomentAudioSE(audioSourceSE, audioSourceSE.clip);
 
-                //•¶š‚ÌF‚ğÔF‚Éİ’è
+                //æ–‡å­—ã®è‰²ã‚’èµ¤è‰²ã«è¨­å®š
                 messageText.color = Color.red;
 
                 Write(systemMessage.systemMessage[number].message);
@@ -1010,17 +1182,17 @@ public class MessageController : MonoBehaviour
 
                 await UniTask.Delay(TimeSpan.FromSeconds(3));
 
-                //ƒV[ƒ“‘JˆÚ—pƒf[ƒ^‚ğ•Û‘¶
+                //ã‚·ãƒ¼ãƒ³é·ç§»æ™‚ç”¨ãƒ‡ãƒ¼ã‚¿ã‚’ä¿å­˜
                 GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
-                //HomeScene‚ÖˆÚ“®
+                //HomeSceneã¸ç§»å‹•
                 SceneManager.LoadScene(CommonController.instance.GetHomeSceneName());
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //TalkMessageStatusŠÖ˜Aƒtƒ‰ƒO‚ª1‚Ìê‡
+            //TalkMessageStatusé–¢é€£ãƒ•ãƒ©ã‚°ãŒ1ã®å ´åˆ
             if (systemMessage.systemMessage[number].isShowTalkMessageStatus == 1) 
             {
                 await ShowNextMessage();
@@ -1028,78 +1200,78 @@ public class MessageController : MonoBehaviour
                 ResetMessage();
 
                 showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹ƒtƒ‰ƒO‚ª4‚Ìê‡
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ãƒ•ãƒ©ã‚°ãŒ4ã®å ´åˆ
             if (systemMessage.systemMessage[number].isTutorialStatus == 4) 
             {
-                //ƒhƒLƒ…ƒƒ“ƒg(ƒ`ƒ…[ƒgƒŠƒAƒ‹”Å)“üè‚µ‚½‚çƒƒbƒZ[ƒW‚ğŠ©‚ß‚é
+                //ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆ(ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç‰ˆ)å…¥æ‰‹ã—ãŸã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‹§ã‚ã‚‹
                 await UniTask.WaitUntil(() => GameController.instance.GetIsTutorialNextMessageFlag(), cancellationToken: cts.Token);
                 GameController.instance.SetIsTutorialNextMessageFlag(false);
 
-                //ƒvƒŒƒCƒ„[Œø‰Ê‰¹‚ğ’â~
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åŠ¹æœéŸ³ã‚’åœæ­¢
                 MusicController.instance.StopSE(Player.instance.audioSourceSE);
 
-                //¶ƒNƒŠƒbƒNcƒhƒLƒ…ƒƒ“ƒg“üè‘€ì‚Ìà–¾
+                //å·¦ã‚¯ãƒªãƒƒã‚¯â€¦ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆå…¥æ‰‹æ“ä½œã®èª¬æ˜
                 ResetMessage();
 
-                //ƒXƒg[ƒŠ[ƒ‚[ƒh‚Ö•ÏX
+                //ã‚¹ãƒˆãƒ¼ãƒªãƒ¼ãƒ¢ãƒ¼ãƒ‰ã¸å¤‰æ›´
                 GameController.instance.SetGameModeStatus(GameModeStatus.Story);
 
                 showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹ƒtƒ‰ƒO‚ª5‚Ìê‡
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ãƒ•ãƒ©ã‚°ãŒ5ã®å ´åˆ
             if (systemMessage.systemMessage[number].isTutorialStatus == 5) 
             {
-                //ƒhƒLƒ…ƒƒ“ƒg(ƒ`ƒ…[ƒgƒŠƒAƒ‹”Å)‚ğ‰{——Œã‚Éƒ|[ƒY‰ğœ‚µ‚½‚çƒƒbƒZ[ƒW‚ğŠ©‚ß‚é
+                //ãƒ‰ã‚­ãƒ¥ãƒ¡ãƒ³ãƒˆ(ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç‰ˆ)ã‚’é–²è¦§å¾Œã«ãƒãƒ¼ã‚ºè§£é™¤ã—ãŸã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‹§ã‚ã‚‹
                 await UniTask.WaitUntil(() => PauseController.instance != null && GameController.instance.GetIsTutorialNextMessageFlag() 
                     && !PauseController.instance.isPause && !PauseController.instance.GetIsViewItemsPanel()
                     && !PauseController.instance.IsReturnToTitlePanel() && OptionUIController.instance != null 
                     && !OptionUIController.instance.GetIsOptionPanel(), cancellationToken: cts.Token);
                 GameController.instance.SetIsTutorialNextMessageFlag(false);
 
-                //ƒvƒŒƒCƒ„[Œø‰Ê‰¹‚ğ’â~
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åŠ¹æœéŸ³ã‚’åœæ­¢
                 MusicController.instance.StopSE(Player.instance.audioSourceSE);
 
                 ResetMessage();
 
-                //ƒXƒg[ƒŠ[ƒ‚[ƒh‚Ö•ÏX
+                //ã‚¹ãƒˆãƒ¼ãƒªãƒ¼ãƒ¢ãƒ¼ãƒ‰ã¸å¤‰æ›´
                 GameController.instance.SetGameModeStatus(GameModeStatus.Story);
 
                 showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹ƒtƒ‰ƒO‚ª6‚Ìê‡
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ãƒ•ãƒ©ã‚°ãŒ6ã®å ´åˆ
             if (systemMessage.systemMessage[number].isTutorialStatus == 6) 
             {
-                //ƒ~ƒXƒeƒŠ[ƒAƒCƒeƒ€(ƒ`ƒ…[ƒgƒŠƒAƒ‹”Å)“üè‚µ‚½‚çƒƒbƒZ[ƒW‚ğŠ©‚ß‚é
+                //ãƒŸã‚¹ãƒ†ãƒªãƒ¼ã‚¢ã‚¤ãƒ†ãƒ (ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç‰ˆ)å…¥æ‰‹ã—ãŸã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‹§ã‚ã‚‹
                 await UniTask.WaitUntil(() => PauseController.instance != null && PauseController.instance.isGetHammer_Tutorial 
                     && PauseController.instance.isGetRope_Tutorial, cancellationToken: cts.Token);
 
-                //ƒvƒŒƒCƒ„[Œø‰Ê‰¹‚ğ’â~
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åŠ¹æœéŸ³ã‚’åœæ­¢
                 MusicController.instance.StopSE(Player.instance.audioSourceSE);
 
                 ResetMessage();
 
-                //ƒXƒg[ƒŠ[ƒ‚[ƒh‚Ö•ÏX
+                //ã‚¹ãƒˆãƒ¼ãƒªãƒ¼ãƒ¢ãƒ¼ãƒ‰ã¸å¤‰æ›´
                 GameController.instance.SetGameModeStatus(GameModeStatus.Story);
 
                 showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹ƒtƒ‰ƒO‚ª7‚Ìê‡
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ãƒ•ãƒ©ã‚°ãŒ7ã®å ´åˆ
             if (systemMessage.systemMessage[number].isTutorialStatus == 7) 
             {
-                //ƒ~ƒXƒeƒŠ[ƒAƒCƒeƒ€(ƒ`ƒ…[ƒgƒŠƒAƒ‹”Å)‚ğ‰{——Œã‚Éƒ|[ƒY‰ğœ‚µ‚½‚çƒƒbƒZ[ƒW‚ğŠ©‚ß‚é
+                //ãƒŸã‚¹ãƒ†ãƒªãƒ¼ã‚¢ã‚¤ãƒ†ãƒ (ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç‰ˆ)ã‚’é–²è¦§å¾Œã«ãƒãƒ¼ã‚ºè§£é™¤ã—ãŸã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‹§ã‚ã‚‹
                 await UniTask.WaitUntil(() => PauseController.instance != null && !PauseController.instance.isPause 
                     && !PauseController.instance.GetIsViewItemsPanel() && PauseController.instance.isViewMysteryItem_Tutorial 
                     && !PauseController.instance.IsReturnToTitlePanel() && OptionUIController.instance != null 
@@ -1107,23 +1279,23 @@ public class MessageController : MonoBehaviour
                 PauseController.instance.isViewMysteryItem_Tutorial = false;
                 ResetMessage();
 
-                //ƒvƒŒƒCƒ„[Œø‰Ê‰¹‚ğ’â~
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åŠ¹æœéŸ³ã‚’åœæ­¢
                 MusicController.instance.StopSE(Player.instance.audioSourceSE);
 
-                //ƒXƒg[ƒŠ[ƒ‚[ƒh‚Ö•ÏX
+                //ã‚¹ãƒˆãƒ¼ãƒªãƒ¼ãƒ¢ãƒ¼ãƒ‰ã¸å¤‰æ›´
                 GameController.instance.SetGameModeStatus(GameModeStatus.Story);
 
                 showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹ƒtƒ‰ƒO‚ª8‚Ìê‡
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ãƒ•ãƒ©ã‚°ãŒ8ã®å ´åˆ
             if (systemMessage.systemMessage[number].isTutorialStatus == 8) 
             {
-                //ƒ`ƒ…[ƒgƒŠƒAƒ‹I—¹
+                //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«çµ‚äº†
 
-                //ƒ`ƒ…[ƒgƒŠƒAƒ‹—pƒS[ƒ‹‚Ì‰{——I—¹‚µ‚½‚çƒƒbƒZ[ƒW‚ğŠ©‚ß‚é
+                //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç”¨ã‚´ãƒ¼ãƒ«ã®é–²è¦§çµ‚äº†ã—ãŸã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å‹§ã‚ã‚‹
                 await UniTask.WaitUntil(() => Time.timeScale == 1
                 && GameController.instance.GetIsTutorialGoalFlag());
 
@@ -1135,61 +1307,61 @@ public class MessageController : MonoBehaviour
 
                 await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                //‰æ–Êƒuƒ‰ƒbƒNƒAƒEƒg
+                //ç”»é¢ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆ
                 isBlackOutPanel = true;
                 ViewBlackOutPanel();
 
                 await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                //wall_Tutorial‚ğ•\¦
+                //wall_Tutorialã‚’è¡¨ç¤º
                 HomeController.instance.wall_Tutorial.SetActive(true);
 
-                //wall_EndTutorial‚ğ”ñ•\¦
+                //wall_EndTutorialã‚’éè¡¨ç¤º
                 HomeController.instance.wall_EndTutorial.SetActive(false);
 
-                //ƒvƒŒƒCƒ„[EƒJƒiƒ‚ğƒ[ƒv
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ»ã‚«ãƒŠãƒ¡ã‚’ãƒ¯ãƒ¼ãƒ—
                 Kaname.instance.WarpPostion(1, 0.505f, 2);
                 Player.instance.PlayerWarp(1, 0.562f, 0);
 
-                //ƒJƒƒ‰‚ÌŠp“x‚ğƒŠƒZƒbƒg
+                //ã‚«ãƒ¡ãƒ©ã®è§’åº¦ã‚’ãƒªã‚»ãƒƒãƒˆ
                 if (Player.instance != null)
                 {
-                    // ƒJƒƒ‰‚Ìã‰º‰ñ“]‚ğƒŠƒZƒbƒg
+                    // ã‚«ãƒ¡ãƒ©ã®ä¸Šä¸‹å›è»¢ã‚’ãƒªã‚»ãƒƒãƒˆ
                     PlayerCamera.instance.ResetCameraRotation();
 
-                    // ƒvƒŒƒCƒ„[‚ÌŒü‚«‚ğƒJƒƒ‰‚Ì³–Ê‚É“¯Šúi•K—v‚É‰‚¶‚Äj
+                    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ãã‚’ã‚«ãƒ¡ãƒ©ã®æ­£é¢ã«åŒæœŸï¼ˆå¿…è¦ã«å¿œã˜ã¦ï¼‰
                     Player.instance.transform.rotation = Quaternion.LookRotation(Vector3.forward, Vector3.up);
 
-                    //ƒvƒŒƒCƒ„[‚Ìtransform.rotation‚Ì’l‚ğ•Û‘¶‚µ‚Ä‚¢‚½’l‚É–ß‚·
+                    //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®transform.rotationã®å€¤ã‚’ä¿å­˜ã—ã¦ã„ãŸå€¤ã«æˆ»ã™
                     Player.instance.transform.rotation = savePlayerQuaternion;
                 }
 
-                //ƒvƒŒƒCƒ„[ƒJƒƒ‰‚ÌX²‰ñ“]ƒŠƒZƒbƒgƒtƒ‰ƒO‚ğtrue‚Éİ’è
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚«ãƒ¡ãƒ©ã®Xè»¸å›è»¢ãƒªã‚»ãƒƒãƒˆãƒ•ãƒ©ã‚°ã‚’trueã«è¨­å®š
                 PlayerCamera.instance.SetIsResetXRotate(true);
 
                 await UniTask.Delay(TimeSpan.FromSeconds(1.5));
 
-                //ƒvƒŒƒCƒ„[ƒJƒƒ‰‚ÌX²‰ñ“]ƒŠƒZƒbƒgƒtƒ‰ƒO‚ğfalse‚Éİ’è
+                //ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚«ãƒ¡ãƒ©ã®Xè»¸å›è»¢ãƒªã‚»ãƒƒãƒˆãƒ•ãƒ©ã‚°ã‚’falseã«è¨­å®š
                 PlayerCamera.instance.SetIsResetXRotate(false);
 
-                //ƒ`ƒ…[ƒgƒŠƒAƒ‹—pƒAƒCƒeƒ€ŠÖŒW‚Ìˆø‚«o‚µ‚ğ”ñ•\¦
+                //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç”¨ã‚¢ã‚¤ãƒ†ãƒ é–¢ä¿‚ã®å¼•ãå‡ºã—ã‚’éè¡¨ç¤º
                 GameController.instance.GetTutorialDocumentDrawer().SetActive(false);
                 GameController.instance.GetTutorialMysteryItemDrawer01().SetActive(false);
                 GameController.instance.GetTutorialMysteryItemDrawer02().SetActive(false);
 
                 await UniTask.Delay(TimeSpan.FromSeconds(0.5));
 
-                //‰æ–Êƒuƒ‰ƒbƒNƒAƒEƒg‚ğ‰ğœ
+                //ç”»é¢ãƒ–ãƒ©ãƒƒã‚¯ã‚¢ã‚¦ãƒˆã‚’è§£é™¤
                 isBlackOutPanel = false;
                 ViewBlackOutPanel();
 
                 showSystemMessage.ShowGameSystemMessage(number);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //TalkMessageStatusŠÖ˜Aƒtƒ‰ƒO‚ª2‚Ìê‡
+            //TalkMessageStatusé–¢é€£ãƒ•ãƒ©ã‚°ãŒ2ã®å ´åˆ
             if (systemMessage.systemMessage[number].isShowTalkMessageStatus == 2) 
             {
                 await ShowNextMessage();
@@ -1200,93 +1372,173 @@ public class MessageController : MonoBehaviour
 
                 showTalkMessage.ShowGameTalkMessage(systemMessage.systemMessage[number].ShowTalkMessageNumber);
 
-                //ˆ—‚ğƒXƒLƒbƒv
+                //å‡¦ç†ã‚’ã‚¹ã‚­ãƒƒãƒ—
                 return;
             }
 
-            //ƒƒbƒZ[ƒW”Ô†‚É‘Î‰‚µ‚Ä‚¢‚éƒƒbƒZ[ƒW‚ğ‹LÚ•Ÿ‚ÌƒƒbƒZ[ƒW”Ô†‚ğ—pˆÓ
+            //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·ã«å¯¾å¿œã—ã¦ã„ã‚‹ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¨˜è¼‰ï¼†æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·ã‚’ç”¨æ„
             await ShowNextMessage();
 
             messageText.text = "";
             number++;
 
-            //ƒXƒy[ƒXƒL[‰Ÿ‰º‚ÅŸ‚ÌƒƒbƒZ[ƒW‚ğ‘‚­
+            //ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼æŠ¼ä¸‹ã§æ¬¡ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’æ›¸ã
             showSystemMessage.ShowGameSystemMessage(number);
         }
     }
 
     /// <summary>
-    /// ƒVƒXƒeƒ€ƒƒbƒZ[ƒW‚ÌŒ¾Œê‚ğİ’è
+    /// ã‚·ã‚¹ãƒ†ãƒ ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¨€èªã‚’è¨­å®š
     /// </summary>
-    /// <param name="number">ƒƒbƒZ[ƒW”Ô†</param>
+    /// <param name="number">ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·</param>
     private void SettingLanguageSystemMessage(int number) 
     {
-        //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+        //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
         switch (LanguageController.instance.GetLanguageStatus())
         {
-            //“ú–{Œê‚Ìê‡
+            //æ—¥æœ¬èª
             case LanguageStatus.kJapanese:
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ“ú–{Œê—p‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’æ—¥æœ¬èªç”¨ã«è¨­å®š
                 messageText.fontSize = systemMessage.systemMessage[number].messageSizeJapanese;
 
-                //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                 Write(systemMessage.systemMessage[number].message);
                 break;
 
-            //‰pŒê‚Ìê‡
+            //è‹±èª
             case LanguageStatus.kEnglish:
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ‰pŒê—p‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è‹±èªç”¨ã«è¨­å®š
                 messageText.fontSize = systemMessage.systemMessage[number].messageSizeEnglish;
 
-                //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                 Write(systemMessage.systemMessage[number].messageEnglish);
                 break;
 
-            //‚»‚êˆÈŠO‚Ìê‡
+            //ç°¡ä½“å­—ä¸­å›½èª
+            case LanguageStatus.kSimplifiedChinese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç°¡ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizeChinese01;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(systemMessage.systemMessage[number].messageChinese01);
+                break;
+
+            //ç¹ä½“å­—ä¸­å›½èª
+            case LanguageStatus.kTraditionalChinese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç¹ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizeChinese02;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(systemMessage.systemMessage[number].messageChinese02);
+                break;
+
+            //ã‚¹ãƒšã‚¤ãƒ³èª
+            case LanguageStatus.kSpanish:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ã‚¹ãƒšã‚¤ãƒ³èªç”¨ã«è¨­å®š
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizeSpanish;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(systemMessage.systemMessage[number].messageSpanish);
+                break;
+
+            //ãƒãƒ«ãƒˆã‚¬ãƒ«èª
+            case LanguageStatus.kPortuguese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ãƒãƒ«ãƒˆã‚¬ãƒ«èªç”¨ã«è¨­å®š
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizePortuguese;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(systemMessage.systemMessage[number].messagePortuguese);
+                break;
+
+            //ãã‚Œä»¥å¤–ã®å ´åˆ
             default:
-                Debug.LogError("‘z’è‚µ‚Ä‚¢‚È‚¢Œ¾ŒêƒXƒe[ƒ^ƒX‚Å‚·");
+                Debug.LogError("æƒ³å®šã—ã¦ã„ãªã„è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§ã™");
                 break;
         }
     }
 
     /// <summary>
-    /// ƒS[ƒ‹ƒƒbƒZ[ƒW‚ğ•\¦
+    /// ã‚´ãƒ¼ãƒ«ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
     /// </summary>
-    /// <param name="number">ƒƒbƒZ[ƒW”Ô†</param>
+    /// <param name="number">ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·</param>
     public void ShowGoalMessage(int number) 
     {
-        //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+        //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
         switch (LanguageController.instance.GetLanguageStatus())
         {
-            //“ú–{Œê‚Ìê‡
+            //æ—¥æœ¬èª
             case LanguageStatus.kJapanese:
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ“ú–{Œê—p‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’æ—¥æœ¬èªç”¨ã«è¨­å®š
                 messageText.fontSize = goalMessage.goalMessage[number].messageSizeJapanese;
 
-                //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                 Write(goalMessage.goalMessage[number].message);
                 break;
 
-            //‰pŒê‚Ìê‡
+            //è‹±èª
             case LanguageStatus.kEnglish:
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ‰pŒê—p‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è‹±èªç”¨ã«è¨­å®š
                 messageText.fontSize = goalMessage.goalMessage[number].messageSizeEnglish;
 
-                //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                 Write(goalMessage.goalMessage[number].messageEnglish);
                 break;
 
-            //‚»‚êˆÈŠO‚Ìê‡
+            //ç°¡ä½“å­—ä¸­å›½èª
+            case LanguageStatus.kSimplifiedChinese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç°¡ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizeChinese01;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(goalMessage.goalMessage[number].messageChinese01);
+                break;
+
+            //ç¹ä½“å­—ä¸­å›½èª
+            case LanguageStatus.kTraditionalChinese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç¹ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizeChinese02;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(goalMessage.goalMessage[number].messageChinese02);
+                break;
+
+            //ã‚¹ãƒšã‚¤ãƒ³èª
+            case LanguageStatus.kSpanish:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ã‚¹ãƒšã‚¤ãƒ³èªç”¨ã«è¨­å®š
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizeSpanish;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(goalMessage.goalMessage[number].messageSpanish);
+                break;
+
+            //ãƒãƒ«ãƒˆã‚¬ãƒ«èª
+            case LanguageStatus.kPortuguese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ãƒãƒ«ãƒˆã‚¬ãƒ«èªç”¨ã«è¨­å®š
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizePortuguese;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(goalMessage.goalMessage[number].messagePortuguese);
+                break;
+
+            //ãã‚Œä»¥å¤–ã®å ´åˆ
             default:
-                Debug.LogError("‘z’è‚µ‚Ä‚¢‚È‚¢Œ¾ŒêƒXƒe[ƒ^ƒX‚Å‚·");
+                Debug.LogError("æƒ³å®šã—ã¦ã„ãªã„è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§ã™");
                 break;
         }
 
-        //ƒƒbƒZ[ƒWƒpƒlƒ‹‚ğ•\¦
+        //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«ã‚’è¡¨ç¤º
         isMessagePanel = true;
         ViewMessagePanel();
     }
@@ -1294,82 +1546,150 @@ public class MessageController : MonoBehaviour
 
 
     /// <summary>
-    /// ƒCƒ“ƒxƒ“ƒgƒŠƒƒbƒZ[ƒW‚ğ•\¦
+    /// ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
     /// </summary>
-    /// <param name="number">ƒƒbƒZ[ƒW”Ô†</param>
+    /// <param name="number">ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ç•ªå·</param>
     public void ShowInventoryMessage(int number) 
     {
-        //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+        //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
         switch (LanguageController.instance.GetLanguageStatus())
         {
-            //“ú–{Œê‚Ìê‡
+            //æ—¥æœ¬èª
             case LanguageStatus.kJapanese:
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ“ú–{Œê—p‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’æ—¥æœ¬èªç”¨ã«è¨­å®š
                 messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeJapanese;
 
-                //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                 Write(inventoryMessage.inventoryMessage[number].message);
                 break;
 
-            //‰pŒê‚Ìê‡
+            //è‹±èª
             case LanguageStatus.kEnglish:
 
-                //ƒƒbƒZ[ƒWƒeƒLƒXƒg‚ÌƒtƒHƒ“ƒgƒTƒCƒY‚ğ‰pŒê—p‚Éİ’è
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’è‹±èªç”¨ã«è¨­å®š
                 messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeEnglish;
 
-                //ƒGƒNƒZƒ‹ƒf[ƒ^Œ^.ƒŠƒXƒgŒ^[”Ô†].ƒJƒ‰ƒ€–¼
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
                 Write(inventoryMessage.inventoryMessage[number].messageEnglish);
                 break;
 
-            //‚»‚êˆÈŠO‚Ìê‡
+            //ç°¡ä½“å­—ä¸­å›½èª
+            case LanguageStatus.kSpanish:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç°¡ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeChinese01;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(inventoryMessage.inventoryMessage[number].messageChinese01);
+                break;
+
+            //ç¹ä½“å­—ä¸­å›½èª
+            case LanguageStatus.kPortuguese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ç¹ä½“å­—ä¸­å›½èªç”¨ã«è¨­å®š
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeChinese02;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(inventoryMessage.inventoryMessage[number].messageChinese02);
+                break;
+
+            //ã‚¹ãƒšã‚¤ãƒ³èª
+            case LanguageStatus.kTraditionalChinese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ã‚¹ãƒšã‚¤ãƒ³èªç”¨ã«è¨­å®š
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeSpanish;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(inventoryMessage.inventoryMessage[number].messageSpanish);
+                break;
+
+            //ãƒãƒ«ãƒˆã‚¬ãƒ«èª
+            case LanguageStatus.kSimplifiedChinese:
+
+                //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚©ãƒ³ãƒˆã‚µã‚¤ã‚ºã‚’ãƒãƒ«ãƒˆã‚¬ãƒ«èªç”¨ã«è¨­å®š
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizePortuguese;
+
+                //ã‚¨ã‚¯ã‚»ãƒ«ãƒ‡ãƒ¼ã‚¿å‹.ãƒªã‚¹ãƒˆå‹[ç•ªå·].ã‚«ãƒ©ãƒ å
+                Write(inventoryMessage.inventoryMessage[number].messagePortuguese);
+                break;
+
+            //ãã‚Œä»¥å¤–ã®å ´åˆ
             default:
-                Debug.LogError("‘z’è‚µ‚Ä‚¢‚È‚¢Œ¾ŒêƒXƒe[ƒ^ƒX‚Å‚·");
+                Debug.LogError("æƒ³å®šã—ã¦ã„ãªã„è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§ã™");
                 break;
         }
 
-        //ƒƒbƒZ[ƒWƒpƒlƒ‹‚ğ•\¦
+        //ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒ‘ãƒãƒ«ã‚’è¡¨ç¤º
         isMessagePanel = true;
         ViewMessagePanel();
     }
 
     /// <summary>
-    /// ƒvƒŒƒCƒ„[‚Ì–¼‘O‚Ì“ü—Í‚ªŠ®—¹‚µ‚½Û‚ÉŒÄ‚Î‚ê‚é
+    /// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®åå‰ã®å…¥åŠ›ãŒå®Œäº†ã—ãŸéš›ã«å‘¼ã°ã‚Œã‚‹
     /// </summary>
-    /// <param name="playerName">“ü—Í‚µ‚½ƒvƒŒƒCƒ„[–¼</param>
+    /// <param name="playerName">å…¥åŠ›ã—ãŸãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å</param>
     public void SavePlayerName(string playerName)
     {
-        //2•¶šˆÈã10•¶šˆÈ‰º‚Å‚ ‚é‚©
+        //2æ–‡å­—ä»¥ä¸Š10æ–‡å­—ä»¥ä¸‹ã§ã‚ã‚‹ã‹
         if ((1 < playerName.Length) && (playerName.Length < 11)) 
         {
-            //–¼‘O‚ğˆê“I‚É•Û‘¶
+            //åå‰ã‚’ä¸€æ™‚çš„ã«ä¿å­˜
             inputPlayerNameField.text = playerName;
 
 
-            //Œ¾ŒêƒXƒe[ƒ^ƒX‚É‰‚¶‚ÄAƒeƒLƒXƒg‚ğ•ÏX‚·‚é
+            //è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã«å¿œã˜ã¦ã€ãƒ†ã‚­ã‚¹ãƒˆã‚’å¤‰æ›´ã™ã‚‹
             switch (LanguageController.instance.GetLanguageStatus())
             {
-                //“ú–{Œê‚Ìê‡
+                //æ—¥æœ¬èª
                 case LanguageStatus.kJapanese:
 
-                    //Šm”F—pƒeƒLƒXƒg‚É“ü—Í‚µ‚½–¼‘O‚ğ•\¦
-                    CheckInputNameText.text = inputPlayerNameField.text + " ‚Å‚æ‚ë‚µ‚¢‚Å‚·‚©H";
+                    //ç¢ºèªç”¨ãƒ†ã‚­ã‚¹ãƒˆã«å…¥åŠ›ã—ãŸåå‰ã‚’è¡¨ç¤º
+                    CheckInputNameText.text = inputPlayerNameField.text + " ã§ã‚ˆã‚ã—ã„ã§ã™ã‹ï¼Ÿ";
                     break;
 
-                //‰pŒê‚Ìê‡
+                //è‹±èª
                 case LanguageStatus.kEnglish:
 
-                    //Šm”F—pƒeƒLƒXƒg‚É“ü—Í‚µ‚½–¼‘O‚ğ•\¦
-                    CheckInputNameText.text = "Is it correct as " + inputPlayerNameField.text + "H";
+                    //ç¢ºèªç”¨ãƒ†ã‚­ã‚¹ãƒˆã«å…¥åŠ›ã—ãŸåå‰ã‚’è¡¨ç¤º
+                    CheckInputNameText.text = "Is it correct as " + inputPlayerNameField.text + "ï¼Ÿ";
                     break;
 
-                //‚»‚êˆÈŠO‚Ìê‡
+                //ç°¡ä½“å­—ä¸­å›½èª
+                case LanguageStatus.kSimplifiedChinese:
+
+                    //ç¢ºèªç”¨ãƒ†ã‚­ã‚¹ãƒˆã«å…¥åŠ›ã—ãŸåå‰ã‚’è¡¨ç¤º
+                    CheckInputNameText.text = inputPlayerNameField.text + " æ­£ç¡®å—ï¼Ÿ";
+                    break;
+
+                //ç¹ä½“å­—ä¸­å›½èª
+                case LanguageStatus.kTraditionalChinese:
+
+                    //ç¢ºèªç”¨ãƒ†ã‚­ã‚¹ãƒˆã«å…¥åŠ›ã—ãŸåå‰ã‚’è¡¨ç¤º
+                    CheckInputNameText.text = inputPlayerNameField.text + " æ­£ç¢ºå—ï¼Ÿ";
+                    break;
+
+                //ã‚¹ãƒšã‚¤ãƒ³èª
+                case LanguageStatus.kSpanish:
+
+                    //ç¢ºèªç”¨ãƒ†ã‚­ã‚¹ãƒˆã«å…¥åŠ›ã—ãŸåå‰ã‚’è¡¨ç¤º
+                    CheckInputNameText.text = "Â¿Es correcto " + inputPlayerNameField.text + "?";
+                    break;
+
+                //ãƒãƒ«ãƒˆã‚¬ãƒ«èª
+                case LanguageStatus.kPortuguese:
+
+                    //ç¢ºèªç”¨ãƒ†ã‚­ã‚¹ãƒˆã«å…¥åŠ›ã—ãŸåå‰ã‚’è¡¨ç¤º
+                    CheckInputNameText.text = "Deseja usar " + inputPlayerNameField.text + "?";
+                    break;
+
+                //ãã‚Œä»¥å¤–ã®å ´åˆ
                 default:
-                    Debug.LogError("‘z’è‚µ‚Ä‚¢‚È‚¢Œ¾ŒêƒXƒe[ƒ^ƒX‚Å‚·");
+                    Debug.LogError("æƒ³å®šã—ã¦ã„ãªã„è¨€èªã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§ã™");
                     break;
             }
 
-            //“ü—Í“à—eŠm”Fƒpƒlƒ‹‚ğ•\¦
+            //å…¥åŠ›å†…å®¹ç¢ºèªãƒ‘ãƒãƒ«ã‚’è¡¨ç¤º
             CheckInputNamePanel.SetActive(true);
 
             inputPlayerNameField.gameObject.SetActive(false);       
@@ -1382,21 +1702,21 @@ public class MessageController : MonoBehaviour
     }
 
     /// <summary>
-    /// “ü—Í“à—eŠm”Fƒpƒlƒ‹‚Åu‚Í‚¢vƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½Û‚ÉŒÄ‚Î‚ê‚é
+    /// å…¥åŠ›å†…å®¹ç¢ºèªãƒ‘ãƒãƒ«ã§ã€Œã¯ã„ã€ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸéš›ã«å‘¼ã°ã‚Œã‚‹
     /// </summary>
     public void OnClickedYesCheckInputNameButton() 
     {
-        //–¼‘O‚ğ•Û‘¶
+        //åå‰ã‚’ä¿å­˜
         GameController.playerName = inputPlayerNameField.text;
 
         CheckInputNamePanel.SetActive(false);
 
-        //Ÿ‚ÌƒVƒXƒeƒ€ƒƒbƒZ[ƒW‚ğ•\¦
+        //æ¬¡ã®ã‚·ã‚¹ãƒ†ãƒ ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤º
         showSystemMessage.ShowGameSystemMessage(5);
     }
 
     /// <summary>
-    /// “ü—Í“à—eŠm”Fƒpƒlƒ‹‚Åu‚¢‚¢‚¦vƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½Û‚ÉŒÄ‚Î‚ê‚é
+    /// å…¥åŠ›å†…å®¹ç¢ºèªãƒ‘ãƒãƒ«ã§ã€Œã„ã„ãˆã€ãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸéš›ã«å‘¼ã°ã‚Œã‚‹
     /// </summary>
     public void OnClickedNoCheckInputNameButton() 
     {
@@ -1405,7 +1725,7 @@ public class MessageController : MonoBehaviour
     }
 
     /// <summary>
-    /// ‚±‚ÌƒRƒ“ƒgƒ[ƒ‰[‚ğ”jŠü‚·‚é
+    /// ã“ã®ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã‚’ç ´æ£„ã™ã‚‹
     /// </summary>
     public void DestroyController()
     {
@@ -1415,56 +1735,56 @@ public class MessageController : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒIƒuƒWƒFƒNƒg‚ª”jŠü‚³‚ê‚éÛ‚ÉŒÄ‚Î‚ê‚é
+    /// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒç ´æ£„ã•ã‚Œã‚‹éš›ã«å‘¼ã°ã‚Œã‚‹
     /// </summary>
     private void OnDestroy()
     {
-        //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘Oƒpƒlƒ‹‚ª‘¶İ‚·‚éê‡
+        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ãƒ‘ãƒãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (speakerNameText != null) 
         {
-            //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘OƒeƒLƒXƒg‚ğnull‚É‚·‚é(ƒƒ‚ƒŠƒŠ[ƒN‚ğ–h‚®‚½‚ß)
+            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ãƒ†ã‚­ã‚¹ãƒˆã‚’nullã«ã™ã‚‹(ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’é˜²ããŸã‚)
             speakerNameText = null;
         }
 
-        //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘Oƒpƒlƒ‹‚ª‘¶İ‚·‚éê‡
+        //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ãƒ‘ãƒãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (speakerNamePanel != null) 
         {
-            //‰ï˜b‚µ‚Ä‚¢‚él‚Ì–¼‘Oƒpƒlƒ‹‚ğnull‚É‚·‚é(ƒƒ‚ƒŠƒŠ[ƒN‚ğ–h‚®‚½‚ß)
+            //ä¼šè©±ã—ã¦ã„ã‚‹äººã®åå‰ãƒ‘ãƒãƒ«ã‚’nullã«ã™ã‚‹(ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’é˜²ããŸã‚)
             speakerNamePanel = null;
         }
 
-        //–¼‘O“ü—ÍŠm”Fƒpƒlƒ‹‚ª‘¶İ‚·‚éê‡
+        //åå‰å…¥åŠ›ç¢ºèªãƒ‘ãƒãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (CheckInputNameText != null) 
         {
-            //Šm”F—pƒeƒLƒXƒg‚ğnull‚É‚·‚é(ƒƒ‚ƒŠƒŠ[ƒN‚ğ–h‚®‚½‚ß)
+            //ç¢ºèªç”¨ãƒ†ã‚­ã‚¹ãƒˆã‚’nullã«ã™ã‚‹(ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’é˜²ããŸã‚)
             CheckInputNameText = null;
         }
 
-        //–¼‘O“ü—ÍŠm”Fƒpƒlƒ‹‚ª‘¶İ‚·‚éê‡
+        //åå‰å…¥åŠ›ç¢ºèªãƒ‘ãƒãƒ«ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (CheckInputNamePanel != null) 
         {
-            //–¼‘O“ü—ÍŠm”Fƒpƒlƒ‹‚ğnull‚É‚·‚é(ƒƒ‚ƒŠƒŠ[ƒN‚ğ–h‚®‚½‚ß)
+            //åå‰å…¥åŠ›ç¢ºèªãƒ‘ãƒãƒ«ã‚’nullã«ã™ã‚‹(ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’é˜²ããŸã‚)
             CheckInputNamePanel = null;
         }
 
-        //–¼‘O“ü—ÍƒtƒB[ƒ‹ƒh‚ª‘¶İ‚·‚éê‡
+        //åå‰å…¥åŠ›ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (inputPlayerNameField != null) 
         {
-            //–¼‘O“ü—ÍƒtƒB[ƒ‹ƒh‚ğnull‚É‚·‚é(ƒƒ‚ƒŠƒŠ[ƒN‚ğ–h‚®‚½‚ß)
+            //åå‰å…¥åŠ›ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚’nullã«ã™ã‚‹(ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’é˜²ããŸã‚)
             inputPlayerNameField = null;
         }
 
-        //ƒ`ƒ…[ƒgƒŠƒAƒ‹—p‚ÌƒS[ƒ‹ƒIƒuƒWƒFƒNƒg‚ª‘¶İ‚·‚éê‡
+        //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç”¨ã®ã‚´ãƒ¼ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒå­˜åœ¨ã™ã‚‹å ´åˆ
         if (goal != null) 
         {
-            //ƒ`ƒ…[ƒgƒŠƒAƒ‹—p‚ÌƒS[ƒ‹ƒIƒuƒWƒFƒNƒg‚ğnull‚É‚·‚é(ƒƒ‚ƒŠƒŠ[ƒN‚ğ–h‚®‚½‚ß)
+            //ãƒãƒ¥ãƒ¼ãƒˆãƒªã‚¢ãƒ«ç”¨ã®ã‚´ãƒ¼ãƒ«ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’nullã«ã™ã‚‹(ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’é˜²ããŸã‚)
             goal = null;
         }
 
 
         CancelAsyncTasks();
 
-        //‚à‚µ‚±‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ªƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX©g‚Å‚ ‚ê‚ÎAstatic‚ÈQÆ‚ğƒNƒŠƒA‚·‚é
+        //ã‚‚ã—ã“ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹è‡ªèº«ã§ã‚ã‚Œã°ã€staticãªå‚ç…§ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹
         if (instance == this)
         {
             instance = null;

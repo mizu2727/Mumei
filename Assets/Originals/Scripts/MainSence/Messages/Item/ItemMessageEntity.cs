@@ -96,6 +96,86 @@ public class ItemMessageEntity
     public int itemDescriptionSizeEnglish;
 
     /// <summary>
+    /// 簡体字中国語アイテム名
+    /// </summary>
+    public string itemNameChinese01;
+
+    /// <summary>
+    /// 簡体字中国語アイテム名のサイズ
+    /// </summary>
+    public int itemNameSizeChinese01;
+
+    /// <summary>
+    /// 簡体字中国語アイテム説明
+    /// </summary>
+    public string itemDescriptionChinese01;
+
+    /// <summary>
+    /// 簡体字中国語アイテム説明のサイズ
+    /// </summary>
+    public int itemDescriptionSizeChinese01;
+
+    /// <summary>
+    /// 繁体字中国語アイテム名
+    /// </summary>
+    public string itemNameChinese02;
+
+    /// <summary>
+    /// 繁体字中国語アイテム名のサイズ
+    /// </summary>
+    public int itemNameSizeChinese02;
+
+    /// <summary>
+    /// 繁体字中国語アイテム説明
+    /// </summary>
+    public string itemDescriptionChinese02;
+
+    /// <summary>
+    /// 繁体字中国語アイテム説明のサイズ
+    /// </summary>
+    public int itemDescriptionSizeChinese02;
+
+    /// <summary>
+    /// スペイン語アイテム名
+    /// </summary>
+    public string itemNameSpanish;
+
+    /// <summary>
+    /// スペイン語アイテム名のサイズ
+    /// </summary>
+    public int itemNameSizeSpanish;
+
+    /// <summary>
+    /// スペイン語アイテム説明
+    /// </summary>
+    public string itemDescriptionSpanish;
+
+    /// <summary>
+    /// スペイン語アイテム説明のサイズ
+    /// </summary>
+    public int itemDescriptionSizeSpanish;
+
+    /// <summary>
+    /// ポルトガル語アイテム名
+    /// </summary>
+    public string itemNamePortuguese;
+
+    /// <summary>
+    /// ポルトガル語アイテム名のサイズ
+    /// </summary>
+    public int itemNameSizePortuguese;
+
+    /// <summary>
+    /// ポルトガル語アイテム説明
+    /// </summary>
+    public string itemDescriptionPortuguese;
+
+    /// <summary>
+    /// ポルトガル語アイテム説明のサイズ
+    /// </summary>
+    public int itemDescriptionSizePortuguese;
+
+    /// <summary>
     /// メモ
     /// </summary>
     public string memo;

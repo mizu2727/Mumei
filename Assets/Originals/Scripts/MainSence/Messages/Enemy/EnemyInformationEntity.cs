@@ -21,6 +21,26 @@ public class EnemyInformationEntity
     public string nameEnglish;
 
     /// <summary>
+    /// 敵の簡体字中国語の名前
+    /// </summary>
+    public string nameChinese01;
+
+    /// <summary>
+    /// 敵の繁体字中国語の名前
+    /// </summary>
+    public string nameChinese02;
+
+    /// <summary>
+    /// 敵のスペイン語の名前
+    /// </summary>
+    public string nameSpanish;
+
+    /// <summary>
+    /// 敵のポルトガル語の名前
+    /// </summary>
+    public string namePortuguese;
+
+    /// <summary>
     /// 歩行音SEのID
     /// </summary>
     public int walkSEId;

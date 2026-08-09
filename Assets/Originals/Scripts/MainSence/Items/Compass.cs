@@ -197,6 +197,7 @@ public class Compass : MonoBehaviour
         //言語ステータスに応じて、テキストを変更する
         switch (LanguageController.instance.GetLanguageStatus())
         {
+            //日本語の場合
             case LanguageController.LanguageStatus.kJapanese:
 
                 //日本語アイテム名を設定する
@@ -212,6 +213,7 @@ public class Compass : MonoBehaviour
                 CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeJapanese;
                 break;
 
+            //英語の場合
             case LanguageController.LanguageStatus.kEnglish:
 
                 //英語アイテムを設定する
@@ -225,6 +227,71 @@ public class Compass : MonoBehaviour
 
                 //アイテム説明のフォントサイズを英語用に設定する
                 CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeEnglish;
+                break;
+
+
+            //簡体字中国語の場合
+            case LanguageController.LanguageStatus.kSimplifiedChinese:
+
+                //簡体字中国語アイテムを設定する
+                CompassNameText.text = itemMessage.itemMessage[kItemId].itemNameChinese01;
+
+                //アイテム名のフォントサイズを簡体字中国語用に設定する
+                CompassNameText.fontSize = itemMessage.itemMessage[kItemId].itemNameSizeChinese01;
+
+                //簡体字中国語アイテム説明名を設定する
+                CompassExplanationText.text = itemMessage.itemMessage[kItemId].itemDescriptionChinese01;
+
+                //アイテム説明のフォントサイズを簡体字中国語用に設定する
+                CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeChinese01;
+                break;
+
+            //繁体字中国語の場合
+            case LanguageController.LanguageStatus.kTraditionalChinese:
+
+                //繁体字中国語アイテムを設定する
+                CompassNameText.text = itemMessage.itemMessage[kItemId].itemNameChinese02;
+
+                //アイテム名のフォントサイズを繁体字中国語用に設定する
+                CompassNameText.fontSize = itemMessage.itemMessage[kItemId].itemNameSizeChinese02;
+
+                //繁体字中国語アイテム説明名を設定する
+                CompassExplanationText.text = itemMessage.itemMessage[kItemId].itemDescriptionChinese02;
+
+                //アイテム説明のフォントサイズを繁体字中国語用に設定する
+                CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeChinese02;
+                break;
+
+            //スペイン語の場合
+            case LanguageController.LanguageStatus.kSpanish:
+
+                //スペイン語アイテムを設定する
+                CompassNameText.text = itemMessage.itemMessage[kItemId].itemNameSpanish;
+
+                //アイテム名のフォントサイズをスペイン語用に設定する
+                CompassNameText.fontSize = itemMessage.itemMessage[kItemId].itemNameSizeSpanish;
+
+                //スペイン語アイテム説明名を設定する
+                CompassExplanationText.text = itemMessage.itemMessage[kItemId].itemDescriptionSpanish;
+
+                //アイテム説明のフォントサイズをスペイン語用に設定する
+                CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeSpanish;
+                break;
+
+            //ポルトガル語の場合
+            case LanguageController.LanguageStatus.kPortuguese:
+
+                //ポルトガル語アイテムを設定する
+                CompassNameText.text = itemMessage.itemMessage[kItemId].itemNamePortuguese;
+
+                //アイテム名のフォントサイズをポルトガル語用に設定する
+                CompassNameText.fontSize = itemMessage.itemMessage[kItemId].itemNameSizePortuguese;
+
+                //ポルトガル語アイテム説明名を設定する
+                CompassExplanationText.text = itemMessage.itemMessage[kItemId].itemDescriptionPortuguese;
+
+                //アイテム説明のフォントサイズをポルトガル語用に設定する
+                CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizePortuguese;
                 break;
         }
     }

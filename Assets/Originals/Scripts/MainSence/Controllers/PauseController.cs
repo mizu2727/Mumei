@@ -1263,6 +1263,7 @@ public class PauseController : MonoBehaviour
                     //言語ステータスに応じて、テキストを変更する
                     switch (LanguageController.instance.GetLanguageStatus()) 
                     {
+                        //日本語
                         case LanguageController.LanguageStatus.kJapanese:
 
                             //ミステリーアイテム説明欄に日本語用の説明テキストを設定する
@@ -1272,6 +1273,7 @@ public class PauseController : MonoBehaviour
                             mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeJapanese;
                             break;
 
+                        //英語
                         case LanguageController.LanguageStatus.kEnglish:
 
                             //ミステリーアイテム説明欄に英語用の説明テキストを設定する
@@ -1279,6 +1281,46 @@ public class PauseController : MonoBehaviour
 
                             //ミステリーアイテム説明テキストサイズを英語用に設定する
                             mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeEnglish;
+                            break;
+
+                        //簡体字中国語
+                        case LanguageController.LanguageStatus.kSimplifiedChinese:
+
+                            //ミステリーアイテム説明欄に簡体字中国語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionChinese01;
+
+                            //ミステリーアイテム説明テキストサイズを簡体字中国語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese01;
+                            break;
+
+                        //繁体字中国語
+                        case LanguageController.LanguageStatus.kTraditionalChinese:
+
+                            //ミステリーアイテム説明欄に繁体字中国語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionChinese02;
+
+                            //ミステリーアイテム説明テキストサイズを繁体字中国語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese02;
+                            break;
+
+                        //スペイン語
+                        case LanguageController.LanguageStatus.kSpanish:
+
+                            //ミステリーアイテム説明欄にスペイン語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionSpanish;
+
+                            //ミステリーアイテム説明テキストサイズをスペイン語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeSpanish;
+                            break;
+
+                        //ポルトガル語
+                        case LanguageController.LanguageStatus.kPortuguese:
+
+                            //ミステリーアイテム説明欄にポルトガル語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionPortuguese;
+
+                            //ミステリーアイテム説明テキストサイズをポルトガル語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizePortuguese;
                             break;
 
                         default:
@@ -1453,8 +1495,9 @@ public class PauseController : MonoBehaviour
             //言語ステータスに応じて、テキストを変更する
             switch (LanguageController.instance.GetLanguageStatus()) 
             {
+                //日本語
                 case LanguageController.LanguageStatus.kJapanese:
-                    //日本語の場合は、ドキュメント名称テキストを日本語にする
+                    //ドキュメント名称テキストを日本語にする
                     documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameJapanese;
 
                     //ドキュメント名称を日本語用にサイズを設定する
@@ -1467,6 +1510,7 @@ public class PauseController : MonoBehaviour
                     documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeJapanese;
                     break;
 
+                //英語
                 case LanguageController.LanguageStatus.kEnglish:
                     //\ドキュメント名称テキストを英語にする
                     documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameEnglish;
@@ -1479,6 +1523,66 @@ public class PauseController : MonoBehaviour
 
                     //ドキュメント説明テキストサイズを英語用に設定する
                     documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeEnglish;
+                    break;
+
+                //簡体字中国語
+                case LanguageController.LanguageStatus.kSimplifiedChinese:
+                    //ドキュメント名称テキストを簡体字中国語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameChinese01;
+
+                    //ドキュメント名称を簡体字中国語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeChinese01;
+
+                    //説明テキストも簡体字中国語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionChinese01;
+
+                    //ドキュメント説明テキストサイズを簡体字中国語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeChinese01;
+                    break;
+
+                //繁体字中国語
+                case LanguageController.LanguageStatus.kTraditionalChinese:
+                    //ドキュメント名称テキストを繁体字中国語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameChinese02;
+
+                    //ドキュメント名称を繁体字中国語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeChinese02;
+
+                    //説明テキストも繁体字中国語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionChinese02;
+
+                    //ドキュメント説明テキストサイズを繁体字中国語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeChinese02;
+                    break;
+
+                //スペイン語
+                case LanguageController.LanguageStatus.kSpanish:
+                    //ドキュメント名称テキストをスペイン語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameSpanish;
+
+                    //ドキュメント名称をスペイン語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeSpanish;
+
+                    //説明テキストもスペイン語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSpanish;
+
+                    //ドキュメント説明テキストサイズをスペイン語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeSpanish;
+                    break;
+
+                //ポルトガル語
+                case LanguageController.LanguageStatus.kPortuguese:
+                    //ドキュメント名称テキストをポルトガル語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNamePortuguese;
+
+                    //ドキュメント名称をポルトガル語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizePortuguese;
+
+                    //説明テキストもポルトガル語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionPortuguese;
+
+                    //ドキュメント説明テキストサイズをポルトガル語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizePortuguese;
                     break;
 
                 default:
@@ -1503,7 +1607,8 @@ public class PauseController : MonoBehaviour
             //言語ステータスに応じて、テキストを変更する
             switch (LanguageController.instance.GetLanguageStatus()) 
             {
-                
+
+                //日本語
                 case LanguageController.LanguageStatus.kJapanese:
 
                     //ミステリーアイテム名称テキストを日本語にする
@@ -1526,6 +1631,7 @@ public class PauseController : MonoBehaviour
                     }
                     break;
 
+                //英語
                 case LanguageController.LanguageStatus.kEnglish:
 
                     //ミステリーアイテム名称テキストを英語にする
@@ -1547,6 +1653,99 @@ public class PauseController : MonoBehaviour
                         mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeEnglish;
                     }   
                     break;
+
+                //簡体字中国語
+                case LanguageController.LanguageStatus.kSimplifiedChinese:
+
+                    //ミステリーアイテム名称テキストを簡体字中国語にする
+                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameChinese01;
+                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese01);
+                    mysteryItemNameText[i].text = item.itemName;
+
+                    //ミステリーアイテム名称テキストサイズを簡体字中国語用に設定する
+                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeChinese01;
+
+                    if (0 < mysteryItemExplanationText.Length) 
+                    {
+                        //ミステリーアイテム説明テキストを簡体字中国語にする
+                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionChinese01;
+                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese01);
+                        mysteryItemExplanationText[i].text = item.description;
+
+                        //ミステリーアイテム説明テキストサイズを簡体字中国語用に設定する
+                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese01;
+                    }
+                    break;
+
+                //繁体字中国語
+                case LanguageController.LanguageStatus.kTraditionalChinese:
+
+                    //ミステリーアイテム名称テキストを繁体字中国語にする
+                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameChinese02;
+                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese02);
+                    mysteryItemNameText[i].text = item.itemName;
+
+                    //ミステリーアイテム名称テキストサイズを繁体字中国語用に設定する
+                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeChinese02;
+
+                    if (0 < mysteryItemExplanationText.Length)
+                    {
+                        //ミステリーアイテム説明テキストを繁体字中国語にする
+                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionChinese02;
+                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese02);
+                        mysteryItemExplanationText[i].text = item.description;
+
+                        //ミステリーアイテム説明テキストサイズを繁体字中国語用に設定する
+                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese02;
+                    }
+                    break;
+
+                //スペイン語
+                case LanguageController.LanguageStatus.kSpanish:
+
+                    //ミステリーアイテム名称テキストをスペイン語にする
+                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameSpanish;
+                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameSpanish);
+                    mysteryItemNameText[i].text = item.itemName;
+
+                    //ミステリーアイテム名称テキストサイズをスペイン語用に設定する
+                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeSpanish;
+
+                    if (0 < mysteryItemExplanationText.Length)
+                    {
+                        //ミステリーアイテム説明テキストをスペイン語にする
+                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionSpanish;
+                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionSpanish);
+                        mysteryItemExplanationText[i].text = item.description;
+
+                        //ミステリーアイテム説明テキストサイズをスペイン語用に設定する
+                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeSpanish;
+                    }
+                    break;
+
+                //ポルトガル語
+                case LanguageController.LanguageStatus.kPortuguese:
+
+                    //ミステリーアイテム名称テキストをポルトガル語にする
+                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNamePortuguese;
+                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNamePortuguese);
+                    mysteryItemNameText[i].text = item.itemName;
+
+                    //ミステリーアイテム名称テキストサイズをポルトガル語用に設定する
+                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizePortuguese;
+
+                    if (0 < mysteryItemExplanationText.Length)
+                    {
+                        //ミステリーアイテム説明テキストをポルトガル語にする
+                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionPortuguese;
+                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionPortuguese);
+                        mysteryItemExplanationText[i].text = item.description;
+
+                        //ミステリーアイテム説明テキストサイズをポルトガル語用に設定する
+                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizePortuguese;
+                    }
+                    break;
+
             }
 
             //TextMeshProRubyコンポーネントにミステリーアイテム名称を設定する

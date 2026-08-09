@@ -41,6 +41,66 @@ public class TalkMessageEntity
     public int messageSizeEnglish;
 
     /// <summary>
+    /// 簡体字中国語メッセージ
+    /// </summary>
+    public string messageChinese01;
+
+    /// <summary>
+    /// 話しているキャラクターの名前の簡体字中国語表記
+    /// </summary>
+    public string speakerNameChinese01;
+
+    /// <summary>
+    /// 簡体字中国語メッセージサイズ
+    /// </summary>
+    public int messageSizeChinese01;
+
+    /// <summary>
+    /// 繁体字中国語メッセージ
+    /// </summary>
+    public string messageChinese02;
+
+    /// <summary>
+    /// 話しているキャラクターの名前の繁体字中国語表記
+    /// </summary>
+    public string speakerNameChinese02;
+
+    /// <summary>
+    /// 繁体字中国語メッセージサイズ
+    /// </summary>
+    public int messageSizeChinese02;
+
+    /// <summary>
+    /// スペイン語メッセージ
+    /// </summary>
+    public string messageSpanish;
+
+    /// <summary>
+    /// 話しているキャラクターの名前のスペイン語表記
+    /// </summary>
+    public string speakerNameSpanish;
+
+    /// <summary>
+    /// スペイン語メッセージサイズ
+    /// </summary>
+    public int messageSizeSpanish;
+
+    /// <summary>
+    /// ポルトガル語メッセージ
+    /// </summary>
+    public string messagePortuguese;
+
+    /// <summary>
+    /// 話しているキャラクターの名前のポルトガル語表記
+    /// </summary>
+    public string speakerNamePortuguese;
+
+    /// <summary>
+    /// ポルトガル語メッセージサイズ
+    /// </summary>
+    public int messageSizePortuguese;
+
+    /// <summary>
     /// 後ろを振り向くステータス（0:振り向かない、1:振り向く）
     /// </summary>
     public int isplayerBackRotateStatus;

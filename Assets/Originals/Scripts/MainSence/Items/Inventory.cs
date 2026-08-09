@@ -756,8 +756,9 @@ public class Inventory : MonoBehaviour
         //言語ステータスに応じて、テキストを変更する
         switch (LanguageController.instance.GetLanguageStatus())
         {
+            //日本語
             case LanguageController.LanguageStatus.kJapanese:
-                //日本語の場合は、使用アイテム名称テキストを日本語にする
+                //使用アイテム名称テキストを日本語にする
                 useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameJapanese;
 
                 //使用アイテム名称を日本語用にサイズを設定する
@@ -770,8 +771,9 @@ public class Inventory : MonoBehaviour
                 useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeJapanese;
                 break;
 
+            //英語
             case LanguageController.LanguageStatus.kEnglish:
-                //\使用アイテム名称テキストを英語にする
+                //使用アイテム名称テキストを英語にする
                 useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameEnglish;
 
                 //使用アイテム名称を英語用にサイズを設定する
@@ -783,6 +785,67 @@ public class Inventory : MonoBehaviour
                 //使用アイテム説明テキストサイズを英語用に設定する
                 useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeEnglish;
                 break;
+
+            //簡体字中国語
+            case LanguageController.LanguageStatus.kSimplifiedChinese:
+                //使用アイテム名称テキストを簡体字中国語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameChinese01;
+
+                //使用アイテム名称を簡体字中国語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizeChinese01;
+
+                //説明テキストも簡体字中国語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionChinese01;
+
+                //使用アイテム説明テキストサイズを簡体字中国語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeChinese01;
+                break;
+
+            //繁体字中国語
+            case LanguageController.LanguageStatus.kTraditionalChinese:
+                //使用アイテム名称テキストを繁体字中国語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameChinese02;
+
+                //使用アイテム名称を繁体字中国語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizeChinese02;
+
+                //説明テキストも繁体字中国語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionChinese02;
+
+                //使用アイテム説明テキストサイズを繁体字中国語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeChinese02;
+                break;
+
+            //スペイン語
+            case LanguageController.LanguageStatus.kSpanish:
+                //使用アイテム名称テキストをスペイン語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameSpanish;
+
+                //使用アイテム名称をスペイン語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizeSpanish;
+
+                //説明テキストもスペイン語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionSpanish;
+
+                //使用アイテム説明テキストサイズをスペイン語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeSpanish;
+                break;
+
+            //ポルトガル語
+            case LanguageController.LanguageStatus.kPortuguese:
+                //使用アイテム名称テキストをポルトガル語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNamePortuguese;
+
+                //使用アイテム名称をポルトガル語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizePortuguese;
+
+                //説明テキストもポルトガル語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionPortuguese;
+
+                //使用アイテム説明テキストサイズをポルトガル語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizePortuguese;
+                break;
+
 
             default:
                 Debug.LogWarning("その他の言語ステータス");

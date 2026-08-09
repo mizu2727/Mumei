@@ -232,6 +232,7 @@ public class Item : MonoBehaviour
         //言語ステータスに応じて、テキストを変更する
         switch (LanguageController.instance.GetLanguageStatus()) 
         {
+            //日本語の場合
             case LanguageController.LanguageStatus.kJapanese:
 
                 //日本語アイテム名を設定する
@@ -241,6 +242,7 @@ public class Item : MonoBehaviour
                 description = itemMessage.itemMessage[id].itemDescriptionJapanese;
                 break;
 
+            //英語の場合
             case LanguageController.LanguageStatus.kEnglish:
 
                 //英語アイテムを設定する
@@ -248,6 +250,42 @@ public class Item : MonoBehaviour
 
                 //英語アイテム説明名を設定する
                 description = itemMessage.itemMessage[id].itemDescriptionEnglish;
+                break;
+
+            //簡体字中国語の場合
+            case LanguageController.LanguageStatus.kSimplifiedChinese:
+
+                //簡体字中国語アイテム名を設定する
+                itemName = itemMessage.itemMessage[id].itemNameChinese01;
+
+                //簡体字中国語アイテム説明名を設定する
+                description = itemMessage.itemMessage[id].itemDescriptionChinese01;
+                break;
+
+            //繁体字中国語の場合
+            case LanguageController.LanguageStatus.kTraditionalChinese:
+
+                //繁体字中国語アイテム名を設定する
+                itemName = itemMessage.itemMessage[id].itemNameChinese02;
+
+                //繁体字中国語アイテム説明名を設定する
+                description = itemMessage.itemMessage[id].itemDescriptionChinese02;
+                break;
+
+            //スペイン語
+            case LanguageController.LanguageStatus.kSpanish:
+                //スペイン語アイテム名を設定する
+                itemName = itemMessage.itemMessage[id].itemNameSpanish;
+                //スペイン語アイテム説明名を設定する
+                description = itemMessage.itemMessage[id].itemDescriptionSpanish;
+                break;
+
+            //ポルトガル語
+            case LanguageController.LanguageStatus.kPortuguese:
+                //ポルトガル語アイテム名を設定する
+                itemName = itemMessage.itemMessage[id].itemNamePortuguese;
+                //ポルトガル語アイテム説明名を設定する
+                description = itemMessage.itemMessage[id].itemDescriptionPortuguese;
                 break;
         }
     }

@@ -452,7 +452,169 @@ public class LanguageController : MonoBehaviour
 
                 break;
 
-            
+            //簡体字中国語
+            case LanguageStatus.kSimplifiedChinese:
+
+                //ボタンテキストを簡体字中国語に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageChinese01;
+                }
+
+                //ボタンサイズを簡体字中国語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeChinese01;
+                }
+
+                //ボタンフォントを簡体字中国語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetSimplifiedChinese();
+                }
+
+                //UIテキストを簡体字中国語に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageChinese01;
+                }
+
+                //UIサイズを簡体字中国語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeChinese01;
+                }
+
+                //UIフォントを簡体字中国語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetSimplifiedChinese();
+                }
+
+                break;
+
+            //繁体字中国語
+            case LanguageStatus.kTraditionalChinese:
+
+                //ボタンテキストを繁体字中国語に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageChinese02;
+                }
+
+                //ボタンサイズを繁体字中国語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeChinese02;
+                }
+
+                //ボタンフォントを繁体字中国語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetTraditionalChinese();
+                }
+
+                //UIテキストを繁体字中国語に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageChinese02;
+                }
+
+                //UIサイズを繁体字中国語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeChinese02;
+                }
+
+                //UIフォントを繁体字中国語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetTraditionalChinese();
+                }
+
+                break;
+
+            //スペイン語
+            case LanguageStatus.kSpanish:
+
+                //ボタンテキストをスペイン語に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSpanish;
+                }
+
+                //ボタンサイズをスペイン語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeSpanish;
+                }
+
+                //ボタンフォントをスペイン語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetSpanish();
+                }
+
+                //UIテキストをスペイン語に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSpanish;
+                }
+
+                //UIサイズをスペイン語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeSpanish;
+                }
+
+                //UIフォントをスペイン語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetSpanish();
+                }
+
+                break;
+
+            //ポルトガル語
+            case LanguageStatus.kPortuguese:
+
+                //ボタンテキストをポルトガル語に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messagePortuguese;
+                }
+
+                //ボタンサイズをポルトガル語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizePortuguese;
+                }
+
+                //ボタンフォントをポルトガル語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetPortuguese();
+                }
+
+                //UIテキストをポルトガル語に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messagePortuguese;
+                }
+
+                //UIサイズをポルトガル語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizePortuguese;
+                }
+
+                //UIフォントをポルトガル語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetPortuguese();
+                }
+
+                break;
         }
 
         //アイテムのテキスト関連を設定する
@@ -515,6 +677,66 @@ public class LanguageController : MonoBehaviour
 
         //言語ステータスを英語に設定する
         languageStatus = LanguageStatus.kEnglish;
+
+        //言語を設定する
+        SettingLanguageText();
+    }
+
+    /// <summary>
+    /// 簡体字中国語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedSimplifiedChineseButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //言語ステータスを簡体字中国語に設定する
+        languageStatus = LanguageStatus.kSimplifiedChinese;
+
+        //言語を設定する
+        SettingLanguageText();
+    }
+
+    /// <summary>
+    /// 繁体字中国語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedTraditionalChineseButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //言語ステータスを繁体字中国語に設定する
+        languageStatus = LanguageStatus.kTraditionalChinese;
+
+        //言語を設定する
+        SettingLanguageText();
+    }
+
+    /// <summary>
+    /// スペイン語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedSpanishButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //言語ステータスをスペイン語に設定する
+        languageStatus = LanguageStatus.kSpanish;
+
+        //言語を設定する
+        SettingLanguageText();
+    }
+
+    /// <summary>
+    /// ポルトガル語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedPortugueseButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //言語ステータスをポルトガル語に設定する
+        languageStatus = LanguageStatus.kPortuguese;
 
         //言語を設定する
         SettingLanguageText();

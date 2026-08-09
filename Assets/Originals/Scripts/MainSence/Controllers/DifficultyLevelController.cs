@@ -904,6 +904,7 @@ public class DifficultyLevelController : MonoBehaviour
         //言語ステータスに応じて、テキストを変更する
         switch (LanguageController.instance.GetLanguageStatus()) 
         {
+            //日本語の場合
             case LanguageController.LanguageStatus.kJapanese:
 
                 //日本語の場合は日本語の説明文を表示する
@@ -913,6 +914,7 @@ public class DifficultyLevelController : MonoBehaviour
                 difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeJapanese;
                 break;
 
+            //英語の場合
             case LanguageController.LanguageStatus.kEnglish:
 
                 //英語の場合は英語の説明文を表示する
@@ -920,6 +922,38 @@ public class DifficultyLevelController : MonoBehaviour
 
                 //フォントサイズを英語の説明文に適したサイズにする
                 difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeEnglish;
+                break;
+
+            //簡体字中国語
+            case LanguageController.LanguageStatus.kSimplifiedChinese:
+                //簡体字中国語の場合は簡体字中国語の説明文を表示する
+                difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationChinese01;
+                //フォントサイズを簡体字中国語の説明文に適したサイズにする
+                difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeChinese01;
+                break;
+
+            //繁体字中国語
+            case LanguageController.LanguageStatus.kTraditionalChinese:
+                //繁体字中国語の場合は繁体字中国語の説明文を表示する
+                difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationChinese02;
+                //フォントサイズを繁体字中国語の説明文に適したサイズにする
+                difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeChinese02;
+                break;
+
+            //スペイン語
+            case LanguageController.LanguageStatus.kSpanish:
+                //スペイン語の場合はスペイン語の説明文を表示する
+                difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSpanish;
+                //フォントサイズをスペイン語の説明文に適したサイズにする
+                difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeSpanish;
+                break;
+
+            //ポルトガル語
+            case LanguageController.LanguageStatus.kPortuguese:
+                //ポルトガル語の場合はポルトガル語の説明文を表示する
+                difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationPortuguese;
+                //フォントサイズをポルトガル語の説明文に適したサイズにする
+                difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizePortuguese;
                 break;
 
             default:
