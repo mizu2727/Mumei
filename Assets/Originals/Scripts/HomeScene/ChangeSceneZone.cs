@@ -294,8 +294,8 @@ public class ChangeSceneZone : MonoBehaviour
     /// </summary>
     private async void LoadSceneStage01() 
     {
-        //プレイヤーライトを持っていない場合
-        if (!Player.instance.GetIsHavePlayerLight()) 
+        //プレイヤーライトを持っていない場合&&現在のシーンがHomeSceneの場合
+        if (!Player.instance.GetIsHavePlayerLight() && nowSceneName == stringHomeScene) 
         {
             //暗すぎてよく見えない旨のメッセージを表示
             MessageController.instance.ShowInventoryMessage(5);
