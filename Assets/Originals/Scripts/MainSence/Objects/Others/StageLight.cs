@@ -28,6 +28,11 @@ public class StageLight : MonoBehaviour
     private float blinkingRange = 30f;
 
     /// <summary>
+    /// ライトが点滅する最大高さ差（Y軸制限）
+    /// </summary>
+    private const float maxLightVerticalRange = 5.0f;
+
+    /// <summary>
     /// ステージライト点滅フラグ
     /// </summary>
     private bool isBlinkingLightFlag = false;
@@ -107,12 +112,18 @@ public class StageLight : MonoBehaviour
 
         for (int i = 0; i < MapAreaGenerate.instance.GetBaseEnemyTransformArray().Length; i++)
         {
+            //敵の位置を取得
+            Vector3 enemyPosition = MapAreaGenerate.instance.GetBaseEnemyTransformArray()[i].position;
+
             //敵との距離を測定
-            distanceArray[i] = Vector3.Distance(MapAreaGenerate.instance.GetBaseEnemyTransformArray()[i].position, transform.position);
+            distanceArray[i] = Vector3.Distance(enemyPosition, transform.position);
+
+            //敵との高さの差を測定
+            float heightDifference = Mathf.Abs(enemyPosition.y - transform.position.y);
 
 
-            //距離が点滅開始範囲以内の場合
-            if (distanceArray[i] <= blinkingRange)
+            //距離が点滅開始範囲以内の場合&&高さの差が制限範囲以内の場合
+            if (distanceArray[i] <= blinkingRange && heightDifference <= maxLightVerticalRange)
             {
                 //ステージライト点滅フラグをオンにする
                 isBlinkingLightFlag = true;
