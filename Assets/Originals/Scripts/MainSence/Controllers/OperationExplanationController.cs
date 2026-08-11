@@ -266,8 +266,9 @@ public class OperationExplanationController : MonoBehaviour
             return;
         }
 
-        //現在のシーン名がHomeSceneの場合
-        if (CommonController.instance.GetHomeSceneName() == SceneManager.GetActiveScene().name)
+        //現在のシーン名がHome系Sceneの場合
+        if (CommonController.instance.GetHomeSceneName() == SceneManager.GetActiveScene().name
+            || CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name)
         {
             //compassTextを非表示にする
             compassText.SetActive(false);

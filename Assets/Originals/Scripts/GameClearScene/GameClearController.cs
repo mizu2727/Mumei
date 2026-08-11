@@ -116,9 +116,9 @@ public class GameClearController : MonoBehaviour
     }
 
     /// <summary>
-    /// HomeSceneBGM‚ÌID‚ðŽæ“¾‚·‚é
+    /// GameClearSceneBGM‚ÌID‚ðŽæ“¾‚·‚é
     /// </summary>
-    /// <returns>HomeSceneBGM‚ÌID</returns>
+    /// <returns>GameClearSceneBGM‚ÌID</returns>
     public int GetGameClearSceneBGMId()
     {
         return gameClearSceneBGMId;

@@ -72,6 +72,20 @@ public class CommonController : MonoBehaviour
     }
 
     /// <summary>
+    /// Home02Scene
+    /// </summary>
+    private const string stringHome02Scene = "Home02Scene";
+
+    /// <summary>
+    /// Home02Sceneのシーン名を取得する関数
+    /// </summary>
+    /// <returns>Home02Sceneのシーン名</returns>
+    public string GetHome02SceneName()
+    {
+        return stringHome02Scene;
+    }
+
+    /// <summary>
     /// GameClearScene
     /// </summary>
     private const string stringGameClearScene = "GameClearScene";

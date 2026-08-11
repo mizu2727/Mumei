@@ -24,6 +24,11 @@ public class ChangeSceneZone : MonoBehaviour
     private const string stringHomeScene = "HomeScene";
 
     /// <summary>
+    /// Home02Scene(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
+    /// </summary>
+    private const string stringHome02Scene = "Home02Scene";
+
+    /// <summary>
     /// Stage01(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringStage01Scene = "Stage01";
@@ -159,11 +164,12 @@ public class ChangeSceneZone : MonoBehaviour
         //現在のシーン名によって処理を変更する
         switch (nowSceneName)
         {
-            //HomeSceneの場合
+            //Home系のSceneの場合
             case stringHomeScene:
+            case stringHome02Scene:
 
-                //ステージ1へシーン遷移する
-                LoadSceneStage01();
+                //ステージへシーン遷移するためのパネル系を表示する
+                LoadSceneStage();
                 break;
 
             //Stage01の場合
@@ -292,7 +298,7 @@ public class ChangeSceneZone : MonoBehaviour
     /// <summary>
     /// Stage01へシーン遷移するための処理
     /// </summary>
-    private async void LoadSceneStage01() 
+    private async void LoadSceneStage() 
     {
         //プレイヤーライトを持っていない場合&&現在のシーンがHomeSceneの場合
         if (!Player.instance.GetIsHavePlayerLight() && nowSceneName == stringHomeScene) 
@@ -331,7 +337,7 @@ public class ChangeSceneZone : MonoBehaviour
     }
 
     /// <summary>
-    /// Stage系のシーンへ遷移する処理
+    /// Stage系のシーンへ遷移する処理(難易度系ボタン押下時に呼ばれる関数内の処理からこの関数を呼び出す)
     /// </summary>
     public async void ChangeStageScene() 
     {

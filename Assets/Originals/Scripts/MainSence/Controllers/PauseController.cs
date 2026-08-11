@@ -652,7 +652,9 @@ public class PauseController : MonoBehaviour
         //ポーズを開く条件
         if (!player.IsDead && !isPause && !isViewItemsPanel
             && !isDocumentPanel && !isDocumentExplanationPanel && !isMysteryItemPanel
-            && !isMysteryItemExplanationPanel && !goal.isGoalPanel && Time.timeScale != 0)
+            && !isMysteryItemExplanationPanel 
+            && (CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name || !goal.isGoalPanel) 
+            && Time.timeScale != 0)
         {
             ViewPausePanel();
         }

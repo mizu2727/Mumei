@@ -25,6 +25,11 @@ public class DifficultyLevelController : MonoBehaviour
     private const string stringHomeScene = "HomeScene";
 
     /// <summary>
+    /// Home02Scene(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
+    /// </summary>
+    private const string stringHome02Scene = "Home02Scene";
+
+    /// <summary>
     /// Stage01(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringStage01 = "Stage01";
@@ -382,8 +387,9 @@ public class DifficultyLevelController : MonoBehaviour
         //現在のシーン名によって処理を変更する
         switch (SceneManager.GetActiveScene().name)
         {
-            //HomeSceneの場合
+            //Home系のSceneの場合
             case stringHomeScene:
+            case stringHome02Scene:
 
                 //ステージ及び難易度選択パネルが存在しない場合
                 if (stageAndDifficultyLevelChoosePanel == null) 

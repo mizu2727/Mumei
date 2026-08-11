@@ -294,6 +294,11 @@ public class GameController : MonoBehaviour
         kHomeScene,
 
         /// <summary>
+        /// Home02Scene
+        /// </summary>
+        kHome02Scene,
+
+        /// <summary>
         /// GameOverScene
         /// </summary>
         kGameOverScene,
