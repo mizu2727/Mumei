@@ -941,8 +941,10 @@ public class DifficultyLevelController : MonoBehaviour
         GameController.instance.CallRestDataMethod();
 
         //ステージクリア情報を設定する
-        SettingStageClearInformation();
+        //SettingStageClearInformation();
 
+        //データを初期化した状態でセーブデータを保存する
+        GameController.instance.CallSaveUserDataMethod();
 
         //TitleSceneNameを再ロードする
         SceneManager.LoadScene(CommonController.instance.GetTitleSceneName());
