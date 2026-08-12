@@ -73,6 +73,9 @@ public class DifficultyLevelController : MonoBehaviour
     [Header("ステージ及び難易度情報表示パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject viewStageAndDifficultyLevelPanel;
 
+    [Header("セーブデータ削除パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject reallyDeleteSavePanel;
+
 
     [Header("難易度説明(Prefabをアタッチ)")]
     [SerializeField] private DifficultyLevelExplanation difficultyLevelExplanation;
@@ -242,6 +245,11 @@ public class DifficultyLevelController : MonoBehaviour
     {
         isviewStageAndDifficultyLevelPanel = flag;
     }
+
+    /// <summary>
+    /// セーブデータ削除パネル閲覧フラグ
+    /// </summary>
+    private bool isviewReallyDeleteSavePanel = false;
 
 
     /// <summary>
@@ -437,6 +445,13 @@ public class DifficultyLevelController : MonoBehaviour
             stageAndDifficultyLevelChoosePanel = null;
         }
 
+        //reallyDeleteSavePanelが存在する場合
+        if (reallyDeleteSavePanel != null)
+        {
+            //reallyDeleteSavePanelをnullにする(メモリリークを防ぐため)
+            reallyDeleteSavePanel = null;
+        }
+
         //viewStageAndDifficultyLevelPanelが存在する場合
         if (viewStageAndDifficultyLevelPanel != null)
         {
@@ -534,7 +549,17 @@ public class DifficultyLevelController : MonoBehaviour
                     Debug.LogError("stageClearInformationPanelがアタッチされていません。");
                 }
 
+                //セーブデータ削除パネルが存在しない場合
+                if (reallyDeleteSavePanel == null)
+                {
+                    Debug.LogError("reallyDeleteSavePanelがアタッチされていません。");
+                }
+
                 //初期化処理
+                //セーブデータ削除パネルを非表示にする
+                isviewReallyDeleteSavePanel = false;
+                ChangeViewReallyDeleteSavePanel();
+
                 //ステージクリア情報パネルを非表示にする
                 isStageClearInformationPanel = false;
                 ChangeViewStageClearInformationPanel();
@@ -879,13 +904,68 @@ public class DifficultyLevelController : MonoBehaviour
         isStageClearInformationPanel = false;
         ChangeViewStageClearInformationPanel();
 
-        //ステージ及び難易度選択パネルを非表示にする
+        //ステージ及び難易度情報パネルを非表示にする
         isviewStageAndDifficultyLevelPanel = false;
         ChangeViewStageAndDifficultyLevelPanel();
 
         //タイトルパネルを表示にする
         TitleController.instance.GetTitlePanel().SetActive(true);
     }
+
+    /// <summary>
+    /// 「データ削除」ボタン押下時、データ削除パネルを表示する関数
+    /// </summary>
+    public void OnClickedViewReallyDeleteSavePanel()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //セーブデータ削除パネルを表示する
+        isviewReallyDeleteSavePanel = true;
+        ChangeViewReallyDeleteSavePanel();
+
+        //ステージ及び難易度情報パネルを非表示にする
+        isviewStageAndDifficultyLevelPanel = false;
+        ChangeViewStageAndDifficultyLevelPanel();
+    }
+
+    /// <summary>
+    /// 「はい」ボタン押下時、セーブデータを削除する関数
+    /// </summary>
+    public void OnClickedYesDeleteData() 
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //セーブデータを削除する処理
+        GameController.instance.CallRestDataMethod();
+
+        //セーブデータ削除パネルを非表示する
+        isviewReallyDeleteSavePanel = false;
+        ChangeViewReallyDeleteSavePanel();
+
+        //ステージ及び難易度情報パネルを非表示にする
+        isviewStageAndDifficultyLevelPanel = true;
+        ChangeViewStageAndDifficultyLevelPanel();
+    }
+
+    /// <summary>
+    /// 「いいえ」ボタン押下時、セーブデータ削除パネルを非表示にする関数
+    /// </summary>
+    public void OnClickedNoDeleteData() 
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //セーブデータ削除パネルを非表示する
+        isviewReallyDeleteSavePanel = false;
+        ChangeViewReallyDeleteSavePanel();
+
+        //ステージ及び難易度情報パネルを非表示にする
+        isviewStageAndDifficultyLevelPanel = true;
+        ChangeViewStageAndDifficultyLevelPanel();
+    }
+
 
     /// <summary>
     /// インゲームへ戻るボタン押下時に呼ばれる関数
@@ -1007,6 +1087,23 @@ public class DifficultyLevelController : MonoBehaviour
         {
             //非表示
             viewStageAndDifficultyLevelPanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// セーブデータ削除パネルの表示/非表示
+    /// </summary>
+    public void ChangeViewReallyDeleteSavePanel()
+    {
+        if (isviewReallyDeleteSavePanel)
+        {
+            //表示
+            reallyDeleteSavePanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            reallyDeleteSavePanel.SetActive(false);
         }
     }
 
