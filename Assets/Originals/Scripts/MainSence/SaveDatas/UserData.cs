@@ -49,6 +49,9 @@ public class UserData
     [Header("セーブする難易度ステータス")]
     public DifficultyLevelController.DifficultyLevel _difficultyLevelStatus;
 
+    [Header("セーブするストーリー閲覧完了ステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<ViewStoryStatusData> viewStoryStatusList = new();
+
     [Header("セーブするステージクリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
     public List<StageClearData> stageClearList = new ();
 
@@ -84,6 +87,17 @@ public class UserData
 
     [Header("セーブする言語ステータス")]
     public LanguageController.LanguageStatus _languageStatusStatus;
+}
+
+/// <summary>
+/// Dictionary型のストーリー閲覧完了ステータスを保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class ViewStoryStatusData
+{
+    public string key;
+    public int value;
 }
 
 /// <summary>

@@ -155,6 +155,11 @@ public class GameController : MonoBehaviour
     [Header("セーブする難易度ステータス")]
     public static DifficultyLevelController.DifficultyLevel saveDifficultyLevelStatus = DifficultyLevelController.DifficultyLevel.kNone;
 
+    [Header("セーブするストーリー閲覧完了ステータス配列")]
+    public static Dictionary<string, int> saveViewStoryStatusArray = new(){
+    {stringTutorialClearStatus, 0},
+    };
+
     [Header("セーブするステージクリアステータス配列")]
     public static Dictionary <string, int> saveStageClearStatusArray = new (){
     {stringDemoStage01, 0},
@@ -328,6 +333,11 @@ public class GameController : MonoBehaviour
     /// 表示するシーンステータス
     /// </summary>
     private ViewScene viewScene;
+
+    /// <summary>
+    /// TutorialClearStatus(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringTutorialClearStatus = "TutorialClearStatus";
 
     /// <summary>
     /// DemoStage01(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)

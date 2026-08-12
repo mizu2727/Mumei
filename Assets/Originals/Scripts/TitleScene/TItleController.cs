@@ -18,6 +18,23 @@ public class TitleController : MonoBehaviour
     /// </summary>
     public static TitleController instance;
 
+
+    /// <summary>
+    /// TutorialClearStatus(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringTutorialClearStatus = "TutorialClearStatus";
+
+    /// <summary>
+    /// DemoStage01(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringDemoStage01 = "DemoStage01";
+
+    /// <summary>
+    /// Stage01(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringStage01 = "Stage01";
+
+
     [Header("タイトル画面のCanvas")]
     [SerializeField] private Canvas titlesCanvas;
 
@@ -232,6 +249,14 @@ public class TitleController : MonoBehaviour
 
         //タイトルBGMを再生
         MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(titleBGMId), titleBGMId);
+
+        //デモ版用のステージ01を既にクリアしている場合||製品版用のステージ01を既にクリアしている場合
+        if ((GameController.instance.GetIsDemoPlayFlag() && saveStageClearStatusArray[stringDemoStage01] == 1)
+            || (!GameController.instance.GetIsDemoPlayFlag() && saveStageClearStatusArray[stringStage01] == 1)) 
+        {
+            //チュートリアルのストーリを閲覧したことを保存する
+            saveViewStoryStatusArray[stringTutorialClearStatus] = 1;
+        }
     }
 
     /// <summary>
@@ -245,8 +270,18 @@ public class TitleController : MonoBehaviour
         //シーン遷移時用データを保存
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
 
-        //OpeningSceneをロードする
-        SceneManager.LoadScene(CommonController.instance.GetOpeningSceneName());        
+        //チュートリアルのストーリーを閲覧していない場合
+        if (saveViewStoryStatusArray[stringTutorialClearStatus] == 0)
+        {
+            //OpeningSceneをロードする
+            SceneManager.LoadScene(CommonController.instance.GetOpeningSceneName());
+        }
+        //既にチュートリアルのストーリーを閲覧している場合
+        else
+        {
+            //Home02SceneNameをロードする
+            SceneManager.LoadScene(CommonController.instance.GetHome02SceneName());
+        }
     }
 
     /// <summary>

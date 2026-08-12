@@ -70,6 +70,12 @@ public class SaveLoad : MonoBehaviour
             _languageStatusStatus = GameController.saveLanguageStatus,
         };
 
+        //Dictionary型のストーリー閲覧完了ステータス配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveViewStoryStatusArray)
+        {
+            userData.viewStoryStatusList.Add(new ViewStoryStatusData { key = item.Key, value = item.Value });
+        }
+
         //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
         foreach (var item in GameController.saveStageClearStatusArray)
         {
@@ -176,13 +182,21 @@ public class SaveLoad : MonoBehaviour
             GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
             GameController.saveLanguageStatus = userData._languageStatusStatus;
 
+            //JsonUtilityで保存可能な形式へ変換したストーリー閲覧完了ステータス配列をDictionary型に変換してロードする
+            Dictionary<string, int> viewStoryStatusRestoredDict = new Dictionary<string, int>();
+            foreach (var data in userData.viewStoryStatusList)
+            {
+                viewStoryStatusRestoredDict[data.key] = data.value;
+            }
+            GameController.saveViewStoryStatusArray = viewStoryStatusRestoredDict;
+
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredDict = new Dictionary<string, int>();
+            Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>();
             foreach (var data in userData.stageClearList)
             {
-                restoredDict[data.key] = data.value;
+                stageClearTestoredDict[data.key] = data.value;
             }
-            GameController.saveStageClearStatusArray = restoredDict;
+            GameController.saveStageClearStatusArray = stageClearTestoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したデモステージ01難易度クリアステータス配列をDictionary型に変換してロードする
             Dictionary<string, int> restoredDemoStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>();
@@ -316,6 +330,11 @@ public class SaveLoad : MonoBehaviour
             _languageStatusStatus = GameController.saveLanguageStatus,
         };
 
+        //Dictionary型のストーリー閲覧完了ステータス配列をリストに変換して保存可能にする
+        foreach (var item in GameController.saveViewStoryStatusArray)
+        {
+            userData.viewStoryStatusList.Add(new ViewStoryStatusData { key = item.Key, value = item.Value });
+        }
 
         //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
         foreach (var item in GameController.saveStageClearStatusArray)
@@ -420,6 +439,14 @@ public class SaveLoad : MonoBehaviour
             GameController.saveStageSceneNameArrayIndex = userData._stageSceneNameArrayIndex;
             GameController.saveDifficultyLevelStatus = userData._difficultyLevelStatus;
             GameController.saveLanguageStatus = userData._languageStatusStatus;
+
+            //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
+            Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>();
+            foreach (var data in userData.stageClearList)
+            {
+                stageClearTestoredDict[data.key] = data.value;
+            }
+            GameController.saveStageClearStatusArray = stageClearTestoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
             Dictionary<string, int> restoredDict = new Dictionary<string, int>();

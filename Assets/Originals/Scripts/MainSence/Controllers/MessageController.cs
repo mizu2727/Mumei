@@ -22,6 +22,12 @@ public class MessageController : MonoBehaviour
     public static MessageController instance;
 
 
+    /// <summary>
+    /// TutorialClearStatus(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringTutorialClearStatus = "TutorialClearStatus";
+
+
     [Header("メッセージパネル関連")]
     [Header("メッセージパネル(ヒエラルキー上からアタッチする必要がある)")]
     [SerializeField] private GameObject messagePanel;
@@ -932,6 +938,9 @@ public class MessageController : MonoBehaviour
 
                 //ゲームモードステータスをInGameに設定
                 GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
+                //チュートリアルのストーリを閲覧したことを保存する
+                saveViewStoryStatusArray[stringTutorialClearStatus] = 1;
 
                 //処理をスキップ
                 return;

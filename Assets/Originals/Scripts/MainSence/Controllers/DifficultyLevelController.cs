@@ -940,13 +940,12 @@ public class DifficultyLevelController : MonoBehaviour
         //セーブデータを削除する処理
         GameController.instance.CallRestDataMethod();
 
-        //セーブデータ削除パネルを非表示する
-        isviewReallyDeleteSavePanel = false;
-        ChangeViewReallyDeleteSavePanel();
+        //ステージクリア情報を設定する
+        SettingStageClearInformation();
 
-        //ステージ及び難易度情報パネルを非表示にする
-        isviewStageAndDifficultyLevelPanel = true;
-        ChangeViewStageAndDifficultyLevelPanel();
+
+        //TitleSceneNameを再ロードする
+        SceneManager.LoadScene(CommonController.instance.GetTitleSceneName());
     }
 
     /// <summary>
