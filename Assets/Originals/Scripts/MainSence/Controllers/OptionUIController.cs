@@ -293,7 +293,7 @@ public class OptionUIController : MonoBehaviour
         if (SceneManager.GetActiveScene().name == CommonController.instance.GetTitleSceneName())
         {
             //タイトルパネルを非表示にする
-            TitleController.instance.titlePanel.SetActive(false);
+            TitleController.instance.GetTitlePanel().SetActive(false);
         }
         else 
         {
@@ -525,7 +525,7 @@ public class OptionUIController : MonoBehaviour
         if (SceneManager.GetActiveScene().name == CommonController.instance.GetTitleSceneName())
         {
             //タイトルパネルを表示にする
-            TitleController.instance.titlePanel.SetActive(true);
+            TitleController.instance.GetTitlePanel().SetActive(true);
         }
         else
         {

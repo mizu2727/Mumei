@@ -20,6 +20,11 @@ public class DifficultyLevelController : MonoBehaviour
     private const string stringDemoStage01 = "DemoStage01";
 
     /// <summary>
+    /// TitleScene(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
+    /// </summary>
+    private const string stringTitleScene = "TitleScene";
+
+    /// <summary>
     /// HomeScene(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
     /// </summary>
     private const string stringHomeScene = "HomeScene";
@@ -63,6 +68,10 @@ public class DifficultyLevelController : MonoBehaviour
     /// NightmareLevel(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringNightmareLevel = "NightmareLevel";
+
+
+    [Header("ステージ及び難易度情報表示パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject viewStageAndDifficultyLevelPanel;
 
 
     [Header("難易度説明(Prefabをアタッチ)")]
@@ -219,6 +228,22 @@ public class DifficultyLevelController : MonoBehaviour
     {stringNightmareLevel, "--:--:--"},
     };
 
+
+    /// <summary>
+    /// ステージ及び難易度情報パネル閲覧フラグ
+    /// </summary>
+    private bool isviewStageAndDifficultyLevelPanel = false;
+
+    /// <summary>
+    /// ステージ及び難易度情報パネル閲覧フラグを設定
+    /// </summary>
+    /// <returns>ステージ及び難易度情報パネル閲覧フラグ</returns>
+    public void SetIsViewStageAndDifficultyLevelPanel(bool flag)
+    {
+        isviewStageAndDifficultyLevelPanel = flag;
+    }
+
+
     /// <summary>
     /// ステージ及び難易度選択パネル閲覧フラグ
     /// </summary>
@@ -299,6 +324,61 @@ public class DifficultyLevelController : MonoBehaviour
         isViewStageAndDifficultyLevelChoosePanel = flag;
     }
 
+    /*----------------------------------------------------------------
+     * SE関連
+     ---------------------------------------------------------------*/
+
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
+    /// <summary>
+    /// SE用audioSource
+    /// </summary>
+    private AudioSource audioSourceSE;
+
+    /// <summary>
+    /// ボタンSEのID
+    /// </summary>
+    private readonly int buttonSEid = 4;
+
+
+    private void OnEnable()
+    {
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
+    }
+
+    private void OnDisable()
+    {
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        if (audioSourceSE != null)
+        {
+            audioSourceSE.volume = volume;
+        }
+    }
+
+    /// <summary>
+    /// AudioSourceの初期化
+    /// </summary>
+    private void InitializeAudioSource()
+    {
+        //AudioSourceSEを取得
+        audioSourceSE = gameObject.AddComponent<AudioSource>();
+
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
+        audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
+        audioSourceSE.playOnAwake = false;
+    }
+
     private void OnDestroy()
     {
         //stageClearInformationPanelが存在する場合
@@ -357,6 +437,13 @@ public class DifficultyLevelController : MonoBehaviour
             stageAndDifficultyLevelChoosePanel = null;
         }
 
+        //viewStageAndDifficultyLevelPanelが存在する場合
+        if (viewStageAndDifficultyLevelPanel != null)
+        {
+            //viewStageAndDifficultyLevelPanelをnullにする(メモリリークを防ぐため)
+            viewStageAndDifficultyLevelPanel = null;
+        }
+
         //インスタンスが存在する場合
         if (instance != null)
         {
@@ -384,9 +471,79 @@ public class DifficultyLevelController : MonoBehaviour
 
     private void Start()
     {
+        //AudioSourceの初期化
+        InitializeAudioSource();
+
         //現在のシーン名によって処理を変更する
         switch (SceneManager.GetActiveScene().name)
         {
+            //TitleSceneの場合
+            case stringTitleScene:
+
+                //ステージ及び難易度情報表示パネルが存在しない場合
+                if (viewStageAndDifficultyLevelPanel == null)
+                {
+                    Debug.LogError("viewStageAndDifficultyLevelPanelがアタッチされていません。");
+                }
+
+                //Easyクリアアイコンが存在しない場合
+                if (easyLeveClearImage == null)
+                {
+                    Debug.LogError("EasyLeveClearImageがアタッチされていません。");
+                }
+
+                //Normalクリアアイコンが存在しない場合
+                if (normalLeveClearImage == null)
+                {
+                    Debug.LogError("NormalLeveClearImageがアタッチされていません。");
+                }
+
+                //Nightmareクリアアイコンが存在しない場合
+                if (nightmareLeveClearImage == null)
+                {
+                    Debug.LogError("NightmareLeveClearImageがアタッチされていません。");
+                }
+
+                //Easyクリア時間テキストが存在しない場合
+                if (easyLeveClearTimeText == null)
+                {
+                    Debug.LogError("EasyLeveClearTimeTextがアタッチされていません。");
+                }
+
+                //Normalクリア時間テキストが存在しない場合
+                if (normalLeveClearTimeText == null)
+                {
+                    Debug.LogError("NormalLeveClearTimeTextがアタッチされていません。");
+                }
+
+                //Nightmareクリア時間テキストが存在しない場合
+                if (nightmareLeveClearTimeText == null)
+                {
+                    Debug.LogError("NightmareLeveClearTimeTextがアタッチされていません。");
+                }
+
+                //悪夢ステージクリア情報パネルが存在しない場合
+                if (nightmareLeveClearInformationPanel == null)
+                {
+                    Debug.LogError("NightmareLeveClearInformationPanelがアタッチされていません。");
+                }
+
+                //ステージクリア情報パネルが存在しない場合
+                if (stageClearInformationPanel == null)
+                {
+                    Debug.LogError("stageClearInformationPanelがアタッチされていません。");
+                }
+
+                //初期化処理
+                //ステージクリア情報パネルを非表示にする
+                isStageClearInformationPanel = false;
+                ChangeViewStageClearInformationPanel();
+
+                //タイトル画面内のステージ及び難易度情報表示パネルを非表示にする
+                isviewStageAndDifficultyLevelPanel = false;
+                ChangeViewStageAndDifficultyLevelPanel();
+                break;
+
             //Home系のSceneの場合
             case stringHomeScene:
             case stringHome02Scene:
@@ -560,7 +717,7 @@ public class DifficultyLevelController : MonoBehaviour
     /// ステージクリアアイコンを表示/非表示する関数
     /// </summary>
     /// <param name="targetKeys">該当ステージ難易度のステータス</param>
-    void ViewStageClearIconImage(Dictionary<string, int> targetKeys) 
+    private void ViewStageClearIconImage(Dictionary<string, int> targetKeys) 
     {
         //難易度EasyLevelを通常クリアしている場合
         if (targetKeys[stringEasyLevel] == 1)
@@ -619,15 +776,24 @@ public class DifficultyLevelController : MonoBehaviour
     /// <param name="number">インデックス番号</param>
     public void OnPointerEnterStageNameButton(int number) 
     {
-        //ステージ背景画像を設定する
-        backgroundStageImage.sprite = backgroundStageImageArray[number];
+        //現在のシーン名がTitleSceneの場合
+        if (CommonController.instance.GetTitleSceneName() == SceneManager.GetActiveScene().name)
+        {
 
-        //ステージ背景画像の色を設定する
-        backgroundStageImage.color = new Color(157, 157, 157, 220);
+        }
+        else 
+        {
+            //ステージ背景画像を設定する
+            backgroundStageImage.sprite = backgroundStageImageArray[number];
+
+            //ステージ背景画像の色を設定する
+            backgroundStageImage.color = new Color(157, 157, 157, 220);
+        }
 
         //ステージクリア情報パネルを表示する
         isStageClearInformationPanel = true;
         ChangeViewStageClearInformationPanel();
+
 
         //ステージクリア情報パネルにステージクリアフラグとクリアタイム時間を設定する処理
         switch (number) 
@@ -689,6 +855,36 @@ public class DifficultyLevelController : MonoBehaviour
                 Debug.LogError("ステージインデックス番号が正しい番号ではないため、ステージクリア情報を更新して表示することができません。");
                 break;
         }
+    }
+
+    /// <summary>
+    /// タイトルへ戻るボタン押下時に呼ばれる関数
+    /// </summary>
+    public void OnClickedReturnToTitleButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //クリアアイコンを非表示にする
+        easyLeveClearImage.SetActive(false);
+        normalLeveClearImage.SetActive(false);
+        nightmareLeveClearImage.SetActive(false);
+
+        //クリア時間テキストを空にする
+        easyLeveClearTimeText.text = "";
+        normalLeveClearTimeText.text = "";
+        nightmareLeveClearTimeText.text = "";
+
+        //ステージのクリア情報パネルを非表示にする
+        isStageClearInformationPanel = false;
+        ChangeViewStageClearInformationPanel();
+
+        //ステージ及び難易度選択パネルを非表示にする
+        isviewStageAndDifficultyLevelPanel = false;
+        ChangeViewStageAndDifficultyLevelPanel();
+
+        //タイトルパネルを表示にする
+        TitleController.instance.GetTitlePanel().SetActive(true);
     }
 
     /// <summary>
@@ -798,7 +994,25 @@ public class DifficultyLevelController : MonoBehaviour
     }
 
     /// <summary>
-    /// ステージ及び難易度説選択パネルの表示/非表示
+    /// タイトル画面内のステージ及び難易度情報パネルの表示/非表示
+    /// </summary>
+    public void ChangeViewStageAndDifficultyLevelPanel()
+    {
+        if (isviewStageAndDifficultyLevelPanel)
+        {
+            //表示
+            viewStageAndDifficultyLevelPanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            viewStageAndDifficultyLevelPanel.SetActive(false);
+        }
+    }
+
+
+    /// <summary>
+    /// ステージ及び難易度選択パネルの表示/非表示
     /// </summary>
     public void ChangeViewStageAndDifficultyLevelChoosePanel()
     {

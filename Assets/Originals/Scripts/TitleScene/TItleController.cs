@@ -22,7 +22,21 @@ public class TitleController : MonoBehaviour
     [SerializeField] private Canvas titlesCanvas;
 
     [Header("タイトルパネル(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] public GameObject titlePanel;
+    [SerializeField] private GameObject titlePanel;
+
+    /// <summary>
+    /// タイトルパネルを取得する
+    /// </summary>
+    /// <returns>タイトルパネル</returns>
+    public GameObject GetTitlePanel()
+    {
+        return titlePanel;
+    }
+
+
+    /*----------------------------------------------------------------
+     * BGM関連
+     ---------------------------------------------------------------*/
 
     [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_BGM sO_BGM;
@@ -37,6 +51,24 @@ public class TitleController : MonoBehaviour
     /// </summary>
     private readonly int titleBGMId = 0;
 
+
+    /*----------------------------------------------------------------
+     * SE関連
+     ---------------------------------------------------------------*/
+
+    [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_SE sO_SE;
+
+    /// <summary>
+    /// SE用audioSource
+    /// </summary>
+    private AudioSource audioSourceSE;
+
+    /// <summary>
+    /// ボタンSEのID
+    /// </summary>
+    private readonly int buttonSEid = 4;
+
     private void OnEnable()
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
@@ -44,6 +76,9 @@ public class TitleController : MonoBehaviour
 
         //BGM音量変更時のイベント登録
         MusicController.OnBGMVolumeChangedEvent += UpdateBGMVolume;
+
+        //SE音量変更時のイベント登録
+        MusicController.OnSEVolumeChangedEvent += UpdateSEVolume;
     }
 
     private void OnDisable()
@@ -53,6 +88,9 @@ public class TitleController : MonoBehaviour
 
         //SE音量変更時のイベント登録解除
         MusicController.OnBGMVolumeChangedEvent -= UpdateBGMVolume;
+
+        //SE音量変更時のイベント登録解除
+        MusicController.OnSEVolumeChangedEvent -= UpdateSEVolume;
     }
 
     /// <summary>
@@ -64,6 +102,18 @@ public class TitleController : MonoBehaviour
         if (audioSourceBGM != null)
         {
             audioSourceBGM.volume = volume;
+        }
+    }
+
+    /// <summary>
+    /// SE音量を0～1へ変更
+    /// </summary>
+    /// <param name="volume">音量</param>
+    private void UpdateSEVolume(float volume)
+    {
+        if (audioSourceSE != null)
+        {
+            audioSourceSE.volume = volume;
         }
     }
 
@@ -137,6 +187,13 @@ public class TitleController : MonoBehaviour
 
         //MusicControllerで設定されているBGM用のAudioMixerGroupを設定する
         audioSourceBGM.outputAudioMixerGroup = MusicController.instance.audioMixerGroupBGM;
+
+        //AudioSourceSEを取得
+        audioSourceSE = gameObject.AddComponent<AudioSource>();
+
+        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
+        audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
+        audioSourceSE.playOnAwake = false;
     }
 
     private void Awake()
@@ -190,6 +247,22 @@ public class TitleController : MonoBehaviour
 
         //OpeningSceneをロードする
         SceneManager.LoadScene(CommonController.instance.GetOpeningSceneName());        
+    }
+
+    /// <summary>
+    /// 「データ」押下時の処理
+    /// </summary>
+    public void OnDataButtonClicked()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //タイトルパネルを非表示にする
+        titlePanel.SetActive(false);
+
+        //タイトル画面内のステージ及び難易度情報パネルを表示にする
+        DifficultyLevelController.instance.SetIsViewStageAndDifficultyLevelPanel(true);
+        DifficultyLevelController.instance.ChangeViewStageAndDifficultyLevelPanel();
     }
 
     /// <summary>
