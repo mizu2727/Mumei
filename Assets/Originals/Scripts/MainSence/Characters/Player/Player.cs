@@ -851,7 +851,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
     private void Update()
     {
-        Debug.Log("ゲームモード：" + GameController.instance.gameModeStatus);
+        //Debug.Log("ゲームモード：" + GameController.instance.gameModeStatus);
 
         //デバッグ時でQキー押下すると死亡する
         if (isDebug && Input.GetKeyDown(KeyCode.Q))

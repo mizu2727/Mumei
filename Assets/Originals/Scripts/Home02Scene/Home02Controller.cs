@@ -171,18 +171,18 @@ public class Home02Controller : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //シーンステータスをkHome02Sceneに設定
-        GameController.instance.SetViewScene(ViewScene.kHome02Scene);
-
-        //ゲームモードステータスをPlayInGameに変更
-        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
-
         //全てのBGMの状態をStopに変更
         sO_BGM.StopAllBGM();
     }
 
     private void Start()
     {
+        //シーンステータスをkHome02Sceneに設定
+        GameController.instance.SetViewScene(ViewScene.kHome02Scene);
+
+        //ゲームモードステータスをPlayInGameに変更
+        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
+
         //BGMを再生
         MusicController.instance.PlayLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(homeSceneBGMId), homeSceneBGMId);
     }
