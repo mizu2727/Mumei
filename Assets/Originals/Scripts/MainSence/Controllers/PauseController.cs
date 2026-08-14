@@ -227,9 +227,6 @@ public class PauseController : MonoBehaviour
     private string defaultItemName = "?????????";
 
 
-    [Header("BGMデータ(共通のScriptableObjectをアタッチする必要がある)")]
-    [SerializeField] public SO_BGM sO_BGM;
-
     /// <summary>
     /// 現在再生されているBGMのID
     /// </summary>
@@ -260,7 +257,7 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// 非同期タスクのキャンセル
     /// チュートリアル内のUniTask処理待機中にポーズ画面からタイトルへ戻る際のmessageTextでMissingReferenceExceptionエラーが起こるのを防止する用
-    /// </summary>
+    /// </summary>nowPlayBGMId
     private CancellationTokenSource cts;
 
 
@@ -271,16 +268,6 @@ public class PauseController : MonoBehaviour
     public GameObject GetPausePanel()
     {
         return pausePanel;
-    }
-
-
-    /// <summary>
-    /// 現在再生されているBGMのIDを取得
-    /// </summary>
-    /// <returns>現在再生されているBGMのID</returns>
-    public int GetNowPlayBGMId() 
-    {
-        return nowPlayBGMId;
     }
 
     /// <summary>
@@ -776,7 +763,7 @@ public class PauseController : MonoBehaviour
             //マウスを非表示にし、固定する
             HideMouseCorsor();
 
-            //ボタンSEを流し、インゲーム内のBGM・SEの一時停止を全て解除する
+            //ボタンSEを流し、インゲーム内のSEの一時停止を全て解除する
             MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
             MusicController.instance.UnPauseSE(Player.instance.audioSourceSE, Player.instance.GetCurrentSE());
 

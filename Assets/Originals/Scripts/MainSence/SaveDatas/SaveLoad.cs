@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using System.Linq;
+
+
 
 public class SaveLoad : MonoBehaviour
 {
@@ -440,6 +443,14 @@ public class SaveLoad : MonoBehaviour
             GameController.saveDifficultyLevelStatus = userData._difficultyLevelStatus;
             GameController.saveLanguageStatus = userData._languageStatusStatus;
 
+            //JsonUtilityで保存可能な形式へ変換したストーリー閲覧完了ステータス配列をDictionary型に変換してロードする
+            Dictionary<string, int> viewStoryStatusRestoredDict = new Dictionary<string, int>();
+            foreach (var data in userData.viewStoryStatusList)
+            {
+                viewStoryStatusRestoredDict[data.key] = data.value;
+            }
+            GameController.saveViewStoryStatusArray = viewStoryStatusRestoredDict;
+
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
             Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>();
             foreach (var data in userData.stageClearList)
@@ -447,14 +458,6 @@ public class SaveLoad : MonoBehaviour
                 stageClearTestoredDict[data.key] = data.value;
             }
             GameController.saveStageClearStatusArray = stageClearTestoredDict;
-
-            //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredDict = new Dictionary<string, int>();
-            foreach (var data in userData.stageClearList)
-            {
-                restoredDict[data.key] = data.value;
-            }
-            GameController.saveStageClearStatusArray = restoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したデモステージ01難易度クリアステータス配列をDictionary型に変換してロードする
             Dictionary<string, int> restoredDemoStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>();
@@ -563,5 +566,92 @@ public class SaveLoad : MonoBehaviour
 
         // 変更を保存する
         PlayerPrefs.Save();
+
+        
+        //各パラメーター(ゲーム本体側)を初期化する
+        GameController.playerName = "";
+        GameController.playCount = 0;
+        GameController.saveStageSceneNameArrayIndex = 0;
+        GameController.saveDifficultyLevelStatus = DifficultyLevelController.DifficultyLevel.kNone;
+
+        //ストーリー閲覧完了ステータス配列を初期化する
+        foreach (string data in GameController.saveViewStoryStatusArray.Keys.ToList())
+        {
+            GameController.saveViewStoryStatusArray[data] = 0;
+        }
+
+        //ステージクリアステータス配列を初期化する
+        foreach (string data in GameController.saveStageClearStatusArray.Keys.ToList())
+        {
+            GameController.saveStageClearStatusArray[data] = 0;
+        }
+
+        //デモ版の場合
+        if (GameController.instance.GetIsDemoPlayFlag())
+        {
+            //デモステージ01難易度クリアステータス配列を初期化する
+            foreach (string data in GameController.saveDemoStage01DifficultyLevelClearStatusArray.Keys.ToList())
+            {
+                GameController.saveDemoStage01DifficultyLevelClearStatusArray[data] = 0;
+            }
+
+            //デモステージ01難易度毎クリアタイム配列をロードする
+            foreach (string data in GameController.saveDemoStage01DifficultyLevelClearTimeArray.Keys.ToList())
+            {
+                GameController.saveDemoStage01DifficultyLevelClearTimeArray[data] = "--:--:--";
+            }
+
+        }
+        //製品版の場合
+        else
+        {
+            //ステージ01難易度クリアステータス配列を初期化する
+            foreach (string data in GameController.saveStage01DifficultyLevelClearStatusArray.Keys.ToList())
+            {
+                GameController.saveStage01DifficultyLevelClearStatusArray[data] = 0;
+            }
+
+            //ステージ02難易度クリアステータス配列を初期化する
+            foreach (string data in GameController.saveStage02DifficultyLevelClearStatusArray.Keys.ToList())
+            {
+                GameController.saveStage02DifficultyLevelClearStatusArray[data] = 0;
+            }
+
+            //ステージ03難易度クリアステータス配列を初期化する
+            foreach (string data in GameController.saveStage03DifficultyLevelClearStatusArray.Keys.ToList())
+            {
+                GameController.saveStage03DifficultyLevelClearStatusArray[data] = 0;
+            }
+
+            //ステージ04難易度クリアステータス配列を初期化する
+            foreach (string data in GameController.saveStage04DifficultyLevelClearStatusArray.Keys.ToList())
+            {
+                GameController.saveStage04DifficultyLevelClearStatusArray[data] = 0;
+            }
+
+            //ステージ01難易度毎クリアタイム配列をロードする
+            foreach (string data in GameController.saveStage01DifficultyLevelClearTimeArray.Keys.ToList())
+            {
+                GameController.saveStage01DifficultyLevelClearTimeArray[data] = "--:--:--";
+            }
+
+            //ステージ02難易度毎クリアタイム配列をロードする
+            foreach (string data in GameController.saveStage02DifficultyLevelClearTimeArray.Keys.ToList())
+            {
+                GameController.saveStage02DifficultyLevelClearTimeArray[data] = "--:--:--";
+            }
+
+            //ステージ03難易度毎クリアタイム配列をロードする
+            foreach (string data in GameController.saveStage03DifficultyLevelClearTimeArray.Keys.ToList())
+            {
+                GameController.saveStage03DifficultyLevelClearTimeArray[data] = "--:--:--";
+            }
+
+            //ステージ04難易度毎クリアタイム配列をロードする
+            foreach (string data in GameController.saveStage04DifficultyLevelClearTimeArray.Keys.ToList())
+            {
+                GameController.saveStage04DifficultyLevelClearTimeArray[data] = "--:--:--";
+            }
+        }
     }
 }

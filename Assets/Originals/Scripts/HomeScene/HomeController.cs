@@ -197,7 +197,7 @@ public class HomeController : MonoBehaviour
     private void InitializeAudioSource()
     {
         //audioSourceBGMÇê›íË
-        audioSourceBGM = MusicController.instance.GetAudioSource();
+        audioSourceBGM = MusicController.instance.GetOtherBGMAudioSource();
 
         //audioClipBGMÇê›íË
         audioClipBGM = sO_BGM.GetBGMClip(homeSceneBGMId);

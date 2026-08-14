@@ -21,9 +21,41 @@ public class MusicController : MonoBehaviour
     private AudioSource stageBGMAudioSource;
 
     /// <summary>
+    /// ステージBGM専用のAudioSourceを取得するメソッド
+    /// </summary>
+    /// <returns>ステージBGM用AudioSource</returns>
+    public AudioSource GetStageBGMAudioSource()
+    {
+        return stageBGMAudioSource;
+    }
+
+    /// <summary>
     /// chasePlayerBGM用AudioSource
     /// </summary>
     private AudioSource chasePlayerBGMAudioSource;
+
+    /// <summary>
+    /// 追跡BGM専用のAudioSourceを取得するメソッド
+    /// </summary>
+    /// <returns>追跡BGM用AudioSource</returns>
+    public AudioSource GetChasePlayerBGMAudioSource()
+    {
+        return chasePlayerBGMAudioSource;
+    }
+
+    /// <summary>
+    /// その他BGM用AudioSource
+    /// </summary>
+    private AudioSource otherBGMAudioSource;
+
+    /// <summary>
+    /// その他BGM用AudioSourceを取得
+    /// </summary>
+    /// <returns>その他BGM用AudioSource</returns>
+    public AudioSource GetOtherBGMAudioSource()
+    {
+        return otherBGMAudioSource;
+    }
 
     [Header("AudioMixer")]
     public AudioMixer audioMixer;
@@ -43,9 +75,27 @@ public class MusicController : MonoBehaviour
     private const float minBGMSliderVolume = 0f;
 
     /// <summary>
+    /// BGM最小音量取得(Slider用)
+    /// </summary>
+    /// <returns>BGM最小音量(Slider用)</returns>
+    public float GetMinBGMSliderVolume()
+    {
+        return minBGMSliderVolume;
+    }
+
+    /// <summary>
     /// SE最大音量(Slider用)
     /// </summary>
     private const float maxBGMSliderVolume = 1f;
+
+    /// <summary>
+    /// BGM最大音量取得(Slider用)
+    /// </summary>
+    /// <returns>BGM最大音量(Slider用)</returns>
+    public float GetMaxBGMSliderVolume()
+    {
+        return maxBGMSliderVolume;
+    }
 
     /// <summary>
     /// OnBGMVolumeChangedEvent
@@ -71,9 +121,27 @@ public class MusicController : MonoBehaviour
     private const float minSESliderVolume = 0f;
 
     /// <summary>
+    /// SE最小音量取得(Slider用)
+    /// </summary>
+    /// <returns>SE最小音量(Slider用)</returns>
+    public float GetMinSESliderVolume()
+    {
+        return minSESliderVolume;
+    }
+
+    /// <summary>
     /// SE最大音量(Slider用)
     /// </summary>
     private const float maxSESliderVolume = 1f;
+
+    /// <summary>
+    /// SE最大音量取得(Slider用)
+    /// </summary>
+    /// <returns>SE最大音量(Slider用)</returns>
+    public float GetMaxSESliderVolume()
+    {
+        return maxSESliderVolume;
+    }
 
     /// <summary>
     /// OnSEVolumeChangedEvent
@@ -111,63 +179,10 @@ public class MusicController : MonoBehaviour
     /// </summary>
     private readonly List<AudioSource> audioSourceSEList = new ();
 
+
     [Header("デバッグフラグ")]
     [SerializeField] private bool isDebug;
 
-
-    /// <summary>
-    /// ステージBGM専用のAudioSourceを取得するメソッド
-    /// </summary>
-    /// <returns>ステージBGM用AudioSource</returns>
-    public AudioSource GetStageBGMAudioSource()
-    {
-        return stageBGMAudioSource;
-    }
-
-    /// <summary>
-    /// 追跡BGM専用のAudioSourceを取得するメソッド
-    /// </summary>
-    /// <returns>追跡BGM用AudioSource</returns>
-    public AudioSource GetChasePlayerBGMAudioSource()
-    {
-        return chasePlayerBGMAudioSource;
-    }
-
-    /// <summary>
-    /// BGM最小音量取得(Slider用)
-    /// </summary>
-    /// <returns>BGM最小音量(Slider用)</returns>
-    public float GetMinBGMSliderVolume()
-    {
-        return minBGMSliderVolume;
-    }
-
-    /// <summary>
-    /// BGM最大音量取得(Slider用)
-    /// </summary>
-    /// <returns>BGM最大音量(Slider用)</returns>
-    public float GetMaxBGMSliderVolume()
-    {
-        return maxBGMSliderVolume;
-    }
-
-    /// <summary>
-    /// SE最小音量取得(Slider用)
-    /// </summary>
-    /// <returns>SE最小音量(Slider用)</returns>
-    public float GetMinSESliderVolume()
-    {
-        return minSESliderVolume;
-    }
-
-    /// <summary>
-    /// SE最大音量取得(Slider用)
-    /// </summary>
-    /// <returns>SE最大音量(Slider用)</returns>
-    public float GetMaxSESliderVolume()
-    {
-        return maxSESliderVolume;
-    }
 
     private void Awake()
     {
@@ -179,6 +194,8 @@ public class MusicController : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+
+        InitializeAudioSource();
 
         //sceneLoadedに「OnSceneLoaded」関数を追加
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -275,7 +292,7 @@ public class MusicController : MonoBehaviour
         }
 
         //1つ目のリストに追加
-        audioSourceBGMList.Add(stageBGMAudioSource);
+        //audioSourceBGMList.Add(stageBGMAudioSource);
 
         if (chasePlayerBGMAudioSource == null)
         {
@@ -286,7 +303,22 @@ public class MusicController : MonoBehaviour
         }
 
         //2つ目のリストに追加
+        //audioSourceBGMList.Add(chasePlayerBGMAudioSource);
+
+
+        if (otherBGMAudioSource == null)
+        {
+            otherBGMAudioSource = gameObject.AddComponent<AudioSource>();
+            otherBGMAudioSource.outputAudioMixerGroup = audioMixerGroupBGM;
+            otherBGMAudioSource.playOnAwake = false;
+            otherBGMAudioSource.loop = true;
+        }
+
+        // リスト整理（重複防止）
+        audioSourceBGMList.Clear();
+        audioSourceBGMList.Add(stageBGMAudioSource);
         audioSourceBGMList.Add(chasePlayerBGMAudioSource);
+        audioSourceBGMList.Add(otherBGMAudioSource);
     }
 
     /// <summary>
