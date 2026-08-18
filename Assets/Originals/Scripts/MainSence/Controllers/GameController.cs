@@ -21,6 +21,11 @@ public class GameController : MonoBehaviour
     /// </summary>
     private bool isDemoPlayFlag = true;
 
+    /// <summary>
+    /// デフォルトのフレームレート
+    /// </summary>
+    private const int kDefaultFrameRate = 60;
+
     [Header("Prefab内のGameControllerの子オブジェクトをアタッチすること")]
     [SerializeField] private SaveLoad saveLoad;
 
@@ -690,6 +695,9 @@ public class GameController : MonoBehaviour
 
 
         Time.timeScale = 1;
+
+        //フレームレートをXfpsに設定
+        Application.targetFrameRate = kDefaultFrameRate;
     }
 
     private void Start()
