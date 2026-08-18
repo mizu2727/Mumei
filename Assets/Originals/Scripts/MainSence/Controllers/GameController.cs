@@ -778,18 +778,12 @@ public class GameController : MonoBehaviour
             //難易度ステータスを保存した値に設定
             saveDifficultyLevelStatus = DifficultyLevelController.DifficultyLevel.kNone;
         }
-
-        //リセット(デバッグ用。新しいシーン遷移時用データ用パラメータが追加された場合に一度実行すること)
-        //例：新規のDictionary型パラメータが追加された際に実行する
-        //実行時には、テストプレイ終了方法を必ず停止ボタンで止めること
-        //(「ゲーム終了」ボタンを押下場合、セーブした値が残ってしまうため)
-        //CallRestDataMethod();
     }
 
     private void Update()
     {
-        //マウス感度をスライダーから取得
-        if (mouseSensitivitySlider)
+        //マウス感度設定を開いている場合のみマウス感度をスライダーから取得
+        if (mouseSensitivitySlider && OptionUIController.instance.GetIsViewMouseSensitivityPanel())
         {
             lookSensitivity = mouseSensitivitySlider.value;
 
@@ -797,8 +791,8 @@ public class GameController : MonoBehaviour
             if (lookSensitivity > maxLookSensitivity) lookSensitivity = maxLookSensitivity;
         }
 
-        //セーブ用BGM音量をスライダーから取得
-        if (MusicController.instance.bGMSlider)
+        //音量調整設定を開いている場合のみ、セーブ用BGM音量をスライダーから取得
+        if (MusicController.instance.bGMSlider && OptionUIController.instance.GetIsViewAudioAdjustmentPanel())
         {
             bGMVolume = MusicController.instance.bGMSlider.value;
 
@@ -809,8 +803,8 @@ public class GameController : MonoBehaviour
             if (bGMVolume < MusicController.instance.GetMinBGMSliderVolume()) bGMVolume = MusicController.instance.GetMinBGMSliderVolume();
         }
 
-        //セーブ用SE音量をスライダーから取得
-        if (MusicController.instance.sESlider)
+        //音量調整設定を開いている場合のみ、セーブ用SE音量をスライダーから取得
+        if (MusicController.instance.sESlider && OptionUIController.instance.GetIsViewAudioAdjustmentPanel())
         {
             sEVolume = MusicController.instance.sESlider.value;
 

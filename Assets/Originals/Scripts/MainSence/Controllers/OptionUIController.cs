@@ -52,14 +52,41 @@ public class OptionUIController : MonoBehaviour
     private bool isViewMouseSensitivityPanel = false;
 
     /// <summary>
+    /// マウス感度設定パネル閲覧フラグを取得
+    /// </summary>
+    /// <returns>マウス感度設定パネル閲覧フラグ</returns>
+    public bool GetIsViewMouseSensitivityPanel() 
+    {
+        return isViewMouseSensitivityPanel;
+    }
+
+    /// <summary>
     /// 音量調整設定パネル閲覧フラグ
     /// </summary>
     private bool isViewAudioAdjustmentPanel = false;
 
     /// <summary>
+    /// 音量調整設定パネル閲覧フラグを取得
+    /// </summary>
+    /// <returns>音量調整設定パネル閲覧フラグ</returns>
+    public bool GetIsViewAudioAdjustmentPanel() 
+    {
+        return isViewAudioAdjustmentPanel;
+    }
+
+    /// <summary>
     /// 明るさ調整設定パネル閲覧フラグ
     /// </summary>
     private bool isViewBrightnessAdjustmentPanel = false;
+
+    /// <summary>
+    /// 明るさ調整設定パネル閲覧フラグを取得
+    /// </summary>
+    /// <returns>明るさ調整設定パネル閲覧フラグ</returns>
+    public bool GetIsViewBrightnessAdjustmentPanel() 
+    {
+        return isViewBrightnessAdjustmentPanel;
+    }
 
     /// <summary>
     /// スクリーン調整設定パネル閲覧フラグ

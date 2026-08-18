@@ -3,8 +3,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
 
-
-//明るさ調整管理クラス
+/// <summary>
+/// 明るさ調整管理クラス
+/// </summary>
 public class BrightnessAdjustmentController : MonoBehaviour
 {
     /// <summary>
@@ -110,8 +111,8 @@ public class BrightnessAdjustmentController : MonoBehaviour
 
     private void Update()
     {
-        //スライダーが存在する場合
-        if (brightnessAdjustmentSlider)
+        //スライダーが存在する場合&&明るさ調整パネルを開いている場合
+        if (brightnessAdjustmentSlider && OptionUIController.instance.GetIsViewBrightnessAdjustmentPanel())
         {
 
             //スライダーの値をFog欄内のDensityへ設定
