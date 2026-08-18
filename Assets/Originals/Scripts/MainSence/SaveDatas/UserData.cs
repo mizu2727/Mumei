@@ -13,9 +13,6 @@ public class UserData
     [Header("プレイ回数(ヒエラルキー上からの編集禁止)")]
     public int playCount;
 
-    [Header("現在のシーン名(ヒエラルキー上からの編集禁止)")]
-    public string sceneName;
-
     [Header("マウス/ゲームパッドの右スティックの感度(ヒエラルキー上からの編集禁止)")]
     public float sensitivityValue;
 

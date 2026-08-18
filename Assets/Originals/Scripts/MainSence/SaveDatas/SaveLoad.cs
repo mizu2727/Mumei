@@ -39,9 +39,6 @@ public class SaveLoad : MonoBehaviour
             //プレイ回数を保存
             playCount = GameController.playCount,
 
-            //現在のシーン名を取得して保存
-            sceneName = SceneManager.GetActiveScene().name,
-
             //マウス/ゲームパッドの右スティックの感度を保存
             sensitivityValue = GameController.lookSensitivity,
 
@@ -167,9 +164,7 @@ public class SaveLoad : MonoBehaviour
             string josn = PlayerPrefs.GetString(stringPlayerUserData);
 
             //JSON文字列をUserDataオブジェクトに変換
-            UserData userData = JsonUtility.FromJson<UserData>(josn);           
-
-            SceneManager.LoadScene(userData.sceneName);
+            UserData userData = JsonUtility.FromJson<UserData>(josn);
 
             //各パラメーターにユーザーデータを設定
             GameController.playerName = userData.playerName;
