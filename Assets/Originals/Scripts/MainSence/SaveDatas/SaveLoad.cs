@@ -110,7 +110,7 @@ public class SaveLoad : MonoBehaviour
         }
 
         //Dictionary型のステージ04難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage01DifficultyLevelClearStatusArray)
+        foreach (var item in GameController.saveStage04DifficultyLevelClearStatusArray)
         {
             userData.stage04DifficultyLevelClearDataList.Add(new Stage04DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
@@ -370,7 +370,7 @@ public class SaveLoad : MonoBehaviour
         }
 
         //Dictionary型のステージ04難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage01DifficultyLevelClearStatusArray)
+        foreach (var item in GameController.saveStage04DifficultyLevelClearStatusArray)
         {
             userData.stage04DifficultyLevelClearDataList.Add(new Stage04DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
