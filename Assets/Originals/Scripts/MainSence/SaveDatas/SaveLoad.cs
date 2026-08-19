@@ -5,7 +5,9 @@ using UnityEngine.UIElements;
 using System.Linq;
 
 
-
+/// <summary>
+/// セーブデータ関連クラス
+/// </summary>
 public class SaveLoad : MonoBehaviour
 {
     /// <summary>
@@ -71,73 +73,73 @@ public class SaveLoad : MonoBehaviour
         };
 
         //Dictionary型のストーリー閲覧完了ステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveViewStoryStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveViewStoryStatusArray)
         {
             userData.viewStoryStatusList.Add(new ViewStoryStatusData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStageClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStageClearStatusArray)
         {
             userData.stageClearList.Add(new StageClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のデモステージ01難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveDemoStage01DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveDemoStage01DifficultyLevelClearStatusArray)
         {
             userData.demoStage01DifficultyLevelClearDataList.Add(new DemoStage01DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ01難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage01DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStage01DifficultyLevelClearStatusArray)
         {
             userData.stage01DifficultyLevelClearDataList.Add(new Stage01DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ02難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage02DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStage02DifficultyLevelClearStatusArray)
         {
             userData.stage02DifficultyLevelClearDataList.Add(new Stage02DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ03難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage03DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStage03DifficultyLevelClearStatusArray)
         {
             userData.stage03DifficultyLevelClearDataList.Add(new Stage03DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ04難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage04DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStage04DifficultyLevelClearStatusArray)
         {
             userData.stage04DifficultyLevelClearDataList.Add(new Stage04DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のデモステージ01難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveDemoStage01DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveDemoStage01DifficultyLevelClearTimeArray)
         {
             userData.demoStage01DifficultyLevelClearTimeDataList.Add(new DemoStage01DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ01難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage01DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveStage01DifficultyLevelClearTimeArray)
         {
             userData.stage01DifficultyLevelClearTimeDataList.Add(new Stage01DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ02難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage02DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveStage02DifficultyLevelClearTimeArray)
         {
             userData.stage02DifficultyLevelClearTimeDataList.Add(new Stage02DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ03難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage03DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveStage03DifficultyLevelClearTimeArray)
         {
             userData.stage03DifficultyLevelClearTimeDataList.Add(new Stage03DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ04難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage04DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveStage04DifficultyLevelClearTimeArray)
         {
             userData.stage04DifficultyLevelClearTimeDataList.Add(new Stage04DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
@@ -180,97 +182,103 @@ public class SaveLoad : MonoBehaviour
             GameController.isSaveSelfViewCompassTextPanel = userData.isSelfViewCompassTextPanel;
             GameController.saveLanguageStatus = userData._languageStatusStatus;
 
+
+            /*----------------------------------------------------------------------
+             * 現在のデフォルトキー構成をベースにしたDictionary型へ変換してロードする
+             * (セーブデータに存在しないキーがあってもデフォルト値で補完され、例外にならない)
+             -----------------------------------------------------------------------*/
+
             //JsonUtilityで保存可能な形式へ変換したストーリー閲覧完了ステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> viewStoryStatusRestoredDict = new Dictionary<string, int>();
-            foreach (var data in userData.viewStoryStatusList)
+            Dictionary<string, int> viewStoryStatusRestoredDict = new Dictionary<string, int>(GameController.saveViewStoryStatusArray);
+            foreach (ViewStoryStatusData data in userData.viewStoryStatusList)
             {
                 viewStoryStatusRestoredDict[data.key] = data.value;
             }
             GameController.saveViewStoryStatusArray = viewStoryStatusRestoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>();
-            foreach (var data in userData.stageClearList)
+            Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>(GameController.saveStageClearStatusArray);
+            foreach (StageClearData data in userData.stageClearList)
             {
                 stageClearTestoredDict[data.key] = data.value;
             }
             GameController.saveStageClearStatusArray = stageClearTestoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したデモステージ01難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredDemoStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.demoStage01DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredDemoStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveDemoStage01DifficultyLevelClearStatusArray);
+            foreach (DemoStage01DifficultyLevelClearData data in userData.demoStage01DifficultyLevelClearDataList)
             {
                 restoredDemoStage01DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveDemoStage01DifficultyLevelClearStatusArray = restoredDemoStage01DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ01難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.stage01DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveStage01DifficultyLevelClearStatusArray);
+            foreach (Stage01DifficultyLevelClearData data in userData.stage01DifficultyLevelClearDataList)
             {
                 restoredStage01DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage01DifficultyLevelClearStatusArray = restoredStage01DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ02難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredStage02DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.stage02DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredStage02DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveStage02DifficultyLevelClearStatusArray);
+            foreach (Stage02DifficultyLevelClearData data in userData.stage02DifficultyLevelClearDataList)
             {
                 restoredStage02DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage02DifficultyLevelClearStatusArray = restoredStage02DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ03難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredStage03DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.stage03DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredStage03DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveStage03DifficultyLevelClearStatusArray);
+            foreach (Stage03DifficultyLevelClearData data in userData.stage03DifficultyLevelClearDataList)
             {
                 restoredStage03DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage03DifficultyLevelClearStatusArray = restoredStage03DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ04難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredStage04DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.stage04DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredStage04DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveStage04DifficultyLevelClearStatusArray);
+            foreach (Stage04DifficultyLevelClearData data in userData.stage04DifficultyLevelClearDataList)
             {
                 restoredStage04DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage04DifficultyLevelClearStatusArray = restoredStage04DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したデモステージ01難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredDemoStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.demoStage01DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredDemoStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveDemoStage01DifficultyLevelClearTimeArray);
+            foreach (DemoStage01DifficultyLevelClearTimeData data in userData.demoStage01DifficultyLevelClearTimeDataList)
             {
                 restoredDemoStage01DifficultyLevelClearTimeDict[data.key] = data.value;
             }
             GameController.saveDemoStage01DifficultyLevelClearTimeArray = restoredDemoStage01DifficultyLevelClearTimeDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ01難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.stage01DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveStage01DifficultyLevelClearTimeArray);
+            foreach (Stage01DifficultyLevelClearTimeData data in userData.stage01DifficultyLevelClearTimeDataList)
             {
                 restoredStage01DifficultyLevelClearTimeDict[data.key] = data.value;
             }
             GameController.saveStage01DifficultyLevelClearTimeArray = restoredStage01DifficultyLevelClearTimeDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ02難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredStage02DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.stage02DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredStage02DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveStage02DifficultyLevelClearTimeArray);
+            foreach (Stage02DifficultyLevelClearTimeData data in userData.stage02DifficultyLevelClearTimeDataList)
             {
                 restoredStage02DifficultyLevelClearTimeDict[data.key] = data.value;
             }
             GameController.saveStage02DifficultyLevelClearTimeArray = restoredStage02DifficultyLevelClearTimeDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ03難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredStage03DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.stage03DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredStage03DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveStage03DifficultyLevelClearTimeArray);
+            foreach (Stage03DifficultyLevelClearTimeData data in userData.stage03DifficultyLevelClearTimeDataList)
             {
                 restoredStage03DifficultyLevelClearTimeDict[data.key] = data.value;
             }
             GameController.saveStage03DifficultyLevelClearTimeArray = restoredStage03DifficultyLevelClearTimeDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ04難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredStage04DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.stage04DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredStage04DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveStage04DifficultyLevelClearTimeArray);
+            foreach (Stage04DifficultyLevelClearTimeData data in userData.stage04DifficultyLevelClearTimeDataList)
             {
                 restoredStage04DifficultyLevelClearTimeDict[data.key] = data.value;
             }
@@ -329,73 +337,73 @@ public class SaveLoad : MonoBehaviour
         };
 
         //Dictionary型のストーリー閲覧完了ステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveViewStoryStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveViewStoryStatusArray)
         {
             userData.viewStoryStatusList.Add(new ViewStoryStatusData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStageClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStageClearStatusArray)
         {
             userData.stageClearList.Add(new StageClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のデモステージ01難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveDemoStage01DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveDemoStage01DifficultyLevelClearStatusArray)
         {
             userData.demoStage01DifficultyLevelClearDataList.Add(new DemoStage01DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ01難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage01DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStage01DifficultyLevelClearStatusArray)
         {
             userData.stage01DifficultyLevelClearDataList.Add(new Stage01DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ02難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage02DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStage02DifficultyLevelClearStatusArray)
         {
             userData.stage02DifficultyLevelClearDataList.Add(new Stage02DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ03難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage03DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStage03DifficultyLevelClearStatusArray)
         {
             userData.stage03DifficultyLevelClearDataList.Add(new Stage03DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ04難易度クリアステータス配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage04DifficultyLevelClearStatusArray)
+        foreach (KeyValuePair<string, int> item in GameController.saveStage04DifficultyLevelClearStatusArray)
         {
             userData.stage04DifficultyLevelClearDataList.Add(new Stage04DifficultyLevelClearData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のデモステージ01難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveDemoStage01DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveDemoStage01DifficultyLevelClearTimeArray)
         {
             userData.demoStage01DifficultyLevelClearTimeDataList.Add(new DemoStage01DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ01難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage01DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveStage01DifficultyLevelClearTimeArray)
         {
             userData.stage01DifficultyLevelClearTimeDataList.Add(new Stage01DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ02難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage02DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveStage02DifficultyLevelClearTimeArray)
         {
             userData.stage02DifficultyLevelClearTimeDataList.Add(new Stage02DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ03難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage03DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveStage03DifficultyLevelClearTimeArray)
         {
             userData.stage03DifficultyLevelClearTimeDataList.Add(new Stage03DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージ04難易度毎クリアタイム配列をリストに変換して保存可能にする
-        foreach (var item in GameController.saveStage04DifficultyLevelClearTimeArray)
+        foreach (KeyValuePair<string, string> item in GameController.saveStage04DifficultyLevelClearTimeArray)
         {
             userData.stage04DifficultyLevelClearTimeDataList.Add(new Stage04DifficultyLevelClearTimeData { key = item.Key, value = item.Value });
         }
@@ -438,97 +446,103 @@ public class SaveLoad : MonoBehaviour
             GameController.saveDifficultyLevelStatus = userData._difficultyLevelStatus;
             GameController.saveLanguageStatus = userData._languageStatusStatus;
 
+
+            /*----------------------------------------------------------------------
+             * 現在のデフォルトキー構成をベースにしたDictionary型へ変換してロードする
+             * (セーブデータに存在しないキーがあってもデフォルト値で補完され、例外にならない)
+             -----------------------------------------------------------------------*/
+
             //JsonUtilityで保存可能な形式へ変換したストーリー閲覧完了ステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> viewStoryStatusRestoredDict = new Dictionary<string, int>();
-            foreach (var data in userData.viewStoryStatusList)
+            Dictionary<string, int> viewStoryStatusRestoredDict = new Dictionary<string, int>(GameController.saveViewStoryStatusArray);
+            foreach (ViewStoryStatusData data in userData.viewStoryStatusList)
             {
                 viewStoryStatusRestoredDict[data.key] = data.value;
             }
             GameController.saveViewStoryStatusArray = viewStoryStatusRestoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>();
-            foreach (var data in userData.stageClearList)
+            Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>(GameController.saveStageClearStatusArray);
+            foreach (StageClearData data in userData.stageClearList)
             {
                 stageClearTestoredDict[data.key] = data.value;
             }
             GameController.saveStageClearStatusArray = stageClearTestoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したデモステージ01難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredDemoStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.demoStage01DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredDemoStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveDemoStage01DifficultyLevelClearStatusArray);
+            foreach (DemoStage01DifficultyLevelClearData data in userData.demoStage01DifficultyLevelClearDataList)
             {
                 restoredDemoStage01DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveDemoStage01DifficultyLevelClearStatusArray = restoredDemoStage01DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ01難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.stage01DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredStage01DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveStage01DifficultyLevelClearStatusArray);
+            foreach (Stage01DifficultyLevelClearData data in userData.stage01DifficultyLevelClearDataList)
             {
                 restoredStage01DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage01DifficultyLevelClearStatusArray = restoredStage01DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ02難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredStage02DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.stage02DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredStage02DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveStage02DifficultyLevelClearStatusArray);
+            foreach (Stage02DifficultyLevelClearData data in userData.stage02DifficultyLevelClearDataList)
             {
                 restoredStage02DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage02DifficultyLevelClearStatusArray = restoredStage02DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ03難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredStage03DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.stage03DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredStage03DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveStage03DifficultyLevelClearStatusArray);
+            foreach (Stage03DifficultyLevelClearData data in userData.stage03DifficultyLevelClearDataList)
             {
                 restoredStage03DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage03DifficultyLevelClearStatusArray = restoredStage03DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ04難易度クリアステータス配列をDictionary型に変換してロードする
-            Dictionary<string, int> restoredStage04DifficultyLevelClearStatusDict = new Dictionary<string, int>();
-            foreach (var data in userData.stage04DifficultyLevelClearDataList)
+            Dictionary<string, int> restoredStage04DifficultyLevelClearStatusDict = new Dictionary<string, int>(GameController.saveStage04DifficultyLevelClearStatusArray);
+            foreach (Stage04DifficultyLevelClearData data in userData.stage04DifficultyLevelClearDataList)
             {
                 restoredStage04DifficultyLevelClearStatusDict[data.key] = data.value;
             }
             GameController.saveStage04DifficultyLevelClearStatusArray = restoredStage04DifficultyLevelClearStatusDict;
 
             //JsonUtilityで保存可能な形式へ変換したデモステージ01難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredDemoStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.demoStage01DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredDemoStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveDemoStage01DifficultyLevelClearTimeArray);
+            foreach (DemoStage01DifficultyLevelClearTimeData data in userData.demoStage01DifficultyLevelClearTimeDataList)
             {
                 restoredDemoStage01DifficultyLevelClearTimeDict[data.key] = data.value;
             }
             GameController.saveDemoStage01DifficultyLevelClearTimeArray = restoredDemoStage01DifficultyLevelClearTimeDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ01難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.stage01DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredStage01DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveStage01DifficultyLevelClearTimeArray);
+            foreach (Stage01DifficultyLevelClearTimeData data in userData.stage01DifficultyLevelClearTimeDataList)
             {
                 restoredStage01DifficultyLevelClearTimeDict[data.key] = data.value;
             }
             GameController.saveStage01DifficultyLevelClearTimeArray = restoredStage01DifficultyLevelClearTimeDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ02難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredStage02DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.stage02DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredStage02DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveStage02DifficultyLevelClearTimeArray);
+            foreach (Stage02DifficultyLevelClearTimeData data in userData.stage02DifficultyLevelClearTimeDataList)
             {
                 restoredStage02DifficultyLevelClearTimeDict[data.key] = data.value;
             }
             GameController.saveStage02DifficultyLevelClearTimeArray = restoredStage02DifficultyLevelClearTimeDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ03難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredStage03DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.stage03DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredStage03DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveStage03DifficultyLevelClearTimeArray);
+            foreach (Stage03DifficultyLevelClearTimeData data in userData.stage03DifficultyLevelClearTimeDataList)
             {
                 restoredStage03DifficultyLevelClearTimeDict[data.key] = data.value;
             }
             GameController.saveStage03DifficultyLevelClearTimeArray = restoredStage03DifficultyLevelClearTimeDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージ04難易度毎クリアタイム配列をDictionary型に変換してロードする
-            Dictionary<string, string> restoredStage04DifficultyLevelClearTimeDict = new Dictionary<string, string>();
-            foreach (var data in userData.stage04DifficultyLevelClearTimeDataList)
+            Dictionary<string, string> restoredStage04DifficultyLevelClearTimeDict = new Dictionary<string, string>(GameController.saveStage04DifficultyLevelClearTimeArray);
+            foreach (Stage04DifficultyLevelClearTimeData data in userData.stage04DifficultyLevelClearTimeDataList)
             {
                 restoredStage04DifficultyLevelClearTimeDict[data.key] = data.value;
             }
