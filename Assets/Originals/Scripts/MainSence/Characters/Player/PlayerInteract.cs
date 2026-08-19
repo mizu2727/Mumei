@@ -514,6 +514,28 @@ public class PlayerInteract : MonoBehaviour
                     //処理を終了
                     return;
                 }
+
+                //放送操作パネル
+                if (raycastHit.transform.tag == CommonController.instance.GetBroadcastOperationsTag() 
+                    && BroadcastController.instance.GetIsBroadcastSwitchFlag())
+                {
+                    isInteract = true;
+
+                    //放送のスイッチをオフにする
+                    BroadcastController.instance.SetIsBroadcastSwitchFlag(false);
+
+                    //放送のノイズを止める
+                    BroadcastController.instance.StopBroadcastNoise();
+
+                    //フラッシュライト関係のメッセージを表示
+                    MessageController.instance.ShowInventoryMessage(6);
+
+
+                    await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+                    //処理を終了
+                    return;
+                }
             }
         }
         else
@@ -587,6 +609,10 @@ public class PlayerInteract : MonoBehaviour
             {
                 targetLayer = CommonController.instance.GetHiddenObjectLayer();
             }
+            else if (currentObjectTag == CommonController.instance.GetBroadcastOperationsTag())
+            {
+                targetLayer = CommonController.instance.GetBroadcastOperationsLayer();
+            }
             else
             {
                 Debug.LogWarning($"オブジェクト {currentHighlightedObject.name} のタグ {currentObjectTag} は認識されません。'Default' にフォールバックします。");
@@ -630,7 +656,8 @@ public class PlayerInteract : MonoBehaviour
                 raycastHit.transform.tag == CommonController.instance.GetGoalTag() ||
                 raycastHit.transform.tag == CommonController.instance.GetStageLightTag()||
                 raycastHit.transform.tag == CommonController.instance.GetDrawerTag() ||
-                raycastHit.transform.tag == CommonController.instance.GetHiddenObjectTag())
+                raycastHit.transform.tag == CommonController.instance.GetHiddenObjectTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetBroadcastOperationsTag())
             {
                 //Rayがヒットしたオブジェクト
                 GameObject hitObject = raycastHit.transform.gameObject;

@@ -55,6 +55,29 @@ public class BroadcastController : MonoBehaviour
     /// </summary>
     private bool isBroadcastNoiseFlag;
 
+    /// <summary>
+    /// 放送スイッチフラグ
+    /// </summary>
+    private bool isBroadcastSwitchFlag;
+
+    /// <summary>
+    /// 放送スイッチフラグを取得する関数
+    /// </summary>
+    /// <returns>放送スイッチフラグ</returns>
+    public bool GetIsBroadcastSwitchFlag() 
+    {
+        return isBroadcastSwitchFlag;
+    }
+
+    /// <summary>
+    /// 放送スイッチフラグを設定する関数
+    /// </summary>
+    /// <param name="flag">放送スイッチフラグ</param>
+    public void SetIsBroadcastSwitchFlag(bool flag) 
+    {
+        isBroadcastSwitchFlag = flag;
+    }
+
 
     private void OnDestroy() 
     {
@@ -102,6 +125,7 @@ public class BroadcastController : MonoBehaviour
         //変数の初期化
         lastSaveBroadcastSpeakerListNumber = 99999;
         isBroadcastNoiseFlag = false;
+        isBroadcastSwitchFlag = true;
 
         //放送スピーカーの位置のリストを作成
         foreach (GameObject obj in broadcastSpeakerList) 
@@ -112,8 +136,8 @@ public class BroadcastController : MonoBehaviour
 
     private void Update()
     {
-        //ポーズ中の場合
-        if (PauseController.instance.isPause || Time.timeScale == 0) 
+        //ポーズ中の場合||放送スイッチがOFFの場合
+        if (PauseController.instance.isPause || Time.timeScale == 0 || !isBroadcastSwitchFlag) 
         {
             //処理をスキップ
             return;
@@ -198,7 +222,7 @@ public class BroadcastController : MonoBehaviour
     /// <summary>
     /// 指定の放送スピーカーのノイズを停止する処理
     /// </summary>
-    private void StopBroadcastNoise() 
+    public void StopBroadcastNoise() 
     {
         //放送中のスピーカーを取得する
         broadcastSpeaker = broadcastSpeakerList[saveBroadcastSpeakerListNumber].GetComponent<BroadcastSpeaker>();

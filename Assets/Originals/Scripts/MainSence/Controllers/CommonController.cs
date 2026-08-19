@@ -345,6 +345,20 @@ public class CommonController : MonoBehaviour
     }
 
     /// <summary>
+    /// 放送操作機器オブジェクトタグ
+    /// </summary>
+    private const string broadcastOperationsTag = "BroadcastOperations";
+
+    /// <summary>
+    /// 放送操作機器オブジェクトタグを取得する関数
+    /// </summary>
+    /// <returns>放送操作機器オブジェクトタグ</returns>
+    public string GetBroadcastOperationsTag()
+    {
+        return broadcastOperationsTag;
+    }
+
+    /// <summary>
     /// アウトラインタグ
     /// </summary>
     private const string outlineTag = "Outline";
@@ -487,6 +501,20 @@ public class CommonController : MonoBehaviour
     public string GetHiddenObjectLayer()
     {
         return hiddenObjectLayer;
+    }
+
+    /// <summary>
+    /// 放送操作機器オブジェクトレイヤー
+    /// </summary>
+    private const string broadcastOperationsLayer = "BroadcastOperations";
+
+    /// <summary>
+    /// 放送操作機器オブジェクトレイヤーを取得する関数
+    /// </summary>
+    /// <returns>放送操作機器オブジェクトレイヤー</returns>
+    public string GetBroadcastOperationsLayer()
+    {
+        return broadcastOperationsLayer;
     }
 
 
