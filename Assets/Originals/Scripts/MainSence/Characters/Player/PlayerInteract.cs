@@ -527,11 +527,13 @@ public class PlayerInteract : MonoBehaviour
                     //放送のノイズを止める
                     BroadcastController.instance.StopBroadcastNoise();
 
-                    //フラッシュライト関係のメッセージを表示
+                    //放送スイッチをオフにした旨のメッセージを表示
                     MessageController.instance.ShowInventoryMessage(6);
 
-
                     await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+                    //メッセージをリセット
+                    MessageController.instance.ResetMessage();
 
                     //処理を終了
                     return;
