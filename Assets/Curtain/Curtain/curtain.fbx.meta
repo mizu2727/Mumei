@@ -1,12 +1,5 @@
 fileFormatVersion: 2
-guid: b6aeaf37aa4c053489b1e7feb2e8fc77
-AssetOrigin:
-  serializedVersion: 1
-  productId: 226196
-  packageName: Asset pack for horror game
-  packageVersion: 1.0
-  assetPath: Assets/Asset pack for horror game/Models/broken bed/broken bed.fbx
-  uploadId: 512507
+guid: c2f6ede3ac87e33419ea6dab14d67777
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -21,7 +14,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
-    removeConstantScaleCurves: 1
+    removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -106,8 +99,8 @@ ModelImporter:
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
-  importBlendShapeDeformPercent: 0
-  remapMaterialsIfMaterialImportModeIsNone: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
