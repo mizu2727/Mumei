@@ -538,6 +538,33 @@ public class PlayerInteract : MonoBehaviour
                     //処理を終了
                     return;
                 }
+
+                //シャッタースイッチ
+                if (raycastHit.transform.tag == CommonController.instance.GetShutterSwitchTag())
+                {
+                    isInteract = true;
+
+                    //シャッタースイッチのコンポーネントを取得
+                    ShutterSwitch shutterSwitch = raycastHit.transform.gameObject.GetComponent<ShutterSwitch>();
+
+                    //シャッターが閉じている場合
+                    if (shutterSwitch != null && !shutterSwitch.GetIsShutterOpen()) 
+                    {
+                        //シャッターを開く
+                        shutterSwitch.OpenShutter();
+
+                        //シャッターを開けた旨のメッセージを表示
+                        MessageController.instance.ShowInventoryMessage(7);
+
+                        await UniTask.Delay(TimeSpan.FromSeconds(3));
+
+                        //メッセージをリセット
+                        MessageController.instance.ResetMessage();
+                    }
+
+                    //処理を終了
+                    return;
+                }
             }
         }
         else
@@ -615,6 +642,10 @@ public class PlayerInteract : MonoBehaviour
             {
                 targetLayer = CommonController.instance.GetBroadcastOperationsLayer();
             }
+            else if (currentObjectTag == CommonController.instance.GetShutterSwitchTag())
+            {
+                targetLayer = CommonController.instance.GetShutterSwitchLayer();
+            }
             else
             {
                 Debug.LogWarning($"オブジェクト {currentHighlightedObject.name} のタグ {currentObjectTag} は認識されません。'Default' にフォールバックします。");
@@ -659,7 +690,8 @@ public class PlayerInteract : MonoBehaviour
                 raycastHit.transform.tag == CommonController.instance.GetStageLightTag()||
                 raycastHit.transform.tag == CommonController.instance.GetDrawerTag() ||
                 raycastHit.transform.tag == CommonController.instance.GetHiddenObjectTag() ||
-                raycastHit.transform.tag == CommonController.instance.GetBroadcastOperationsTag())
+                raycastHit.transform.tag == CommonController.instance.GetBroadcastOperationsTag() ||
+                raycastHit.transform.tag == CommonController.instance.GetShutterSwitchTag())
             {
                 //Rayがヒットしたオブジェクト
                 GameObject hitObject = raycastHit.transform.gameObject;

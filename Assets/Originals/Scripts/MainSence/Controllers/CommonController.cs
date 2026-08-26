@@ -359,6 +359,20 @@ public class CommonController : MonoBehaviour
     }
 
     /// <summary>
+    /// シャッターのスイッチオブジェクトタグ
+    /// </summary>
+    private const string shutterSwitchTag = "ShutterSwitch";
+
+    /// <summary>
+    /// シャッターのスイッチオブジェクトタグを取得する関数
+    /// </summary>
+    /// <returns>シャッターのスイッチオブジェクトタグ</returns>
+    public string GetShutterSwitchTag()
+    {
+        return shutterSwitchTag;
+    }
+
+    /// <summary>
     /// アウトラインタグ
     /// </summary>
     private const string outlineTag = "Outline";
@@ -515,6 +529,20 @@ public class CommonController : MonoBehaviour
     public string GetBroadcastOperationsLayer()
     {
         return broadcastOperationsLayer;
+    }
+
+    /// <summary>
+    /// シャッターのスイッチオブジェクトタグ
+    /// </summary>
+    private const string shutterSwitchLayer = "ShutterSwitch";
+
+    /// <summary>
+    /// シャッターのスイッチオブジェクトタグを取得する関数
+    /// </summary>
+    /// <returns>シャッターのスイッチオブジェクトタグ</returns>
+    public string GetShutterSwitchLayer()
+    {
+        return shutterSwitchLayer;
     }
 
 

@@ -17,12 +17,13 @@ public class ScrollObject : MonoBehaviour
     //スクロールの向きの決定
     private float direction = 1.0f;
 
+
     private void Start()
     {
         if (!isDirection) direction = -1;
     }
 
-    void Update()
+    private void Update()
     {
         //オブジェクトを指定の速度と向きでスクロールさせる
         transform.Translate(speed * Time.deltaTime * direction, 0, 0);
@@ -32,7 +33,7 @@ public class ScrollObject : MonoBehaviour
     }
 
     //オブジェクトの位置を開始地点へ指定する
-    void Scroll()
+    private void Scroll()
     {
         float difference = transform.position.x - endPosition;
         Vector3 resetPosition = transform.position;
