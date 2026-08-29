@@ -1323,10 +1323,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             gameObjectDoor = collision.gameObject;
             door = gameObjectDoor.GetComponent<Door>();
 
-            if (!door.GetIsNeedKeyDoor() && !door.isOpenDoor)
+            //鍵がかかっていないドア系が閉まっている場合
+            if ((!door.GetIsNeedKeyDoor() && !door.isOpenDoor && !door.GetIsSlidingDoor()) 
+                || (!door.GetIsNeedKeyDoor() && !door.isOpenDoor && door.GetIsSlidingDoor()) && !door.IsSliding())
             {
                 //ドアを開ける
                 door.OpenDoor();
+            }
+
+            //鍵がかかっていないスライドドアが開いている場合
+            if (!door.GetIsNeedKeyDoor() && door.isOpenDoor && door.GetIsSlidingDoor() && !door.IsSliding())
+            {
+                //ドアを閉める
+                door.CloseDoor();
             }
         }
 
@@ -1376,10 +1385,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             gameObjectDoor = collider.gameObject;
             door = gameObjectDoor.GetComponent<Door>();
 
-            if (!door.GetIsNeedKeyDoor() && !door.isOpenDoor)
+            //鍵がかかっていないドア系が閉まっている場合
+            if ((!door.GetIsNeedKeyDoor() && !door.isOpenDoor && !door.GetIsSlidingDoor())
+                || (!door.GetIsNeedKeyDoor() && !door.isOpenDoor && door.GetIsSlidingDoor()) && !door.IsSliding())
             {
                 //ドアを開ける
                 door.OpenDoor();
+            }
+
+            //鍵がかかっていないスライドドアが開いている場合
+            if (!door.GetIsNeedKeyDoor() && door.isOpenDoor && door.GetIsSlidingDoor() && !door.IsSliding())
+            {
+                //ドアを閉める
+                door.CloseDoor();
             }
         }
 

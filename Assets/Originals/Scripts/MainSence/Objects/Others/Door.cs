@@ -93,6 +93,15 @@ public class Door : MonoBehaviour
     [Header("スライド式ドアフラグ(ONにすると横スライド開閉になる)")]
     [SerializeField] private bool isSlidingDoor = false;
 
+    /// <summary>
+    /// スライド式ドアフラグを取得する関数
+    /// </summary>
+    /// <returns>スライド式ドアフラグ</returns>
+    public bool GetIsSlidingDoor()
+    {
+        return isSlidingDoor;
+    }
+
     [Header("スライド方向(ローカル座標のX軸方向に移動。負値で逆方向)")]
     [SerializeField] private float slideDistance = 2.0f;
 
@@ -113,6 +122,15 @@ public class Door : MonoBehaviour
     /// スライド中フラグ
     /// </summary>
     private bool isSliding = false;
+
+    /// <summary>
+    /// スライド中フラグを取得する関数
+    /// </summary>
+    /// <returns>スライド中フラグ</returns>
+    public bool IsSliding() 
+    {
+        return isSliding;
+    }
 
     /// <summary>
     /// スライド目標座標
@@ -371,7 +389,7 @@ public class Door : MonoBehaviour
     /// <summary>
     /// ドアを閉める
     /// </summary>
-    void CloseDoor()
+    public void CloseDoor()
     {
         isOpenDoor = false;
 
