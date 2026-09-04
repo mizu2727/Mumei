@@ -679,8 +679,6 @@ public class Inventory : MonoBehaviour
 
         //スタミナ増強剤使用フラグをfalseに設定
         isUseStaminaItem = false;
-
-        Debug.Log("スタミナ増強剤の効果が終了しました");
     }
 
     /// <summary>
