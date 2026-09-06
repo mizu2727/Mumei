@@ -27,7 +27,7 @@ public class HearingEnemy : BaseEnemy
     /// <summary>
     /// 音が届く最大高さ差（Y軸制限）
     /// </summary>
-    private const float maxSoundVerticalRange = 10.0f;
+    private const float maxOtherSoundVerticalRange = 10.0f;
 
 
     [Header("難易度Easyの場合のダッシュ音の調査時間(直接調整すること)")]
@@ -182,7 +182,7 @@ public class HearingEnemy : BaseEnemy
                     float heightDiff = Mathf.Abs(transform.position.y - speakerTransform.position.y);
 
                     //高さ制限を超えている場合
-                    if (heightDiff > maxSoundVerticalRange)
+                    if (heightDiff > maxOtherSoundVerticalRange)
                     {
                         //処理をスキップ
                         continue;
@@ -237,7 +237,7 @@ public class HearingEnemy : BaseEnemy
         //(プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合)&&追従モード以外の場合
         //プレイヤー追従時にダッシュ音を検知してしまうと追従状態から調査状態に移行してしまうため、追従モード以外の場合に限定する
         if ((Player.instance.IsDash || Player.instance.GetIsMakeSound()) && !isInvestigatingSound && !Player.instance.GetIsPlayerHidden()
-            && distanceToPlayer <= soundDetectionRange && heightDifferenceToPlayer <= maxSoundVerticalRange && currentState != EnemyState.Chase)
+            && distanceToPlayer <= soundDetectionRange && heightDifferenceToPlayer <= maxOtherSoundVerticalRange && currentState != EnemyState.Chase)
         {
             //ノイズ画面を表示
             noiseScreenPanel.SetActive(true);
