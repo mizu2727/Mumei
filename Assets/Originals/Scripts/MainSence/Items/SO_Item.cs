@@ -60,6 +60,11 @@ public class SO_Item : ScriptableObject
         public ItemType itemType;
 
         /// <summary>
+        /// 彷徨う者の情報アイテムID
+        /// </summary>
+        public int enemyInformationMessageId;
+
+        /// <summary>
         /// アイテムの名前
         /// </summary>
         public string itemName;
@@ -118,6 +123,11 @@ public class SO_Item : ScriptableObject
             itemType = item.GetItemType();
 
             /// <summary>
+            /// 彷徨う者の情報アイテムID
+            /// </summary>
+            enemyInformationMessageId = item.GetEnemyInformationMessageId();
+
+            /// <summary>
             /// アイテムの名前
             /// </summary>
             itemName = item.GetItemName();
@@ -145,20 +155,45 @@ public class SO_Item : ScriptableObject
     public List<ItemData> itemList = new List<ItemData>();
 
     /// <summary>
-    /// アイテムリストを返す
+    /// アイテムリストを取得する
     /// </summary>
     /// <returns>アイテムリスト</returns>
     public List<ItemData> GetItemLists()
     {
         return itemList;
     }
- 
+
+
+    /// <summary>
+    /// 永続的に保存する彷徨う者の情報リスト
+    /// </summary>
+    public List<ItemData> enemyInformationList = new List<ItemData>();
+
+    /// <summary>
+    /// 永続的に保存する彷徨う者の情報リストを取得する
+    /// </summary>
+    /// <returns>永続的に保存する彷徨う者の情報リスト</returns>
+    public List<ItemData> GetEnemyInformationList()
+    {
+        return enemyInformationList;
+    }
+
+
     /// <summary>
     /// 保存しているアイテムを全て初期化する
     /// </summary>
     public void ResetItems()
     {
         itemList.Clear();
+    }
+
+
+    /// <summary>
+    /// 永続的に保存している彷徨う者の情報リストを全て初期化する
+    /// </summary>
+    public void ResetEnemyInformationList()
+    {
+        enemyInformationList.Clear();
     }
 
 
@@ -199,10 +234,25 @@ public class SO_Item : ScriptableObject
     {
         if (itemList.Exists(item => item.id == id)) 
         {
-            var updateItem = itemList.Find(item => item.id == id);
+            ItemData updateItem = itemList.Find(item => item.id == id);
             updateItem.itemName = newName;
         }
     }
+
+    /// <summary>
+    /// 彷徨う者の情報名をidで検索して変更するメソッド
+    /// </summary>
+    /// <param name="id">彷徨う者の情報ID</param>
+    /// <param name="newName">彷徨う者の情報名</param>
+    public void SetEnemyInformationItemName(int id, string newName)
+    {
+        if (enemyInformationList.Exists(item => item.id == id))
+        {
+            ItemData updateEnemyInformation = enemyInformationList.Find(item => item.id == id);
+            updateEnemyInformation.itemName = newName;
+        }
+    }
+
 
     /// <summary>
     /// アイテム説明をidで検索して変更するメソッド
@@ -213,8 +263,22 @@ public class SO_Item : ScriptableObject
     {
         if (itemList.Exists(item => item.id == id)) 
         {
-            var updateItem = itemList.Find(item => item.id == id);
+            ItemData updateItem = itemList.Find(item => item.id == id);
             updateItem.description = newDescription;
+        }
+    }
+
+    /// <summary>
+    /// 彷徨う者の情報の説明をidで検索して変更するメソッド
+    /// </summary>
+    /// <param name="id">彷徨う者の情報ID</param>
+    /// <param name="newDescription">彷徨う者の情報の説明</param>
+    public void SetEnemyInformationItemDescription(int id, string newDescription)
+    {
+        if (enemyInformationList.Exists(item => item.id == id))
+        {
+            ItemData updateEnemyInformation = enemyInformationList.Find(item => item.id == id);
+            updateEnemyInformation.description = newDescription;
         }
     }
 
@@ -239,7 +303,7 @@ public class SO_Item : ScriptableObject
         else 
         {
             //既存アイテムの数を追加更新
-            var updateItem = itemList.Find(item => item.id == newItem.GetId());
+            ItemData updateItem = itemList.Find(item => item.id == newItem.GetId());
             updateItem.count += newItem.GetCount();
 
             //インベントリに追加
@@ -258,7 +322,7 @@ public class SO_Item : ScriptableObject
         if (itemList.Exists(item => item.id == id)) 
         {
             //既存アイテムの数を減少更新
-            var updateItem = itemList.Find(item => item.id == id);
+            ItemData updateItem = itemList.Find(item => item.id == id);
             updateItem.count = count;
         }
     }
@@ -272,7 +336,7 @@ public class SO_Item : ScriptableObject
         //nullチェック
         if (newItem == null || newItem.gameObject == null)
         {
-            Debug.LogWarning("AddDocument に null な item が渡されました！");
+            Debug.LogWarning("ドキュメント・ミステリーアイテム追加処理でnullitemが渡された。");
             return;
         }
 
@@ -297,9 +361,40 @@ public class SO_Item : ScriptableObject
         }
         else
         {
-            Debug.Log("同じidのアイテムはすでに追加済み");
+            Debug.Log("ドキュメント・ミステリーアイテム追加処理で同じidのアイテムはすでに追加済み");
         }
     }
+
+    /// <summary>
+    /// 彷徨う者の情報追加
+    /// </summary>
+    /// <param name="newEnemyInformation">入手した彷徨う者の情報</param>
+    public void AddEnemyInformationItem(Item newEnemyInformation)
+    {
+        //nullチェック
+        if (newEnemyInformation == null || newEnemyInformation.gameObject == null)
+        {
+            Debug.LogWarning("彷徨う者の情報追加処理でnullitemが渡された。");
+            return;
+        }
+
+        if (!enemyInformationList.Exists(item => item != null && item.id == newEnemyInformation.GetId()))
+        {
+            //リストに新規追加
+            ItemData newEnemyInformationData = new ItemData(newEnemyInformation);
+            enemyInformationList.Add(newEnemyInformationData);
+
+            if (newEnemyInformationData.itemType == ItemType.EnemyInforｍation)
+            {
+                //TODO:彷徨う者の情報追加
+            }
+        }
+        else
+        {
+            Debug.Log("彷徨う者の情報追加処理で同じidのアイテムはすでに追加済み");
+        }
+    }
+
 
     /// <summary>
     /// nullアイテムを削除

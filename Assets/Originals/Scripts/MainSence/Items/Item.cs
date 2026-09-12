@@ -100,8 +100,7 @@ public class Item : MonoBehaviour
     /// <summary>
     /// 彷徨う者の情報アイテムID
     /// </summary>
-    [SerializeField]
-    private int enemyInformationMessageId;
+    [SerializeField] private int enemyInformationMessageId;
 
     /// <summary>
     /// アイテムの名前

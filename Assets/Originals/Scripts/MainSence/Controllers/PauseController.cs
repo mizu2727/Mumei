@@ -1224,7 +1224,7 @@ public class PauseController : MonoBehaviour
         {
             //入手したミステリーアイテムがリスト内に存在するかを確認
             string itemName = mysteryItemNames[index];
-            var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
+            SO_Item.ItemData item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
 
             if (item != null)
             {
@@ -1367,7 +1367,7 @@ public class PauseController : MonoBehaviour
         }
 
         //アイテムリストから該当するアイテムを検索
-        var item = sO_Item.itemList.Find(x => x.itemName == mysteryItemName && x.itemType == ItemType.MysteryItem);
+        SO_Item.ItemData item = sO_Item.itemList.Find(x => x.itemName == mysteryItemName && x.itemType == ItemType.MysteryItem);
         if (item != null && !mysteryItemNames.Contains(mysteryItemName))
         {
             //アイテム名リストに追加
@@ -1396,7 +1396,7 @@ public class PauseController : MonoBehaviour
             {
                 //入手したミステリーアイテムがリスト内に存在するかを確認
                 string itemName = mysteryItemNames[i];
-                var item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
+                SO_Item.ItemData item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
 
                 if (item != null)
                 {
@@ -1591,7 +1591,7 @@ public class PauseController : MonoBehaviour
         for (int i = 0; i < mysteryItemIds.Count; i++)
         {
             int itemId = mysteryItemIds[i];
-            var item = sO_Item.itemList.Find(x => x.id == itemId && x.itemType == ItemType.MysteryItem);
+            SO_Item.ItemData item = sO_Item.itemList.Find(x => x.id == itemId && x.itemType == ItemType.MysteryItem);
 
             //言語ステータスに応じて、テキストを変更する
             switch (LanguageController.instance.GetLanguageStatus()) 
