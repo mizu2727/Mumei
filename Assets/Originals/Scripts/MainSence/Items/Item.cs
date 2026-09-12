@@ -27,6 +27,11 @@ public enum ItemType
     Document,
 
     /// <summary>
+    /// 彷徨う者の情報
+    /// </summary>
+    EnemyInforｍation,
+
+    /// <summary>
     /// 鍵
     /// </summary>
     Key,
@@ -91,6 +96,12 @@ public class Item : MonoBehaviour
     /// アイテムの種類
     /// </summary>
     [SerializeField] private ItemType itemType;
+
+    /// <summary>
+    /// 彷徨う者の情報アイテムID
+    /// </summary>
+    [SerializeField]
+    private int enemyInformationMessageId;
 
     /// <summary>
     /// アイテムの名前
@@ -171,6 +182,15 @@ public class Item : MonoBehaviour
     }
 
     /// <summary>
+    /// 彷徨う者の情報アイテムIDを取得
+    /// </summary>
+    /// <returns>彷徨う者の情報アイテムID</returns>
+    public int GetEnemyInformationMessageId() 
+    {
+        return enemyInformationMessageId;
+    }
+
+    /// <summary>
     /// アイテム名を取得
     /// </summary>
     /// <returns>アイテム名</returns>
@@ -228,6 +248,10 @@ public class Item : MonoBehaviour
 
         //効果値を設定する
         effectValue = itemMessage.itemMessage[id].itemEffectValue;
+
+        //彷徨う者の情報アイテムIDを設定する
+        enemyInformationMessageId = itemMessage.itemMessage[id].enemyInformationMessageId;
+
 
         //言語ステータスに応じて、テキストを変更する
         switch (LanguageController.instance.GetLanguageStatus()) 

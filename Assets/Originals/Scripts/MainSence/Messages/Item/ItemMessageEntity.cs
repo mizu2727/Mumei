@@ -46,6 +46,11 @@ public class ItemMessageEntity
     public float spawnRotationZ;
 
     /// <summary>
+    /// 彷徨う者の情報アイテムID
+    /// </summary>
+    public int enemyInformationMessageId;
+
+    /// <summary>
     /// 日本語アイテム名
     /// </summary>
     public string itemNameJapanese;

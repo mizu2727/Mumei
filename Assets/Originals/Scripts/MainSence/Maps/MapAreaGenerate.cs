@@ -36,6 +36,9 @@ public class MapAreaGenerate : MonoBehaviour
     [Header("ドキュメントとミステリーアイテムを格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> documentAndMysteryItemPrefabList;
 
+    [Header("彷徨う者の情報アイテムを格納する(Prefabをアタッチすること。)")]
+    [SerializeField] private List<GameObject> enemyInforｍationItemPrefabList;
+
     [Header("コンパスを格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> compassPrefabList;
 
@@ -296,6 +299,12 @@ public class MapAreaGenerate : MonoBehaviour
     {
         //documentAndMysteryItemPrefabListのコピーを作成
         shuffledItemPrefabList = new List<GameObject>(documentAndMysteryItemPrefabList);
+
+        //TODO追加予定：該当のステージ・該当の難易度で、指定の彷徨う者の情報を入手して②場合のみセットする
+        //彷徨う者の情報を全アイテム格納リストに追加
+        //shuffledItemPrefabList.AddRange(enemyInforｍationItemPrefabList);
+
+
 
         //コンパスを全アイテム格納リストに追加
         shuffledItemPrefabList.AddRange(compassPrefabList);
