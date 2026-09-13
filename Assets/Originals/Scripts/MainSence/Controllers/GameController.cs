@@ -165,6 +165,14 @@ public class GameController : MonoBehaviour
     {stringTutorialClearStatus, 0},
     };
 
+    [Header("セーブする彷徨う者関連情報ステータス配列")]
+    public static Dictionary<string, int> saveEnemyInformationStatusArray = new(){
+    {stringDemoVeinVainWandererStatus, kDefaultSaveEnemyInformationKey},
+    {stringVeinVainWandererStatus, kDefaultSaveEnemyInformationKey},
+    {stringBeauteousBewilderWandererStatus, kDefaultSaveEnemyInformationKey},
+    {stringSingSongWandererStatus, kDefaultSaveEnemyInformationKey},
+    };
+
     [Header("セーブするステージクリアステータス配列")]
     public static Dictionary <string, int> saveStageClearStatusArray = new (){
     {stringDemoStage01, 0},
@@ -343,6 +351,31 @@ public class GameController : MonoBehaviour
     /// TutorialClearStatus(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
     /// </summary>
     private const string stringTutorialClearStatus = "TutorialClearStatus";
+
+    /// <summary>
+    /// デモ版用静声に熱する彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringDemoVeinVainWandererStatus = "DemoVeinVainWanderer";
+
+    /// <summary>
+    /// 静声に熱する彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringVeinVainWandererStatus = "VeinVainWanderer";
+
+    /// <summary>
+    /// 微美しき魅忘の彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringBeauteousBewilderWandererStatus = "BeauteousBewilderWanderer";
+
+    /// <summary>
+    /// 唄歌う彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringSingSongWandererStatus = "SingSongWanderer";
+
+    /// <summary>
+    /// 保存用彷徨う者関連情報のキー値(99999は未取得状態を意味する)
+    /// </summary>
+    private const int kDefaultSaveEnemyInformationKey = 99999;
 
     /// <summary>
     /// DemoStage01(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)

@@ -26,6 +26,26 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private const string stringTutorialClearStatus = "TutorialClearStatus";
 
+    /// <summary>
+    /// デモ版用静声に熱する彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringDemoVeinVainWandererStatus = "DemoVeinVainWanderer";
+
+    /// <summary>
+    /// 静声に熱する彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringVeinVainWandererStatus = "VeinVainWanderer";
+
+    /// <summary>
+    /// 微美しき魅忘の彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringBeauteousBewilderWandererStatus = "BeauteousBewilderWanderer";
+
+    /// <summary>
+    /// 唄歌う彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringSingSongWandererStatus = "SingSongWanderer";
+
 
     [Header("プレイヤー(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Player player;
@@ -117,6 +137,11 @@ public class PauseController : MonoBehaviour
 
     [Header("彷徨う者説明欄テキスト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private TMP_Text[] wandererExplanationText;
+
+    /// <summary>
+    /// 彷徨う者関連情報を未取得状態の場合のキー値
+    /// </summary>
+    private const int kDefaultSaveEnemyInformationKey = 99999;
 
 
     /*-----------------------------------------------------------

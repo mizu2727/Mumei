@@ -49,6 +49,9 @@ public class UserData
     [Header("セーブするストーリー閲覧完了ステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
     public List<ViewStoryStatusData> viewStoryStatusList = new();
 
+    [Header("セーブする彷徨う者関連情報ステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
+    public List<EnemyInformationStatusData> enemyInformationStatusList = new();
+
     [Header("セーブするステージクリアステータスリスト(JsonUtilityで保存可能な形式への変換用List)")]
     public List<StageClearData> stageClearList = new ();
 
@@ -92,6 +95,17 @@ public class UserData
 /// </summary>
 [System.Serializable]
 public class ViewStoryStatusData
+{
+    public string key;
+    public int value;
+}
+
+/// <summary>
+/// Dictionary型の彷徨う者関連情報ステータスを保存するためのクラス
+/// JsonUtilityで保存可能な形式への変換のために作成
+/// </summary>
+[System.Serializable]
+public class EnemyInformationStatusData
 {
     public string key;
     public int value;

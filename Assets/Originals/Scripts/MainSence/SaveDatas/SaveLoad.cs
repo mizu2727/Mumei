@@ -26,6 +26,12 @@ public class SaveLoad : MonoBehaviour
     private const string stringSceneTransitionPlayerUserData = "SceneTransitionPlayerUserData";
 
     /// <summary>
+    /// 保存用彷徨う者関連情報のキー値(99999は未取得状態を意味する)
+    /// </summary>
+    private const int kDefaultSaveEnemyInformationKey = 99999;
+
+
+    /// <summary>
     /// データを保存するメソッド
     /// </summary>
     public void SaveUserData() 
@@ -76,6 +82,12 @@ public class SaveLoad : MonoBehaviour
         foreach (KeyValuePair<string, int> item in GameController.saveViewStoryStatusArray)
         {
             userData.viewStoryStatusList.Add(new ViewStoryStatusData { key = item.Key, value = item.Value });
+        }
+
+        //Dictionary型の彷徨う者関連情報ステータス配列をリストに変換して保存可能にする
+        foreach (KeyValuePair<string, int> item in GameController.saveEnemyInformationStatusArray)
+        {
+            userData.enemyInformationStatusList.Add(new EnemyInformationStatusData { key = item.Key, value = item.Value });
         }
 
         //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
@@ -195,6 +207,14 @@ public class SaveLoad : MonoBehaviour
                 viewStoryStatusRestoredDict[data.key] = data.value;
             }
             GameController.saveViewStoryStatusArray = viewStoryStatusRestoredDict;
+
+            //JsonUtilityで保存可能な形式へ変換した彷徨う者関連情報ステータス配列をDictionary型に変換してロードする
+            Dictionary<string, int> viewEnemyInformationStatusRestoredDict = new Dictionary<string, int>(GameController.saveEnemyInformationStatusArray);
+            foreach (EnemyInformationStatusData data in userData.enemyInformationStatusList)
+            {
+                viewEnemyInformationStatusRestoredDict[data.key] = data.value;
+            }
+            GameController.saveEnemyInformationStatusArray = viewEnemyInformationStatusRestoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
             Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>(GameController.saveStageClearStatusArray);
@@ -342,6 +362,12 @@ public class SaveLoad : MonoBehaviour
             userData.viewStoryStatusList.Add(new ViewStoryStatusData { key = item.Key, value = item.Value });
         }
 
+        //Dictionary型の彷徨う者関連情報ステータス配列をリストに変換して保存可能にする
+        foreach (KeyValuePair<string, int> item in GameController.saveEnemyInformationStatusArray)
+        {
+            userData.enemyInformationStatusList.Add(new EnemyInformationStatusData { key = item.Key, value = item.Value });
+        }
+
         //Dictionary型のステージクリアステータス配列をリストに変換して保存可能にする
         foreach (KeyValuePair<string, int> item in GameController.saveStageClearStatusArray)
         {
@@ -459,6 +485,14 @@ public class SaveLoad : MonoBehaviour
                 viewStoryStatusRestoredDict[data.key] = data.value;
             }
             GameController.saveViewStoryStatusArray = viewStoryStatusRestoredDict;
+
+            //JsonUtilityで保存可能な形式へ変換した彷徨う者関連情報ステータス配列をDictionary型に変換してロードする
+            Dictionary<string, int> viewEnemyInformationStatusRestoredDict = new Dictionary<string, int>(GameController.saveEnemyInformationStatusArray);
+            foreach (EnemyInformationStatusData data in userData.enemyInformationStatusList)
+            {
+                viewEnemyInformationStatusRestoredDict[data.key] = data.value;
+            }
+            GameController.saveEnemyInformationStatusArray = viewEnemyInformationStatusRestoredDict;
 
             //JsonUtilityで保存可能な形式へ変換したステージクリアステータス配列をDictionary型に変換してロードする
             Dictionary<string, int> stageClearTestoredDict = new Dictionary<string, int>(GameController.saveStageClearStatusArray);
@@ -587,6 +621,12 @@ public class SaveLoad : MonoBehaviour
         foreach (string data in GameController.saveViewStoryStatusArray.Keys.ToList())
         {
             GameController.saveViewStoryStatusArray[data] = 0;
+        }
+
+        //彷徨う者関連情報ステータス配列を初期化する
+        foreach (string data in GameController.saveEnemyInformationStatusArray.Keys.ToList())
+        {
+            GameController.saveEnemyInformationStatusArray[data] = kDefaultSaveEnemyInformationKey;
         }
 
         //ステージクリアステータス配列を初期化する
