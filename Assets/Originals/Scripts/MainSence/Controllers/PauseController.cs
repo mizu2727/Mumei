@@ -65,6 +65,14 @@ public class PauseController : MonoBehaviour
     [Header("アーカイブパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject archivePanel;
 
+    [Header("アーカイブボタンテキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private TMP_Text archiveButtonText;
+
+    /// <summary>
+    /// アーカイブボタンテキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby archiveButtonTextRubyComponent;
+
     [Header("彷徨う者関連パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject wandererPanel;
 
@@ -79,6 +87,36 @@ public class PauseController : MonoBehaviour
     {
         wandererButton.SetActive(isActive);
     }
+
+    [Header("彷徨う者ボタンテキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private TMP_Text wandererButtonText;
+
+    /// <summary>
+    /// 彷徨う者ボタンテキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby wandererButtonTextRubyComponent;
+
+    [Header("彷徨う者名称ボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Button[] wandererNameButton;
+
+    [Header("彷徨う者名称テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private TMP_Text[] wandererNameText;
+
+    /// <summary>
+    /// 彷徨う者名称テキストをTextMeshProRubyコンポーネントに変換して保存する変数
+    /// </summary>
+    private TextMeshProRuby[] wandererNameTextRubyComponent;
+
+    /// <summary>
+    /// デフォルトの彷徨う者名称テキストサイズ
+    /// </summary>
+    private const int kWandererNameTextSize = 14;
+
+    [Header("彷徨う者説明欄パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject wandererExplanationPanel;
+
+    [Header("彷徨う者説明欄テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private TMP_Text[] wandererExplanationText;
 
 
     /*-----------------------------------------------------------
@@ -359,6 +397,20 @@ public class PauseController : MonoBehaviour
             viewItemsPanel = null;
         }
 
+        //wandererButtonTextが存在する場合
+        if (wandererButtonText != null) 
+        {
+            //wandererButtonTextをnullにする
+            wandererButtonText = null;
+        }
+
+        //wandererButtonTextRubyComponentが存在する場合
+        if (wandererButtonTextRubyComponent != null)
+        {
+            //wandererButtonTextRubyComponentをnullにする
+            wandererButtonTextRubyComponent = null;
+        }
+
         //wandererButtonが存在する場合
         if (wandererButton != null)
         {
@@ -371,6 +423,20 @@ public class PauseController : MonoBehaviour
         {
             //wandererPanelをnullにする
             wandererPanel = null;
+        }
+
+        //archiveButtonTextが存在する場合
+        if (archiveButtonText != null) 
+        {
+            //archiveButtonTextをnullにする
+            archiveButtonText = null;
+        }
+
+        //archiveButtonTextRubyComponentが存在する場合
+        if (archiveButtonTextRubyComponent != null)
+        {
+            //archiveButtonTextRubyComponentをnullにする
+            archiveButtonTextRubyComponent = null;
         }
 
         //archivePanelが存在する場合
