@@ -21,6 +21,12 @@ public class PauseController : MonoBehaviour
     /// </summary>
     public static PauseController instance;
 
+    /// <summary>
+    /// TutorialClearStatus(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringTutorialClearStatus = "TutorialClearStatus";
+
+
     [Header("プレイヤー(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Player player;
 
@@ -33,8 +39,51 @@ public class PauseController : MonoBehaviour
     [Header("ポーズパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject pausePanel;
 
+    /// <summary>
+    /// pausePanelを取得
+    /// </summary>
+    /// <returns>pausePanel</returns>
+    public GameObject GetPausePanel()
+    {
+        return pausePanel;
+    }
+
+
+    /*-----------------------------------------------------------
+     * アイテム確認パネル関連(アイテム確認パネルの子パネルも含む)
+     ----------------------------------------------------------*/
+
     [Header("アイテム確認パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject viewItemsPanel;
+
+
+    /*-----------------------------------------------------------
+     * アーカイブパネル関連(アーカイブパネルの子パネルも含む)
+     ----------------------------------------------------------*/
+
+    [Header("アーカイブパネル関連")]
+    [Header("アーカイブパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject archivePanel;
+
+    [Header("彷徨う者関連パネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject wandererPanel;
+
+    [Header("彷徨う者ボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject wandererButton;
+
+    /// <summary>
+    /// 彷徨う者ボタンを表示/非表示する
+    /// </summary>
+    /// <param name="isActive">表示/非表示</param>
+    public void SetWandererButtonActive(bool isActive)
+    {
+        wandererButton.SetActive(isActive);
+    }
+
+
+    /*-----------------------------------------------------------
+     * ドキュメントパネル関連(ドキュメントパネルの子パネルも含む)
+     ----------------------------------------------------------*/
 
     [Header("ドキュメントパネル関連")]
     [Header("ドキュメント確認パネル(ヒエラルキー上からアタッチすること)")]
@@ -64,6 +113,10 @@ public class PauseController : MonoBehaviour
     /// </summary>
     private const int kDefultDocumentNameTextSize = 14;
 
+
+    /*-----------------------------------------------------------
+     * ミステリーアイテムパネル関連(ミステリーアイテムパネルの子パネルも含む)
+     ----------------------------------------------------------*/
 
     [Header("ミステリーアイテムパネル関連")]
     [Header("ミステリーアイテム確認パネル(ヒエラルキー上からアタッチすること)")]
@@ -121,16 +174,6 @@ public class PauseController : MonoBehaviour
     }
 
     /// <summary>
-    /// 感度設定パネル閲覧フラグ
-    /// </summary>
-    private bool isViewMouseSensitivityPanel = false;
-
-    /// <summary>
-    /// 音量調整設定パネル説欄フラグ
-    /// </summary>
-    private bool isViewAudioAdjustmentPanel = false;
-
-    /// <summary>
     /// タイトルへ戻るパネル閲覧フラグ
     /// </summary>
     private bool isReturnToTitlePanel = false;
@@ -143,6 +186,16 @@ public class PauseController : MonoBehaviour
     {
         return isReturnToTitlePanel;
     }
+
+    /// <summary>
+    /// アーカイブパネル閲覧フラグ
+    /// </summary>
+    private bool isArchivePanel = false;
+
+    /// <summary>
+    /// 彷徨う者パネル閲覧フラグ
+    /// </summary>
+    private bool isWandererPanel = false;
 
     /// <summary>
     /// ドキュメントパネル閲覧フラグ
@@ -230,7 +283,16 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// 現在再生されているBGMのID
     /// </summary>
-    private int nowPlayBGMId = 99999; 
+    private int nowPlayBGMId = 99999;
+
+    /// <summary>
+    /// 対象のBGMに設定する
+    /// </summary>
+    /// <param name="subjectPlayBGMId_">対象のBGM</param>
+    public void SetNowPlayBGMId(int subjectPlayBGMId_)
+    {
+        nowPlayBGMId = subjectPlayBGMId_;
+    }
 
     [Header("SEデータ(共通のScriptableObjectをアタッチする必要がある)")]
     [SerializeField] public SO_SE sO_SE;
@@ -257,27 +319,8 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// 非同期タスクのキャンセル
     /// チュートリアル内のUniTask処理待機中にポーズ画面からタイトルへ戻る際のmessageTextでMissingReferenceExceptionエラーが起こるのを防止する用
-    /// </summary>nowPlayBGMId
+    /// </summary>
     private CancellationTokenSource cts;
-
-
-    /// <summary>
-    /// pausePanelを取得
-    /// </summary>
-    /// <returns>pausePanel</returns>
-    public GameObject GetPausePanel()
-    {
-        return pausePanel;
-    }
-
-    /// <summary>
-    /// 対象のBGMに設定する
-    /// </summary>
-    /// <param name="subjectPlayBGMId_">対象のBGM</param>
-    public void SetNowPlayBGMId(int subjectPlayBGMId_) 
-    {
-        nowPlayBGMId = subjectPlayBGMId_;
-    }
 
 
     /// <summary>
@@ -314,6 +357,27 @@ public class PauseController : MonoBehaviour
         {
             //viewItemsPanelをnullにする
             viewItemsPanel = null;
+        }
+
+        //wandererButtonが存在する場合
+        if (wandererButton != null)
+        {
+            //wandererButtonをnullにする
+            wandererButton = null;
+        }
+
+        //wandererPanelが存在する場合
+        if (wandererPanel != null)
+        {
+            //wandererPanelをnullにする
+            wandererPanel = null;
+        }
+
+        //archivePanelが存在する場合
+        if (archivePanel != null)
+        {
+            //archivePanelをnullにする
+            archivePanel = null;
         }
 
         //documentNameTextRubyComponentが存在する場合
@@ -584,7 +648,20 @@ public class PauseController : MonoBehaviour
             documentNameTextRubyComponent.Text = documentNameText.text;
         }
 
-        
+
+        //チュートリアルのストーリーを閲覧済みの場合
+        if (saveViewStoryStatusArray[stringTutorialClearStatus] == 1) 
+        {
+            //彷徨う者ボタンを表示する
+            wandererButton.SetActive(true);
+        }
+        else
+        {
+            //彷徨う者ボタンを非表示にする
+            wandererButton.SetActive(false);
+        }
+
+
         //パネルを初期状態で非表示にする
         //フラグ値を初期化
         isPause = false;
@@ -592,6 +669,9 @@ public class PauseController : MonoBehaviour
 
         isViewItemsPanel = false;
         ChangeViewItemsPanel();
+
+        isArchivePanel = false;
+        ChangeViewArchivePanel();
 
         isDocumentPanel = false;
         ChangeViewDocumentPanel();
@@ -637,7 +717,7 @@ public class PauseController : MonoBehaviour
     private void TogglePause()
     {
         //ポーズを開く条件
-        if (!player.IsDead && !isPause && !isViewItemsPanel
+        if (!player.IsDead && !isPause && !isViewItemsPanel && !isArchivePanel
             && !isDocumentPanel && !isDocumentExplanationPanel && !isMysteryItemPanel
             && !isMysteryItemExplanationPanel 
             && (CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name || !goal.isGoalPanel) 
@@ -657,6 +737,10 @@ public class PauseController : MonoBehaviour
             //アイテム確認パネルを非表示
             isViewItemsPanel = false;
             ChangeViewItemsPanel();
+
+            //アーカイブパネルを非表示
+            isArchivePanel = false;
+            ChangeViewArchivePanel();
 
             //ドキュメントパネルを非表示
             isDocumentPanel = false;
@@ -847,6 +931,39 @@ public class PauseController : MonoBehaviour
         ChangeReturnToTitlePanel();
     }
 
+    /// <summary>
+    /// 「アーカイブ」ボタン押下
+    /// </summary>
+    public void OnClickedViewArchivePanelButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //アーカイブパネルを表示
+        isArchivePanel = true;
+        ChangeViewArchivePanel();
+
+        //ドキュメントパネルを非表示
+        isDocumentPanel = false;
+        ChangeViewDocumentPanel();
+
+        //ミステリーアイテムパネルを非表示
+        isMysteryItemPanel = false;
+        ChangeViewMysteryItemPanel();
+    }
+
+    /// <summary>
+    /// 「彷徨う者」ボタン押下
+    /// </summary>
+    public void OnClickedViewWandererPanelButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //彷徨う者パネルを非表示
+        isWandererPanel = false;
+        ChangeViewWandererPanel();
+    }
 
     /// <summary>
     /// 「ドキュメント」ボタン押下
@@ -859,6 +976,10 @@ public class PauseController : MonoBehaviour
         //ドキュメントパネルを表示
         isDocumentPanel = true;
         ChangeViewDocumentPanel();
+
+        //アーカイブパネルを非表示
+        isArchivePanel = false;
+        ChangeViewArchivePanel();
 
         //ミステリーアイテムパネルを非表示
         isMysteryItemPanel = false;
@@ -876,6 +997,10 @@ public class PauseController : MonoBehaviour
         // ミステリーアイテムパネルを表示
         isMysteryItemPanel = true;
         ChangeViewMysteryItemPanel();
+
+        //アーカイブパネルを非表示
+        isArchivePanel = false;
+        ChangeViewArchivePanel();
 
         // ドキュメントパネルを非表示
         isDocumentPanel = false;
@@ -917,6 +1042,10 @@ public class PauseController : MonoBehaviour
         //アイテム確認パネルを非表示
         isViewItemsPanel = false;
         ChangeViewItemsPanel();
+
+        //アーカイブパネルを非表示
+        isArchivePanel = false;
+        ChangeViewArchivePanel();
 
         //ドキュメントパネルを非表示
         isDocumentPanel = false;
@@ -976,7 +1105,7 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// アイテム確認パネルの表示/非表示
     /// </summary>
-    void ChangeViewItemsPanel() 
+    private void ChangeViewItemsPanel() 
     {
         if (isViewItemsPanel)
         {
@@ -993,7 +1122,7 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// タイトルへ戻るパネルの表示/非表示
     /// </summary>
-    void ChangeReturnToTitlePanel()
+    private void ChangeReturnToTitlePanel()
     {
         if (isReturnToTitlePanel)
         {
@@ -1008,9 +1137,66 @@ public class PauseController : MonoBehaviour
     }
 
     /// <summary>
+    /// アーカイブパネルの表示/非表示
+    /// </summary>
+    private void ChangeViewArchivePanel()
+    {
+        if (isArchivePanel)
+        {
+            //UIのレイヤーを手前側にする
+            archivePanel.transform.SetAsLastSibling();
+
+            //テキスト内容を変更する
+            SettingLanguageText();
+
+            //表示
+            archivePanel.SetActive(true);
+
+        }
+        else
+        {
+            //非表示
+            archivePanel.SetActive(false);
+
+            //TODO:アーカイブパネル内の子パネルを非表示にする処理を追加する
+
+            //彷徨う者パネルを非表示
+            isWandererPanel = false;
+            ChangeViewWandererPanel();
+        }
+    }
+
+    /// <summary>
+    /// 彷徨う者パネルの表示/非表示
+    /// </summary>
+    private void ChangeViewWandererPanel()
+    {
+        if (isWandererPanel)
+        {
+            //UIのレイヤーを手前側にする
+            wandererPanel.transform.SetAsLastSibling();
+
+            //テキスト内容を変更する
+            SettingLanguageText();
+
+            //表示
+            wandererPanel.SetActive(true);
+
+            //TODO:他のアーカイブパネル内の子パネルを非表示にする処理を追加する
+        }
+        else
+        {
+            //非表示
+            wandererPanel.SetActive(false);
+
+            //TODO:彷徨う者パネル内の子パネルを非表示にする処理を追加する
+        }
+    }
+
+    /// <summary>
     /// ドキュメントパネルの表示/非表示
     /// </summary>
-    void ChangeViewDocumentPanel() 
+    private void ChangeViewDocumentPanel() 
     {
         if (isDocumentPanel)
         {
@@ -1038,7 +1224,7 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// ドキュメント説明欄パネルの表示/非表示
     /// </summary>
-    void ChangeViewDocumentExplanationPanel()
+    private void ChangeViewDocumentExplanationPanel()
     {
         if (isDocumentExplanationPanel)
         {
@@ -1095,7 +1281,7 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// ミステリーアイテム確認パネルの表示/非表示
     /// </summary>
-    void ChangeViewMysteryItemPanel()
+    private void ChangeViewMysteryItemPanel()
     {
         if (isMysteryItemPanel)
         {
@@ -1144,7 +1330,7 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// ミステリーアイテム説明欄パネルの表示/非表示
     /// </summary>
-    void ChangeViewMysteryItemExplanationPanel()
+    private void ChangeViewMysteryItemExplanationPanel()
     {
         if (isMysteryItemExplanationPanel)
         {

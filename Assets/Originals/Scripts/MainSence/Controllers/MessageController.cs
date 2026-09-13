@@ -942,6 +942,9 @@ public class MessageController : MonoBehaviour
                 //チュートリアルのストーリを閲覧したことを保存する
                 saveViewStoryStatusArray[stringTutorialClearStatus] = 1;
 
+                //彷徨う者ボタンを表示する
+                PauseController.instance.SetWandererButtonActive(true);
+
                 //処理をスキップ
                 return;
             }
