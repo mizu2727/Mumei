@@ -138,11 +138,6 @@ public class PauseController : MonoBehaviour
     [Header("彷徨う者説明欄テキスト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private TMP_Text[] wandererExplanationText;
 
-    /// <summary>
-    /// 彷徨う者関連情報を未取得状態の場合のキー値
-    /// </summary>
-    private const int kDefaultSaveEnemyInformationKey = 99999;
-
 
     /*-----------------------------------------------------------
      * ドキュメントパネル関連(ドキュメントパネルの子パネルも含む)
@@ -288,6 +283,27 @@ public class PauseController : MonoBehaviour
 
     [Header("チュートリアル用ミステリーアイテム閲覧入手フラグ(編集禁止)")]
     public bool isViewMysteryItem_Tutorial = false;
+
+
+    /// <summary>
+    /// 彷徨う者関連情報IDのリスト
+    /// </summary>
+    private List<int> enemyInformationIds = new();
+
+    /// <summary>
+    /// 彷徨う者関連情報名のリスト
+    /// </summary>
+    private List<string> enemyInformationNames = new();
+
+    /// <summary>
+    /// 彷徨う者関連情報説明欄のリスト
+    /// </summary>
+    private List<string> enemyInformationExplanations = new();
+
+    /// <summary>
+    /// 彷徨う者関連情報を未取得状態の場合のキー値
+    /// </summary>
+    private const int kDefaultSaveEnemyInformationKey = 99999;
 
 
     /// <summary>
