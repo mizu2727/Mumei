@@ -12,8 +12,14 @@ public class BeauteousBewilderWanderer : LightVisibilityEnemy
     [SerializeField] private GameObject creatureModel;
 
 
-    private void Update()
+    /// <summary>
+    /// 「private void Update()」の場合、 override ではなく「隠蔽(hide)」になってしまい、
+    /// 継承元（LightVisibilityEnemy → BaseEnemy）のUpdate()が呼ばれなくなる。
+    /// </summary>
+    protected override void Update()
     {
+        base.Update();
+
         //調査状態の場合||追跡状態の場合
         if (currentState == EnemyState.Investigate || currentState == EnemyState.Chase)
         {
