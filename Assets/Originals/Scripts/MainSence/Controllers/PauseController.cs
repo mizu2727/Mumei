@@ -1674,7 +1674,26 @@ public class PauseController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 彷徨う者情報関連の名前を追加し、UIに反映する関数
+    /// </summary>
+    /// <param name="itemID"></param>
+    /// <param name="wandererID"></param>
+    /// <param name="wandererName"></param>
+    /// <param name="wandererDescription"></param>
+    public void ChangeWandererTexts(int itemID, int wandererID, string wandererName, string wandererDescription) 
+    {
+        //彷徨う者関連情報のIDを保存
+        enemyInformationIds[wandererID] = itemID;
 
+        //彷徨う者関連情報の名称を保存
+        enemyInformationNames[wandererID] = wandererName;
+
+        //彷徨う者関連情報の説明を保存
+        enemyInformationExplanations[wandererID] = wandererDescription;
+
+        //TODO:UIのテキストを更新する処理を追加する
+    }
 
     /// <summary>
     /// ドキュメント説明欄パネルの表示/非表示
