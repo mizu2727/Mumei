@@ -4,9 +4,10 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 using static LanguageController;
 using Random = UnityEngine.Random;
-
+using static GameController;
 
 /// <summary>
 /// マップエリアランダム配置クラス
@@ -17,6 +18,44 @@ public class MapAreaGenerate : MonoBehaviour
     /// インスタンス
     /// </summary>
     public static MapAreaGenerate instance;
+
+
+    /// <summary>
+    /// Stage01(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
+    /// </summary>
+    private const string stringStage01Scene = "Stage01";
+
+    /// <summary>
+    /// Stage02(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
+    /// </summary>
+    private const string stringStage02Scene = "Stage02";
+
+    /// <summary>
+    /// Stage03(switch文で使用する。C#のswitch文のcaseは、「コンパイル時点で値が絶対に変わらないもの（定数）」のみコンパイルできるため)
+    /// </summary>
+    private const string stringStage03Scene = "Stage03";
+
+
+    /// <summary>
+    /// デモ版用静声に熱する彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringDemoVeinVainWandererStatus = "DemoVeinVainWanderer";
+
+    /// <summary>
+    /// 静声に熱する彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringVeinVainWandererStatus = "VeinVainWanderer";
+
+    /// <summary>
+    /// 微美しき魅忘の彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringBeauteousBewilderWandererStatus = "BeauteousBewilderWanderer";
+
+    /// <summary>
+    /// 唄歌う彷徨う者のステータス(Dictionaryのキーに、他クラスのインスタンスメソッドの戻り値を宣言と同時に入れることができないため)
+    /// </summary>
+    private const string stringSingSongWandererStatus = "SingSongWanderer";
+
 
     [Header("マップエリアを格納する(ヒエラルキー上のマップエリアをアタッチすること)")]
     [SerializeField] private List <GameObject> areaPrefabList;
@@ -38,6 +77,11 @@ public class MapAreaGenerate : MonoBehaviour
 
     [Header("彷徨う者の情報アイテムを格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> enemyInforｍationItemPrefabList;
+
+    /// <summary>
+    /// 彷徨う者関連情報を未取得状態の場合のキー値
+    /// </summary>
+    private const int kDefaultSaveEnemyInformationKey = 99999;
 
     [Header("コンパスを格納する(Prefabをアタッチすること。)")]
     [SerializeField] private List<GameObject> compassPrefabList;
@@ -273,7 +317,7 @@ public class MapAreaGenerate : MonoBehaviour
     /// <summary>
     /// マップをランダム配置するメソッド
     /// </summary>
-    void MapGenerate() 
+    private void MapGenerate() 
     {
         //areaPrefabListのコピーを作成
         List<GameObject> shuffledMapAreaPrefabList = new List<GameObject>(areaPrefabList);
@@ -295,14 +339,51 @@ public class MapAreaGenerate : MonoBehaviour
     /// <summary>
     /// アイテムをランダム配置するメソッド
     /// </summary>
-    void ItemGenerate()
+    private void ItemGenerate()
     {
         //documentAndMysteryItemPrefabListのコピーを作成
         shuffledItemPrefabList = new List<GameObject>(documentAndMysteryItemPrefabList);
 
-        //TODO追加予定：該当のステージ・該当の難易度で、指定の彷徨う者の情報を入手して②場合のみセットする
-        //彷徨う者の情報を全アイテム格納リストに追加
-        //shuffledItemPrefabList.AddRange(enemyInforｍationItemPrefabList);
+        //現在のステージ名に応じて、彷徨う者の情報を全アイテム格納リストに追加する
+        switch (SceneManager.GetActiveScene().name) 
+        {
+            //ステージ1
+            case stringStage01Scene:
+
+                //(デモ版&&デモ環境用の静声に熱する彷徨う者の関連情報を取得していない状態の場合)||(製品版&&本番環境用の静声に熱する彷徨う者の関連情報を取得していない状態の場合)
+                if ((GameController.instance.GetIsDemoPlayFlag() && saveEnemyInformationStatusArray[stringDemoVeinVainWandererStatus] == kDefaultSaveEnemyInformationKey)
+                    || (!GameController.instance.GetIsDemoPlayFlag() && saveEnemyInformationStatusArray[stringVeinVainWandererStatus] == kDefaultSaveEnemyInformationKey)) 
+                {
+                    //彷徨う者の情報を全アイテム格納リストに追加
+                    shuffledItemPrefabList.AddRange(enemyInforｍationItemPrefabList);
+                }
+
+                break;
+
+            //ステージ2
+            case stringStage02Scene:
+
+                //微美しき魅忘の彷徨う者の関連情報を取得していない状態の場合
+                if (saveEnemyInformationStatusArray[stringBeauteousBewilderWandererStatus] == kDefaultSaveEnemyInformationKey)
+                {
+                    //彷徨う者の情報を全アイテム格納リストに追加
+                    shuffledItemPrefabList.AddRange(enemyInforｍationItemPrefabList);
+                }
+
+                break;
+
+            //ステージ3
+            case stringStage03Scene:
+
+                //唄歌う彷徨う者の関連情報を取得していない状態の場合
+                if (saveEnemyInformationStatusArray[stringSingSongWandererStatus] == kDefaultSaveEnemyInformationKey)
+                {
+                    //彷徨う者の情報を全アイテム格納リストに追加
+                    shuffledItemPrefabList.AddRange(enemyInforｍationItemPrefabList);
+                }
+
+                break;
+        }
 
 
 
