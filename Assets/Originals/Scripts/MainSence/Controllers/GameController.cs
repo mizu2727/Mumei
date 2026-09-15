@@ -22,9 +22,17 @@ public class GameController : MonoBehaviour
     private bool isDemoPlayFlag = true;
 
     /// <summary>
+    /// デモ版彷徨う者関連情報全削除フラグ(TODO:製品版リリースタイミングでは必ずfalseにすること)
+    /// </summary>
+    private bool isDemoResetEnemyInformationListFlag = true;
+
+    /// <summary>
     /// デフォルトのフレームレート
     /// </summary>
     private const int kDefaultFrameRate = 60;
+
+    [Header("アイテムデータ(共通のScriptableObjectをアタッチする必要がある)")]
+    [SerializeField] public SO_Item sO_Item;
 
     [Header("Prefab内のGameControllerの子オブジェクトをアタッチすること")]
     [SerializeField] private SaveLoad saveLoad;
@@ -731,13 +739,19 @@ public class GameController : MonoBehaviour
 
         //フレームレートをXfpsに設定
         Application.targetFrameRate = kDefaultFrameRate;
+
+        //デモ版彷徨う者関連情報全削除フラグがtrueの場合
+        if (isDemoResetEnemyInformationListFlag)
+        {
+            //彷徨う者関連情報を全削除
+            sO_Item.ResetEnemyInformationList();
+        }
     }
 
     private void Start()
     {
         //パラメーターリセット
         ResetParams();
-
 
 
         //マウス旋回速度のSliderの最大値を設定

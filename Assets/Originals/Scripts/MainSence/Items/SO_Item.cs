@@ -194,6 +194,7 @@ public class SO_Item : ScriptableObject
     public void ResetEnemyInformationList()
     {
         enemyInformationList.Clear();
+        Debug.Log("œfœr‚¤Ò‚Ìî•ñƒŠƒXƒg‚ğ‘S‚ÄíœÏ‚İ");
     }
 
 
@@ -387,6 +388,8 @@ public class SO_Item : ScriptableObject
             if (newEnemyInformationData.itemType == ItemType.EnemyInfor‚ation)
             {
                 //TODO:œfœr‚¤Ò‚Ìî•ñ’Ç‰Á
+                PauseController.instance.ChangeWandererTexts(newEnemyInformationData.id, newEnemyInformationData.enemyInformationMessageId
+                    , newEnemyInformationData.itemName, newEnemyInformationData.description);
             }
         }
         else
