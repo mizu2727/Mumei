@@ -563,7 +563,7 @@ public class PauseController : MonoBehaviour
             documentExplanationText = null;
         }
 
-        //documentInventoryPanelが存在する場合
+        //documentExplanationPanelが存在する場合
         if (documentExplanationPanel != null)
         {
             //documentExplanationPanelをnullにする
@@ -1384,13 +1384,30 @@ public class PauseController : MonoBehaviour
             //説明テキストが重なるのを防止するため、全ての説明テキストを一旦クリアする
             for (int i = 0; i < wandererExplanationText.Length; i++)
             {
-                if (wandererExplanationText.Length > 0)
+                // wandererExplanationText[i]が存在する場合
+                if (wandererExplanationText[i] != null) 
+                {
+                    //コンポーネントを取得して配列に格納する
+                    wandererExplanationTextRubyComponent[i] = wandererExplanationText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
+                    wandererExplanationText[i].text = "";
+
+                    //wandererExplanationTextRubyComponent[i]が存在する場合
+                    if (wandererExplanationTextRubyComponent[i] != null)
+                    {
+                        //説明テキストをリセットする
+                        wandererExplanationTextRubyComponent[i].Text = wandererExplanationText[i].text;
+                    }
+                }
+
+                /*
+                    if (wandererExplanationText.Length > 0)
                 {
                     //コンポーネントを取得して配列に格納する
                     wandererExplanationTextRubyComponent[i] = wandererExplanationText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
                     wandererExplanationText[i].text = "";
                     wandererExplanationTextRubyComponent[i].Text = wandererExplanationText[i].text;
                 }
+                    */
             }
 
             //彷徨う者説明欄を非表示
@@ -1681,7 +1698,7 @@ public class PauseController : MonoBehaviour
             }
             else
             {
-                Debug.LogError($"アイテム '{itemName}' が見つかりません");
+                Debug.LogWarning($"彷徨う者関連情報アイテム '{itemName}' が見つかりません");
             }
         }
     }
