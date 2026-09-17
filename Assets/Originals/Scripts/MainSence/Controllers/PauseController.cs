@@ -88,7 +88,7 @@ public class PauseController : MonoBehaviour
     [SerializeField] private GameObject archivePanel;
 
     [Header("アーカイブボタンテキスト(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private TMP_Text archiveButtonText;
+    [SerializeField] private Text archiveButtonText;
 
     /// <summary>
     /// アーカイブボタンテキストをTextMeshProRubyコンポーネントに変換して保存する変数
@@ -111,7 +111,7 @@ public class PauseController : MonoBehaviour
     }
 
     [Header("彷徨う者ボタンテキスト(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] private TMP_Text wandererButtonText;
+    [SerializeField] private Text wandererButtonText;
 
     /// <summary>
     /// 彷徨う者ボタンテキストをTextMeshProRubyコンポーネントに変換して保存する変数
@@ -1127,9 +1127,14 @@ public class PauseController : MonoBehaviour
         //ボタンSE
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
-        //彷徨う者パネルを非表示
-        isWandererPanel = false;
+        //彷徨う者パネルを表示
+        isWandererPanel = true;
         ChangeViewWandererPanel();
+
+        //「彷徨う者」ボタンを非表示にする
+        wandererButton.SetActive(false);
+
+        //TODO:アーカイブパネル内の他のパネルを非表示
     }
 
     /// <summary>
@@ -1316,13 +1321,20 @@ public class PauseController : MonoBehaviour
             //テキスト内容を変更する
             SettingLanguageText();
 
-            //表示
+            //アーカイブパネルを表示
             archivePanel.SetActive(true);
+
+            /*----------------------------------------------------------
+             *TODO:アーカイブパネル内の子ボタンを全て表示にする処理を追加する 
+             ----------------------------------------------------------*/
+
+            //「彷徨う者」ボタンを表示にする
+            wandererButton.SetActive(true);
 
         }
         else
         {
-            //非表示
+            //アーカイブパネルを非表示
             archivePanel.SetActive(false);
 
             /*----------------------------------------------------------

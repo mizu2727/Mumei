@@ -684,8 +684,8 @@ public class CommonController : MonoBehaviour
     public void SetupButtonHoverEvents()
     {
         //ボタンの TextMeshProUGUI 配列と番号配列を取得
-        var textArray = LanguageController.instance.GetButtonTMPTextArray();
-        var numberArray = LanguageController.instance.GetButtonTextNumberArray();
+        TMP_Text[] textArray = LanguageController.instance.GetButtonTMPTextArray();
+        int[] numberArray = LanguageController.instance.GetButtonTextNumberArray();
 
         for (int i = 0; i < textArray.Length; i++)
         {
