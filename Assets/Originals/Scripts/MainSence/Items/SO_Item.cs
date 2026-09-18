@@ -387,7 +387,7 @@ public class SO_Item : ScriptableObject
 
             if (newEnemyInformationData.itemType == ItemType.EnemyInfor‚ation)
             {
-                //TODO:œfœr‚¤Ò‚Ìî•ñ’Ç‰Á
+                //œfœr‚¤Ò‚Ìî•ñ’Ç‰Á
                 PauseController.instance.ChangeWandererTexts(newEnemyInformationData.id, newEnemyInformationData.enemyInformationMessageId
                     , newEnemyInformationData.itemName, newEnemyInformationData.description);
             }

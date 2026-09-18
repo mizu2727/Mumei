@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using static GameController;
 using static Player;
 using static UnityEditor.Progress;
+using System.Linq;
 
 /// <summary>
 /// ポーズ画面管理クラス
@@ -1465,6 +1466,10 @@ public class PauseController : MonoBehaviour
             if ((GameController.instance.GetIsDemoPlayFlag() && saveEnemyInformationStatusArray.Keys.ElementAt(i) == stringVeinVainWandererStatus)
                 || (!GameController.instance.GetIsDemoPlayFlag() && saveEnemyInformationStatusArray.Keys.ElementAt(i) == stringDemoVeinVainWandererStatus))
             {
+                //使わないスロットにも、未判明表示を入れておく
+                wandererNameText[i].fontSize = kDefaultWandererNameTextSize;
+                wandererNameText[i].text = defaultItemName;
+
                 //次のループへ
                 continue;
             }
@@ -1712,6 +1717,12 @@ public class PauseController : MonoBehaviour
     /// <param name="wandererDescription"></param>
     public void ChangeWandererTexts(int itemID, int wandererID, string wandererName, string wandererDescription) 
     {
+        //保存用彷徨う者関連情報ステータス配列の値を1に変更する
+        string targetKey = saveEnemyInformationStatusArray.Keys.ElementAt(wandererID);
+        saveEnemyInformationStatusArray[targetKey] = 1;
+
+        Debug.Log($"彷徨う者関連情報のステータスを変更しました。ID: {wandererID}, 名前: {wandererName}");
+
         //彷徨う者関連情報のIDを保存
         enemyInformationIds[wandererID] = itemID;
 
