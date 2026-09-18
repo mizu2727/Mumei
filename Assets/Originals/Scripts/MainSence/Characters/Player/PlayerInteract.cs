@@ -346,7 +346,7 @@ public class PlayerInteract : MonoBehaviour
                         if (sO_Item == null) Debug.LogError("SO_Itemが初期化されていません！");
 
                         //対象アイテムがプレイヤーライトの場合
-                        if (item.GetItemType() == ItemType.PlayerLight) 
+                        if (item.GetItemType() == ItemType.PlayerLight)
                         {
                             //拾ったアイテムをステージ上から削除
                             DestroyItem(pickUpItem);
@@ -384,7 +384,7 @@ public class PlayerInteract : MonoBehaviour
                                 //ドキュメントの場合は取得SEを再生してから削除
                                 DestroyDocument(pickUpItem);
                             }
-                            else 
+                            else
                             {
                                 //拾ったアイテムをステージ上から削除
                                 DestroyItem(pickUpItem);
@@ -397,7 +397,7 @@ public class PlayerInteract : MonoBehaviour
                         else if (item.GetItemType() == ItemType.UseItem)
                         {
                             //インベントリに空きがあるかを確認
-                            if ((Inventory.instance.GetKeepItemId() == CommonController.instance.GetKNoneItemId()) 
+                            if ((Inventory.instance.GetKeepItemId() == CommonController.instance.GetKNoneItemId())
                                 || (Inventory.instance.GetKeepItemId() == item.GetId()))
                             {
                                 //インベントリに追加
@@ -427,6 +427,18 @@ public class PlayerInteract : MonoBehaviour
                                 //処理を終了
                                 return;
                             }
+                        }
+                        //対象アイテムが彷徨う者関連情報アイテムの場合
+                        else if (item.GetItemType() == ItemType.EnemyInforｍation) 
+                        {
+                            //ポーズ画面内の彷徨う者関連情報パネル内に追加する
+                            sO_Item.AddEnemyInformationItem(item);
+
+                            //拾ったアイテムをステージ上から削除
+                            DestroyItem(pickUpItem);
+
+                            //処理を終了
+                            return;
                         }
 
                     }
