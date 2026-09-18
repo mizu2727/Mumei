@@ -51,6 +51,11 @@ public class ItemMessageEntity
     public int enemyInformationMessageId;
 
     /// <summary>
+    /// デモ版ステータス(0:製品版、1:デモ版)
+    /// </summary>
+    public int demoStatus;
+
+    /// <summary>
     /// 日本語アイテム名
     /// </summary>
     public string itemNameJapanese;

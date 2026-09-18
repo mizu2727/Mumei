@@ -103,6 +103,11 @@ public class Item : MonoBehaviour
     [SerializeField] private int enemyInformationMessageId;
 
     /// <summary>
+    /// デモ版ステータス
+    /// </summary>
+    [SerializeField] private int demoStatus;
+
+    /// <summary>
     /// アイテムの名前
     /// </summary>
     [SerializeField] private string itemName;
@@ -190,6 +195,15 @@ public class Item : MonoBehaviour
     }
 
     /// <summary>
+    /// デモ版ステータスを取得
+    /// </summary>
+    /// <returns>デモ版ステータス</returns>
+    public int GetDemoStatus() 
+    {
+        return demoStatus;
+    }
+
+    /// <summary>
     /// アイテム名を取得
     /// </summary>
     /// <returns>アイテム名</returns>
@@ -250,6 +264,9 @@ public class Item : MonoBehaviour
 
         //彷徨う者の情報アイテムIDを設定する
         enemyInformationMessageId = itemMessage.itemMessage[id].enemyInformationMessageId;
+
+        //デモ版ステータスを設定する
+        demoStatus = itemMessage.itemMessage[id].demoStatus;
 
 
         //言語ステータスに応じて、テキストを変更する

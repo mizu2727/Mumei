@@ -65,6 +65,11 @@ public class SO_Item : ScriptableObject
         public int enemyInformationMessageId;
 
         /// <summary>
+        /// デモ版ステータス
+        /// </summary>
+        public int demoStatus;
+
+        /// <summary>
         /// アイテムの名前
         /// </summary>
         public string itemName;
@@ -126,6 +131,11 @@ public class SO_Item : ScriptableObject
             /// 彷徨う者の情報アイテムID
             /// </summary>
             enemyInformationMessageId = item.GetEnemyInformationMessageId();
+
+            /// <summary>
+            /// デモ版ステータス
+            /// </summary>
+            demoStatus = item.GetDemoStatus();
 
             /// <summary>
             /// アイテムの名前
@@ -388,7 +398,8 @@ public class SO_Item : ScriptableObject
             if (newEnemyInformationData.itemType == ItemType.EnemyInforｍation)
             {
                 //彷徨う者の情報追加
-                PauseController.instance.ChangeWandererTexts(newEnemyInformationData.id, newEnemyInformationData.enemyInformationMessageId
+                PauseController.instance.ChangeWandererTexts(newEnemyInformationData.id
+                    , newEnemyInformationData.enemyInformationMessageId, newEnemyInformationData.demoStatus
                     , newEnemyInformationData.itemName, newEnemyInformationData.description);
             }
         }

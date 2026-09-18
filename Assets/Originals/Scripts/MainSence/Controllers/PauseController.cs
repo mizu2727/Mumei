@@ -12,7 +12,6 @@ using UnityEngine.UI;
 using static GameController;
 using static Player;
 using static UnityEditor.Progress;
-using System.Linq;
 
 /// <summary>
 /// ポーズ画面管理クラス
@@ -1711,11 +1710,12 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// 彷徨う者情報関連の名前を追加し、UIに反映する関数
     /// </summary>
-    /// <param name="itemID"></param>
-    /// <param name="wandererID"></param>
-    /// <param name="wandererName"></param>
-    /// <param name="wandererDescription"></param>
-    public void ChangeWandererTexts(int itemID, int wandererID, string wandererName, string wandererDescription) 
+    /// <param name="itemID">アイテムID</param>
+    /// <param name="wandererID">彷徨う者ID</param>
+    /// <param name="demoStatus">デモ版ステータス</param>
+    /// <param name="wandererName">彷徨う者の名前</param>
+    /// <param name="wandererDescription">彷徨う者の説明</param>
+    public void ChangeWandererTexts(int itemID, int wandererID, int demoStatus, string wandererName, string wandererDescription) 
     {
         //保存用彷徨う者関連情報ステータス配列の値を1に変更する
         string targetKey = saveEnemyInformationStatusArray.Keys.ElementAt(wandererID);
@@ -1723,14 +1723,23 @@ public class PauseController : MonoBehaviour
 
         Debug.Log($"彷徨う者関連情報のステータスを変更しました。ID: {wandererID}, 名前: {wandererName}");
 
+        int addwandererIDNumber = 0;
+
+        //デモ版ステータスが0の場合
+        if (demoStatus == 0) 
+        {
+            //wandererID - 1になるようにする
+            addwandererIDNumber = -1;
+        }
+
         //彷徨う者関連情報のIDを保存
-        enemyInformationIds[wandererID] = itemID;
+        enemyInformationIds[wandererID + addwandererIDNumber] = itemID;
 
         //彷徨う者関連情報の名称を保存
-        enemyInformationNames[wandererID] = wandererName;
+        enemyInformationNames[wandererID + addwandererIDNumber] = wandererName;
 
         //彷徨う者関連情報の説明を保存
-        enemyInformationExplanations[wandererID] = wandererDescription;
+        enemyInformationExplanations[wandererID + addwandererIDNumber] = wandererDescription;
 
         //TODO:UIのテキストを更新する処理を追加する
         UpdateEnemyInformationUI();
