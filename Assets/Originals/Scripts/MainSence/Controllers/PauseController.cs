@@ -2536,7 +2536,7 @@ public class PauseController : MonoBehaviour
 
                     //彷徨う者関連情報名称テキストを日本語にする
                     enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameJapanese;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameJapanese);
+                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameJapanese);
                     wandererNameText[i].text = item.itemName;
 
                     //彷徨う者関連情報名称テキストサイズを日本語用に設定する
@@ -2546,7 +2546,7 @@ public class PauseController : MonoBehaviour
                     {
                         //彷徨う者関連情報説明テキストを日本語にする
                         enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionJapanese;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionJapanese);
+                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionJapanese);
                         wandererExplanationText[i].text = item.description;
 
                         //彷徨う者関連情報説明テキストサイズを日本語用に設定する
@@ -2559,7 +2559,7 @@ public class PauseController : MonoBehaviour
 
                     //彷徨う者関連情報名称テキストを英語にする
                     enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameEnglish;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameEnglish);
+                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameEnglish);
                     wandererNameText[i].text = item.itemName;
 
                     //彷徨う者関連情報名称テキストサイズを英語用に設定する
@@ -2569,7 +2569,7 @@ public class PauseController : MonoBehaviour
                     {
                         //彷徨う者関連情報説明テキストを英語にする
                         enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionEnglish;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionEnglish);
+                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionEnglish);
                         wandererExplanationText[i].text = item.description;
 
                         //彷徨う者関連情報説明テキストサイズを英語に設定する
@@ -2582,7 +2582,7 @@ public class PauseController : MonoBehaviour
 
                     //彷徨う者関連情報名称テキストを簡体字中国語にする
                     enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameChinese01;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese01);
+                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese01);
                     wandererNameText[i].text = item.itemName;
 
                     //彷徨う者関連情報名称テキストサイズを簡体字中国語用に設定する
@@ -2592,7 +2592,7 @@ public class PauseController : MonoBehaviour
                     {
                         //彷徨う者関連情報説明テキストを簡体字中国語にする
                         enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionChinese01;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese01);
+                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese01);
                         wandererExplanationText[i].text = item.description;
 
                         //彷徨う者関連情報説明テキストサイズを簡体字中国語用に設定する
@@ -2605,7 +2605,7 @@ public class PauseController : MonoBehaviour
 
                     //彷徨う者関連情報名称テキストを繁体字中国語にする
                     enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameChinese02;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese02);
+                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese02);
                     wandererNameText[i].text = item.itemName;
 
                     //彷徨う者関連情報名称テキストサイズを繁体字中国語用に設定する
@@ -2615,7 +2615,7 @@ public class PauseController : MonoBehaviour
                     {
                         //彷徨う者関連情報説明テキストを繁体字中国語にする
                         enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionChinese02;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese02);
+                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese02);
                         wandererExplanationText[i].text = item.description;
 
                         //彷徨う者関連情報説明テキストサイズを繁体字中国語用に設定する
@@ -2628,7 +2628,7 @@ public class PauseController : MonoBehaviour
 
                     //彷徨う者関連情報名称テキストをスペイン語にする
                     enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameSpanish;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameSpanish);
+                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameSpanish);
                     wandererNameText[i].text = item.itemName;
 
                     //彷徨う者関連情報名称テキストサイズをスペイン語用に設定する
@@ -2638,7 +2638,7 @@ public class PauseController : MonoBehaviour
                     {
                         //彷徨う者関連情報説明テキストをスペイン語にする
                         enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionSpanish;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionSpanish);
+                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionSpanish);
                         wandererExplanationText[i].text = item.description;
 
                         //彷徨う者関連情報説明テキストサイズをスペイン語用に設定する
@@ -2651,7 +2651,7 @@ public class PauseController : MonoBehaviour
 
                     //彷徨う者関連情報名称テキストをポルトガル語にする
                     enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNamePortuguese;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNamePortuguese);
+                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNamePortuguese);
                     wandererNameText[i].text = item.itemName;
 
                     //彷徨う者関連情報名称テキストサイズをポルトガル語用に設定する
@@ -2661,7 +2661,7 @@ public class PauseController : MonoBehaviour
                     {
                         //彷徨う者関連情報説明テキストをポルトガル語にする
                         enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionPortuguese;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionPortuguese);
+                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionPortuguese);
                         wandererExplanationText[i].text = item.description;
 
                         //彷徨う者関連情報説明テキストサイズをポルトガル語用に設定する
