@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem.Utilities;
@@ -24,7 +25,7 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// デモ版彷徨う者関連情報全削除フラグ(TODO:製品版リリースタイミングでは必ずfalseにすること)
     /// </summary>
-    private bool isDemoResetEnemyInformationListFlag = true;
+    private bool isDemoResetEnemyInformationListFlag = false;
 
     /// <summary>
     /// デフォルトのフレームレート
@@ -745,6 +746,12 @@ public class GameController : MonoBehaviour
         {
             //彷徨う者関連情報を全削除
             sO_Item.ResetEnemyInformationList();
+
+            //彷徨う者関連情報ステータス配列を初期化する
+            foreach (string data in saveEnemyInformationStatusArray.Keys.ToList())
+            {
+                saveEnemyInformationStatusArray[data] = kDefaultSaveEnemyInformationKey;
+            }
         }
     }
 

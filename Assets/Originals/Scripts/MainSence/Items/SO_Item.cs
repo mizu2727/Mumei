@@ -398,8 +398,7 @@ public class SO_Item : ScriptableObject
             if (newEnemyInformationData.itemType == ItemType.EnemyInforÇçation)
             {
                 //úfúrÇ§é“ÇÃèÓïÒí«â¡
-                PauseController.instance.ChangeWandererTexts(newEnemyInformationData.id
-                    , newEnemyInformationData.enemyInformationMessageId, newEnemyInformationData.demoStatus
+                PauseController.instance.ChangeWandererTexts(newEnemyInformationData.id, newEnemyInformationData.enemyInformationMessageId
                     , newEnemyInformationData.itemName, newEnemyInformationData.description);
             }
         }

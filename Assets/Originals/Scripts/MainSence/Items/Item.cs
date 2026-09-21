@@ -244,6 +244,8 @@ public class Item : MonoBehaviour
     /// </summary>
     public  void SettingLanguageText() 
     {
+        Debug.Log("アイテムID:" + itemMessage.itemMessage[id].itemId);
+
         //アイテムのプレハブのAddressables名を設定する
         prefabPath = itemMessage.itemMessage[id].itemPrefabPath;
 

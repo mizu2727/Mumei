@@ -16,7 +16,7 @@ using static UnityEditor.Progress;
 /// <summary>
 /// ポーズ画面管理クラス
 /// </summary>
-public class PauseController : MonoBehaviour
+public partial class PauseController : MonoBehaviour
 {
     /// <summary>
     /// インスタンス
@@ -310,7 +310,7 @@ public class PauseController : MonoBehaviour
     /// <summary>
     /// デフォルトの1つ目の彷徨う者関連情報IDと連動するアイテムIDの値
     /// </summary>
-    private const int kDefaultInterlockingOfFirstEnemyInformationIdAndItemId = 27;
+    private const int kDefaultInterlockingOfFirstEnemyInformationIdAndItemId = 28;
 
     /// <summary>
     /// 彷徨う者関連情報名のリスト
@@ -1328,9 +1328,12 @@ public class PauseController : MonoBehaviour
              *TODO:アーカイブパネル内の子ボタンを全て表示にする処理を追加する 
              ----------------------------------------------------------*/
 
-            //「彷徨う者」ボタンを表示にする
-            wandererButton.SetActive(true);
-
+            //チュートリアルのストーリーを閲覧済みの場合
+            if (saveViewStoryStatusArray[stringTutorialClearStatus] == 1) 
+            {
+                //「彷徨う者」ボタンを表示にする
+                wandererButton.SetActive(true);
+            }
         }
         else
         {
@@ -1344,95 +1347,6 @@ public class PauseController : MonoBehaviour
             //彷徨う者パネルを非表示
             isWandererPanel = false;
             ChangeViewWandererPanel();
-        }
-    }
-
-    /// <summary>
-    /// 彷徨う者パネルの表示/非表示
-    /// </summary>
-    private void ChangeViewWandererPanel()
-    {
-        if (isWandererPanel)
-        {
-            //UIのレイヤーを手前側にする
-            wandererPanel.transform.SetAsLastSibling();
-
-            //テキスト内容を変更する
-            SettingLanguageText();
-
-            //表示
-            wandererPanel.SetActive(true);
-
-            /*---------------------------------------------------------
-             * TODO:他のアーカイブパネル内の子パネルを非表示にする処理を追加する
-             --------------------------------------------------------*/
-
-        }
-        else
-        {
-            //非表示
-            wandererPanel.SetActive(false);
-
-
-            /*------------------------------------------
-             * 彷徨う者説明テキストをリセット
-             ---------------------------------------------*/
-
-            //wandererExplanationTextRubyComponentを初期化
-            wandererExplanationTextRubyComponent = new TMP_Ruby.TextMeshProRuby[wandererExplanationText.Length];
-
-            //説明テキストが重なるのを防止するため、全ての説明テキストを一旦クリアする
-            for (int i = 0; i < wandererExplanationText.Length; i++)
-            {
-                // wandererExplanationText[i]が存在する場合
-                if (wandererExplanationText[i] != null) 
-                {
-                    //コンポーネントを取得して配列に格納する
-                    wandererExplanationTextRubyComponent[i] = wandererExplanationText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
-                    wandererExplanationText[i].text = "";
-
-                    //wandererExplanationTextRubyComponent[i]が存在する場合
-                    if (wandererExplanationTextRubyComponent[i] != null)
-                    {
-                        //説明テキストをリセットする
-                        wandererExplanationTextRubyComponent[i].Text = wandererExplanationText[i].text;
-                    }
-                }
-
-                /*
-                    if (wandererExplanationText.Length > 0)
-                {
-                    //コンポーネントを取得して配列に格納する
-                    wandererExplanationTextRubyComponent[i] = wandererExplanationText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
-                    wandererExplanationText[i].text = "";
-                    wandererExplanationTextRubyComponent[i].Text = wandererExplanationText[i].text;
-                }
-                    */
-            }
-
-            //彷徨う者説明欄を非表示
-            isWandererExplanationPanel = false;
-            ChangeViewWandererExplanationPanel();
-        }
-    }
-
-    /// <summary>
-    /// 彷徨う者説明欄パネルの表示/非表示
-    /// </summary>
-    private void ChangeViewWandererExplanationPanel()
-    {
-        if (isWandererExplanationPanel)
-        {
-            //テキスト内容を変更する
-            SettingLanguageText();
-
-            //表示
-            wandererExplanationPanel.SetActive(true);
-        }
-        else
-        {
-            //非表示
-            wandererExplanationPanel.SetActive(false);
         }
     }
 
@@ -1451,111 +1365,159 @@ public class PauseController : MonoBehaviour
             return;
         }
 
+        
+        //彷徨う者関連情報を設定するためのキーを取得する
+        string[] targetKeys = GameController.instance.GetIsDemoPlayFlag()
+            ? new string[] { stringDemoVeinVainWandererStatus, stringBeauteousBewilderWandererStatus, stringSingSongWandererStatus } // デモ版
+            : new string[] { stringVeinVainWandererStatus, stringBeauteousBewilderWandererStatus, stringSingSongWandererStatus };// 製品版
+
         //ボタンにクリックイベントを追加
         for (int i = 0; i < wandererNameButton.Length; i++)
         {
             //ローカル変数でインデックスをキャプチャ
-            int index = i;
+            //int index = i;
+
+            //クリックイベント二重登録を防止
+            wandererNameButton[i].onClick.RemoveAllListeners();
 
             //クリックイベントを追加
-            wandererNameButton[i].onClick.AddListener(() => OnClickedWandererNameButton(index));
+            wandererNameButton[i].onClick.AddListener(() => OnClickedWandererNameButton(i));
 
-            //(デモ版環境&&保存用彷徨う者関連情報ステータス配列のキーが静声に熱する彷徨う者の場合)
-            //||(本番環境&&保存用彷徨う者関連情報ステータス配列のキーがデモ版用静声に熱する彷徨う者の場合)
-            if ((GameController.instance.GetIsDemoPlayFlag() && saveEnemyInformationStatusArray.Keys.ElementAt(i) == stringVeinVainWandererStatus)
-                || (!GameController.instance.GetIsDemoPlayFlag() && saveEnemyInformationStatusArray.Keys.ElementAt(i) == stringDemoVeinVainWandererStatus))
+            //現在のボタンに対応するキーを取得
+            string key = targetKeys[i];
+
+            // ステータス配列に対象のキーが存在するか確認し、値を取得
+            if (saveEnemyInformationStatusArray.TryGetValue(key, out int statusValue)) 
             {
-                //使わないスロットにも、未判明表示を入れておく
-                wandererNameText[i].fontSize = kDefaultWandererNameTextSize;
-                wandererNameText[i].text = defaultItemName;
-
-                //次のループへ
-                continue;
-            }
-
-            //保存用彷徨う者関連情報ステータス配列の値が1の場合
-            if (saveEnemyInformationStatusArray.ElementAt(i).Value == 1)
-            {
-                //言語ステータスに応じて、テキストを変更する
-                switch (LanguageController.instance.GetLanguageStatus())
+                //保存用彷徨う者関連情報ステータス配列の値が1の場合
+                if (statusValue == 1)
                 {
-                    //日本語
-                    case LanguageController.LanguageStatus.kJapanese:
+                    //言語ステータスに応じて、テキストを変更する
+                    switch (LanguageController.instance.GetLanguageStatus())
+                    {
+                        //日本語
+                        case LanguageController.LanguageStatus.kJapanese:
 
-                        //彷徨う者名称欄に日本語用の名称テキストを設定する
-                        wandererNameText[0].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameJapanese;
+                            //彷徨う者名称欄に日本語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameJapanese;
 
-                        //彷徨う者名称テキストサイズを日本語用に設定する
-                        wandererNameText[0].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeJapanese;
-                        break;
+                            //彷徨う者名称テキストサイズを日本語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeJapanese;
 
-                    //英語
-                    case LanguageController.LanguageStatus.kEnglish:
+                            //彷徨う者説明欄欄に日本語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionJapanese;
 
-                        //彷徨う者名称欄に英語用の名称テキストを設定する
-                        wandererNameText[0].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameEnglish;
+                            //彷徨う者説明欄テキストサイズを日本語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeJapanese;
+                            break;
 
-                        //彷徨う者名称テキストサイズを英語用に設定する
-                        wandererNameText[0].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeEnglish;
-                        break;
+                        //英語
+                        case LanguageController.LanguageStatus.kEnglish:
 
-                    //簡体字中国語
-                    case LanguageController.LanguageStatus.kSimplifiedChinese:
+                            //彷徨う者名称欄に英語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameEnglish;
 
-                        //彷徨う者名称欄に簡体字中国語用の名称テキストを設定する
-                        wandererNameText[0].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameChinese01;
+                            //彷徨う者名称テキストサイズを英語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeEnglish;
 
-                        //彷徨う者名称テキストサイズを簡体字中国語用に設定する
-                        wandererNameText[0].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeChinese01;
-                        break;
+                            //彷徨う者説明欄欄に英語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionEnglish;
 
-                    //繁体字中国語
-                    case LanguageController.LanguageStatus.kTraditionalChinese:
+                            //彷徨う者説明欄テキストサイズを英語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeEnglish;
+                            break;
 
-                        //彷徨う者名称欄に繁体字中国語用の名称テキストを設定する
-                        wandererNameText[0].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameChinese02;
+                        //簡体字中国語
+                        case LanguageController.LanguageStatus.kSimplifiedChinese:
 
-                        //彷徨う者名称テキストサイズを繁体字中国語用に設定する
-                        wandererNameText[0].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeChinese02;
-                        break;
+                            //彷徨う者名称欄に簡体字中国語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameChinese01;
 
-                    //スペイン語
-                    case LanguageController.LanguageStatus.kSpanish:
+                            //彷徨う者名称テキストサイズを簡体字中国語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeChinese01;
 
-                        //彷徨う者名称欄にスペイン語用の名称テキストを設定する
-                        wandererNameText[0].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSpanish;
+                            //彷徨う者説明欄欄に簡体字中国語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionChinese01;
 
-                        //彷徨う者名称テキストサイズをスペイン語用に設定する
-                        wandererNameText[0].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeSpanish;
-                        break;
+                            //彷徨う者説明欄テキストサイズを簡体字中国語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeChinese01;
+                            break;
 
-                    //ポルトガル語
-                    case LanguageController.LanguageStatus.kPortuguese:
+                        //繁体字中国語
+                        case LanguageController.LanguageStatus.kTraditionalChinese:
 
-                        //彷徨う者名称欄にポルトガル語用の名称テキストを設定する
-                        wandererNameText[0].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNamePortuguese;
+                            //彷徨う者名称欄に繁体字中国語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameChinese02;
 
-                        //彷徨う者名称テキストサイズをポルトガル語用に設定する
-                        wandererNameText[0].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizePortuguese;
-                        break;
+                            //彷徨う者名称テキストサイズを繁体字中国語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeChinese02;
 
-                    default:
-                        Debug.LogWarning("その他の言語ステータス");
-                        break;
+                            //彷徨う者説明欄欄に繁体字中国語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionChinese02;
+
+                            //彷徨う者説明欄テキストサイズを繁体字中国語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeChinese02;
+                            break;
+
+                        //スペイン語
+                        case LanguageController.LanguageStatus.kSpanish:
+
+                            //彷徨う者名称欄にスペイン語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSpanish;
+
+                            //彷徨う者名称テキストサイズをスペイン語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeSpanish;
+
+                            //彷徨う者説明欄欄にスペイン語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSpanish;
+
+                            //彷徨う者説明欄テキストサイズをスペイン語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeSpanish;
+                            break;
+
+                        //ポルトガル語
+                        case LanguageController.LanguageStatus.kPortuguese:
+
+                            //彷徨う者名称欄にポルトガル語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNamePortuguese;
+
+                            //彷徨う者名称テキストサイズをポルトガル語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizePortuguese;
+
+                            //彷徨う者説明欄欄にポルトガル語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionPortuguese;
+
+                            //彷徨う者説明欄テキストサイズをポルトガル語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizePortuguese;
+                            break;
+
+                        default:
+                            Debug.LogWarning("その他の言語ステータス");
+                            break;
+                    }
+
+                    //彷徨う者関連情報IDのリストにIDを追加する
+                    enemyInformationIds[i] = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemId;
+
+                    //彷徨う者関連情報名称のリストに名称を追加する
+                    enemyInformationNames[i] = wandererNameText[i].text;
+
+                    //彷徨う者関連情報の説明のリストに説明を追加する
+                    enemyInformationExplanations[i] = wandererExplanationText[i].text;
                 }
-            }
-            //保存用彷徨う者関連情報ステータス配列の値が初期値の場合
-            else if (saveEnemyInformationStatusArray.ElementAt(i).Value == kDefaultSaveEnemyInformationKey) 
-            {
-                //彷徨う者名称のサイズを初期化する
-                wandererNameText[i].fontSize = kDefaultWandererNameTextSize;
+                //保存用彷徨う者関連情報ステータス配列の値が初期値の場合
+                else if (saveEnemyInformationStatusArray.ElementAt(i).Value == kDefaultSaveEnemyInformationKey)
+                {
+                    //彷徨う者名称のサイズを初期化する
+                    wandererNameText[i].fontSize = kDefaultWandererNameTextSize;
 
-                //入手していない彷徨う者名の初期表示を"?????????"にする
-                wandererNameText[i].text = defaultItemName;
+                    //入手していない彷徨う者名の初期表示を"?????????"にする
+                    wandererNameText[i].text = defaultItemName;
+                }
             }
         }
 
-
+        //RubyComponentへの反映
         for (int i = 0; i < wandererNameTextRubyComponent.Length; i++)
         {
             ////wandererNameTextRubyComponentに入手していないアイテム名の初期表示を設定
@@ -1564,34 +1526,6 @@ public class PauseController : MonoBehaviour
         }
 
         //wandererExplanationTextRubyComponent初期化処理は、ChangeViewWandererPanel()内で先に実行している。
-    }
-
-    /// <summary>
-    /// ドキュメントパネルの表示/非表示
-    /// </summary>
-    private void ChangeViewDocumentPanel() 
-    {
-        if (isDocumentPanel)
-        {
-            //UIのレイヤーを手前側にする
-            documentInventoryPanel.transform.SetAsLastSibling();
-
-            //テキスト内容を変更する
-            SettingLanguageText();
-
-            //表示
-            documentInventoryPanel.SetActive(true);
-
-        }
-        else 
-        {
-            //非表示
-            documentInventoryPanel.SetActive(false);
-
-            //ドキュメント説明欄パネルを非表示
-            isDocumentExplanationPanel = false;
-            ChangeViewDocumentExplanationPanel();
-        }
     }
 
     /// <summary>
@@ -1712,273 +1646,54 @@ public class PauseController : MonoBehaviour
     /// </summary>
     /// <param name="itemID">アイテムID</param>
     /// <param name="wandererID">彷徨う者ID</param>
-    /// <param name="demoStatus">デモ版ステータス</param>
     /// <param name="wandererName">彷徨う者の名前</param>
     /// <param name="wandererDescription">彷徨う者の説明</param>
-    public void ChangeWandererTexts(int itemID, int wandererID, int demoStatus, string wandererName, string wandererDescription) 
+    public void ChangeWandererTexts(int itemID, int wandererID, string wandererName, string wandererDescription) 
     {
-        //保存用彷徨う者関連情報ステータス配列の値を1に変更する
-        string targetKey = saveEnemyInformationStatusArray.Keys.ElementAt(wandererID);
-        saveEnemyInformationStatusArray[targetKey] = 1;
+        string targetKey;
 
-        Debug.Log($"彷徨う者関連情報のステータスを変更しました。ID: {wandererID}, 名前: {wandererName}");
-
-        int addwandererIDNumber = 0;
-
-        //デモ版ステータスが0の場合
-        if (demoStatus == 0) 
+        //デモ版で静声に熱する彷徨う者の関連情報を入手した場合
+        if (GameController.instance.GetIsDemoPlayFlag() && wandererID == 1)
         {
-            //wandererID - 1になるようにする
-            addwandererIDNumber = -1;
+            //デモ版の静声に熱する彷徨う者の関連情報の値を取得
+            targetKey = saveEnemyInformationStatusArray.Keys.ElementAt(wandererID - 1);
+        }
+        else 
+        {
+            //彷徨う者の関連情報の値を取得
+            targetKey = saveEnemyInformationStatusArray.Keys.ElementAt(wandererID);
         }
 
-        //彷徨う者関連情報のIDを保存
-        enemyInformationIds[wandererID + addwandererIDNumber] = itemID;
+        //保存用彷徨う者関連情報ステータス配列の値を1に変更する  
+        saveEnemyInformationStatusArray[targetKey] = 1;
 
-        //彷徨う者関連情報の名称を保存
-        enemyInformationNames[wandererID + addwandererIDNumber] = wandererName;
 
-        //彷徨う者関連情報の説明を保存
-        enemyInformationExplanations[wandererID + addwandererIDNumber] = wandererDescription;
+        //デモ版で静声に熱する彷徨う者の関連情報を入手した場合
+        if (GameController.instance.GetIsDemoPlayFlag() && wandererID == 1)
+        {
+            //デモ版の静声に熱する彷徨う者の関連情報のIDを保存
+            enemyInformationIds[wandererID - 1] = itemID;
+
+            //デモ版の静声に熱する彷徨う者の関連情報の名称を保存
+            enemyInformationNames[wandererID - 1] = wandererName;
+
+            //デモ版の静声に熱する彷徨う者の関連情報の説明を保存
+            enemyInformationExplanations[wandererID - 1] = wandererDescription;
+        }
+        else 
+        {
+            //彷徨う者関連情報のIDを保存
+            enemyInformationIds[wandererID] = itemID;
+
+            //彷徨う者関連情報の名称を保存
+            enemyInformationNames[wandererID] = wandererName;
+
+            //彷徨う者関連情報の説明を保存
+            enemyInformationExplanations[wandererID] = wandererDescription;
+        }
 
         //TODO:UIのテキストを更新する処理を追加する
         UpdateEnemyInformationUI();
-    }
-
-    /// <summary>
-    /// 彷徨う者関連情報のUIを更新
-    /// </summary>
-    private void UpdateEnemyInformationUI()
-    {
-        for (int i = 0; i < wandererNameText.Length; i++)
-        {
-            if (i < enemyInformationNames.Count)
-            {
-                //入手した彷徨う者関連情報がリスト内に存在するかを確認
-                string itemName = enemyInformationNames[i];
-                SO_Item.ItemData item = sO_Item.enemyInformationList.Find(x => x.itemName == itemName && x.itemType == ItemType.EnemyInforｍation);
-
-                if (item != null)
-                {
-                    //ボタンに表示されるテキストを"?????????"から彷徨う者関連情報名に変更する
-                    wandererNameText[i].text = itemName;
-                    wandererNameTextRubyComponent[i].Text = wandererNameText[i].text;
-
-                    //ボタンクリックを有効
-                    wandererNameButton[i].interactable = true;
-
-                    if (i < wandererExplanationText.Length)
-                    {
-                        //説明欄テキストに彷徨う者関連情報説明を反映させる
-                        wandererExplanationText[i].text = enemyInformationExplanations[i];
-                        wandererExplanationTextRubyComponent[i].Text = wandererExplanationText[i].text;
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"アイテム '{itemName}' が見つかりません");
-
-                    //ボタンに表示されるテキストを"?????????"にする
-                    wandererNameText[i].text = defaultItemName;
-                    wandererNameTextRubyComponent[i].Text = wandererNameText[i].text;
-
-                    //ボタンクリックを無効
-                    wandererNameButton[i].interactable = false;
-
-                    if (i < wandererExplanationText.Length)
-                    {
-                        //説明欄テキストを空にする
-                        wandererExplanationText[i].text = "";
-                        wandererExplanationTextRubyComponent[i].Text = wandererExplanationText[i].text;
-                    }
-                }
-            }
-            else
-            {
-                //ボタンに表示されるテキストを"?????????"にする
-                wandererNameText[i].text = defaultItemName;
-                wandererNameTextRubyComponent[i].Text = wandererNameText[i].text;
-
-                //ボタンクリックを無効
-                wandererNameButton[i].interactable = false;
-
-                if (i < wandererExplanationText.Length)
-                {
-                    //説明欄テキストを空にする
-                    wandererExplanationText[i].text = "";
-                    wandererExplanationTextRubyComponent[i].Text = wandererExplanationText[i].text;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// ドキュメント説明欄パネルの表示/非表示
-    /// </summary>
-    private void ChangeViewDocumentExplanationPanel()
-    {
-        if (isDocumentExplanationPanel)
-        {
-            //テキスト内容を変更する
-            SettingLanguageText();
-
-            //表示
-            documentExplanationPanel.SetActive(true);
-        }
-        else
-        {
-            //非表示
-            documentExplanationPanel.SetActive(false);
-        }
-    }
-
-
-    /// <summary>
-    /// DocumentNameTextの記載内容を変更
-    /// </summary>
-    /// <param name="documentId">取得したid</param>
-    /// <param name="documentName">変更先の記載内容</param>
-    public void ChangeDocumentNameText(int documentId, string documentName) 
-    {
-        //チュートリアル用ドキュメントの場合
-        if (documentId == documentBook_TutorialID) 
-        {
-            //フラグ値をオン
-            GameController.instance.SetIsTutorialNextMessageFlag(true);
-
-            
-        }
-
-        //IDを保存
-        keepDocumentBookID = documentId;
-
-        //シーン内で取得したドキュメントオブジェクトの名前を保存
-        documentNameText.text = documentName;
-        documentNameTextRubyComponent.Text = documentNameText.text;
-    }
-
-    /// <summary>
-    /// DocumentExplanationTextの記載内容を変更
-    /// </summary>
-    /// <param name="documentDescription"></param>
-    public void ChangeDocumentExplanationText(string documentDescription)
-    {
-        //シーン内で取得したドキュメントオブジェクトの説明を保存
-        documentExplanationTextRubyComponent = documentExplanationText.GetComponent<TMP_Ruby.TextMeshProRuby>();
-        documentExplanationText.text = documentDescription;
-        documentExplanationTextRubyComponent.Text = documentExplanationText.text;
-    }
-
-    /// <summary>
-    /// ミステリーアイテム確認パネルの表示/非表示
-    /// </summary>
-    private void ChangeViewMysteryItemPanel()
-    {
-        if (isMysteryItemPanel)
-        {
-            //UIのレイヤーを手前側にする
-            mysteryItemInventoryPanel.transform.SetAsLastSibling();
-
-            //テキスト内容を変更する
-            SettingLanguageText();
-
-            //表示
-            mysteryItemInventoryPanel.SetActive(true);
-        }
-        else
-        {
-            //非表示
-            mysteryItemInventoryPanel.SetActive(false);
-
-            //ミステリーアイテム説明欄を非表示
-            isMysteryItemExplanationPanel = false;
-            ChangeViewMysteryItemExplanationPanel();
-
-            //画像と説明テキストをリセット
-            if (mysteryItemImage.Length > 0)
-            {
-                mysteryItemImage[0].sprite = null;
-                mysteryItemImage[0].enabled = false;
-            }
-
-            //mysteryItemExplanationTextRubyComponentを初期化
-            mysteryItemExplanationTextRubyComponent = new TMP_Ruby.TextMeshProRuby[mysteryItemExplanationText.Length];
-
-            //説明テキストが重なるのを防止するため、全ての説明テキストを一旦クリアする
-            for (int i = 0; i < mysteryItemExplanationText.Length; i++)
-            {
-                if (mysteryItemExplanationText.Length > 0)
-                {
-                    //コンポーネントを取得して配列に格納する
-                    mysteryItemExplanationTextRubyComponent[i] = mysteryItemExplanationText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
-                    mysteryItemExplanationText[i].text = "";
-                    mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
-                }
-            }
-        }
-    }
-
-    /// <summary>
-    /// ミステリーアイテム説明欄パネルの表示/非表示
-    /// </summary>
-    private void ChangeViewMysteryItemExplanationPanel()
-    {
-        if (isMysteryItemExplanationPanel)
-        {
-            //テキスト内容を変更する
-            SettingLanguageText();
-
-            //表示
-            mysteryItemExplanationPanel.SetActive(true);
-        }
-        else
-        {
-            //非表示
-            mysteryItemExplanationPanel.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// ミステリーアイテムのUIを初期化
-    /// </summary>
-    private void InitializeMysteryItemUI()
-    {
-        //mysteryItemNameTextRubyComponentを初期化
-        mysteryItemNameTextRubyComponent = new TMP_Ruby.TextMeshProRuby[mysteryItemNameText.Length];
-
-        //nullチェック
-        if (mysteryItemNameButton == null || mysteryItemNameText == null || mysteryItemNameTextRubyComponent == null)
-        {
-            Debug.LogError("mysteryItemNameButton or mysteryItemNameText is not assigned!");
-            return;
-        }
-
-        //ボタンにクリックイベントを追加
-        for (int i = 0; i < mysteryItemNameButton.Length; i++)
-        {
-            //ローカル変数でインデックスをキャプチャ
-            int index = i; 
-
-            //クリックイベントを追加
-            mysteryItemNameButton[i].onClick.AddListener(() => OnClickedMysteryItemNameButton(index));
-
-            //ミステリーアイテム名称のサイズを初期化する
-            mysteryItemNameText[i].fontSize = kDefultMysteryItemNameTextSize;
-
-            //入手していないアイテム名の初期表示を"?????????"にする
-            mysteryItemNameText[i].text = defaultItemName;
-
-        }
-
-
-        for (int i = 0; i < mysteryItemNameTextRubyComponent.Length; i++) 
-        {
-            ////mysteryItemNameTextRubyComponentに入手していないアイテム名の初期表示"?????????"を代入
-            mysteryItemNameTextRubyComponent[i] = mysteryItemNameText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
-            mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
-        }
-
-        //mysteryItemExplanationTextRubyComponent初期化処理は、ChangeViewMysteryItemPanel()内で先に実行している。
     }
 
     /// <summary>
@@ -2116,576 +1831,18 @@ public class PauseController : MonoBehaviour
     }
 
     /// <summary>
-    /// ミステリーアイテム名を追加し、UIに反映
-    /// </summary>
-    /// <param name="mysteryItemID">アイテムID</param>
-    /// <param name="mysteryItemName">アイテム名</param>
-    /// <param name="mysteryItemDescription">アイテム説明</param>
-    public void ChangeMysteryItemTexts(int mysteryItemID, string mysteryItemName, string mysteryItemDescription)
-    {
-        //IDリストに追加
-        mysteryItemIds.Add(mysteryItemID);
-
-        for (int i = 0; i < mysteryItemIds.Count; i++)
-        {
-            //チュートリアル用ハンマーの場合
-            if (mysteryItemIds[i] == hammer_TutorialID) 
-            {
-                //フラグ値をオン
-                isGetHammer_Tutorial = true;
-            }
-
-            //チュートリアル用ロープの場合
-            if (mysteryItemIds[i] == rope_TutorialID)
-            {
-                //フラグ値をオン
-                isGetRope_Tutorial = true;
-            }
-        }
-
-        //アイテムリストから該当するアイテムを検索
-        SO_Item.ItemData item = sO_Item.itemList.Find(x => x.itemName == mysteryItemName && x.itemType == ItemType.MysteryItem);
-        if (item != null && !mysteryItemNames.Contains(mysteryItemName))
-        {
-            //アイテム名リストに追加
-            mysteryItemNames.Add(mysteryItemName);
-
-            //アイテム説明リストに追加
-            mysteryItemExplanations.Add(mysteryItemDescription);
-
-            //UIに反映させる
-            UpdateMysteryItemUI();
-        }
-        else 
-        {
-            Debug.LogWarning($"MysteryItem '{mysteryItemName}' が見つからないか、すでに追加済みです");
-        }
-    }
-
-    /// <summary>
-    /// ミステリーアイテムのUIを更新
-    /// </summary>
-    private void UpdateMysteryItemUI()
-    {
-        for (int i = 0; i < mysteryItemNameText.Length; i++)
-        {
-            if (i < mysteryItemNames.Count)
-            {
-                //入手したミステリーアイテムがリスト内に存在するかを確認
-                string itemName = mysteryItemNames[i];
-                SO_Item.ItemData item = sO_Item.itemList.Find(x => x.itemName == itemName && x.itemType == ItemType.MysteryItem);
-
-                if (item != null)
-                {
-                    //ボタンに表示されるテキストを"?????????"からミステリーアイテム名に変更する
-                    mysteryItemNameText[i].text = itemName;
-                    mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
-
-                    //ボタンクリックを有効
-                    mysteryItemNameButton[i].interactable = true;
-
-                    if (i < mysteryItemExplanationText.Length)
-                    {
-                        //説明欄テキストにミステリーアイテム説明を反映させる
-                        mysteryItemExplanationText[i].text = mysteryItemExplanations[i];
-                        mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
-                    }
-
-                    if (i < mysteryItemImage.Length)
-                    {
-                        //ミステリーアイテム画像を反映させる
-                        mysteryItemImage[i].sprite = item.icon;
-                        mysteryItemImage[i].enabled = (item.icon != null);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"アイテム '{itemName}' が見つかりません");
-
-                    //ボタンに表示されるテキストを"?????????"にする
-                    mysteryItemNameText[i].text = defaultItemName;
-                    mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
-
-                    //ボタンクリックを無効
-                    mysteryItemNameButton[i].interactable = false;
-
-                    if (i < mysteryItemExplanationText.Length)
-                    {
-                        //説明欄テキストを空にする
-                        mysteryItemExplanationText[i].text = "";
-                        mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
-                    }
-
-                    if (i < mysteryItemImage.Length)
-                    {
-                        //ミステリーアイテム画像をnullする
-                        mysteryItemImage[i].sprite = null;
-                        mysteryItemImage[i].enabled = false;
-                    }
-                }
-            }
-            else
-            {
-                //ボタンに表示されるテキストを"?????????"にする
-                mysteryItemNameText[i].text = defaultItemName;
-                mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
-
-                //ボタンクリックを無効
-                mysteryItemNameButton[i].interactable = false;
-
-                if (i < mysteryItemExplanationText.Length)
-                {
-                    //説明欄テキストを空にする
-                    mysteryItemExplanationText[i].text = "";
-                    mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
-                }
-
-                if (i < mysteryItemImage.Length)
-                {
-                    //ミステリーアイテム画像をnullする
-                    mysteryItemImage[i].sprite = null;
-                    mysteryItemImage[i].enabled = false;
-                }
-            }
-        }
-    }
-
-    /// <summary>
     /// 言語を設定する
     /// </summary>
     public void SettingLanguageText() 
     {
-        //ドキュメントIDを取得している場合
-        if (keepDocumentBookID != defaultDocumentBookID) 
-        {
-            //言語ステータスに応じて、テキストを変更する
-            switch (LanguageController.instance.GetLanguageStatus()) 
-            {
-                //日本語
-                case LanguageController.LanguageStatus.kJapanese:
-                    //ドキュメント名称テキストを日本語にする
-                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameJapanese;
+        //ドキュメントの言語設定を行う
+        SettingLanguageDocumentText();
 
-                    //ドキュメント名称を日本語用にサイズを設定する
-                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeJapanese;
+        //ミステリーアイテムの言語設定を行う
+        SettingLanguageMysteryItemText();
 
-                    //説明テキストも日本語にする
-                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionJapanese;
-
-                    //ドキュメント説明テキストサイズを日本語用に設定する
-                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeJapanese;
-                    break;
-
-                //英語
-                case LanguageController.LanguageStatus.kEnglish:
-                    //\ドキュメント名称テキストを英語にする
-                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameEnglish;
-
-                    //ドキュメント名称を英語用にサイズを設定する
-                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeEnglish;
-
-                    //説明テキストも英語にする
-                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionEnglish;
-
-                    //ドキュメント説明テキストサイズを英語用に設定する
-                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeEnglish;
-                    break;
-
-                //簡体字中国語
-                case LanguageController.LanguageStatus.kSimplifiedChinese:
-                    //ドキュメント名称テキストを簡体字中国語にする
-                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameChinese01;
-
-                    //ドキュメント名称を簡体字中国語用にサイズを設定する
-                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeChinese01;
-
-                    //説明テキストも簡体字中国語にする
-                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionChinese01;
-
-                    //ドキュメント説明テキストサイズを簡体字中国語用に設定する
-                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeChinese01;
-                    break;
-
-                //繁体字中国語
-                case LanguageController.LanguageStatus.kTraditionalChinese:
-                    //ドキュメント名称テキストを繁体字中国語にする
-                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameChinese02;
-
-                    //ドキュメント名称を繁体字中国語用にサイズを設定する
-                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeChinese02;
-
-                    //説明テキストも繁体字中国語にする
-                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionChinese02;
-
-                    //ドキュメント説明テキストサイズを繁体字中国語用に設定する
-                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeChinese02;
-                    break;
-
-                //スペイン語
-                case LanguageController.LanguageStatus.kSpanish:
-                    //ドキュメント名称テキストをスペイン語にする
-                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameSpanish;
-
-                    //ドキュメント名称をスペイン語用にサイズを設定する
-                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeSpanish;
-
-                    //説明テキストもスペイン語にする
-                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSpanish;
-
-                    //ドキュメント説明テキストサイズをスペイン語用に設定する
-                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeSpanish;
-                    break;
-
-                //ポルトガル語
-                case LanguageController.LanguageStatus.kPortuguese:
-                    //ドキュメント名称テキストをポルトガル語にする
-                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNamePortuguese;
-
-                    //ドキュメント名称をポルトガル語用にサイズを設定する
-                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizePortuguese;
-
-                    //説明テキストもポルトガル語にする
-                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionPortuguese;
-
-                    //ドキュメント説明テキストサイズをポルトガル語用に設定する
-                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizePortuguese;
-                    break;
-
-                default:
-                    Debug.LogWarning("その他の言語ステータス");
-                    break;
-            }
-
-
-            //TextMeshProRubyコンポーネントにドキュメント名称を設定する
-            documentNameTextRubyComponent.Text = documentNameText.text;
-
-
-            //TextMeshProRubyコンポーネントにドキュメント説明文を設定する
-            documentExplanationTextRubyComponent.Text = documentExplanationText.text;
-        }
-
-        for (int i = 0; i < mysteryItemIds.Count; i++)
-        {
-            int itemId = mysteryItemIds[i];
-            SO_Item.ItemData item = sO_Item.itemList.Find(x => x.id == itemId && x.itemType == ItemType.MysteryItem);
-
-            //言語ステータスに応じて、テキストを変更する
-            switch (LanguageController.instance.GetLanguageStatus()) 
-            {
-
-                //日本語
-                case LanguageController.LanguageStatus.kJapanese:
-
-                    //ミステリーアイテム名称テキストを日本語にする
-                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameJapanese;
-                    sO_Item.SetItemName(item.id , itemMessage.itemMessage[item.id].itemNameJapanese);
-                    mysteryItemNameText[i].text = item.itemName;
-
-                    //ミステリーアイテム名称テキストサイズを日本語用に設定する
-                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeJapanese;
-
-                    if (0 < mysteryItemExplanationText.Length) 
-                    {
-                        //ミステリーアイテム説明テキストを日本語にする
-                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionJapanese;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionJapanese);
-                        mysteryItemExplanationText[i].text = item.description;
-
-                        //ミステリーアイテム説明テキストサイズを日本語用に設定する
-                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeJapanese;
-                    }
-                    break;
-
-                //英語
-                case LanguageController.LanguageStatus.kEnglish:
-
-                    //ミステリーアイテム名称テキストを英語にする
-                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameEnglish;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameEnglish);
-                    mysteryItemNameText[i].text = item.itemName;
-
-                    //ミステリーアイテム名称テキストサイズを英語用に設定する
-                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeEnglish;
-
-                    if (0 < mysteryItemExplanationText.Length) 
-                    {
-                        //ミステリーアイテム説明テキストを英語にする
-                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionEnglish;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionEnglish);
-                        mysteryItemExplanationText[i].text = item.description;
-
-                        //ミステリーアイテム説明テキストサイズを英語に設定する
-                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeEnglish;
-                    }   
-                    break;
-
-                //簡体字中国語
-                case LanguageController.LanguageStatus.kSimplifiedChinese:
-
-                    //ミステリーアイテム名称テキストを簡体字中国語にする
-                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameChinese01;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese01);
-                    mysteryItemNameText[i].text = item.itemName;
-
-                    //ミステリーアイテム名称テキストサイズを簡体字中国語用に設定する
-                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeChinese01;
-
-                    if (0 < mysteryItemExplanationText.Length) 
-                    {
-                        //ミステリーアイテム説明テキストを簡体字中国語にする
-                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionChinese01;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese01);
-                        mysteryItemExplanationText[i].text = item.description;
-
-                        //ミステリーアイテム説明テキストサイズを簡体字中国語用に設定する
-                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese01;
-                    }
-                    break;
-
-                //繁体字中国語
-                case LanguageController.LanguageStatus.kTraditionalChinese:
-
-                    //ミステリーアイテム名称テキストを繁体字中国語にする
-                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameChinese02;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese02);
-                    mysteryItemNameText[i].text = item.itemName;
-
-                    //ミステリーアイテム名称テキストサイズを繁体字中国語用に設定する
-                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeChinese02;
-
-                    if (0 < mysteryItemExplanationText.Length)
-                    {
-                        //ミステリーアイテム説明テキストを繁体字中国語にする
-                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionChinese02;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese02);
-                        mysteryItemExplanationText[i].text = item.description;
-
-                        //ミステリーアイテム説明テキストサイズを繁体字中国語用に設定する
-                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese02;
-                    }
-                    break;
-
-                //スペイン語
-                case LanguageController.LanguageStatus.kSpanish:
-
-                    //ミステリーアイテム名称テキストをスペイン語にする
-                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameSpanish;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameSpanish);
-                    mysteryItemNameText[i].text = item.itemName;
-
-                    //ミステリーアイテム名称テキストサイズをスペイン語用に設定する
-                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeSpanish;
-
-                    if (0 < mysteryItemExplanationText.Length)
-                    {
-                        //ミステリーアイテム説明テキストをスペイン語にする
-                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionSpanish;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionSpanish);
-                        mysteryItemExplanationText[i].text = item.description;
-
-                        //ミステリーアイテム説明テキストサイズをスペイン語用に設定する
-                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeSpanish;
-                    }
-                    break;
-
-                //ポルトガル語
-                case LanguageController.LanguageStatus.kPortuguese:
-
-                    //ミステリーアイテム名称テキストをポルトガル語にする
-                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNamePortuguese;
-                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNamePortuguese);
-                    mysteryItemNameText[i].text = item.itemName;
-
-                    //ミステリーアイテム名称テキストサイズをポルトガル語用に設定する
-                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizePortuguese;
-
-                    if (0 < mysteryItemExplanationText.Length)
-                    {
-                        //ミステリーアイテム説明テキストをポルトガル語にする
-                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionPortuguese;
-                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionPortuguese);
-                        mysteryItemExplanationText[i].text = item.description;
-
-                        //ミステリーアイテム説明テキストサイズをポルトガル語用に設定する
-                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizePortuguese;
-                    }
-                    break;
-
-            }
-
-            //TextMeshProRubyコンポーネントにミステリーアイテム名称を設定する
-            mysteryItemNameTextRubyComponent[i].Text = mysteryItemNameText[i].text;
-
-            //TextMeshProRubyコンポーネントにミステリーアイテム説明文を設定する
-            mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
-        }
-
-        /*---------------------------------------------
-         * 彷徨う者関連情報のテキストを設定する
-         -----------------------------------------------*/
-
-        for (int i = 0; i < enemyInformationIds.Count; i++)
-        {
-            int itemId = enemyInformationIds[i];
-            SO_Item.ItemData item = sO_Item.enemyInformationList.Find(x => x.id == itemId && x.itemType == ItemType.EnemyInforｍation);
-
-            if (enemyInformationIds[i] == kDefaultSaveEnemyInformationKey)
-            {
-                //次のループへ
-                continue;
-            }
-
-            //言語ステータスに応じて、テキストを変更する
-            switch (LanguageController.instance.GetLanguageStatus())
-            {
-
-                //日本語
-                case LanguageController.LanguageStatus.kJapanese:
-
-                    //彷徨う者関連情報名称テキストを日本語にする
-                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameJapanese;
-                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameJapanese);
-                    wandererNameText[i].text = item.itemName;
-
-                    //彷徨う者関連情報名称テキストサイズを日本語用に設定する
-                    wandererNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeJapanese;
-
-                    if (0 < wandererExplanationText.Length)
-                    {
-                        //彷徨う者関連情報説明テキストを日本語にする
-                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionJapanese;
-                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionJapanese);
-                        wandererExplanationText[i].text = item.description;
-
-                        //彷徨う者関連情報説明テキストサイズを日本語用に設定する
-                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeJapanese;
-                    }
-                    break;
-
-                //英語
-                case LanguageController.LanguageStatus.kEnglish:
-
-                    //彷徨う者関連情報名称テキストを英語にする
-                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameEnglish;
-                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameEnglish);
-                    wandererNameText[i].text = item.itemName;
-
-                    //彷徨う者関連情報名称テキストサイズを英語用に設定する
-                    wandererNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeEnglish;
-
-                    if (0 < wandererExplanationText.Length)
-                    {
-                        //彷徨う者関連情報説明テキストを英語にする
-                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionEnglish;
-                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionEnglish);
-                        wandererExplanationText[i].text = item.description;
-
-                        //彷徨う者関連情報説明テキストサイズを英語に設定する
-                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeEnglish;
-                    }
-                    break;
-
-                //簡体字中国語
-                case LanguageController.LanguageStatus.kSimplifiedChinese:
-
-                    //彷徨う者関連情報名称テキストを簡体字中国語にする
-                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameChinese01;
-                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese01);
-                    wandererNameText[i].text = item.itemName;
-
-                    //彷徨う者関連情報名称テキストサイズを簡体字中国語用に設定する
-                    wandererNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeChinese01;
-
-                    if (0 < wandererExplanationText.Length)
-                    {
-                        //彷徨う者関連情報説明テキストを簡体字中国語にする
-                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionChinese01;
-                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese01);
-                        wandererExplanationText[i].text = item.description;
-
-                        //彷徨う者関連情報説明テキストサイズを簡体字中国語用に設定する
-                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese01;
-                    }
-                    break;
-
-                //繁体字中国語
-                case LanguageController.LanguageStatus.kTraditionalChinese:
-
-                    //彷徨う者関連情報名称テキストを繁体字中国語にする
-                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameChinese02;
-                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameChinese02);
-                    wandererNameText[i].text = item.itemName;
-
-                    //彷徨う者関連情報名称テキストサイズを繁体字中国語用に設定する
-                    wandererNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeChinese02;
-
-                    if (0 < wandererExplanationText.Length)
-                    {
-                        //彷徨う者関連情報説明テキストを繁体字中国語にする
-                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionChinese02;
-                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionChinese02);
-                        wandererExplanationText[i].text = item.description;
-
-                        //彷徨う者関連情報説明テキストサイズを繁体字中国語用に設定する
-                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese02;
-                    }
-                    break;
-
-                //スペイン語
-                case LanguageController.LanguageStatus.kSpanish:
-
-                    //彷徨う者関連情報名称テキストをスペイン語にする
-                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameSpanish;
-                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNameSpanish);
-                    wandererNameText[i].text = item.itemName;
-
-                    //彷徨う者関連情報名称テキストサイズをスペイン語用に設定する
-                    wandererNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeSpanish;
-
-                    if (0 < wandererExplanationText.Length)
-                    {
-                        //彷徨う者関連情報説明テキストをスペイン語にする
-                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionSpanish;
-                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionSpanish);
-                        wandererExplanationText[i].text = item.description;
-
-                        //彷徨う者関連情報説明テキストサイズをスペイン語用に設定する
-                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeSpanish;
-                    }
-                    break;
-
-                //ポルトガル語
-                case LanguageController.LanguageStatus.kPortuguese:
-
-                    //彷徨う者関連情報名称テキストをポルトガル語にする
-                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNamePortuguese;
-                    sO_Item.SetEnemyInformationItemName(item.id, itemMessage.itemMessage[item.id].itemNamePortuguese);
-                    wandererNameText[i].text = item.itemName;
-
-                    //彷徨う者関連情報名称テキストサイズをポルトガル語用に設定する
-                    wandererNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizePortuguese;
-
-                    if (0 < wandererExplanationText.Length)
-                    {
-                        //彷徨う者関連情報説明テキストをポルトガル語にする
-                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionPortuguese;
-                        sO_Item.SetEnemyInformationItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionPortuguese);
-                        wandererExplanationText[i].text = item.description;
-
-                        //彷徨う者関連情報説明テキストサイズをポルトガル語用に設定する
-                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizePortuguese;
-                    }
-                    break;
-
-            }
-
-            //TextMeshProRubyコンポーネントに彷徨う者関連情報名称を設定する
-            wandererNameTextRubyComponent[i].Text = wandererNameText[i].text;
-
-            //TextMeshProRubyコンポーネントに彷徨う者関連情報説明文を設定する
-            wandererExplanationTextRubyComponent[i].Text = wandererExplanationText[i].text;
-        }
+        //彷徨う者関連情報の言語設定を行う
+        SettingLanguageWandererInformationText();
     }
 
     /// <summary>
