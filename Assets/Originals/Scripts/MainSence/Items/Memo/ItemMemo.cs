@@ -33,7 +33,7 @@ public class ItemMemo
         "24:汚れた片方のシューズ:MysteryItem",
         "25:スプレー缶:MysteryItem",
         "26:新品のノート:MysteryItem",
-        "27:デモ版用静声に熱する彷徨う者の関連情報:EnemyInforｍation(使用廃止)",
+        "27:未使用",
         "28:静声に熱する彷徨う者の関連情報:EnemyInforｍation",
         "29:微美しき魅忘の彷徨う者の関連情報:EnemyInforｍation",
         "30:唄歌う彷徨う者の関連情報:EnemyInforｍation",

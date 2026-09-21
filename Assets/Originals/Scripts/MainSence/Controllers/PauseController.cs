@@ -1351,184 +1351,6 @@ public partial class PauseController : MonoBehaviour
     }
 
     /// <summary>
-    /// 彷徨う者関連情報のUIを初期化
-    /// </summary>
-    private void InitializeWandererItemUI()
-    {
-        //wandererNameTextRubyComponentを初期化
-        wandererNameTextRubyComponent = new TMP_Ruby.TextMeshProRuby[wandererNameText.Length];
-
-        //nullチェック
-        if (wandererNameButton == null || wandererNameText == null || wandererNameTextRubyComponent == null)
-        {
-            Debug.LogError("wandererNameButton or wandererNameText is not assigned!");
-            return;
-        }
-
-        
-        //彷徨う者関連情報を設定するためのキーを取得する
-        string[] targetKeys = GameController.instance.GetIsDemoPlayFlag()
-            ? new string[] { stringDemoVeinVainWandererStatus, stringBeauteousBewilderWandererStatus, stringSingSongWandererStatus } // デモ版
-            : new string[] { stringVeinVainWandererStatus, stringBeauteousBewilderWandererStatus, stringSingSongWandererStatus };// 製品版
-
-        //ボタンにクリックイベントを追加
-        for (int i = 0; i < wandererNameButton.Length; i++)
-        {
-            //ローカル変数でインデックスをキャプチャ
-            //int index = i;
-
-            //クリックイベント二重登録を防止
-            wandererNameButton[i].onClick.RemoveAllListeners();
-
-            //クリックイベントを追加
-            wandererNameButton[i].onClick.AddListener(() => OnClickedWandererNameButton(i));
-
-            //現在のボタンに対応するキーを取得
-            string key = targetKeys[i];
-
-            // ステータス配列に対象のキーが存在するか確認し、値を取得
-            if (saveEnemyInformationStatusArray.TryGetValue(key, out int statusValue)) 
-            {
-                //保存用彷徨う者関連情報ステータス配列の値が1の場合
-                if (statusValue == 1)
-                {
-                    //言語ステータスに応じて、テキストを変更する
-                    switch (LanguageController.instance.GetLanguageStatus())
-                    {
-                        //日本語
-                        case LanguageController.LanguageStatus.kJapanese:
-
-                            //彷徨う者名称欄に日本語用の名称テキストを設定する
-                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameJapanese;
-
-                            //彷徨う者名称テキストサイズを日本語用に設定する
-                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeJapanese;
-
-                            //彷徨う者説明欄欄に日本語用の名称テキストを設定する
-                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionJapanese;
-
-                            //彷徨う者説明欄テキストサイズを日本語用に設定する
-                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeJapanese;
-                            break;
-
-                        //英語
-                        case LanguageController.LanguageStatus.kEnglish:
-
-                            //彷徨う者名称欄に英語用の名称テキストを設定する
-                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameEnglish;
-
-                            //彷徨う者名称テキストサイズを英語用に設定する
-                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeEnglish;
-
-                            //彷徨う者説明欄欄に英語用の名称テキストを設定する
-                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionEnglish;
-
-                            //彷徨う者説明欄テキストサイズを英語用に設定する
-                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeEnglish;
-                            break;
-
-                        //簡体字中国語
-                        case LanguageController.LanguageStatus.kSimplifiedChinese:
-
-                            //彷徨う者名称欄に簡体字中国語用の名称テキストを設定する
-                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameChinese01;
-
-                            //彷徨う者名称テキストサイズを簡体字中国語用に設定する
-                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeChinese01;
-
-                            //彷徨う者説明欄欄に簡体字中国語用の名称テキストを設定する
-                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionChinese01;
-
-                            //彷徨う者説明欄テキストサイズを簡体字中国語用に設定する
-                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeChinese01;
-                            break;
-
-                        //繁体字中国語
-                        case LanguageController.LanguageStatus.kTraditionalChinese:
-
-                            //彷徨う者名称欄に繁体字中国語用の名称テキストを設定する
-                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameChinese02;
-
-                            //彷徨う者名称テキストサイズを繁体字中国語用に設定する
-                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeChinese02;
-
-                            //彷徨う者説明欄欄に繁体字中国語用の名称テキストを設定する
-                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionChinese02;
-
-                            //彷徨う者説明欄テキストサイズを繁体字中国語用に設定する
-                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeChinese02;
-                            break;
-
-                        //スペイン語
-                        case LanguageController.LanguageStatus.kSpanish:
-
-                            //彷徨う者名称欄にスペイン語用の名称テキストを設定する
-                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSpanish;
-
-                            //彷徨う者名称テキストサイズをスペイン語用に設定する
-                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeSpanish;
-
-                            //彷徨う者説明欄欄にスペイン語用の名称テキストを設定する
-                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSpanish;
-
-                            //彷徨う者説明欄テキストサイズをスペイン語用に設定する
-                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeSpanish;
-                            break;
-
-                        //ポルトガル語
-                        case LanguageController.LanguageStatus.kPortuguese:
-
-                            //彷徨う者名称欄にポルトガル語用の名称テキストを設定する
-                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNamePortuguese;
-
-                            //彷徨う者名称テキストサイズをポルトガル語用に設定する
-                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizePortuguese;
-
-                            //彷徨う者説明欄欄にポルトガル語用の名称テキストを設定する
-                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionPortuguese;
-
-                            //彷徨う者説明欄テキストサイズをポルトガル語用に設定する
-                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizePortuguese;
-                            break;
-
-                        default:
-                            Debug.LogWarning("その他の言語ステータス");
-                            break;
-                    }
-
-                    //彷徨う者関連情報IDのリストにIDを追加する
-                    enemyInformationIds[i] = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemId;
-
-                    //彷徨う者関連情報名称のリストに名称を追加する
-                    enemyInformationNames[i] = wandererNameText[i].text;
-
-                    //彷徨う者関連情報の説明のリストに説明を追加する
-                    enemyInformationExplanations[i] = wandererExplanationText[i].text;
-                }
-                //保存用彷徨う者関連情報ステータス配列の値が初期値の場合
-                else if (saveEnemyInformationStatusArray.ElementAt(i).Value == kDefaultSaveEnemyInformationKey)
-                {
-                    //彷徨う者名称のサイズを初期化する
-                    wandererNameText[i].fontSize = kDefaultWandererNameTextSize;
-
-                    //入手していない彷徨う者名の初期表示を"?????????"にする
-                    wandererNameText[i].text = defaultItemName;
-                }
-            }
-        }
-
-        //RubyComponentへの反映
-        for (int i = 0; i < wandererNameTextRubyComponent.Length; i++)
-        {
-            ////wandererNameTextRubyComponentに入手していないアイテム名の初期表示を設定
-            wandererNameTextRubyComponent[i] = wandererNameText[i].GetComponent<TMP_Ruby.TextMeshProRuby>();
-            wandererNameTextRubyComponent[i].Text = wandererNameText[i].text;
-        }
-
-        //wandererExplanationTextRubyComponent初期化処理は、ChangeViewWandererPanel()内で先に実行している。
-    }
-
-    /// <summary>
     /// 彷徨う者名称ボタン押下時
     /// </summary>
     /// <param name="index">インデックス番号</param>
@@ -1537,14 +1359,11 @@ public partial class PauseController : MonoBehaviour
         //ボタンSE
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
-
+        //インデックス番号が名称ボタンの数より小さい場合
         if (index < enemyInformationNames.Count)
         {
-            //入手した彷徨う者関連情報がリスト内に存在するかを確認
-            string itemName = enemyInformationNames[index];
-            SO_Item.ItemData item = sO_Item.enemyInformationList.Find(x => x.itemName == itemName && x.itemType == ItemType.EnemyInforｍation);
-
-            if (item != null)
+            //既に取得済みの彷徨う者関連情報の場合
+            if (enemyInformationIds[index] != kDefaultSaveEnemyInformationKey)
             {
                 //彷徨う者説明パネルを表示
                 isWandererExplanationPanel = true;
@@ -1570,60 +1389,60 @@ public partial class PauseController : MonoBehaviour
                         case LanguageController.LanguageStatus.kJapanese:
 
                             //彷徨う者説明欄に日本語用の説明テキストを設定する
-                            wandererExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionJapanese;
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionJapanese;
 
                             //彷徨う者説明テキストサイズを日本語用に設定する
-                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeJapanese;
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeJapanese;
                             break;
 
                         //英語
                         case LanguageController.LanguageStatus.kEnglish:
 
                             //彷徨う者説明欄に英語用の説明テキストを設定する
-                            wandererExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionEnglish;
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionEnglish;
 
                             //彷徨う者説明テキストサイズを英語用に設定する
-                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeEnglish;
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeEnglish;
                             break;
 
                         //簡体字中国語
                         case LanguageController.LanguageStatus.kSimplifiedChinese:
 
                             //彷徨う者説明欄に簡体字中国語用の説明テキストを設定する
-                            wandererExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionChinese01;
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionChinese01;
 
                             //彷徨う者説明テキストサイズを簡体字中国語用に設定する
-                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese01;
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeChinese01;
                             break;
 
                         //繁体字中国語
                         case LanguageController.LanguageStatus.kTraditionalChinese:
 
                             //彷徨う者説明欄に繁体字中国語用の説明テキストを設定する
-                            wandererExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionChinese02;
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionChinese02;
 
                             //彷徨う者説明テキストサイズを繁体字中国語用に設定する
-                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeChinese02;
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeChinese02;
                             break;
 
                         //スペイン語
                         case LanguageController.LanguageStatus.kSpanish:
 
                             //彷徨う者説明欄にスペイン語用の説明テキストを設定する
-                            wandererExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionSpanish;
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSpanish;
 
                             //彷徨う者説明テキストサイズをスペイン語用に設定する
-                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeSpanish;
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeSpanish;
                             break;
 
                         //ポルトガル語
                         case LanguageController.LanguageStatus.kPortuguese:
 
                             //彷徨う者説明欄にポルトガル語用の説明テキストを設定する
-                            wandererExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionPortuguese;
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionPortuguese;
 
                             //彷徨う者説明テキストサイズをポルトガル語用に設定する
-                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizePortuguese;
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizePortuguese;
                             break;
 
                         default:
@@ -1636,64 +1455,9 @@ public partial class PauseController : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"彷徨う者関連情報アイテム '{itemName}' が見つかりません");
+                Debug.LogWarning($"彷徨う者関連情報アイテム '{enemyInformationNames[index]}' が見つかりません");
             }
         }
-    }
-
-    /// <summary>
-    /// 彷徨う者情報関連の名前を追加し、UIに反映する関数
-    /// </summary>
-    /// <param name="itemID">アイテムID</param>
-    /// <param name="wandererID">彷徨う者ID</param>
-    /// <param name="wandererName">彷徨う者の名前</param>
-    /// <param name="wandererDescription">彷徨う者の説明</param>
-    public void ChangeWandererTexts(int itemID, int wandererID, string wandererName, string wandererDescription) 
-    {
-        string targetKey;
-
-        //デモ版で静声に熱する彷徨う者の関連情報を入手した場合
-        if (GameController.instance.GetIsDemoPlayFlag() && wandererID == 1)
-        {
-            //デモ版の静声に熱する彷徨う者の関連情報の値を取得
-            targetKey = saveEnemyInformationStatusArray.Keys.ElementAt(wandererID - 1);
-        }
-        else 
-        {
-            //彷徨う者の関連情報の値を取得
-            targetKey = saveEnemyInformationStatusArray.Keys.ElementAt(wandererID);
-        }
-
-        //保存用彷徨う者関連情報ステータス配列の値を1に変更する  
-        saveEnemyInformationStatusArray[targetKey] = 1;
-
-
-        //デモ版で静声に熱する彷徨う者の関連情報を入手した場合
-        if (GameController.instance.GetIsDemoPlayFlag() && wandererID == 1)
-        {
-            //デモ版の静声に熱する彷徨う者の関連情報のIDを保存
-            enemyInformationIds[wandererID - 1] = itemID;
-
-            //デモ版の静声に熱する彷徨う者の関連情報の名称を保存
-            enemyInformationNames[wandererID - 1] = wandererName;
-
-            //デモ版の静声に熱する彷徨う者の関連情報の説明を保存
-            enemyInformationExplanations[wandererID - 1] = wandererDescription;
-        }
-        else 
-        {
-            //彷徨う者関連情報のIDを保存
-            enemyInformationIds[wandererID] = itemID;
-
-            //彷徨う者関連情報の名称を保存
-            enemyInformationNames[wandererID] = wandererName;
-
-            //彷徨う者関連情報の説明を保存
-            enemyInformationExplanations[wandererID] = wandererDescription;
-        }
-
-        //TODO:UIのテキストを更新する処理を追加する
-        UpdateEnemyInformationUI();
     }
 
     /// <summary>

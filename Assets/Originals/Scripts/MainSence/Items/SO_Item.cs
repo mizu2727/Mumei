@@ -393,7 +393,6 @@ public class SO_Item : ScriptableObject
         {
             //ÉäÉXÉgÇ…êVãKí«â¡
             ItemData newEnemyInformationData = new ItemData(newEnemyInformation);
-            enemyInformationList.Add(newEnemyInformationData);
 
             if (newEnemyInformationData.itemType == ItemType.EnemyInforÇçation)
             {

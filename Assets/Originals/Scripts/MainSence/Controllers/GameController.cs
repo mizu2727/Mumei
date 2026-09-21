@@ -22,10 +22,8 @@ public class GameController : MonoBehaviour
     /// </summary>
     private bool isDemoPlayFlag = true;
 
-    /// <summary>
-    /// デモ版彷徨う者関連情報全削除フラグ(TODO:製品版リリースタイミングでは必ずfalseにすること)
-    /// </summary>
-    private bool isDemoResetEnemyInformationListFlag = false;
+    [Header("デモ版彷徨う者関連情報全削除フラグ(TODO:製品版リリースタイミングでは必ずfalseにすること)")]
+    [SerializeField] private bool isDemoResetEnemyInformationListFlag = false;
 
     /// <summary>
     /// デフォルトのフレームレート
@@ -744,9 +742,6 @@ public class GameController : MonoBehaviour
         //デモ版彷徨う者関連情報全削除フラグがtrueの場合
         if (isDemoResetEnemyInformationListFlag)
         {
-            //彷徨う者関連情報を全削除
-            sO_Item.ResetEnemyInformationList();
-
             //彷徨う者関連情報ステータス配列を初期化する
             foreach (string data in saveEnemyInformationStatusArray.Keys.ToList())
             {

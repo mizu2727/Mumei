@@ -244,7 +244,12 @@ public class Item : MonoBehaviour
     /// </summary>
     public  void SettingLanguageText() 
     {
-        Debug.Log("アイテムID:" + itemMessage.itemMessage[id].itemId);
+        //itemMessageのNullチェック(エラーが起こった場合、エディタ上でシングルクリックし、ヒエラルキー上で表示されているitem系からitemMessageをアタッチすること)
+        if (itemMessage == null)
+        {
+            Debug.LogError("itemMessage が参照されていません。", this);
+            return;
+        }
 
         //アイテムのプレハブのAddressables名を設定する
         prefabPath = itemMessage.itemMessage[id].itemPrefabPath;
