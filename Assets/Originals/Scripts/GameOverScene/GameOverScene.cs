@@ -15,6 +15,22 @@ public class GameOverScene : MonoBehaviour
     [Header("ゲームオーバー画面のCanvas")]
     [SerializeField] private Canvas gameOverCanvas;
 
+    [Header("ゲームオーバーパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject gameOverPanel;
+
+    /// <summary>
+    /// ゲームオーバーパネル閲覧フラグ
+    /// </summary>
+    private bool isViewGameOverPanel = false;
+
+    [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject returnToTitlePanel;
+
+    /// <summary>
+    /// タイトルへ戻るパネル閲覧フラグ
+    /// </summary>
+    private bool isReturnToTitlePanel = false;
+
     /// <summary>
     /// ロードしたいScene名
     /// </summary>
@@ -104,7 +120,7 @@ public class GameOverScene : MonoBehaviour
             instance = null;
         }
     }
-    void Start()
+    private void Start()
     {
         //シーン名配列インデックス番号
         switch (saveStageSceneNameArrayIndex) 
@@ -154,16 +170,56 @@ public class GameOverScene : MonoBehaviour
     /// <summary>
     /// ゲームオーバー時のUIを表示
     /// </summary>
-    void ViewGameOverUI() 
+    private void ViewGameOverUI() 
     {
         gameOverCanvas.enabled = true;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
+        //ゲームオーバーパネルを表示にし、タイトルへ戻るパネルを非表示する
+        isViewGameOverPanel = true;
+        ChangeViewGameOverPanel();
+
+        isReturnToTitlePanel = false;
+        ChangeReturnToTitlePanel();
     }
 
+    /// <summary>
+    /// ゲームオーバーパネルの表示/非表示
+    /// </summary>
+    private void ChangeViewGameOverPanel()
+    {
+        if (isViewGameOverPanel)
+        {
+            //表示
+            gameOverPanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            gameOverPanel.SetActive(false);
+        }
+    }
 
     /// <summary>
-    /// リスタートボタン押下時の処理(GameOverSceneではシーン遷移時用データを保存しないこと)
+    /// タイトルへ戻るパネルの表示/非表示
+    /// </summary>
+    private void ChangeReturnToTitlePanel()
+    {
+        if (isReturnToTitlePanel)
+        {
+            //表示
+            returnToTitlePanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            returnToTitlePanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// リスタートボタン押下時の処理
     /// </summary>
     public void OnClickedRestartGameButton()
     {
@@ -182,6 +238,19 @@ public class GameOverScene : MonoBehaviour
     /// </summary>
     public void OnClickedReturnToTitleButton()
     {
+        //ゲームオーバーパネルを非表示にし、タイトルへ戻るパネルを表示する
+        isReturnToTitlePanel = true;
+        ChangeReturnToTitlePanel();
+
+        isViewGameOverPanel = false;
+        ChangeViewGameOverPanel();
+    }
+
+    /// <summary>
+    /// 「はい」押下
+    /// </summary>
+    public void OnClickedYesButton()
+    {
         //難易度をなしにリセット
         DifficultyLevelController.instance.SetDifficultyLevelStatus(DifficultyLevelController.DifficultyLevel.kNone);
 
@@ -190,5 +259,18 @@ public class GameOverScene : MonoBehaviour
 
         //TitleSceneをロードする
         SceneManager.LoadScene(CommonController.instance.GetTitleSceneName());
+    }
+
+    /// <summary>
+    /// 「いいえ」押下
+    /// </summary>
+    public void OnClickedNoButton()
+    {
+        //ゲームオーバーパネルを表示にし、タイトルへ戻るパネルを非表示する
+        isViewGameOverPanel = true;
+        ChangeViewGameOverPanel();
+
+        isReturnToTitlePanel = false;
+        ChangeReturnToTitlePanel();
     }
 }
