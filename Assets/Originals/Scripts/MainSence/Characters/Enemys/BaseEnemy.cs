@@ -35,6 +35,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         /// 微美しき魅忘の彷徨う者
         /// </summary>
         BeauteousBewilderWanderer,
+
+        /// <summary>
+        /// 唄歌う彷徨う者
+        /// </summary>
+        SingSongWanderer,
     }
 
 
