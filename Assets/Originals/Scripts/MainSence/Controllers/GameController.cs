@@ -944,12 +944,37 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
+    /// ステージ選択へ戻る
+    /// </summary>
+    public void ReturnToSelectStage()
+    {
+        //難易度をなしにリセット
+        DifficultyLevelController.instance.SetDifficultyLevelStatus(DifficultyLevelController.DifficultyLevel.kNone);
+
+        //シーン遷移時用データを保存
+        CallSaveSceneTransitionUserDataMethod();
+
+        //MessageControllerの非同期タスクをキャンセル
+        if (MessageController.instance != null)
+        {
+            MessageController.instance.CancelAsyncTasks();
+            MessageController.instance.DestroyController();
+        }
+
+        //プレイヤー削除・Home02Sceneへ遷移
+        if (Player.instance != null)
+        {
+            Player.instance.DestroyPlayer();
+        }
+
+        SceneManager.LoadScene(CommonController.instance.GetHome02SceneName());
+    }
+
+    /// <summary>
     /// タイトル画面へ戻る
     /// </summary>
     public void ReturnToTitle() 
     {
-
-
         //難易度をなしにリセット
         DifficultyLevelController.instance.SetDifficultyLevelStatus(DifficultyLevelController.DifficultyLevel.kNone);
 
@@ -975,6 +1000,5 @@ public class GameController : MonoBehaviour
         {
             PauseController.instance.DestroyController();
         }
-
     }
 }

@@ -19,6 +19,22 @@ public partial class PauseController
     }
 
     /// <summary>
+    /// 「ステージ選択へ戻る」ボタン押下
+    /// </summary>
+    public void OnClickedViewReturnToSelectStagePanelButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+
+        //リタイアパネルを非表示にし、ステージ選択へ戻るパネルを表示する
+        isReturnToSelectStagePanel = true;
+        ChangeReturnToSelectStagePanel();
+
+        isRetirePanel = false;
+        ChangeViewRetirePanel();
+    }
+
+    /// <summary>
     /// 「タイトルへ戻る」ボタン押下
     /// </summary>
     public void OnClickedReturnToTitleButton()
@@ -48,6 +64,23 @@ public partial class PauseController
         {
             //非表示
             retirePanel.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// ステージ選択へ戻るパネルの表示/非表示
+    /// </summary>
+    private void ChangeReturnToSelectStagePanel()
+    {
+        if (isReturnToSelectStagePanel)
+        {
+            //表示
+            returnToSelectStagePanel.SetActive(true);
+        }
+        else
+        {
+            //非表示
+            returnToSelectStagePanel.SetActive(false);
         }
     }
 

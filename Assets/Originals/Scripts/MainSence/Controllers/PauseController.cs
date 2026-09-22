@@ -238,6 +238,12 @@ public partial class PauseController : MonoBehaviour
     [Header("リタイアパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject retirePanel;
 
+    [Header("ステージ選択へ戻るパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject returnToSelectStagePanel;
+
+    [Header("ステージ選択へ戻るボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject returnToSelectStageButton;
+
     [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject returnToTitlePanel;
 
@@ -267,6 +273,11 @@ public partial class PauseController : MonoBehaviour
     /// リタイアパネル閲覧フラグ
     /// </summary>
     private bool isRetirePanel = false;
+
+    /// <summary>
+    /// ステージ選択へ戻るパネル閲覧フラグ
+    /// </summary>
+    private bool isReturnToSelectStagePanel = false;
 
     /// <summary>
     /// タイトルへ戻るパネル閲覧フラグ
@@ -697,6 +708,20 @@ public partial class PauseController : MonoBehaviour
             returnToTitlePanel = null;
         }
 
+        //returnToSelectStageButtonが存在する場合
+        if (returnToSelectStageButton != null) 
+        {
+            //returnToSelectStageButtonをnullにする
+            returnToSelectStageButton = null;
+        }
+
+        //returnToSelectStagePanelが存在する場合
+        if (returnToSelectStagePanel != null) 
+        {
+            //returnToSelectStagePanelをnullにする
+            returnToSelectStagePanel = null;
+        }
+
         //retirePanelが存在する場合
         if (retirePanel != null) 
         {
@@ -860,6 +885,20 @@ public partial class PauseController : MonoBehaviour
             viewItemsPanel.GetComponent<Image>().color = kViewItemsPanelBlackColor;
         }
 
+        //現在のシーン名がHomeSceneの場合||現在のシーン名がHome02Sceneの場合
+        if (CommonController.instance.GetHomeSceneName() == SceneManager.GetActiveScene().name
+            || CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name)
+        {
+            //ステージ選択へ戻るボタンを非表示にする
+            returnToSelectStageButton.SetActive(false);
+        }
+        else
+        {
+            //ステージ選択へ戻るボタンを表示する
+            returnToSelectStageButton.SetActive(true);
+        }
+
+
         //パネルを初期状態で非表示にする
         //フラグ値を初期化
         isPause = false;
@@ -876,6 +915,9 @@ public partial class PauseController : MonoBehaviour
 
         isMysteryItemPanel = false;
         ChangeViewMysteryItemPanel();
+
+        isReturnToSelectStagePanel = false;
+        ChangeReturnToSelectStagePanel();
 
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
@@ -1101,29 +1143,44 @@ public partial class PauseController : MonoBehaviour
     }
 
     /// <summary>
-    /// タイトルへ戻るパネル内の「はい」押下
+    /// ステージ選択へ戻るパネル・タイトルへ戻るパネル内の「はい」押下
     /// </summary>
     public void OnClickedYesButton()
     {
         //ボタンSE
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
-        //タイトル画面へ遷移
-        GameController.instance.ReturnToTitle();
+        //ステージ選択へ戻るパネルが表示されている場合
+        if (isReturnToSelectStagePanel) 
+        {
+            //ステージ選択画面へ遷移
+            GameController.instance.ReturnToSelectStage();
+        }
+        //タイトルへ戻るパネルが表示されている場合
+        else if (isReturnToTitlePanel)
+        {
+            //タイトル画面へ遷移
+            GameController.instance.ReturnToTitle();
+        }
     }
 
     /// <summary>
-    /// タイトルへ戻るパネル内の「いいえ」押下
+    /// ステージ選択へ戻るパネル・タイトルへ戻るパネル内の「いいえ」押下
     /// </summary>
     public void OnClickedNoButton()
     {
         //ボタンSE
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
-        //リタイアパネルを表示にし、タイトルへ戻るパネルを非表示する
+        //リタイアパネルを表示
         isRetirePanel = true;
         ChangeViewRetirePanel();
 
+        //ステージ選択へ戻るパネルを非表示にする
+        isReturnToSelectStagePanel = false;
+        ChangeReturnToSelectStagePanel();
+
+        //タイトルへ戻るパネルを非表示にする
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
     }
