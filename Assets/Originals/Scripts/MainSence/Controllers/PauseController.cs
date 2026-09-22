@@ -58,6 +58,11 @@ public partial class PauseController : MonoBehaviour
     [Header("敵(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private BaseEnemy[] baseEnemy;
 
+
+    /*-----------------------------------------------------------
+     * ポーズパネル関連(アイテム確認パネルの子パネルも含む)
+     ----------------------------------------------------------*/
+
     [Header("ポーズパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject pausePanel;
 
@@ -78,6 +83,9 @@ public partial class PauseController : MonoBehaviour
     [Header("アイテム確認パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject viewItemsPanel;
 
+    Color32 kDefaultViewItemsPanelColor = new Color32(0, 0, 0, 210);
+
+    Color32 kViewItemsPanelBlackColor = new Color32(0, 0, 0, 255);
 
     /*-----------------------------------------------------------
      * アーカイブパネル関連(アーカイブパネルの子パネルも含む)
@@ -816,6 +824,17 @@ public partial class PauseController : MonoBehaviour
             wandererButton.SetActive(false);
         }
 
+        //現在のシーン名がHomeSceneの場合
+        if (CommonController.instance.GetHomeSceneName() == SceneManager.GetActiveScene().name)
+        {
+            //アイテム確認パネルの色をデフォルトの色に戻す
+            viewItemsPanel.GetComponent<Image>().color = kDefaultViewItemsPanelColor;
+        }
+        else 
+        {
+            //アイテム確認パネルの色を黒にする
+            viewItemsPanel.GetComponent<Image>().color = kViewItemsPanelBlackColor;
+        }
 
         //パネルを初期状態で非表示にする
         //フラグ値を初期化
