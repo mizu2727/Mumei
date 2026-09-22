@@ -230,9 +230,21 @@ public partial class PauseController : MonoBehaviour
     [Header("ミステリーアイテム説明欄パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject mysteryItemExplanationPanel;
 
+
+    /*-----------------------------------------------------------
+     * リタイア関連
+     -----------------------------------------------------------*/
+
+    [Header("リタイアパネル(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject retirePanel;
+
     [Header("タイトルへ戻るパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject returnToTitlePanel;
 
+
+    /*-----------------------------------------------------------
+     * フラグ関連
+     -----------------------------------------------------------*/
     [Header("フラグ関連")]
     [Header("ポーズフラグ(ヒエラルキー上からの編集禁止)")]
     public bool isPause = false;
@@ -250,6 +262,11 @@ public partial class PauseController : MonoBehaviour
     {
         return isViewItemsPanel;
     }
+
+    /// <summary>
+    /// リタイアパネル閲覧フラグ
+    /// </summary>
+    private bool isRetirePanel = false;
 
     /// <summary>
     /// タイトルへ戻るパネル閲覧フラグ
@@ -680,6 +697,13 @@ public partial class PauseController : MonoBehaviour
             returnToTitlePanel = null;
         }
 
+        //retirePanelが存在する場合
+        if (retirePanel != null) 
+        {
+            //retirePanelをnullにする
+            retirePanel = null;
+        }
+
         //もしこのインスタンスがシングルトンインスタンス自身であれば、staticな参照をクリアする
         if (instance == this)
         {
@@ -856,6 +880,9 @@ public partial class PauseController : MonoBehaviour
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
 
+        isRetirePanel = false;
+        ChangeViewRetirePanel();
+
         isGetHammer_Tutorial = false;
         isGetRope_Tutorial = false;
         isViewMysteryItem_Tutorial = false;
@@ -905,7 +932,7 @@ public partial class PauseController : MonoBehaviour
         //ポーズを開く条件
         if (!player.IsDead && !isPause && !isViewItemsPanel && !isArchivePanel
             && !isDocumentPanel && !isDocumentExplanationPanel && !isMysteryItemPanel
-            && !isMysteryItemExplanationPanel 
+            && !isMysteryItemExplanationPanel && !isRetirePanel
             && (CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name || !goal.isGoalPanel) 
             && Time.timeScale != 0)
         {
@@ -916,8 +943,8 @@ public partial class PauseController : MonoBehaviour
         {
             OnClickedClosePauseButton();
         }
-        //アイテム確認パネルを開いている場合||タイトルへ戻るパネルを開いている場合||オプションパネルを開いている場合||
-        else if (isViewItemsPanel || isReturnToTitlePanel || OptionUIController.instance.GetIsOptionPanel()) 
+        //アイテム確認パネルを開いている場合||リタイアパネルを開いている場合||オプションパネルを開いている場合||
+        else if (isViewItemsPanel || isRetirePanel || OptionUIController.instance.GetIsOptionPanel()) 
         {
             //各パネルを閉じる
             //アイテム確認パネルを非表示
@@ -936,9 +963,9 @@ public partial class PauseController : MonoBehaviour
             isMysteryItemPanel = false;
             ChangeViewMysteryItemPanel();
 
-            //タイトルへ戻るパネルを非表示
-            isReturnToTitlePanel = false;
-            ChangeReturnToTitlePanel();
+            //リタイアパネルを非表示
+            isRetirePanel = false;
+            ChangeViewRetirePanel();
 
             //オプションパネルが表示されている場合は閉じる
             OptionUIController.instance.OnClickedCloseOptionButton();
@@ -1074,23 +1101,7 @@ public partial class PauseController : MonoBehaviour
     }
 
     /// <summary>
-    /// 「タイトルへ戻る」ボタン押下
-    /// </summary>
-    public void OnClickedReturnToTitleButton()
-    {
-        //ボタンSE
-        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
-
-        //ポーズパネルを非表示にし、タイトルへ戻るパネルを表示する
-        isReturnToTitlePanel = true;
-        ChangeReturnToTitlePanel();
-
-        isPause = false;
-        ChangeViewPausePanel();
-    }
-
-    /// <summary>
-    /// 「はい」押下
+    /// タイトルへ戻るパネル内の「はい」押下
     /// </summary>
     public void OnClickedYesButton()
     {
@@ -1102,16 +1113,16 @@ public partial class PauseController : MonoBehaviour
     }
 
     /// <summary>
-    /// 「いいえ」押下
+    /// タイトルへ戻るパネル内の「いいえ」押下
     /// </summary>
     public void OnClickedNoButton()
     {
         //ボタンSE
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
 
-        //ポーズパネルを表示にし、タイトルへ戻るパネルを非表示する
-        isPause = true;
-        ChangeViewPausePanel();
+        //リタイアパネルを表示にし、タイトルへ戻るパネルを非表示する
+        isRetirePanel = true;
+        ChangeViewRetirePanel();
 
         isReturnToTitlePanel = false;
         ChangeReturnToTitlePanel();
@@ -1245,6 +1256,10 @@ public partial class PauseController : MonoBehaviour
         //ミステリーアイテムパネルを非表示
         isMysteryItemPanel = false;
         ChangeViewMysteryItemPanel();
+
+        //リタイアパネルを非表示
+        isRetirePanel = false;
+        ChangeViewRetirePanel();
     }
 
     /// <summary>
@@ -1307,23 +1322,6 @@ public partial class PauseController : MonoBehaviour
         {
             //非表示
             viewItemsPanel.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// タイトルへ戻るパネルの表示/非表示
-    /// </summary>
-    private void ChangeReturnToTitlePanel()
-    {
-        if (isReturnToTitlePanel)
-        {
-            //表示
-            returnToTitlePanel.SetActive(true);
-        }
-        else
-        {
-            //非表示
-            returnToTitlePanel.SetActive(false);
         }
     }
 

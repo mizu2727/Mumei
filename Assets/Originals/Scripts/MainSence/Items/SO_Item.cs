@@ -417,4 +417,3 @@ public class SO_Item : ScriptableObject
         itemList.RemoveAll(item => item == null);
     }
 }
-
