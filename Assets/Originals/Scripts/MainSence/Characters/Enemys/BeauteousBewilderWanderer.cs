@@ -103,23 +103,6 @@ public class BeauteousBewilderWanderer : LightVisibilityEnemy
             normalModel.SetActive(!shouldBeCreature);
             creatureModel.SetActive(shouldBeCreature);
         }
-
-        /*
-        //調査状態の場合||追跡状態の場合
-        if (currentState == EnemyState.Investigate || currentState == EnemyState.Chase)
-        {
-            //クリーチャー形態を表示
-            normalModel.SetActive(false);
-            creatureModel.SetActive(true);
-            
-        }
-        else
-        {
-            //通常形態を表示
-            normalModel.SetActive(true);
-            creatureModel.SetActive(false);
-        }
-        */
     }
 
     /// <summary>
