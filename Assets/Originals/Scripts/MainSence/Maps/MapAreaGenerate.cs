@@ -285,9 +285,8 @@ public class MapAreaGenerate : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
-
         //マップをランダムに配置
         MapGenerate();
 
@@ -311,7 +310,6 @@ public class MapAreaGenerate : MonoBehaviour
             }
         }
     }
-
 
 
     /// <summary>
@@ -354,7 +352,6 @@ public class MapAreaGenerate : MonoBehaviour
                 if ((GameController.instance.GetIsDemoPlayFlag() && saveEnemyInformationStatusArray[stringDemoVeinVainWandererStatus] == kDefaultSaveEnemyInformationKey)
                     || (!GameController.instance.GetIsDemoPlayFlag() && saveEnemyInformationStatusArray[stringVeinVainWandererStatus] == kDefaultSaveEnemyInformationKey)) 
                 {
-                    Debug.Log("ステージ1の彷徨う者関連情報追加");
                     //彷徨う者の情報を全アイテム格納リストに追加
                     shuffledItemPrefabList.AddRange(enemyInforｍationItemPrefabList);
                 }
@@ -367,7 +364,6 @@ public class MapAreaGenerate : MonoBehaviour
                 //微美しき魅忘の彷徨う者の関連情報を取得していない状態の場合
                 if (saveEnemyInformationStatusArray[stringBeauteousBewilderWandererStatus] == kDefaultSaveEnemyInformationKey)
                 {
-                    Debug.Log("ステージ2の彷徨う者関連情報追加");
                     //彷徨う者の情報を全アイテム格納リストに追加
                     shuffledItemPrefabList.AddRange(enemyInforｍationItemPrefabList);
                 }
@@ -380,7 +376,6 @@ public class MapAreaGenerate : MonoBehaviour
                 //唄歌う彷徨う者の関連情報を取得していない状態の場合
                 if (saveEnemyInformationStatusArray[stringSingSongWandererStatus] == kDefaultSaveEnemyInformationKey)
                 {
-                    Debug.Log("ステージ3の彷徨う者関連情報追加");
                     //彷徨う者の情報を全アイテム格納リストに追加
                     shuffledItemPrefabList.AddRange(enemyInforｍationItemPrefabList);
                 }
