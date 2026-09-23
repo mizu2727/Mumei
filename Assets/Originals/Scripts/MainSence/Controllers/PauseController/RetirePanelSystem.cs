@@ -55,6 +55,13 @@ public partial class PauseController
     /// </summary>
     private void ChangeViewRetirePanel()
     {
+        //リタイアパネルが存在しない場合
+        if (retirePanel == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
         if (isRetirePanel)
         {
             //表示
@@ -72,6 +79,13 @@ public partial class PauseController
     /// </summary>
     private void ChangeReturnToSelectStagePanel()
     {
+        //ステージ選択へ戻るパネルが存在しない場合
+        if (returnToSelectStagePanel == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
         if (isReturnToSelectStagePanel)
         {
             //表示

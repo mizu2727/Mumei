@@ -860,18 +860,22 @@ public partial class PauseController : MonoBehaviour
             documentNameTextRubyComponent.Text = documentNameText.text;
         }
 
-
-        //チュートリアルのストーリーを閲覧済みの場合
-        if (saveViewStoryStatusArray[stringTutorialClearStatus] == 1) 
+        //彷徨う者ボタンが存在する場合
+        if (wandererButton != null) 
         {
-            //彷徨う者ボタンを表示する
-            wandererButton.SetActive(true);
+            //チュートリアルのストーリーを閲覧済みの場合
+            if (saveViewStoryStatusArray[stringTutorialClearStatus] == 1)
+            {
+                //彷徨う者ボタンを表示する
+                wandererButton.SetActive(true);
+            }
+            else
+            {
+                //彷徨う者ボタンを非表示にする
+                wandererButton.SetActive(false);
+            }
         }
-        else
-        {
-            //彷徨う者ボタンを非表示にする
-            wandererButton.SetActive(false);
-        }
+            
 
         //現在のシーン名がHomeSceneの場合
         if (CommonController.instance.GetHomeSceneName() == SceneManager.GetActiveScene().name)
@@ -885,17 +889,21 @@ public partial class PauseController : MonoBehaviour
             viewItemsPanel.GetComponent<Image>().color = kViewItemsPanelBlackColor;
         }
 
-        //現在のシーン名がHomeSceneの場合||現在のシーン名がHome02Sceneの場合
-        if (CommonController.instance.GetHomeSceneName() == SceneManager.GetActiveScene().name
-            || CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name)
+        //ステージ選択へ戻るボタンが存在する場合
+        if (returnToSelectStageButton != null) 
         {
-            //ステージ選択へ戻るボタンを非表示にする
-            returnToSelectStageButton.SetActive(false);
-        }
-        else
-        {
-            //ステージ選択へ戻るボタンを表示する
-            returnToSelectStageButton.SetActive(true);
+            //現在のシーン名がHomeSceneの場合||現在のシーン名がHome02Sceneの場合
+            if (CommonController.instance.GetHomeSceneName() == SceneManager.GetActiveScene().name
+                || CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name)
+            {
+                //ステージ選択へ戻るボタンを非表示にする
+                returnToSelectStageButton.SetActive(false);
+            }
+            else
+            {
+                //ステージ選択へ戻るボタンを表示する
+                returnToSelectStageButton.SetActive(true);
+            }
         }
 
 
@@ -1387,6 +1395,13 @@ public partial class PauseController : MonoBehaviour
     /// </summary>
     private void ChangeViewArchivePanel()
     {
+        //アーカイブパネルが存在しない場合
+        if (archivePanel == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
         if (isArchivePanel)
         {
             //UIのレイヤーを手前側にする
