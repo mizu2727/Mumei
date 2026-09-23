@@ -11,7 +11,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
 using static Player;
-using static UnityEditor.Progress;
 
 /// <summary>
 /// ポーズ画面管理クラス
