@@ -322,6 +322,32 @@ public class MusicController : MonoBehaviour
     }
 
     /// <summary>
+    /// 保存したBGM音量をスライダーとAudioMixerの両方に反映する
+    /// </summary>
+    public void ApplyBGMVolume(float value)
+    {
+        if (bGMSlider != null)
+        {
+            // イベントを発火させずに見た目だけ更新（二重処理防止）
+            bGMSlider.SetValueWithoutNotify(value);
+        }
+        // Mixerへは明示的に反映
+        OnBGMVolumeChanged(value);
+    }
+
+    /// <summary>
+    /// 保存したSE音量をスライダーとAudioMixerの両方に反映する
+    /// </summary>
+    public void ApplySEVolume(float value)
+    {
+        if (sESlider != null)
+        {
+            sESlider.SetValueWithoutNotify(value);
+        }
+        OnSEVolumeChanged(value);
+    }
+
+    /// <summary>
     /// スライダーの値をdBに変換して、AudioMixerの「BGM」パラメータに反映させる
     /// </summary>
     /// <param name="value">スライダーの値</param>

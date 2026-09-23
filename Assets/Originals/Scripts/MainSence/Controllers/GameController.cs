@@ -563,6 +563,7 @@ public class GameController : MonoBehaviour
             }
         }
 
+        /*
         //BGMスライダーが存在する場合
         if (MusicController.instance.bGMSlider != null)
         {
@@ -588,8 +589,11 @@ public class GameController : MonoBehaviour
                 MusicController.instance.OnSEVolumeChanged(sEVolume);
             } 
         }
+        */
 
-        
+        //BGM/SE音量を保存値で反映（AudioMixer初期化を待つため1フレーム遅延）
+        ApplySavedVolumeAsync().Forget();
+
 
         //画面解像度テキストが存在する場合
         if (resolutionText != null) 
@@ -829,6 +833,19 @@ public class GameController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 1フレーム待ってから保存した音量を反映する
+    /// </summary>
+    private async UniTaskVoid ApplySavedVolumeAsync()
+    {
+        await UniTask.Yield(PlayerLoopTiming.Update, this.GetCancellationTokenOnDestroy());
+
+        if (MusicController.instance == null || MusicController.instance.audioMixer == null) return;
+
+        MusicController.instance.ApplyBGMVolume(bGMVolume);
+        MusicController.instance.ApplySEVolume(sEVolume);
+    }
+
     private void Update()
     {
         //マウス感度設定を開いている場合のみマウス感度をスライダーから取得
@@ -896,6 +913,9 @@ public class GameController : MonoBehaviour
     public void CallLoadUserDataMethod() 
     {
         saveLoad.LoadUserData();
+
+        //ロードした音量を即時反映
+        ApplySavedVolumeAsync().Forget();
     }
 
     /// <summary>
