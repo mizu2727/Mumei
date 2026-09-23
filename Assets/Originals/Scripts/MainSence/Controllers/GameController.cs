@@ -563,34 +563,6 @@ public class GameController : MonoBehaviour
             }
         }
 
-        /*
-        //BGMスライダーが存在する場合
-        if (MusicController.instance.bGMSlider != null)
-        {
-            //BGMを保存した値に設定
-            MusicController.instance.bGMSlider.value = bGMVolume;
-
-            //現在のシーン名がTitleSceneの場合(ステージ系シーンへ遷移した際に発生するエラーを防ぐためにこのif分を追加)
-            if (SceneManager.GetActiveScene().name == CommonController.instance.GetTitleSceneName()) 
-            {
-                MusicController.instance.OnBGMVolumeChanged(bGMVolume);
-            }
-        }
-
-        //SEスライダーが存在する場合
-        if (MusicController.instance.sESlider != null)
-        {
-            //SEを保存した値に設定
-            MusicController.instance.sESlider.value = sEVolume;
-
-            //現在のシーン名がTitleSceneの場合(ステージ系シーンへ遷移した際に発生するエラーを防ぐためにこのif分を追加)
-            if (SceneManager.GetActiveScene().name == CommonController.instance.GetTitleSceneName())
-            {
-                MusicController.instance.OnSEVolumeChanged(sEVolume);
-            } 
-        }
-        */
-
         //BGM/SE音量を保存値で反映（AudioMixer初期化を待つため1フレーム遅延）
         ApplySavedVolumeAsync().Forget();
 
