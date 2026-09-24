@@ -25,6 +25,24 @@ public class BeauteousBewilderWanderer : LightVisibilityEnemy
     /// </summary>
     private bool? isCreatureForm = null;
 
+    /// <summary>
+    /// 各形態のAnimator
+    /// (BaseEnemy.animator は「現在表示中の形態のAnimator」に差し替えて使う)
+    /// </summary>
+    private Animator normalAnimator;
+    private Animator creatureAnimator;
+
+    /// <summary>
+    /// 形態切り替え時に引き継ぐAnimatorパラメーター
+    /// </summary>
+    private static readonly string[] kSyncBoolParameters =
+    {
+        kIsWalkAnimatorParameter,
+        kIsRunAnimatorParameter,
+        "isAttack",
+        "isDamage",
+    };
+
     private void Awake()
     {
         //各モデルが「親とは別に独立して動く」原因になるコンポーネントを無効化
@@ -41,6 +59,39 @@ public class BeauteousBewilderWanderer : LightVisibilityEnemy
         {
             creatureModelLocalPosition = creatureModel.transform.localPosition;
             creatureModelLocalRotation = creatureModel.transform.localRotation;
+        }
+
+
+        SetupAnimators();
+    }
+
+    /// <summary>
+    /// 各形態のAnimatorを取得する
+    /// モデル側にAnimatorが無い場合は、親(このオブジェクト)のAnimatorを使う
+    /// </summary>
+    private void SetupAnimators()
+    {
+        Animator parentAnimator = GetComponent<Animator>();
+
+        normalAnimator = normalModel != null ? normalModel.GetComponentInChildren<Animator>(true) : null;
+        creatureAnimator = creatureModel != null ? creatureModel.GetComponentInChildren<Animator>(true) : null;
+
+        if (normalAnimator == null) normalAnimator = parentAnimator;
+        if (creatureAnimator == null) creatureAnimator = parentAnimator;
+
+        //両形態が自前のAnimatorを持っている場合、親のAnimatorは競合するので無効化
+        if (parentAnimator != null && normalAnimator != parentAnimator && creatureAnimator != parentAnimator)
+        {
+            parentAnimator.enabled = false;
+        }
+
+        if (normalAnimator == null || creatureAnimator == null)
+        {
+            Debug.LogError($"[{gameObject.name}] 通常形態またはクリーチャー形態のAnimatorが見つかりません");
+        }
+        else if (normalAnimator.runtimeAnimatorController == null || creatureAnimator.runtimeAnimatorController == null)
+        {
+            Debug.LogError($"[{gameObject.name}] AnimatorにControllerが設定されていません");
         }
     }
 
@@ -100,9 +151,37 @@ public class BeauteousBewilderWanderer : LightVisibilityEnemy
         if (isCreatureForm != shouldBeCreature)
         {
             isCreatureForm = shouldBeCreature;
-            normalModel.SetActive(!shouldBeCreature);
-            creatureModel.SetActive(shouldBeCreature);
+            SwitchForm(shouldBeCreature);
         }
+    }
+
+    /// <summary>
+    /// 形態を切り替え、BaseEnemyが操作するAnimatorを表示中の形態のものに差し替える
+    /// </summary>
+    private void SwitchForm(bool toCreature)
+    {
+        Animator previous = animator;
+        Animator next = toCreature ? creatureAnimator : normalAnimator;
+
+        normalModel.SetActive(!toCreature);
+        creatureModel.SetActive(toCreature);
+
+        if (next == null) return;
+
+        //直前のAnimatorに設定されていたパラメーターを引き継ぐ
+        //(このフレームでBaseEnemyが立てた isRun / isDamage などを失わないため)
+        if (previous != null && previous != next && previous.runtimeAnimatorController != null
+            && next.runtimeAnimatorController != null)
+        {
+            foreach (string param in kSyncBoolParameters)
+            {
+                next.SetBool(param, previous.GetBool(param));
+            }
+            next.speed = previous.speed;
+        }
+
+        //BaseEnemy.animator を差し替え(以降の SetBool はすべて表示中の形態に効く)
+        PlayAnimator = next;
     }
 
     /// <summary>
