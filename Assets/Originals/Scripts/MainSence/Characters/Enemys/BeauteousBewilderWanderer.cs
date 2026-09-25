@@ -43,6 +43,22 @@ public class BeauteousBewilderWanderer : LightVisibilityEnemy
         "isDamage",
     };
 
+    [Header("攻撃アニメーションの再生速度(1 = 通常、0.5 = 半分の速さ)")]
+    [SerializeField, Range(0.05f, 2.0f)] private float attackAnimationSpeed = 0.5f;
+
+    [Header("攻撃アニメーションを停止させる位置(正規化時間 0～1。0.5 = 半分まで再生して停止)")]
+    [SerializeField, Range(0.0f, 1.0f)] private float attackAnimationStopNormalizedTime = 0.5f;
+
+    /// <summary>
+    /// BaseEnemyの攻撃アニメーション再生速度をこの敵専用の値に差し替える
+    /// </summary>
+    protected override float AttackAnimationSpeed => attackAnimationSpeed;
+
+    /// <summary>
+    /// BaseEnemyの攻撃アニメーション停止位置をこの敵専用の値に差し替える
+    /// </summary>
+    protected override float AttackAnimationStopNormalizedTime => attackAnimationStopNormalizedTime;
+
     private void Awake()
     {
         //各モデルが「親とは別に独立して動く」原因になるコンポーネントを無効化

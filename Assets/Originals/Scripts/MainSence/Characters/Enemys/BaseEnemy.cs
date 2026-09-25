@@ -290,6 +290,18 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private bool isAttack = false;
 
+    /// <summary>
+    /// 攻撃アニメーションの再生速度(1 = 通常速度)
+    /// 敵ごとに変えたい場合は派生クラスでoverrideする
+    /// </summary>
+    protected virtual float AttackAnimationSpeed => 1.0f;
+
+    /// <summary>
+    /// 攻撃アニメーションを停止させる位置(正規化時間 0～1)
+    /// 敵ごとに変えたい場合は派生クラスでoverrideする
+    /// </summary>
+    protected virtual float AttackAnimationStopNormalizedTime => 0.8f;
+
 
     /// <summary>
     /// プレイヤーを攻撃するメソッド
@@ -422,8 +434,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //遷移が完了して「AttackState」という名前のステートになるのを待つ
         await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName(kAttackStateName));
 
-        //そのステートが終了間際まで待つ
-        await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.8f);
+        //攻撃アニメーションの再生速度を設定(派生クラスで変更可能。既定値は1倍)
+        animator.speed = AttackAnimationSpeed;
+
+        //停止位置(正規化時間)まで待つ(派生クラスで変更可能。既定値は0.8)
+        float stopNormalizedTime = Mathf.Clamp01(AttackAnimationStopNormalizedTime);
+        await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= stopNormalizedTime);
 
         //アニメーションを最後で止める
         animator.speed = 0;
