@@ -61,8 +61,12 @@ public class BeauteousBewilderWanderer : LightVisibilityEnemy
     /// </summary>
     protected override float AttackAnimationStopNormalizedTime => attackAnimationStopNormalizedTime;
 
-    [Header("攻撃演出時のプレイヤーとの距離(m)。大きいほど敵が後ろに下がる(BaseEnemyの既定値は1.5)")]
-    [SerializeField, Range(0.5f, 5.0f)] private float attackDistanceFromPlayer = 2.0f;
+    /// <summary>
+    /// 攻撃演出時のプレイヤーとの距離(m)。大きいほど敵が後ろに下がる(BaseEnemyの既定値は1.5)
+    /// </summary>
+    private float attackDistanceFromPlayer = 2.0f;
+
+    protected override float AttackDistanceFromPlayer => attackDistanceFromPlayer;
 
 
     private void Awake()
