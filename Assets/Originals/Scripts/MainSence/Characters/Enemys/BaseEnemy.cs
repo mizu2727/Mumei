@@ -302,6 +302,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     protected virtual float AttackAnimationStopNormalizedTime => 0.8f;
 
+    /// <summary>
+    /// 攻撃演出時に、プレイヤーの正面から何m離れた位置に敵を配置するか
+    /// 敵ごとに変えたい場合は派生クラスでoverrideする
+    /// </summary>
+    protected virtual float AttackDistanceFromPlayer => 1.5f;
+
 
     /// <summary>
     /// プレイヤーを攻撃するメソッド
@@ -414,7 +420,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         forward = forward.normalized;
 
         //距離の倍率
-        float distanceMagnification = 1.5f;
+        float distanceMagnification = AttackDistanceFromPlayer;
 
         //プレイヤーの位置から前方に一定距離だけ進んだ位置を計算
         Vector3 targetPosition = Player.instance.transform.position + forward * distanceMagnification;
