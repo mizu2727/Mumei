@@ -43,8 +43,10 @@ public class BeauteousBewilderWanderer : LightVisibilityEnemy
         "isDamage",
     };
 
-    [Header("攻撃アニメーションの再生速度(1 = 通常、0.5 = 半分の速さ)")]
-    [SerializeField, Range(0.05f, 2.0f)] private float attackAnimationSpeed = 0.5f;
+    /// <summary>
+    /// 攻撃アニメーションの再生速度
+    /// </summary>
+    private float attackAnimationSpeed = 1.0f;
 
     [Header("攻撃アニメーションを停止させる位置(正規化時間 0～1。0.5 = 半分まで再生して停止)")]
     [SerializeField, Range(0.0f, 1.0f)] private float attackAnimationStopNormalizedTime = 0.5f;
