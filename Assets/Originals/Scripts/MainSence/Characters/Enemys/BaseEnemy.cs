@@ -24,7 +24,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 彷徨う者の名前
     /// </summary>
-    enum EnemyName 
+    enum EnemyName
     {
         /// <summary>
         /// 静声に熱する彷徨う者
@@ -315,10 +315,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private async void AttackPlayer()
     {
         //プレイヤーが既に死亡している場合||既に攻撃している場合
-        if (Player.instance.IsDead || isAttack || Player.instance == null || PlayerCamera.instance == null) 
+        if (Player.instance.IsDead || isAttack || Player.instance == null || PlayerCamera.instance == null)
         {
             //処理をスキップ
-            return; 
+            return;
         }
 
         //攻撃フラグをtrueに設定
@@ -344,7 +344,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// プレイヤーカメラを対象のオブジェクトの方へ向ける処理
     /// </summary>
-    private async UniTask LookAtCamera() 
+    private async UniTask LookAtCamera()
     {
         //敵がプレイヤーを襲う際のエフェクト画面を表示するフラグをtrueに設定
         EnemyAttackScreen.instance.SetIsViewEnemyAttackScreen(true);
@@ -426,7 +426,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         Vector3 targetPosition = Player.instance.transform.position + forward * distanceMagnification;
 
         //プレイヤーの高さを敵と同じにする
-        targetPosition.y = transform.position.y;           
+        targetPosition.y = transform.position.y;
 
         //敵をその位置に移動
         transform.position = targetPosition;
@@ -467,9 +467,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private Vector3 lastCollisionPoint;
 
-   /// <summary>
-   /// 移動時の状態
-   /// </summary>
+    /// <summary>
+    /// 移動時の状態
+    /// </summary>
     public enum EnemyState
     {
         /// <summary>
@@ -559,7 +559,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private int maxPositionNumber;
 
 
-    [Header("検知・視線関連")] 
+    [Header("検知・視線関連")]
     [Header("追従したいオブジェクト(ヒエラルキー上のプレイヤーをアタッチすること)")]
     [SerializeField] public Transform targetPoint;
 
@@ -630,12 +630,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 歩行音のID
     /// </summary>
-    private  int walkSEid;
+    private int walkSEid;
 
     /// <summary>
     /// ダッシュ音のID
     /// </summary>
-    private  int runSEid;
+    private int runSEid;
 
     /// <summary>
     /// プレイヤーを探す音用のaudioSource
@@ -645,7 +645,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// プレイヤーを探す音のID
     /// </summary>
-    private  int findPlayerSEid;
+    private int findPlayerSEid;
 
     /// <summary>
     /// プレイヤーを襲う音用のaudioSource
@@ -730,12 +730,76 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     GameObject gameObjectDoor;
 
+
+    /*----------------------
+     * スタック(移動停止)対策関連
+     ---------------------*/
+
+    [Header("スタック検知関連")]
+    [Header("移動量をチェックする間隔(秒)")]
+    [SerializeField] private float stuckCheckInterval = 0.5f;
+
+    [Header("チェック間隔内にこの距離(m)以上動いていなければ「進めていない」とみなす")]
+    [SerializeField] private float stuckMoveThreshold = 0.15f;
+
+    [Header("進めていない状態がこの秒数続いたらスタックと判定して復帰処理を行う")]
+    [SerializeField] private float stuckTimeToRecover = 1.5f;
+
+    [Header("スタック復帰時にログを出す(原因調査用)")]
+    [SerializeField] private bool isLogStuck = true;
+
+    /// <summary>
+    /// 移動量チェック用タイマー
+    /// </summary>
+    private float stuckCheckTimer;
+
+    /// <summary>
+    /// 進めていない状態が続いている時間
+    /// </summary>
+    private float stuckTimer;
+
+    /// <summary>
+    /// 前回チェック時の位置
+    /// </summary>
+    private Vector3 stuckCheckLastPosition;
+
+    /// <summary>
+    /// 連続でスタック復帰した回数
+    /// </summary>
+    private int stuckRecoverCount;
+
+    /// <summary>
+    /// 壁に衝突して方向転換待ちをしているフラグ
+    /// (この間だけ意図的にisStoppedをtrueにしている)
+    /// </summary>
+    private bool isWallAvoidWaiting = false;
+
+    /// <summary>
+    /// 壁衝突後、方向転換するまでの待機時間
+    /// </summary>
+    private const float kWallAvoidWaitTime = 0.5f;
+
+    /// <summary>
+    /// 壁衝突時の方向転換で探すランダム地点までの距離
+    /// </summary>
+    private const float kChangeDirectionDistance = 3.0f;
+
+    /// <summary>
+    /// 方向転換先を探す試行回数
+    /// </summary>
+    private const int kChangeDirectionTryCount = 8;
+
+    /// <summary>
+    /// 経路計算用(毎回newしないよう使い回す)
+    /// </summary>
+    private NavMeshPath workPath;
+
     /// <summary>
     /// ダメージを受けるフラグを取得
     /// </summary>
     /// <returns>ダメージを受けるフラグ</returns>
-    public bool GetIsReceiveDamage() 
-    { 
+    public bool GetIsReceiveDamage()
+    {
         return isReceiveDamage;
     }
 
@@ -752,8 +816,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// 歩行音・ダッシュ音用のaudioSourceを取得
     /// </summary>
     /// <returns>歩行音・ダッシュ音用のaudioSource</returns>
-    public AudioSource GetAudioSourceSE() 
-    { 
+    public AudioSource GetAudioSourceSE()
+    {
         return audioSourceSE;
     }
 
@@ -779,7 +843,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// プレイヤーを探す音のIDを取得
     /// </summary>
     /// <returns>プレイヤーを探す音のID</returns>
-    public int GetFindPlayerSEid() 
+    public int GetFindPlayerSEid()
     {
         return findPlayerSEid;
     }
@@ -874,12 +938,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// オブジェクトが破壊された際に呼ばれる関数
     /// </summary>
-    void OnDestroy() 
+    void OnDestroy()
     {
-        for (int i = 0; i < patrolPoint.Length; i ++) 
+        for (int i = 0; i < patrolPoint.Length; i++)
         {
             //patrolPointが存在する場合
-            if (patrolPoint[i] != null) 
+            if (patrolPoint[i] != null)
             {
                 //patrolPointをnullに設定
                 patrolPoint[i] = null;
@@ -887,21 +951,21 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //targetPointが存在する場合
-        if (targetPoint != null) 
+        if (targetPoint != null)
         {
             //targetPointをnullに設定
             targetPoint = null;
         }
 
         //playerFoundPanelが存在する場合
-        if (playerFoundPanel != null) 
+        if (playerFoundPanel != null)
         {
             //playerFoundPanelをnullに設定
             playerFoundPanel = null;
         }
 
         //noiseScreenPanelが存在する場合
-        if (noiseScreenPanel != null) 
+        if (noiseScreenPanel != null)
         {
             //noiseScreenPanelをnullに設定
             noiseScreenPanel = null;
@@ -917,7 +981,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
     void Start()
     {
-       InitializeAudioSource();
+        InitializeAudioSource();
 
         PlayAnimator = GetComponent<Animator>();
 
@@ -929,7 +993,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             audioSourceSE = gameObject.AddComponent<AudioSource>();
             audioSourceSE.playOnAwake = false;
         }
-        
+
 
         navMeshAgent = GetComponent<NavMeshAgent>();
         if (navMeshAgent == null)
@@ -971,7 +1035,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         navMeshAgent.stoppingDistance = 0f;
 
         //モデルに合わせて調整すること
-        navMeshAgent.baseOffset = 0f; 
+        navMeshAgent.baseOffset = 0f;
 
         //モデルの回転を初期化
         transform.rotation = Quaternion.identity;
@@ -995,7 +1059,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //徘徊地点の初期化
-        if ( patrolPoint == null || patrolPoint.Length == 0)
+        if (patrolPoint == null || patrolPoint.Length == 0)
         {
             Debug.LogError($"[{gameObject.name}] testMap01またはpatrolPointが設定されていません！");
             return;
@@ -1011,6 +1075,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 return;
             }
         }
+
+        //経路計算用のNavMeshPathを生成
+        workPath = new NavMeshPath();
+
+        //スタック検知の初期化
+        ResetStuckCheck();
 
         //俳諧地点の初期化
         maxPositionNumber = patrolPoint.Length;
@@ -1184,7 +1254,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     }
 
                     //プレイヤーが隠れている場合の処理
-                    if (Player.instance.GetIsPlayerHidden()) 
+                    if (Player.instance.GetIsPlayerHidden())
                     {
                         //プレイヤーの視認失敗
                         return false;
@@ -1223,7 +1293,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         navMeshAgent.speed = dashSpeed;
         navMeshAgent.isStopped = false;
     }
- 
+
     /// <summary>
     /// 次の俳諧地点を決める
     /// </summary>
@@ -1253,6 +1323,28 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //NavMesh上の位置を確認
         if (NavMesh.SamplePosition(targetPos, out hit, findPatrolPointRange, NavMesh.AllAreas))
         {
+            //最後まで到達できる経路かを確認する
+            //(到達できない徘徊地点を選ぶと、経路の途中(NavMeshの切れ目)で止まってしまうため)
+            if (TrySetCompletePatrolDestination(positionNumber, hit.position))
+            {
+                return;
+            }
+
+            //ランダムに選んだ地点に到達できない場合、他の徘徊地点を順番に試す
+            for (int i = 1; i < patrolPoint.Length; i++)
+            {
+                int nextIndex = (positionNumber + i) % patrolPoint.Length;
+                if (patrolPoint[nextIndex] == null) continue;
+
+                if (NavMesh.SamplePosition(patrolPoint[nextIndex].position, out NavMeshHit nextHit, findPatrolPointRange, NavMesh.AllAreas)
+                    && TrySetCompletePatrolDestination(nextIndex, nextHit.position))
+                {
+                    return;
+                }
+            }
+
+            //どの徘徊地点にも完全な経路が無い場合は、従来通り行ける所まで向かう
+            Debug.LogWarning($"[{gameObject.name}] 完全な経路で到達できる徘徊地点がありません。NavMeshの繋がりを確認してください。");
             navMeshAgent.destination = hit.position;
         }
         else
@@ -1284,6 +1376,30 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     }
 
     /// <summary>
+    /// 徘徊地点までの経路が完全(PathComplete)な場合のみ目的地に設定する
+    /// </summary>
+    /// <param name="index">徘徊地点の要素番号</param>
+    /// <param name="navMeshPosition">NavMesh上に補正した徘徊地点の位置</param>
+    /// <returns>設定できた場合true</returns>
+    private bool TrySetCompletePatrolDestination(int index, Vector3 navMeshPosition)
+    {
+        if (workPath == null) workPath = new NavMeshPath();
+
+        //経路を計算
+        if (navMeshAgent.CalculatePath(navMeshPosition, workPath) && workPath.status == NavMeshPathStatus.PathComplete)
+        {
+            navMeshAgent.SetPath(workPath);
+            positionNumber = index;
+            return true;
+        }
+
+        //到達できない徘徊地点をログに出す(NavMeshが途切れている場所の特定用)
+        Debug.LogWarning($"[{gameObject.name}] 徘徊地点「{patrolPoint[index].name}」へ到達できません(経路:{workPath.status})。" +
+                         $"現在地:{transform.position} 目的地:{navMeshPosition}");
+        return false;
+    }
+
+    /// <summary>
     /// 移動しているかを判定する
     /// </summary>
     /// <returns>移動中ならtrue</returns>
@@ -1311,24 +1427,32 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             if (currentState == EnemyState.Chase)
             {
                 //NavMeshAgent自体の経路探索に任せるため、以下の強制停止処理をスキップする
-                return;
+                //(※returnすると下のプレイヤー・ドア判定まで飛ばしてしまうため、ifで分岐する)
             }
+            //進行方向の壁に正面からぶつかった場合のみ停止して方向転換する
+            //(床・天井や、壁を横に擦っただけの接触では止めない)
+            else if (!isWallAvoidWaiting && IsHeadOnWallCollision(collision))
+            {
+                //方向転換待ちフラグをtrueに設定
+                isWallAvoidWaiting = true;
 
-            //速度を0に設定して停止させる
-            navMeshAgent.velocity = Vector3.zero;
+                //速度を0に設定して停止させる
+                navMeshAgent.velocity = Vector3.zero;
 
-            //NavMeshAgentの移動を停止
-            navMeshAgent.isStopped = true;
+                //NavMeshAgentの移動を停止
+                navMeshAgent.isStopped = true;
 
-            //停止アニメーションを再生
-            animator.SetBool(kIsRunAnimatorParameter, false); 
-            animator.SetBool(kIsWalkAnimatorParameter, false);
+                //停止アニメーションを再生
+                animator.SetBool(kIsRunAnimatorParameter, false);
+                animator.SetBool(kIsWalkAnimatorParameter, false);
 
-            //衝突地点を記録
-            lastCollisionPoint = collision.contacts[0].point;
+                //衝突地点を記録
+                lastCollisionPoint = collision.GetContact(0).point;
 
-            //0.5秒後に方向転換
-            Invoke("ChangeDirection", 0.5f); 
+                //多重登録を防いでから、一定時間後に方向転換
+                CancelInvoke(nameof(ChangeDirection));
+                Invoke(nameof(ChangeDirection), kWallAvoidWaitTime);
+            }
         }
 
         //プレイヤーに触れた場合&&ダメージを受けていない場合&&プレイヤーが隠れていない場合
@@ -1351,7 +1475,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             door = gameObjectDoor.GetComponent<Door>();
 
             //鍵がかかっていないドア系が閉まっている場合
-            if ((!door.GetIsNeedKeyDoor() && !door.isOpenDoor && !door.GetIsSlidingDoor()) 
+            if ((!door.GetIsNeedKeyDoor() && !door.isOpenDoor && !door.GetIsSlidingDoor())
                 || (!door.GetIsNeedKeyDoor() && !door.isOpenDoor && door.GetIsSlidingDoor()) && !door.IsSliding())
             {
                 //ドアを開ける
@@ -1470,45 +1594,267 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     void ChangeDirection()
     {
-        //navMeshAgentが有効であるか
-        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled)
+        //方向転換待ちフラグを解除(どの分岐でも必ず解除する)
+        isWallAvoidWaiting = false;
+
+        //navMeshAgentが有効でない、またはNavMesh上にいない場合は何もしない
+        if (navMeshAgent == null || !navMeshAgent.isActiveAndEnabled || !navMeshAgent.isOnNavMesh)
         {
-            //NavMeshAgentの停止を解除
-            navMeshAgent.isStopped = false;
+            return;
+        }
 
-            //現在位置から少し離れたランダムな方向を探す
-            Vector3 randomDirection = Random.insideUnitSphere.normalized * 3f;
-            Vector3 newTarget = transform.position + randomDirection;
+        //ダメージ中はDamageRelatedProcessing()側で停止・再開を管理するため、ここでは再開しない
+        if (isReceiveDamage)
+        {
+            return;
+        }
 
-            //NavMesh上の位置を確認
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(newTarget, out hit, 5f, NavMesh.AllAreas))
+        //NavMeshAgentの停止を解除
+        navMeshAgent.isStopped = false;
+
+        //スタック検知をリセット(停止していた0.5秒をスタックとして数えないため)
+        ResetStuckCheck();
+
+        //待機中に追従状態へ切り替わっていた場合は、ChasePlayer()の目的地設定に任せる
+        if (currentState == EnemyState.Chase)
+        {
+            return;
+        }
+
+        if (workPath == null) workPath = new NavMeshPath();
+
+        //壁から離れる方向(水平方向のみ)
+        Vector3 awayFromWall = transform.position - lastCollisionPoint;
+        awayFromWall.y = 0f;
+        if (awayFromWall.sqrMagnitude < 0.0001f)
+        {
+            awayFromWall = -transform.forward;
+            awayFromWall.y = 0f;
+        }
+        awayFromWall.Normalize();
+
+        //壁から離れる方向を中心に±90度の範囲でランダムな地点を探す
+        //(※元のRandom.insideUnitSphereはY成分を含むため、上下の別の床をサンプリングしてしまうことがあった)
+        for (int i = 0; i < kChangeDirectionTryCount; i++)
+        {
+            float angle = Random.Range(-90f, 90f);
+            Vector3 direction = Quaternion.AngleAxis(angle, Vector3.up) * awayFromWall;
+            Vector3 newTarget = transform.position + direction * kChangeDirectionDistance;
+
+            //NavMesh上の位置を確認(高さの違う床を拾わないよう、サンプリング半径は小さめ)
+            if (NavMesh.SamplePosition(newTarget, out NavMeshHit hit, 1.5f, NavMesh.AllAreas)
+                && Mathf.Abs(hit.position.y - transform.position.y) < 1.0f
+                && navMeshAgent.CalculatePath(hit.position, workPath)
+                && workPath.status == NavMeshPathStatus.PathComplete)
             {
-                navMeshAgent.SetDestination(hit.position);
+                navMeshAgent.SetPath(workPath);
+                return;
             }
-            else
+        }
+
+        //回避先が見つからない場合は、到達可能な徘徊地点を選び直す
+        Debug.LogWarning($"[{gameObject.name}] 壁衝突後の回避先が見つからないため、徘徊地点を選び直します。位置:{transform.position}");
+        NextPosition();
+    }
+
+    /// <summary>
+    /// 進行方向の壁に正面からぶつかったかを判定する
+    /// </summary>
+    /// <param name="collision">衝突情報</param>
+    /// <returns>正面衝突の場合true</returns>
+    private bool IsHeadOnWallCollision(Collision collision)
+    {
+        if (navMeshAgent == null || collision.contactCount == 0)
+        {
+            return false;
+        }
+
+        //NavMeshAgentが進もうとしている方向(水平)
+        Vector3 moveDirection = navMeshAgent.desiredVelocity;
+        moveDirection.y = 0f;
+
+        //ほぼ動いていない場合は正面衝突とみなさない
+        if (moveDirection.sqrMagnitude < 0.01f)
+        {
+            return false;
+        }
+        moveDirection.Normalize();
+
+        for (int i = 0; i < collision.contactCount; i++)
+        {
+            //接触面の法線(相手のコライダーから自分へ向かう向き)
+            Vector3 normal = collision.GetContact(i).normal;
+
+            //法線が上下を向いている = 床や天井との接触なので無視する
+            //(床と壁が一体のメッシュでWallレイヤー/タグになっている道などで、段差や継ぎ目を踏むたびに停止していたのを防ぐ)
+            if (Mathf.Abs(normal.y) > 0.5f)
             {
-                //移動先が見つからない場合、現在の目的地を再設定する
-                if (navMeshAgent.path.corners.Length > 1)
+                continue;
+            }
+
+            normal.y = 0f;
+            normal.Normalize();
+
+            //進行方向と法線が向かい合っている(=壁に向かって進んでいる)場合のみ正面衝突
+            //(横に擦っただけの接触はNavMeshAgentの回避に任せる)
+            if (Vector3.Dot(moveDirection, normal) < -0.5f)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// スタック検知の状態をリセットする
+    /// </summary>
+    private void ResetStuckCheck()
+    {
+        stuckCheckTimer = 0f;
+        stuckTimer = 0f;
+        stuckCheckLastPosition = transform.position;
+    }
+
+    /// <summary>
+    /// 移動停止が意図しないものである場合に、NavMeshAgentの停止を解除する
+    /// (isStoppedがtrueのまま残って動かなくなるのを防ぐ)
+    /// </summary>
+    private void EnsureAgentResumed()
+    {
+        //壁衝突の方向転換待ち中は意図的に停止しているので解除しない
+        if (isWallAvoidWaiting)
+        {
+            return;
+        }
+
+        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh && navMeshAgent.isStopped)
+        {
+            navMeshAgent.isStopped = false;
+        }
+    }
+
+    /// <summary>
+    /// スタック(経路はあるのに進めていない状態)を検知して復帰させる
+    /// </summary>
+    private void CheckStuck()
+    {
+        //通常プレイ以外、攻撃中、ダメージ中はチェックしない
+        //(Update内のawait後に遅れて呼ばれた場合でも、攻撃演出中にワープしないようにする)
+        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame
+            || attackMode != AttackMode.None || isAttack || isReceiveDamage)
+        {
+            ResetStuckCheck();
+            return;
+        }
+
+        //意図的に停止している、経路計算中、経路が無い場合はチェックしない
+        if (navMeshAgent == null || !navMeshAgent.isActiveAndEnabled || !navMeshAgent.isOnNavMesh
+            || isWallAvoidWaiting || navMeshAgent.isStopped || navMeshAgent.pathPending || !navMeshAgent.hasPath)
+        {
+            ResetStuckCheck();
+            return;
+        }
+
+        //目的地にほぼ到着している場合は、到着処理(NextPosition等)に任せる
+        if (navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance + 0.5f)
+        {
+            ResetStuckCheck();
+            return;
+        }
+
+        stuckCheckTimer += Time.deltaTime;
+        if (stuckCheckTimer < stuckCheckInterval)
+        {
+            return;
+        }
+
+        //前回チェック時からの水平移動量
+        Vector3 moved = transform.position - stuckCheckLastPosition;
+        moved.y = 0f;
+
+        stuckCheckLastPosition = transform.position;
+        stuckCheckTimer = 0f;
+
+        if (moved.magnitude < stuckMoveThreshold)
+        {
+            //進めていない時間を加算
+            stuckTimer += stuckCheckInterval;
+        }
+        else
+        {
+            //進めているのでリセット
+            stuckTimer = 0f;
+            stuckRecoverCount = 0;
+        }
+
+        //一定時間進めていない場合、スタックとみなして復帰処理
+        if (stuckTimer >= stuckTimeToRecover)
+        {
+            RecoverFromStuck();
+        }
+    }
+
+    /// <summary>
+    /// スタックからの復帰処理
+    /// </summary>
+    private void RecoverFromStuck()
+    {
+        stuckRecoverCount++;
+
+        if (isLogStuck)
+        {
+            Debug.LogWarning($"[{gameObject.name}] スタック検知({stuckRecoverCount}回目) 状態:{currentState} " +
+                             $"位置:{transform.position} Agent内部位置:{navMeshAgent.nextPosition} 目的地:{navMeshAgent.destination} " +
+                             $"経路:{navMeshAgent.pathStatus} 残距離:{navMeshAgent.remainingDistance:F2}");
+        }
+
+        //Rigidbodyに残っている速度を消す(物理の押し戻しとNavMeshAgentの移動が喧嘩するのを防ぐ)
+        if (rigidBody != null && !rigidBody.isKinematic)
+        {
+            rigidBody.linearVelocity = Vector3.zero;
+            rigidBody.angularVelocity = Vector3.zero;
+        }
+
+        //Transformの位置とNavMeshAgentの内部位置のズレを解消するため、NavMesh上の最寄り位置へワープ
+        //(Warpすると経路が消えるので、この後で必ず目的地を設定し直す)
+        Vector3 savedDestination = navMeshAgent.destination;
+        if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 2.0f, NavMesh.AllAreas))
+        {
+            navMeshAgent.Warp(hit.position);
+        }
+
+        navMeshAgent.isStopped = false;
+
+        switch (currentState)
+        {
+            //追従状態:次フレームのChasePlayer()でプレイヤーへの経路が再設定される
+            case EnemyState.Chase:
+                navMeshAgent.SetDestination(savedDestination);
+                break;
+
+            //調査状態:1回目は同じ地点へ再挑戦、それでもダメなら徘徊に戻す
+            case EnemyState.Investigate:
+                if (stuckRecoverCount <= 1)
                 {
-                    navMeshAgent.SetDestination(navMeshAgent.path.corners[navMeshAgent.path.corners.Length - 1]);
-                    Debug.LogWarning($"[{gameObject.name}] ランダムな移動先が見つからないため、現在の目的地を再設定");
+                    navMeshAgent.SetDestination(savedDestination);
                 }
                 else
                 {
-                    //移動先が見つからない場合、最も近いNavMeshの端を探す
-                    if (NavMesh.FindClosestEdge(transform.position, out NavMeshHit edgeHit, NavMesh.AllAreas))
-                    {
-                        navMeshAgent.SetDestination(edgeHit.position);
-                        Debug.LogWarning($"[{gameObject.name}] 最寄りのNavMeshの端に移動");
-                    }
-                    else
-                    {
-                        Debug.LogError($"[{gameObject.name}] 有効な回避先が見つかりませんでした。");
-                    }
+                    currentState = EnemyState.Patrol;
+                    isAlertMode = false;
+                    EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                    NextPosition();
                 }
-            }
+                break;
+
+            //徘徊・警戒状態:別の徘徊地点を選び直す
+            default:
+                NextPosition();
+                break;
         }
+
+        ResetStuckCheck();
     }
 
 
@@ -1590,14 +1936,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     {
 
         //通常プレイ以外のモードの場合
-        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
+        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame)
         {
             //処理をスキップ
-            return; 
+            return;
         }
 
         //プレイヤーが死亡している場合、処理をスキップ
-        if (Player.instance == null || Player.instance.IsDead  || targetPoint == null)
+        if (Player.instance == null || Player.instance.IsDead || targetPoint == null)
         {
             Debug.LogWarning($"[{gameObject.name}] Update処理をスキップ: Player={Player.instance}, tagetPoint={targetPoint}");
             navMeshAgent.isStopped = true;
@@ -1605,7 +1951,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //ダメージを受けた場合
-        if (isReceiveDamage) 
+        if (isReceiveDamage)
         {
             //ダメージ関連処理開始
             DamageRelatedProcessing();
@@ -1614,7 +1960,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //攻撃モードが開始された場合
-        if (attackMode == AttackMode.StartAttack) 
+        if (attackMode == AttackMode.StartAttack)
         {
             //プレイヤーを攻撃
             AttackPlayer();
@@ -1637,6 +1983,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             //通常徘徊状態
             case EnemyState.Patrol:
 
+                //意図しない停止(isStoppedのまま)を解除
+                EnsureAgentResumed();
+
                 //歩行アニメーションを再生
                 animator.SetBool(kIsRunAnimatorParameter, false);
                 animator.SetBool(kIsWalkAnimatorParameter, IsMove);
@@ -1658,7 +2007,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         lastKnownPlayerPosition = targetPoint.position;
 
                         //通常プレイモード&&パネルがnull以外の場合
-                        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null) 
+                        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
                         {
                             //画面を赤く表示
                             playerFoundPanel.SetActive(true);
@@ -1687,6 +2036,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
             //警戒圏内状態
             case EnemyState.Alert:
+
+                //意図しない停止(isStoppedのまま)を解除
+                EnsureAgentResumed();
 
                 //歩行アニメーションを再生
                 animator.SetBool(kIsRunAnimatorParameter, false);
@@ -1739,7 +2091,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 }
                 break;
 
-        　　 //追従状態
+            //追従状態
             case EnemyState.Chase:
                 //警戒音を停止
                 StopFindPlayerSE();
@@ -1779,7 +2131,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                         //調査状態に移行
                         currentState = EnemyState.Investigate;
-                        
+
                         Debug.Log("追従状態から調査状態へ");
                     }
                 }
@@ -1802,6 +2154,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
             //調査状態
             case EnemyState.Investigate:
+
+                //意図しない停止(isStoppedのまま)を解除
+                EnsureAgentResumed();
 
                 //画面の色を元に戻す
                 playerFoundPanel.SetActive(false);
@@ -1849,8 +2204,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 break;
         }
 
+        //スタック(経路はあるのに進めていない状態)を検知して復帰させる
+        CheckStuck();
+
         //移動時の効果音処理(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
-        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame) 
+        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
         {
             // 効果音制御
             currentSE = (currentState == EnemyState.Chase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
@@ -1860,7 +2218,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
             //最終音量 = マスターSE音量 × 相対音量
             float finalVolume = masterSEVolume * relativeVolume;
-            
+
             if (IsMove && !wasMovingLastFrame)
             {
                 //移動音再生(走る音の場合、ピッチを調整)
@@ -1897,19 +2255,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             }
 
             wasMovingLastFrame = IsMove;
-        }        
+        }
     }
 
     /// <summary>
     /// ダメージ関連処理
     /// </summary>
-    private void DamageRelatedProcessing() 
+    private void DamageRelatedProcessing()
     {
         //ダメージ受けている秒数が8秒以下の場合
         if (receiveDamageCount <= kMaxReceiveDamageCount)
         {
             //ダメージを受けている秒数が0秒の場合
-            if (receiveDamageCount == 0) 
+            if (receiveDamageCount == 0)
             {
                 //ダメージアニメーション再生
                 animator.SetBool(kIsDamageAnimatorParameter, true);
@@ -1931,7 +2289,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             //ダメージを受けている秒数を加算する
             receiveDamageCount += Time.deltaTime;
         }
-        else 
+        else
         {
             //移動停止解除
             navMeshAgent.isStopped = false;
@@ -1947,7 +2305,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 animator.SetBool(kIsRunAnimatorParameter, true);
                 animator.SetBool(kIsWalkAnimatorParameter, false);
             }
-            else 
+            else
             {
                 //移動アニメーション再生
                 animator.SetBool(kIsRunAnimatorParameter, false);
@@ -1959,7 +2317,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             receiveDamageCount = 0;
 
             //ダメージを受けているフラグをオフにする
-            isReceiveDamage　= false;
+            isReceiveDamage = false;
         }
     }
 
@@ -2028,7 +2386,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         else if (distance >= minSoundDistance)
         {
             //最小音量
-            return minVolume; 
+            return minVolume;
         }
         else
         {
@@ -2041,10 +2399,10 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 警戒音再生メソッド
     /// </summary>
-    protected void PlayFindPlayerSE() 
+    protected void PlayFindPlayerSE()
     {
         //ポーズ中ではない場合
-        if(Time.timeScale == 1) 
+        if (Time.timeScale == 1)
         {
             //プレイヤーを探すSE再生中フラグをtrue
             isPlayFindPlayerSE = true;
@@ -2059,7 +2417,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 警戒音停止メソッド
     /// </summary>
-    protected void StopFindPlayerSE() 
+    protected void StopFindPlayerSE()
     {
         //プレイヤーを探すSE再生中フラグをfalse
         isPlayFindPlayerSE = false;
