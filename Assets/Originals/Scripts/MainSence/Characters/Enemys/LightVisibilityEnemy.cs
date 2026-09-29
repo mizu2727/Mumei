@@ -100,9 +100,9 @@ public class LightVisibilityEnemy : BaseEnemy
 
     protected override async void Update() 
     {
-        //ゲームがプレイ中でない、またはプレイヤーが死亡している場合
+        //ゲームがプレイ中でない、またはプレイヤーが死亡している||無限追従場合
         if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame || Player.instance == null
-            || Player.instance.IsDead || targetPoint == null)
+            || Player.instance.IsDead || targetPoint == null　|| currentState == EnemyState.InfinityChase)
         {
             navMeshAgent.isStopped = true;
 
@@ -147,8 +147,8 @@ public class LightVisibilityEnemy : BaseEnemy
                         //プレイヤーライト発見フラグをオンにする
                         isViewPlayerLight = true;
 
-                        //追従モード以外の場合
-                        if (currentState != EnemyState.Chase)
+                        //追従モード以外の場合&&唄歌う彷徨う者以外の場合
+                        if (currentState != EnemyState.Chase && enemyNameStatus != EnemyName.SingSongWanderer)
                         {
                             //ノイズ画面を表示
                             noiseScreenPanel.SetActive(true);

@@ -19,12 +19,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
 
     [Header("彷徨う者の名前のステータス(直接編集すること)")]
-    [SerializeField] private EnemyName enemyNameStatus;
+    [SerializeField] protected EnemyName enemyNameStatus;
 
     /// <summary>
     /// 彷徨う者の名前
     /// </summary>
-    enum EnemyName
+    protected enum EnemyName
     {
         /// <summary>
         /// 静声に熱する彷徨う者
@@ -491,6 +491,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         /// 調査（プレイヤーを見失った位置に向かう）
         /// </summary>
         Investigate,
+
+        /// <summary>
+        /// 無限追従
+        /// </summary>
+        InfinityChase,
     }
 
     /// <summary>
@@ -1260,8 +1265,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         return false;
                     }
 
-                    //ステージBGMからプレイヤーを追従するBGMへ切り替える
-                    EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
+                    //唄歌う彷徨う者以外の場合
+                    if (enemyNameStatus != EnemyName.SingSongWanderer) 
+                    {
+                        //ステージBGMからプレイヤーを追従するBGMへ切り替える
+                        EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
+                    }
 
                     //プレイヤーの視認成功
                     return true;
@@ -1423,8 +1432,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //壁に触れた場合
         if (collision.gameObject.layer == LayerMask.NameToLayer(CommonController.instance.GetWallLayer()) || collision.gameObject.CompareTag(CommonController.instance.GetWallTag()))
         {
-            //追従状態の場合、
-            if (currentState == EnemyState.Chase)
+            //追従状態の場合||無限追従の場合
+            if (currentState == EnemyState.Chase || currentState == EnemyState.InfinityChase)
             {
                 //NavMeshAgent自体の経路探索に任せるため、以下の強制停止処理をスキップする
                 //(※returnすると下のプレイヤー・ドア判定まで飛ばしてしまうため、ifで分岐する)
@@ -1615,8 +1624,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //スタック検知をリセット(停止していた0.5秒をスタックとして数えないため)
         ResetStuckCheck();
 
-        //待機中に追従状態へ切り替わっていた場合は、ChasePlayer()の目的地設定に任せる
-        if (currentState == EnemyState.Chase)
+        //待機中に追従状態または無限追従へ切り替わっていた場合は、ChasePlayer()の目的地設定に任せる
+        if (currentState == EnemyState.Chase　|| currentState == EnemyState.InfinityChase)
         {
             return;
         }
@@ -1828,8 +1837,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
         switch (currentState)
         {
-            //追従状態:次フレームのChasePlayer()でプレイヤーへの経路が再設定される
+            //追従状態・無限追従:次フレームのChasePlayer()でプレイヤーへの経路が再設定される
             case EnemyState.Chase:
+            case EnemyState.InfinityChase:
                 navMeshAgent.SetDestination(savedDestination);
                 break;
 
@@ -1843,7 +1853,13 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 {
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
-                    EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+
+                    //唄歌う彷徨う者以外の場合
+                    if (enemyNameStatus != EnemyName.SingSongWanderer) 
+                    {
+                        EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                    }
+                    
                     NextPosition();
                 }
                 break;
@@ -2006,8 +2022,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         isAlertMode = true;
                         lastKnownPlayerPosition = targetPoint.position;
 
-                        //通常プレイモード&&パネルがnull以外の場合
-                        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                        //唄歌う彷徨う者以外の場合&&通常プレイモード&&パネルがnull以外の場合
+                        if (enemyNameStatus != EnemyName.SingSongWanderer && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
                         {
                             //画面を赤く表示
                             playerFoundPanel.SetActive(true);
@@ -2026,8 +2042,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 }
                 else if (!navMeshAgent.pathPending && (navMeshAgent.remainingDistance < 0.5f || !navMeshAgent.hasPath))
                 {
-                    //プレイヤーを追従するBGMからステージBGMへ切り替える
-                    EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                    //唄歌う彷徨う者以外の場合
+                    if (enemyNameStatus != EnemyName.SingSongWanderer) 
+                    {
+                        //プレイヤーを追従するBGMからステージBGMへ切り替える
+                        EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                    } 
 
                     //次の徘徊先を設定
                     NextPosition();
@@ -2057,8 +2077,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Chase;
                     lastKnownPlayerPosition = targetPoint.position;
 
-                    //通常プレイモード&&パネルがnull以外の場合
-                    if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                    //唄歌う彷徨う者以外の場合&&通常プレイモード&&パネルがnull以外の場合
+                    if (enemyNameStatus != EnemyName.SingSongWanderer && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
                     {
                         //画面を赤く表示
                         playerFoundPanel.SetActive(true);
@@ -2079,8 +2099,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         playerFoundPanel.SetActive(false);
                     }
 
-                    //プレイヤーを追従するBGMからステージBGMへ切り替える
-                    EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                    //唄歌う彷徨う者以外の場合
+                    if (enemyNameStatus != EnemyName.SingSongWanderer) 
+                    {
+                        //プレイヤーを追従するBGMからステージBGMへ切り替える
+                        EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                    }
 
                     Debug.Log("警戒圏内状態から通常徘徊状態へ");
                 }
@@ -2187,8 +2211,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     currentState = EnemyState.Patrol;
                     isAlertMode = false;
 
-                    //プレイヤーを追従するBGMからステージBGMへ切り替える
-                    EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                    //唄歌う彷徨う者以外の場合
+                    if (enemyNameStatus != EnemyName.SingSongWanderer) 
+                    {
+                        //プレイヤーを追従するBGMからステージBGMへ切り替える
+                        EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                    }
 
                     Debug.Log("調査状態から通常徘徊状態へ");
                 }
@@ -2202,6 +2230,39 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     Debug.Log("調査状態から警戒圏内状態へ");
                 }
                 break;
+
+            //無限追従状態
+            case EnemyState.InfinityChase:
+                //警戒音を停止
+                StopFindPlayerSE();
+
+                //ダッシュアニメーションを再生
+                animator.SetBool(kIsRunAnimatorParameter, true);
+                animator.SetBool(kIsWalkAnimatorParameter, false);
+
+                navMeshAgent.speed = dashSpeed;
+
+                //プレイヤーを追従
+                ChasePlayer();
+
+                //追従状態を続ける
+                lastKnownPlayerPosition = targetPoint.position;
+
+                //調査ステートへの移行時間をリセット
+                changeToInvestigateTimer = 0f;
+
+                /*
+                await UniTask.Delay(TimeSpan.FromSeconds(0.3));
+
+                //画面の色を元に戻す(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
+                //通常プレイモード&&パネルがnull以外の場合
+                if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                {
+                    playerFoundPanel.SetActive(false);
+                }
+                */
+
+                break;
         }
 
         //スタック(経路はあるのに進めていない状態)を検知して復帰させる
@@ -2211,7 +2272,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
         {
             // 効果音制御
-            currentSE = (currentState == EnemyState.Chase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
+            currentSE = (currentState == EnemyState.Chase || currentState == EnemyState.InfinityChase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
             //距離ベースの相対音量（0～1）
             float relativeVolume = CalculateVolumeBasedOnDistance(distance);
@@ -2299,7 +2360,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
             //保存していたEnemyStateがChaseの場合
 
-            if (saveEnemyState == EnemyState.Chase)
+            if (saveEnemyState == EnemyState.Chase || currentState == EnemyState.InfinityChase)
             {
                 //移動アニメーション再生
                 animator.SetBool(kIsRunAnimatorParameter, true);

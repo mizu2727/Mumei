@@ -153,7 +153,7 @@ public class HearingEnemy : BaseEnemy
 
         //放送スピーカーとの距離を計算し、範囲内のスピーカーを検知する
         if (!isInvestigatingSound && !isInvestigatingBroadcastSound && BroadcastController.instance != null
-            && currentState != EnemyState.Investigate && currentState != EnemyState.Chase)
+            && currentState != EnemyState.Investigate && currentState != EnemyState.Chase && currentState != EnemyState.InfinityChase)
         {
             //放送スピーカーのTransformのリストを取得
             List<Transform> speakerTransformList = BroadcastController.instance.GetBroadcastSpeakerTransformList();
@@ -234,13 +234,20 @@ public class HearingEnemy : BaseEnemy
         // Y軸の高さ差を計算
         float heightDifferenceToPlayer = Mathf.Abs(transform.position.y - targetPoint.position.y);
 
-        //(プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合)&&追従モード以外の場合
+        //(プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合)&&追従モード・無限追従モード以外の場合
         //プレイヤー追従時にダッシュ音を検知してしまうと追従状態から調査状態に移行してしまうため、追従モード以外の場合に限定する
         if ((Player.instance.IsDash || Player.instance.GetIsMakeSound()) && !isInvestigatingSound && !Player.instance.GetIsPlayerHidden()
-            && distanceToPlayer <= soundDetectionRange && heightDifferenceToPlayer <= maxOtherSoundVerticalRange && currentState != EnemyState.Chase)
+            && distanceToPlayer <= soundDetectionRange && heightDifferenceToPlayer <= maxOtherSoundVerticalRange && currentState != EnemyState.Chase 
+            && currentState != EnemyState.InfinityChase)
         {
-            //ノイズ画面を表示
-            noiseScreenPanel.SetActive(true);
+            //唄歌う彷徨う者以外の場合
+            if (enemyNameStatus != EnemyName.SingSongWanderer) 
+            {
+                //ノイズ画面を表示
+                noiseScreenPanel.SetActive(true);
+            }
+
+            
 
             Debug.Log("ダッシュ音を検知");
 
@@ -262,7 +269,6 @@ public class HearingEnemy : BaseEnemy
             noiseScreenPanel.SetActive(false);
         }
 
-        //TODO:
 
         //状態ごとの処理
         switch (currentState)
@@ -270,6 +276,7 @@ public class HearingEnemy : BaseEnemy
             case EnemyState.Patrol:
             case EnemyState.Alert:
             case EnemyState.Chase:
+            case EnemyState.InfinityChase:
 
                 //BaseEnemy.csのUpdate関数を呼び出す
                 base.Update();
@@ -297,8 +304,12 @@ public class HearingEnemy : BaseEnemy
                         isInvestigatingSound = false;
                         isInvestigatingBroadcastSound = false;
 
-                        //画面を赤く表示
-                        playerFoundPanel.SetActive(true);
+                        //唄歌う彷徨う者以外の場合
+                        if (enemyNameStatus != EnemyName.SingSongWanderer)
+                        {
+                            //画面を赤く表示
+                            playerFoundPanel.SetActive(true);
+                        }
 
                         Debug.Log("調査状態から追従状態へ02");
                     }
