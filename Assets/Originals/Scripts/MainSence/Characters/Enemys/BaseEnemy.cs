@@ -2360,7 +2360,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
             //保存していたEnemyStateがChaseの場合
 
-            if (saveEnemyState == EnemyState.Chase || currentState == EnemyState.InfinityChase)
+            if (saveEnemyState == EnemyState.Chase || saveEnemyState == EnemyState.InfinityChase)
             {
                 //移動アニメーション再生
                 animator.SetBool(kIsRunAnimatorParameter, true);
