@@ -1135,11 +1135,22 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 nameJapanese = enemyInformation.enemyInformation[2].nameJapanese;
                 nameEnglish = enemyInformation.enemyInformation[2].nameEnglish;
 
-                //TODO予定(SEをアタッチすること):SEのIDを設定。インデックス番号を2に戻すこと
+                //SEのIDを設定
                 walkSEid = enemyInformation.enemyInformation[2].walkSEId;
                 runSEid = enemyInformation.enemyInformation[2].runSEId;
                 findPlayerSEid = enemyInformation.enemyInformation[1].findPlayerSEId;
 
+                break;
+
+            //唄歌う彷徨う者
+            case EnemyName.SingSongWanderer:
+                //名前を設定
+                nameJapanese = enemyInformation.enemyInformation[3].nameJapanese;
+                nameEnglish = enemyInformation.enemyInformation[3].nameEnglish;
+                //SEのIDを設定
+                walkSEid = enemyInformation.enemyInformation[3].walkSEId;
+                runSEid = enemyInformation.enemyInformation[3].runSEId;
+                findPlayerSEid = enemyInformation.enemyInformation[1].findPlayerSEId;
                 break;
 
 
@@ -1423,11 +1434,22 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     }
 
     /// <summary>
+    /// オブジェクトに接触した場合に呼ばれる(派生クラスで独自の接触処理を行う用)
+    /// OnCollisionEnter / OnTriggerEnter / OnTriggerStay から呼ばれる
+    /// </summary>
+    /// <param name="touchedObject">接触したオブジェクト</param>
+    protected virtual void OnTouchObject(GameObject touchedObject)
+    {
+    }
+
+    /// <summary>
     /// オブジェクトのコリジョンと衝突した場合の処理
     /// </summary>
     /// <param name="collision">衝突したオブジェクトのコリジョン</param>
     private void OnCollisionEnter(Collision collision)
     {
+        //派生クラスへ接触したオブジェクトを通知
+        OnTouchObject(collision.gameObject);
 
         //壁に触れた場合
         if (collision.gameObject.layer == LayerMask.NameToLayer(CommonController.instance.GetWallLayer()) || collision.gameObject.CompareTag(CommonController.instance.GetWallTag()))
@@ -1525,6 +1547,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <param name="collider">貫通したオブジェクトのコライダー</param>
     private void OnTriggerEnter(Collider collider)
     {
+        //派生クラスへ接触したオブジェクトを通知
+        OnTouchObject(collider.gameObject);
 
         //プレイヤーに触れた場合&&ダメージを受けていない場合&&プレイヤーが隠れていない場合
         if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage && !Player.instance.GetIsPlayerHidden())
@@ -1575,6 +1599,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <param name="collider">離れたオブジェクトのコライダー</param>
     private void OnTriggerStay(Collider collider)
     {
+        //派生クラスへ接触したオブジェクトを通知
+        OnTouchObject(collider.gameObject);
+
         //階段に触れている場合
         if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
         {

@@ -155,6 +155,100 @@ public class HiddenObject : MonoBehaviour
 
 
     /*---------------------------------------------
+     * ハイドポイントの種類関連
+     --------------------------------------------*/
+
+    /// <summary>
+    /// ハイドポイントの種類
+    /// </summary>
+    public enum HidePointType
+    {
+        /// <summary>
+        /// 宝箱
+        /// </summary>
+        Chest,
+
+        /// <summary>
+        /// ゴミ箱
+        /// </summary>
+        TrashCan,
+
+        /// <summary>
+        /// ロッカー
+        /// </summary>
+        Locker,
+    }
+
+    [Header("ハイドポイントの種類(ヒエラルキー上で設定すること)")]
+    [SerializeField] private HidePointType hidePointType = HidePointType.Chest;
+
+    /// <summary>
+    /// ハイドポイントの種類を取得
+    /// </summary>
+    /// <returns>ハイドポイントの種類</returns>
+    public HidePointType GetHidePointType()
+    {
+        return hidePointType;
+    }
+
+    [Header("敵が覗き込む位置(任意。未設定の場合はハイドポイントの前方へ自動配置)")]
+    [Header("※Z軸(青)がハイドポイントの方を向くように配置すること")]
+    [SerializeField] private Transform enemyPeekPoint;
+
+    /// <summary>
+    /// 敵が覗き込む位置を取得(未設定の場合はnull)
+    /// </summary>
+    /// <returns>敵が覗き込む位置</returns>
+    public Transform GetEnemyPeekPoint()
+    {
+        return enemyPeekPoint;
+    }
+
+    /// <summary>
+    /// 敵によって扉が開けられたフラグ(二重に回転させないため)
+    /// </summary>
+    private bool isDoorOpenedByEnemy = false;
+
+
+    /// <summary>
+    /// このハイドポイントの中(子オブジェクト)にプレイヤーが隠れているかを判定する
+    /// </summary>
+    /// <returns>隠れている場合true</returns>
+    public bool IsPlayerHiddenInside()
+    {
+        //プレイヤーが存在しない場合
+        if (Player.instance == null)
+        {
+            return false;
+        }
+
+        //隠れているフラグがオン&&プレイヤーの親がこのハイドポイントの場合
+        return Player.instance.GetIsPlayerHidden() && Player.instance.transform.parent == transform;
+    }
+
+    /// <summary>
+    /// 敵が扉だけを開ける処理(プレイヤーは外に出さない)
+    /// </summary>
+    /// <returns>扉が完全に開くまでの待機時間（秒）。扉が無い場合は0</returns>
+    public float OpenDoorByEnemy()
+    {
+        //扉が無い場合||既に開けている場合
+        if (!hasDoor || doorObject == null || isDoorOpenedByEnemy)
+        {
+            return 0f;
+        }
+
+        //敵によって扉が開けられたフラグをオンにする
+        isDoorOpenedByEnemy = true;
+
+        //扉を開ける
+        SetDoorOpen(true, openDirenctionValue);
+
+        return doorOpenWaitTime;
+    }
+
+
+    /*---------------------------------------------
      * 扉付きオブジェクト関連
      --------------------------------------------*/
 
@@ -175,6 +269,15 @@ public class HiddenObject : MonoBehaviour
 
     [Header("扉が完全に開くまでの待機時間（秒）(ヒエラルキー上で設定すること)")]
     [SerializeField] private float doorOpenWaitTime;
+
+    /// <summary>
+    /// 扉が完全に開くまでの待機時間を取得
+    /// </summary>
+    /// <returns>扉が完全に開くまでの待機時間（秒）</returns>
+    public float GetDoorOpenWaitTime()
+    {
+        return doorOpenWaitTime;
+    }
 
     [Header("扉が完全に閉まるまでの待機時間（秒）(ヒエラルキー上で設定すること)")]
     [SerializeField] private float doorCloseWaitTime;
@@ -204,8 +307,6 @@ public class HiddenObject : MonoBehaviour
     /// OnDisable時にタスクを安全にキャンセルするために使用する
     /// </summary>
     private CancellationTokenSource doorCts;
-
-
 
 
     private void OnEnable()
