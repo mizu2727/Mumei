@@ -76,6 +76,11 @@ public class LanguageController : MonoBehaviour
         /// ポルトガル語
         /// </summary>
         kPortuguese,
+
+        /// <summary>
+        /// ロシア語
+        /// </summary>
+        kRussian,
     }
 
     
@@ -625,6 +630,47 @@ public class LanguageController : MonoBehaviour
                 }
 
                 break;
+
+
+                //ロシア語
+                case LanguageStatus.kRussian:
+                //ボタンテキストをロシア語に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageRussian;
+                }
+
+                //ボタンサイズをロシア語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeRussian;
+                }
+
+                //ボタンフォントをロシア語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetRussian();
+                }
+
+                //UIテキストをロシア語に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageRussian;
+                }
+
+                //UIサイズをロシア語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeRussian;
+                }
+
+                //UIフォントをロシア語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetRussian();
+                }
+                
+                break;
         }
 
         //アイテムのテキスト関連を設定する
@@ -751,6 +797,19 @@ public class LanguageController : MonoBehaviour
         //言語ステータスをポルトガル語に設定する
         languageStatus = LanguageStatus.kPortuguese;
 
+        //言語を設定する
+        SettingLanguageText();
+    }
+
+    /// <summary>
+    /// ロシア語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedRussianButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        //言語ステータスをロシア語に設定する
+        languageStatus = LanguageStatus.kRussian;
         //言語を設定する
         SettingLanguageText();
     }

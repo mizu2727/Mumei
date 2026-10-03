@@ -186,6 +186,26 @@ public class ItemMessageEntity
     public int itemDescriptionSizePortuguese;
 
     /// <summary>
+    /// ロシア語アイテム名
+    /// </summary>
+    public string itemNameRussian;
+
+    /// <summary>
+    /// ロシア語アイテム名のサイズ
+    /// </summary>
+    public int itemNameSizeRussian;
+
+    /// <summary>
+    /// ロシア語アイテム説明
+    /// </summary>
+    public string itemDescriptionRussian;
+
+    /// <summary>
+    /// ロシア語アイテム説明のサイズ
+    /// </summary>
+    public int itemDescriptionSizeRussian;
+
+    /// <summary>
     /// メモ
     /// </summary>
     public string memo;

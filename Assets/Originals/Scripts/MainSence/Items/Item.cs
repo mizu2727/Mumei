@@ -334,6 +334,14 @@ public class Item : MonoBehaviour
                 //ポルトガル語アイテム説明名を設定する
                 description = itemMessage.itemMessage[id].itemDescriptionPortuguese;
                 break;
+
+            //ロシア語
+            case LanguageController.LanguageStatus.kRussian:
+                //ロシア語アイテム名を設定する
+                itemName = itemMessage.itemMessage[id].itemNameRussian;
+                //ロシア語アイテム説明名を設定する
+                description = itemMessage.itemMessage[id].itemDescriptionRussian;
+                break;
         }
     }
 }

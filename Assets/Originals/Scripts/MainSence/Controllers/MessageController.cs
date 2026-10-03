@@ -612,6 +612,14 @@ public class MessageController : MonoBehaviour
                     Write(talkMessage.talkMessage[number].messagePortuguese);
                     break;
 
+                //ロシア語
+                case LanguageStatus.kRussian:
+                    //メッセージテキストのフォントサイズをロシア語用に設定
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizeRussian;
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(talkMessage.talkMessage[number].messageRussian);
+                    break;
+
                 //それ以外の場合
                 default:
                     Debug.LogError("想定していない言語ステータスです");
@@ -669,6 +677,13 @@ public class MessageController : MonoBehaviour
 
                         //会話している人の名前を設定
                         speakerNameText.text = talkMessage.talkMessage[number].speakerNamePortuguese;
+                        break;
+
+                    //ロシア語の場合
+                    case LanguageStatus.kRussian:
+
+                        //会話している人の名前を設定
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerNameRussian;
                         break;
                 }
             }
@@ -785,6 +800,13 @@ public class MessageController : MonoBehaviour
 
                             //会話している人の名前を設定
                             speakerNameText.text = talkMessage.talkMessage[number].speakerNamePortuguese;
+                            break;
+
+                        //ロシア語
+                        case LanguageStatus.kRussian:
+
+                            //会話している人の名前を設定
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerNameRussian;
                             break;
                     }
                 }
@@ -1056,6 +1078,14 @@ public class MessageController : MonoBehaviour
                 Write(talkMessage.talkMessage[number].messagePortuguese);
                 break;
 
+            //ロシア語
+            case LanguageStatus.kRussian:
+                //メッセージテキストのフォントサイズをロシア語用に設定
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizeRussian;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(talkMessage.talkMessage[number].messageRussian);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1146,6 +1176,14 @@ public class MessageController : MonoBehaviour
 
                     //エクセルデータ型.リスト型[番号].カラム名
                     Write(systemMessage.systemMessage[number].messagePortuguese);
+                    break;
+
+                //ロシア語
+                case LanguageStatus.kRussian:
+                    //メッセージテキストのフォントサイズをロシア語用に設定
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizeRussian;
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(systemMessage.systemMessage[number].messageRussian);
                     break;
 
                 //それ以外の場合
@@ -1487,6 +1525,14 @@ public class MessageController : MonoBehaviour
                 Write(systemMessage.systemMessage[number].messagePortuguese);
                 break;
 
+            //ロシア語
+            case LanguageStatus.kRussian:
+                //メッセージテキストのフォントサイズをロシア語用に設定
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizeRussian;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(systemMessage.systemMessage[number].messageRussian);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1561,6 +1607,14 @@ public class MessageController : MonoBehaviour
 
                 //エクセルデータ型.リスト型[番号].カラム名
                 Write(goalMessage.goalMessage[number].messagePortuguese);
+                break;
+
+            //ロシア語
+            case LanguageStatus.kRussian:
+                //メッセージテキストのフォントサイズをロシア語用に設定
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizeRussian;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(goalMessage.goalMessage[number].messageRussian);
                 break;
 
             //それ以外の場合
@@ -1645,6 +1699,14 @@ public class MessageController : MonoBehaviour
                 Write(inventoryMessage.inventoryMessage[number].messagePortuguese);
                 break;
 
+            //ロシア語
+            case LanguageStatus.kRussian:
+                //メッセージテキストのフォントサイズをロシア語用に設定
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeRussian;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(inventoryMessage.inventoryMessage[number].messageRussian);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1712,6 +1774,12 @@ public class MessageController : MonoBehaviour
 
                     //確認用テキストに入力した名前を表示
                     CheckInputNameText.text = "Deseja usar " + inputPlayerNameField.text + "?";
+                    break;
+
+                //ロシア語
+                case LanguageStatus.kRussian:
+                    //確認用テキストに入力した名前を表示
+                    CheckInputNameText.text = "Правильно ли " + inputPlayerNameField.text + "?";
                     break;
 
                 //それ以外の場合

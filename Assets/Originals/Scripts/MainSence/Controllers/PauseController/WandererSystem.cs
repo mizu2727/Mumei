@@ -225,6 +225,22 @@ public partial class PauseController
                             wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizePortuguese;
                             break;
 
+                        //ロシア語
+                        case LanguageController.LanguageStatus.kRussian:
+
+                            //彷徨う者名称欄にロシア語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameRussian;
+
+                            //彷徨う者名称テキストサイズをロシア語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeRussian;
+
+                            //彷徨う者説明欄欄にロシア語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionRussian;
+
+                            //彷徨う者説明欄テキストサイズをロシア語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeRussian;
+                            break;
+
                         default:
                             Debug.LogWarning("その他の言語ステータス");
                             break;
@@ -511,6 +527,25 @@ public partial class PauseController
                     }
                     break;
 
+                //ロシア語
+                case LanguageController.LanguageStatus.kRussian:
+
+                    //彷徨う者関連情報名称テキストをロシア語にする
+                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameRussian;
+                    wandererNameText[i].text = itemMessage.itemMessage[enemyInformationIds[i]].itemNameRussian;
+
+                    //彷徨う者関連情報名称テキストサイズをロシア語用に設定する
+                    wandererNameText[i].fontSize = itemMessage.itemMessage[enemyInformationIds[i]].itemNameSizeRussian;
+
+                    if (0 < wandererExplanationText.Length)
+                    {
+                        //彷徨う者関連情報説明テキストをロシア語にする
+                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionRussian;
+                        wandererExplanationText[i].text = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionRussian;
+                        //彷徨う者関連情報説明テキストサイズをロシア語用に設定する
+                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionSizeRussian;
+                    }
+                    break;
             }
 
             //TextMeshProRubyコンポーネントに彷徨う者関連情報名称を設定する

@@ -622,6 +622,18 @@ public class CommonController : MonoBehaviour
         return portugueseFont;
     }
 
+    [Header("ロシア語用フォント(TMP_FontAssetをアタッチ)")]
+    [SerializeField] private TMP_FontAsset russianFont;
+
+    /// <summary>
+    /// ロシア語用フォントを取得する関数
+    /// </summary>
+    /// <returns>ロシア語用フォント</returns>
+    public TMP_FontAsset GetRussian()
+    {
+        return russianFont;
+    }
+
     /// <summary>
     /// ボタンの文字の色
     /// </summary>
@@ -661,6 +673,7 @@ public class CommonController : MonoBehaviour
             case LanguageController.LanguageStatus.kTraditionalChinese: font = traditionalChineseFont; break;
             case LanguageController.LanguageStatus.kSpanish: font = spanishFont; break;
             case LanguageController.LanguageStatus.kPortuguese: font = portugueseFont; break;
+            case LanguageController.LanguageStatus.kRussian: font = russianFont; break;
         }
 
         //未設定の場合は警告を出して日本語用フォントで代用する
