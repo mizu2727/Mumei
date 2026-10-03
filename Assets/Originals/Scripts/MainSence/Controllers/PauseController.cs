@@ -846,6 +846,9 @@ public partial class PauseController : MonoBehaviour
         //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
         audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
 
+        //現在の言語用フォントを全テキストへ適用する
+        ApplyLanguageFontToPauseTexts();
+
         if (documentNameText != null) 
         {
             //ドキュメントオブジェクトのTextMeshProRubyコンポーネントを取得する
@@ -1687,6 +1690,9 @@ public partial class PauseController : MonoBehaviour
     /// </summary>
     public void SettingLanguageText() 
     {
+        //先に現在の言語用フォントを全テキストへ適用する(□化け防止)
+        ApplyLanguageFontToPauseTexts();
+
         //ドキュメントの言語設定を行う
         SettingLanguageDocumentText();
 
@@ -1695,6 +1701,52 @@ public partial class PauseController : MonoBehaviour
 
         //彷徨う者関連情報の言語設定を行う
         SettingLanguageWandererInformationText();
+    }
+
+    /// <summary>
+    /// 現在の言語用フォントを、ポーズ画面内のTMPテキストへまとめて適用する
+    /// (TextMeshProRuby.Textへ文字列を入れる前に呼ぶこと)
+    /// </summary>
+    private void ApplyLanguageFontToPauseTexts()
+    {
+        //CommonControllerが存在しない場合
+        if (CommonController.instance == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //ドキュメント
+        CommonController.instance.ApplyLanguageFont(documentNameText);
+        CommonController.instance.ApplyLanguageFont(documentExplanationText);
+
+        //ミステリーアイテム
+        ApplyLanguageFontToArray(mysteryItemNameText);
+        ApplyLanguageFontToArray(mysteryItemExplanationText);
+
+        //彷徨う者関連情報
+        ApplyLanguageFontToArray(wandererNameText);
+        ApplyLanguageFontToArray(wandererExplanationText);
+    }
+
+    /// <summary>
+    /// TMP_Text配列の全要素へ現在の言語用フォントを適用する
+    /// </summary>
+    /// <param name="textArray">対象のTMP_Text配列</param>
+    private void ApplyLanguageFontToArray(TMP_Text[] textArray)
+    {
+        //配列が存在しない場合
+        if (textArray == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        for (int i = 0; i < textArray.Length; i++)
+        {
+            //nullチェックはApplyLanguageFont側で行う
+            CommonController.instance.ApplyLanguageFont(textArray[i]);
+        }
     }
 
     /// <summary>

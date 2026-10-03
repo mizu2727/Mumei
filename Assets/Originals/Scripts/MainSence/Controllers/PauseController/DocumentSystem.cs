@@ -68,6 +68,9 @@ public partial class PauseController
         //IDを保存
         keepDocumentBookID = documentId;
 
+        //現在の言語用フォントを適用する
+        CommonController.instance.ApplyLanguageFont(documentNameText);
+
         //シーン内で取得したドキュメントオブジェクトの名前を保存
         documentNameText.text = documentName;
         documentNameTextRubyComponent.Text = documentNameText.text;
@@ -81,6 +84,10 @@ public partial class PauseController
     {
         //シーン内で取得したドキュメントオブジェクトの説明を保存
         documentExplanationTextRubyComponent = documentExplanationText.GetComponent<TMP_Ruby.TextMeshProRuby>();
+
+        //現在の言語用フォントを適用する
+        CommonController.instance.ApplyLanguageFont(documentExplanationText);
+
         documentExplanationText.text = documentDescription;
         documentExplanationTextRubyComponent.Text = documentExplanationText.text;
     }

@@ -166,6 +166,9 @@ public partial class PauseController
     /// </summary>
     private void UpdateMysteryItemUI()
     {
+        //現在の言語用フォントを適用する
+        ApplyLanguageFontToPauseTexts();
+
         for (int i = 0; i < mysteryItemNameText.Length; i++)
         {
             if (i < mysteryItemNames.Count)

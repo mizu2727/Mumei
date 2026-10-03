@@ -1219,6 +1219,12 @@ public class DifficultyLevelController : MonoBehaviour
     /// <param name="number">難易度説明番号</param>
     public void ShowDifficultyLevelExplanation(int number)
     {
+        //現在の言語用フォントを適用する(テキストを入れる前に行わないと□化けする)
+        if (CommonController.instance != null)
+        {
+            CommonController.instance.ApplyLanguageFont(difficultyLevelExplanationText);
+        }
+
         //言語ステータスに応じて、テキストを変更する
         switch (LanguageController.instance.GetLanguageStatus()) 
         {

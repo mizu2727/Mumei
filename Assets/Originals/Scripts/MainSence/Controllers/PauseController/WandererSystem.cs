@@ -89,6 +89,9 @@ public partial class PauseController
     /// </summary>
     private void InitializeWandererItemUI()
     {
+        //現在の言語用フォントを適用する(言語ごとの名称・説明を入れる前に行う)
+        ApplyLanguageFontToPauseTexts();
+
         //wandererNameTextRubyComponentを初期化
         wandererNameTextRubyComponent = new TMP_Ruby.TextMeshProRuby[wandererNameText.Length];
 
@@ -303,6 +306,9 @@ public partial class PauseController
     /// </summary>
     private void UpdateEnemyInformationUI()
     {
+        //現在の言語用フォントを適用する
+        ApplyLanguageFontToPauseTexts();
+
         for (int i = 0; i < wandererNameText.Length; i++)
         {
             if (i < enemyInformationNames.Count)

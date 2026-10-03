@@ -645,6 +645,147 @@ public class CommonController : MonoBehaviour
     }
 
     /// <summary>
+    /// 言語ステータスに対応するフォントを取得する関数
+    /// </summary>
+    /// <param name="status">言語ステータス</param>
+    /// <returns>対応するTMP_FontAsset(未設定時は日本語用フォント)</returns>
+    public TMP_FontAsset GetFontByLanguage(LanguageController.LanguageStatus status)
+    {
+        TMP_FontAsset font = null;
+
+        switch (status)
+        {
+            case LanguageController.LanguageStatus.kJapanese: font = japaneseFont; break;
+            case LanguageController.LanguageStatus.kEnglish: font = englishFont; break;
+            case LanguageController.LanguageStatus.kSimplifiedChinese: font = simplifiedChineseFont; break;
+            case LanguageController.LanguageStatus.kTraditionalChinese: font = traditionalChineseFont; break;
+            case LanguageController.LanguageStatus.kSpanish: font = spanishFont; break;
+            case LanguageController.LanguageStatus.kPortuguese: font = portugueseFont; break;
+        }
+
+        //未設定の場合は警告を出して日本語用フォントで代用する
+        if (font == null)
+        {
+            Debug.LogWarning($"[CommonController] {status} 用のフォントが未設定です。日本語用フォントで代用します。", this);
+            font = japaneseFont;
+        }
+
+        return font;
+    }
+
+    /// <summary>
+    /// 現在の言語ステータスに対応するフォントを取得する関数
+    /// </summary>
+    /// <returns>現在の言語用フォント</returns>
+    public TMP_FontAsset GetCurrentLanguageFont()
+    {
+        //LanguageControllerが未生成の場合は日本語用フォント
+        if (LanguageController.instance == null)
+        {
+            return japaneseFont;
+        }
+
+        return GetFontByLanguage(LanguageController.instance.GetLanguageStatus());
+    }
+
+    /// <summary>
+    /// 現在の言語に対応するフォントをTMP_Textへ適用する関数
+    /// (LanguageControllerの配列に含まれないテキストは、表示前に必ずこれを呼ぶこと)
+    /// </summary>
+    /// <param name="target">対象のTMP_Text</param>
+    public void ApplyLanguageFont(TMP_Text target)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        TMP_FontAsset font = GetCurrentLanguageFont();
+        if (font == null)
+        {
+            return;
+        }
+
+        //同じフォントなら何もしない(不要なメッシュ再生成を防ぐ)
+        if (target.font == font)
+        {
+            return;
+        }
+
+        target.font = font;
+
+        //マテリアルもフォントアセット付属のものに合わせる
+        //(別フォントのマテリアルが残るとアトラスが一致せず□や崩れの原因になる)
+        target.fontSharedMaterial = font.material;
+    }
+
+    /// <summary>
+    /// 現在の言語用フォントを適用した上でテキストを設定する関数
+    /// </summary>
+    /// <param name="target">対象のTMP_Text</param>
+    /// <param name="text">表示する文字列</param>
+    /// <param name="fontSize">フォントサイズ(0以下なら変更しない)</param>
+    public void SetLocalizedText(TMP_Text target, string text, float fontSize = 0f)
+    {
+        if (target == null)
+        {
+            return;
+        }
+
+        //先にフォントを切り替えてからテキストを入れる
+        ApplyLanguageFont(target);
+
+        if (fontSize > 0f)
+        {
+            target.fontSize = fontSize;
+        }
+
+        target.text = text;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        //開発時のみ、フォントに存在しない文字をログに出す
+        LogMissingCharacters(target, text);
+#endif
+    }
+
+    /// <summary>
+    /// フォント(フォールバック含む)に存在しない文字をログに出力する関数
+    /// </summary>
+    /// <param name="target">対象のTMP_Text</param>
+    /// <param name="text">チェックする文字列</param>
+    public void LogMissingCharacters(TMP_Text target, string text)
+    {
+        if (target == null || target.font == null || string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        //ルビ等のリッチテキストタグを除去して本文だけを判定する
+        string plain = System.Text.RegularExpressions.Regex.Replace(text, "<[^>]*>", string.Empty);
+
+        //第3引数true:フォールバックも検索 / 第4引数true:不足文字を重複なしで返す
+        if (target.font.HasCharacters(plain, out uint[] missing, true, false))
+        {
+            return;
+        }
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        foreach (char c in missing)
+        {
+            if (char.IsWhiteSpace(c))
+            {
+                continue;
+            }
+            sb.Append(c).Append("(U+").Append(((int)c).ToString("X4")).Append(") ");
+        }
+
+        if (sb.Length > 0)
+        {
+            Debug.LogWarning($"[CommonController] フォント '{target.font.name}' に無い文字: {sb}\n対象: {target.name} / 本文: {plain}", target);
+        }
+    }
+
+    /// <summary>
     /// ボタンの文字の色を変更する関数
     /// </summary>
     /// <param name="targetButtonTextNumber">対象のボタン番号</param>

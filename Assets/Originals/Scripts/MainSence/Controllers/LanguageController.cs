@@ -13,6 +13,13 @@ public class LanguageController : MonoBehaviour
     /// </summary>
     public static LanguageController instance;
 
+    /// <summary>
+    /// 言語変更時のイベント
+    /// (LanguageControllerの配列に含まれないテキストを持つクラスは、これを購読して再設定する)
+    /// </summary>
+    public static event Action<LanguageStatus> OnLanguageChanged;
+
+
     [Header("ボタンテキストメッセージ(Prefabをアタッチ)")]
     [SerializeField] private ButtonMessage buttonMessage;
 
@@ -258,6 +265,9 @@ public class LanguageController : MonoBehaviour
         tmpText.fontStyle = ConvertFontStyle(fontStyle);
         tmpText.alignment = ConvertAlignment(alignment);
         tmpText.raycastTarget = raycastTarget;
+
+        //TMP Settingsのデフォルトフォントのままにしないよう、現在の言語用フォントを即適用する
+        CommonController.instance.ApplyLanguageFont(tmpText);
 
         return tmpText;
     }
@@ -650,6 +660,9 @@ public class LanguageController : MonoBehaviour
             //Inventoryのテキスト関連を設定する
             Inventory.instance.SettingLanguageText();
         }
+
+        //言語変更を通知する(購読側でフォント・テキストを再設定する)
+        OnLanguageChanged?.Invoke(languageStatus);
     }
 
     /// <summary>

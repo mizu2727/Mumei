@@ -391,6 +391,17 @@ public class MessageController : MonoBehaviour
 
         isWrite = true;
 
+        //現在の言語用フォントを適用する(テキストを入れる前に行わないと□化けする)
+        if (CommonController.instance != null)
+        {
+            CommonController.instance.ApplyLanguageFont(messageText);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            //開発時のみ、フォントに存在しない文字をログに出す
+            CommonController.instance.LogMissingCharacters(messageText, s);
+#endif
+        }
+
         //毎回テキストをクリアしてから書き始める
         messageText.text = "";
 
@@ -1191,7 +1202,7 @@ public class MessageController : MonoBehaviour
                 //文字の色を赤色に設定
                 messageText.color = Color.red;
 
-                Write(systemMessage.systemMessage[number].message);
+                //言語ステータスに応じて、テキストを変更して表示する
                 SettingLanguageSystemMessage(number);
 
                 await ShowNextMessage();
