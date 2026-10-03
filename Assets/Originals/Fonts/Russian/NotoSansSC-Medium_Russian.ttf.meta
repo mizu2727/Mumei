@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ca94e32c0e89e4c46a00d3fd0f6c100b
+guid: 08c49531899792349bb5fecffbe5664a
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -9,7 +9,7 @@ TrueTypeFontImporter:
   characterPadding: 1
   includeFontData: 1
   fontNames:
-  - Shippori Mincho
+  - Noto Sans SC
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
