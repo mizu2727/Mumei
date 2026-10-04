@@ -1602,6 +1602,19 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //派生クラスへ接触したオブジェクトを通知
         OnTouchObject(collider.gameObject);
 
+        //プレイヤーに触れた場合&&ダメージを受けていない場合&&プレイヤーが隠れていない場合
+        if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage && !Player.instance.GetIsPlayerHidden())
+        {
+            if (Player.instance != null && !Player.instance.IsDead)
+            {
+                //攻撃モードを開始する
+                attackMode = AttackMode.StartAttack;
+
+                //プレイヤーの死亡状態モードを死亡へ設定
+                Player.instance.SetDieMode(DieMode.Die);
+            }
+        }
+
         //階段に触れている場合
         if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
         {

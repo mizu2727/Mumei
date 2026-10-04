@@ -98,7 +98,7 @@ public class SystemMessageEntity
     /// <summary>
     /// フランス語メッセージサイズ
     /// </summary>
-    public int messageFrenchEnglish;
+    public int messageSizeFrench;
 
     /// <summary>
     /// InputPlayerNameFieldに関するステータス（0:何もなし、1:InputPlayerNameFieldを表示、2:InputPlayerNameFieldを再度表示）

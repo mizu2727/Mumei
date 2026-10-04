@@ -871,6 +871,18 @@ public class Inventory : MonoBehaviour
                 useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeGerman;
                 break;
 
+            //フランス語
+            case LanguageController.LanguageStatus.kFrench:
+                //使用アイテム名称テキストをフランス語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameFrench;
+                //使用アイテム名称をフランス語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizeFrench;
+                //説明テキストもフランス語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionFrench;
+                //使用アイテム説明テキストサイズをフランス語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeFrench;
+                break;
+
             default:
                 Debug.LogWarning("その他の言語ステータス");
                 break;

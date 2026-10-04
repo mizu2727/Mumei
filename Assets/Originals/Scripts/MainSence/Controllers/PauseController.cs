@@ -1425,6 +1425,15 @@ public partial class PauseController : MonoBehaviour
                 //「彷徨う者」ボタンを表示にする
                 wandererButton.SetActive(true);
             }
+
+
+            /*----------------------------------------------------------
+             *TODO:アーカイブパネル内の子ボタンから表示できるパネルを全て非表示にする処理を追加する 
+             ----------------------------------------------------------*/
+
+            //彷徨う者パネルを非表示
+            isWandererPanel = false;
+            ChangeViewWandererPanel();
         }
         else
         {
@@ -1552,6 +1561,14 @@ public partial class PauseController : MonoBehaviour
                             wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionGerman;
                             //彷徨う者説明テキストサイズをドイツ語用に設定する
                             wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeGerman;
+                            break;
+
+                        //フランス語
+                        case LanguageController.LanguageStatus.kFrench:
+                            //彷徨う者説明欄にフランス語用の説明テキストを設定する
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionFrench;
+                            //彷徨う者説明テキストサイズをフランス語用に設定する
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeFrench;
                             break;
 
                         default:
@@ -1693,6 +1710,14 @@ public partial class PauseController : MonoBehaviour
                             mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionGerman;
                             //ミステリーアイテム説明テキストサイズをドイツ語用に設定する
                             mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeGerman;
+                            break;
+
+                        //フランス語
+                        case LanguageController.LanguageStatus.kFrench:
+                            //ミステリーアイテム説明欄にフランス語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionFrench;
+                            //ミステリーアイテム説明テキストサイズをフランス語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeFrench;
                             break;
 
                         default:

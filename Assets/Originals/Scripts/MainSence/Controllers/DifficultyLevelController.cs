@@ -1296,6 +1296,14 @@ public class DifficultyLevelController : MonoBehaviour
                 difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeGerman;
                 break;
 
+            //フランス語
+            case LanguageController.LanguageStatus.kFrench:
+                //フランス語の場合はフランス語の説明文を表示する
+                difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationFrench;
+                //フォントサイズをフランス語の説明文に適したサイズにする
+                difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeFrench;
+                break;
+
             default:
                 Debug.LogError("言語ステータスが正しい値ではないため、難易度説明文を表示することができません。");
                 break;

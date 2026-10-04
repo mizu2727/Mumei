@@ -325,6 +325,18 @@ public class Compass : MonoBehaviour
                 //アイテム説明のフォントサイズをドイツ語用に設定する
                 CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeGerman;
                 break;
+
+            //フランス語の場合
+            case LanguageController.LanguageStatus.kFrench:
+                //フランス語アイテムを設定する
+                CompassNameText.text = itemMessage.itemMessage[kItemId].itemNameFrench;
+                //アイテム名のフォントサイズをフランス語用に設定する
+                CompassNameText.fontSize = itemMessage.itemMessage[kItemId].itemNameSizeFrench;
+                //フランス語アイテム説明名を設定する
+                CompassExplanationText.text = itemMessage.itemMessage[kItemId].itemDescriptionFrench;
+                //アイテム説明のフォントサイズをフランス語用に設定する
+                CompassExplanationText.fontSize = itemMessage.itemMessage[kItemId].itemDescriptionSizeFrench;
+                break;
         }
     }
 }

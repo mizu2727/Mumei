@@ -220,6 +220,18 @@ public partial class PauseController
                     documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeGerman;
                     break;
 
+                //フランス語
+                case LanguageController.LanguageStatus.kFrench:
+                    //ドキュメント名称テキストをフランス語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameFrench;
+                    //ドキュメント名称をフランス語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeFrench;
+                    //説明テキストもフランス語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionFrench;
+                    //ドキュメント説明テキストサイズをフランス語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeFrench;
+                    break;
+
                 default:
                     Debug.LogWarning("その他の言語ステータス");
                     break;

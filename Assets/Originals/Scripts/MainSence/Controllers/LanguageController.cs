@@ -642,8 +642,8 @@ public class LanguageController : MonoBehaviour
                 break;
 
 
-                //ロシア語
-                case LanguageStatus.kRussian:
+            //ロシア語
+            case LanguageStatus.kRussian:
                 //ボタンテキストをロシア語に変更する
                 for (int i = 0; i < buttonTMPTextArray.Length; i++)
                 {
@@ -682,7 +682,8 @@ public class LanguageController : MonoBehaviour
                 
                 break;
 
-                case LanguageStatus.kGerman:
+            //ドイツ語
+            case LanguageStatus.kGerman:
                 //ボタンテキストをドイツ語に変更する
                 for (int i = 0; i < buttonTMPTextArray.Length; i++)
                 {
@@ -719,6 +720,41 @@ public class LanguageController : MonoBehaviour
                     uITMPTextArray[i].font = CommonController.instance.GetGerman();
                 }
 
+                break;
+
+            //フランス語
+            case LanguageStatus.kFrench:
+
+                //ボタンテキストをフランス語に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageFrench;
+                }
+                //ボタンサイズをフランス語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeFrench;
+                }
+                //ボタンフォントをフランス語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetFrench();
+                }
+                //UIテキストをフランス語に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageFrench;
+                }
+                //UIサイズをフランス語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeFrench;
+                }
+                //UIフォントをフランス語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetFrench();
+                }
                 break;
         }
 
