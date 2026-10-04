@@ -620,6 +620,14 @@ public class MessageController : MonoBehaviour
                     Write(talkMessage.talkMessage[number].messageRussian);
                     break;
 
+                //ドイツ語
+                case LanguageStatus.kGerman:
+                    //メッセージテキストのフォントサイズをドイツ語用に設定
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizeGerman;
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(talkMessage.talkMessage[number].messageGerman);
+                    break;
+
                 //それ以外の場合
                 default:
                     Debug.LogError("想定していない言語ステータスです");
@@ -684,6 +692,12 @@ public class MessageController : MonoBehaviour
 
                         //会話している人の名前を設定
                         speakerNameText.text = talkMessage.talkMessage[number].speakerNameRussian;
+                        break;
+
+                    //ドイツ語の場合
+                    case LanguageStatus.kGerman:
+                        //会話している人の名前を設定
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerNameGerman;
                         break;
                 }
             }
@@ -807,6 +821,13 @@ public class MessageController : MonoBehaviour
 
                             //会話している人の名前を設定
                             speakerNameText.text = talkMessage.talkMessage[number].speakerNameRussian;
+                            break;
+
+                        //ドイツ語
+                        case LanguageStatus.kGerman:
+
+                            //会話している人の名前を設定
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerNameGerman;
                             break;
                     }
                 }
@@ -1086,6 +1107,14 @@ public class MessageController : MonoBehaviour
                 Write(talkMessage.talkMessage[number].messageRussian);
                 break;
 
+            //ドイツ語
+            case LanguageStatus.kGerman:
+                //メッセージテキストのフォントサイズをドイツ語用に設定
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizeGerman;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(talkMessage.talkMessage[number].messageGerman);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1184,6 +1213,14 @@ public class MessageController : MonoBehaviour
                     messageText.fontSize = systemMessage.systemMessage[number].messageSizeRussian;
                     //エクセルデータ型.リスト型[番号].カラム名
                     Write(systemMessage.systemMessage[number].messageRussian);
+                    break;
+
+                //ドイツ語
+                case LanguageStatus.kGerman:
+                    //メッセージテキストのフォントサイズをドイツ語用に設定
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizeGerman;
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(systemMessage.systemMessage[number].messageGerman);
                     break;
 
                 //それ以外の場合
@@ -1533,6 +1570,14 @@ public class MessageController : MonoBehaviour
                 Write(systemMessage.systemMessage[number].messageRussian);
                 break;
 
+            //ドイツ語
+            case LanguageStatus.kGerman:
+                //メッセージテキストのフォントサイズをドイツ語用に設定
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizeGerman;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(systemMessage.systemMessage[number].messageGerman);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1615,6 +1660,14 @@ public class MessageController : MonoBehaviour
                 messageText.fontSize = goalMessage.goalMessage[number].messageSizeRussian;
                 //エクセルデータ型.リスト型[番号].カラム名
                 Write(goalMessage.goalMessage[number].messageRussian);
+                break;
+
+            //ドイツ語
+            case LanguageStatus.kGerman:
+                //メッセージテキストのフォントサイズをドイツ語用に設定
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizeGerman;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(goalMessage.goalMessage[number].messageGerman);
                 break;
 
             //それ以外の場合
@@ -1707,6 +1760,14 @@ public class MessageController : MonoBehaviour
                 Write(inventoryMessage.inventoryMessage[number].messageRussian);
                 break;
 
+            //ドイツ語
+            case LanguageStatus.kGerman:
+                //メッセージテキストのフォントサイズをドイツ語用に設定
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeGerman;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(inventoryMessage.inventoryMessage[number].messageGerman);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1780,6 +1841,12 @@ public class MessageController : MonoBehaviour
                 case LanguageStatus.kRussian:
                     //確認用テキストに入力した名前を表示
                     CheckInputNameText.text = "Правильно ли " + inputPlayerNameField.text + "?";
+                    break;
+
+                //ドイツ語
+                case LanguageStatus.kGerman:
+                    //確認用テキストに入力した名前を表示
+                    CheckInputNameText.text = "Ist es richtig als " + inputPlayerNameField.text + "?";
                     break;
 
                 //それ以外の場合

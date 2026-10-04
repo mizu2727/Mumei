@@ -1288,6 +1288,14 @@ public class DifficultyLevelController : MonoBehaviour
                 difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeRussian;
                 break;
 
+            //ドイツ語
+            case LanguageController.LanguageStatus.kGerman:
+                //ドイツ語の場合はドイツ語の説明文を表示する
+                difficultyLevelExplanationText.text = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationGerman;
+                //フォントサイズをドイツ語の説明文に適したサイズにする
+                difficultyLevelExplanationText.fontSize = difficultyLevelExplanation.difficultyLevelExplanation[number].explanationSizeGerman;
+                break;
+
             default:
                 Debug.LogError("言語ステータスが正しい値ではないため、難易度説明文を表示することができません。");
                 break;

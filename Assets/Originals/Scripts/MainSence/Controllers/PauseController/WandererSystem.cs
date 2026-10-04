@@ -241,6 +241,18 @@ public partial class PauseController
                             wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeRussian;
                             break;
 
+                        //ドイツ語
+                        case LanguageController.LanguageStatus.kGerman:
+                            //彷徨う者名称欄にドイツ語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameGerman;
+                            //彷徨う者名称テキストサイズをドイツ語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeGerman;
+                            //彷徨う者説明欄欄にドイツ語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionGerman;
+                            //彷徨う者説明欄テキストサイズをドイツ語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeGerman;
+                            break;
+
                         default:
                             Debug.LogWarning("その他の言語ステータス");
                             break;
@@ -544,6 +556,26 @@ public partial class PauseController
                         wandererExplanationText[i].text = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionRussian;
                         //彷徨う者関連情報説明テキストサイズをロシア語用に設定する
                         wandererExplanationText[i].fontSize = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionSizeRussian;
+                    }
+                    break;
+
+                //ドイツ語
+                case LanguageController.LanguageStatus.kGerman:
+
+                    //彷徨う者関連情報名称テキストをドイツ語にする
+                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameGerman;
+                    wandererNameText[i].text = itemMessage.itemMessage[enemyInformationIds[i]].itemNameGerman;
+
+                    //彷徨う者関連情報名称テキストサイズをドイツ語用に設定する
+                    wandererNameText[i].fontSize = itemMessage.itemMessage[enemyInformationIds[i]].itemNameSizeGerman;
+
+                    if (0 < wandererExplanationText.Length)
+                    {
+                        //彷徨う者関連情報説明テキストをドイツ語にする
+                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionGerman;
+                        wandererExplanationText[i].text = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionGerman;
+                        //彷徨う者関連情報説明テキストサイズをドイツ語用に設定する
+                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionSizeGerman;
                     }
                     break;
             }

@@ -208,6 +208,18 @@ public partial class PauseController
                     documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeRussian;
                     break;
 
+                //ドイツ語
+                case LanguageController.LanguageStatus.kGerman:
+                    //ドキュメント名称テキストをドイツ語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameGerman;
+                    //ドキュメント名称をドイツ語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeGerman;
+                    //説明テキストもドイツ語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionGerman;
+                    //ドキュメント説明テキストサイズをドイツ語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeGerman;
+                    break;
+
                 default:
                     Debug.LogWarning("その他の言語ステータス");
                     break;

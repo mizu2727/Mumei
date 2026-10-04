@@ -425,6 +425,25 @@ public partial class PauseController
                     }
                     break;
 
+                //ドイツ語
+                case LanguageController.LanguageStatus.kGerman:
+                    //ミステリーアイテム名称テキストをドイツ語にする
+                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameGerman;
+                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameGerman);
+                    mysteryItemNameText[i].text = item.itemName;
+                    //ミステリーアイテム名称テキストサイズをドイツ語用に設定する
+                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeGerman;
+                    if (0 < mysteryItemExplanationText.Length)
+                    {
+                        //ミステリーアイテム説明テキストをドイツ語にする
+                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionGerman;
+                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionGerman);
+                        mysteryItemExplanationText[i].text = item.description;
+                        //ミステリーアイテム説明テキストサイズをドイツ語用に設定する
+                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeGerman;
+                    }
+                    break;
+
             }
 
             //TextMeshProRubyコンポーネントにミステリーアイテム名称を設定する

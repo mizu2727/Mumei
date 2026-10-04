@@ -859,6 +859,18 @@ public class Inventory : MonoBehaviour
                 useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeRussian;
                 break;
 
+            //ドイツ語
+            case LanguageController.LanguageStatus.kGerman:
+                //使用アイテム名称テキストをドイツ語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameGerman;
+                //使用アイテム名称をドイツ語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizeGerman;
+                //説明テキストもドイツ語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionGerman;
+                //使用アイテム説明テキストサイズをドイツ語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeGerman;
+                break;
+
             default:
                 Debug.LogWarning("その他の言語ステータス");
                 break;

@@ -1546,6 +1546,14 @@ public partial class PauseController : MonoBehaviour
                             wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeRussian;
                             break;
 
+                        //ドイツ語
+                        case LanguageController.LanguageStatus.kGerman:
+                            //彷徨う者説明欄にドイツ語用の説明テキストを設定する
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionGerman;
+                            //彷徨う者説明テキストサイズをドイツ語用に設定する
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeGerman;
+                            break;
+
                         default:
                             Debug.LogWarning("その他の言語ステータス");
                             break;
@@ -1677,6 +1685,14 @@ public partial class PauseController : MonoBehaviour
 
                             //ミステリーアイテム説明テキストサイズをロシア語用に設定する
                             mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeRussian;
+                            break;
+
+                        //ドイツ語
+                        case LanguageController.LanguageStatus.kGerman:
+                            //ミステリーアイテム説明欄にドイツ語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionGerman;
+                            //ミステリーアイテム説明テキストサイズをドイツ語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeGerman;
                             break;
 
                         default:

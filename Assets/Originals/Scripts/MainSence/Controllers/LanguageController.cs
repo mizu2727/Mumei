@@ -676,6 +676,45 @@ public class LanguageController : MonoBehaviour
                 }
                 
                 break;
+
+                case LanguageStatus.kGerman:
+                //ボタンテキストをドイツ語に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageGerman;
+                }
+
+                //ボタンサイズをドイツ語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeGerman;
+                }
+
+                //ボタンフォントをドイツ語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetGerman();
+                }
+
+                //UIテキストをドイツ語に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageGerman;
+                }
+
+                //UIサイズをドイツ語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeGerman;
+                }
+
+                //UIフォントをドイツ語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetGerman();
+                }
+
+                break;
         }
 
         //アイテムのテキスト関連を設定する
