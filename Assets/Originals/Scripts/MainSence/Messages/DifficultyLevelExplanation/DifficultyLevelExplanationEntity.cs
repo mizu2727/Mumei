@@ -89,4 +89,14 @@ public class DifficultyLevelExplanationEntity
     /// ドイツ語での難易度説明を表示する際のサイズ
     /// </summary>
     public int explanationSizeGerman;
+
+    /// <summary>
+    /// フランス語での難易度説明
+    /// </summary>
+    public string explanationFrench;
+
+    /// <summary>
+    /// フランス語での難易度説明を表示する際のサイズ
+    /// </summary>
+    public int explanationSizeFrench;
 }

@@ -89,4 +89,14 @@ public class InventoryMessageEntity
     /// ドイツ語メッセージサイズ
     /// </summary>
     public int messageSizeGerman;
+
+    /// <summary>
+    /// フランス語メッセージ内容
+    /// </summary>
+    public string messageFrench;
+
+    /// <summary>
+    /// フランス語メッセージサイズ
+    /// </summary>
+    public int messageSizeFrench;
 }

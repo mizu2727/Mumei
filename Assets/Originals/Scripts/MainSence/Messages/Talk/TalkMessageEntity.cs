@@ -131,6 +131,21 @@ public class TalkMessageEntity
     public int messageSizeGerman;
 
     /// <summary>
+    /// フランス語メッセージ
+    /// </summary>
+    public string messageFrench;
+
+    /// <summary>
+    /// 話しているキャラクターの名前のフランス語表記
+    /// </summary>
+    public string speakerNameFrench;
+
+    /// <summary>
+    /// フランス語メッセージサイズ
+    /// </summary>
+    public int messageSizeFrench;
+
+    /// <summary>
     /// 後ろを振り向くステータス（0:振り向かない、1:振り向く）
     /// </summary>
     public int isplayerBackRotateStatus;
