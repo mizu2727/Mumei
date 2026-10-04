@@ -99,4 +99,14 @@ public class GoalMessageEntity
     /// フランス語メッセージサイズ
     /// </summary>
     public int messageSizeFrench;
+
+    /// <summary>
+    /// トルコ語メッセージ内容
+    /// </summary>
+    public string messageTurkish;
+
+    /// <summary>
+    /// トルコ語メッセージサイズ
+    /// </summary>
+    public int messageSizeTurkish;
 }

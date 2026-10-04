@@ -883,6 +883,18 @@ public class Inventory : MonoBehaviour
                 useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeFrench;
                 break;
 
+            //トルコ語
+            case LanguageController.LanguageStatus.kTurkish:
+                //使用アイテム名称テキストをトルコ語にする
+                useItemNameText.text = itemMessage.itemMessage[keepItemId].itemNameTurkish;
+                //使用アイテム名称をトルコ語用にサイズを設定する
+                useItemNameText.fontSize = itemMessage.itemMessage[keepItemId].itemNameSizeTurkish;
+                //説明テキストもトルコ語にする
+                useItemExplanationText.text = itemMessage.itemMessage[keepItemId].itemDescriptionTurkish;
+                //使用アイテム説明テキストサイズをトルコ語用に設定する
+                useItemExplanationText.fontSize = itemMessage.itemMessage[keepItemId].itemDescriptionSizeTurkish;
+                break;
+
             default:
                 Debug.LogWarning("その他の言語ステータス");
                 break;

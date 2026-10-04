@@ -246,6 +246,26 @@ public class ItemMessageEntity
     public int itemDescriptionSizeFrench;
 
     /// <summary>
+    /// トルコ語アイテム名
+    /// </summary>
+    public string itemNameTurkish;
+
+    /// <summary>
+    /// トルコ語アイテム名のサイズ
+    /// </summary>
+    public int itemNameSizeTurkish;
+
+    /// <summary>
+    /// トルコ語アイテム説明
+    /// </summary>
+    public string itemDescriptionTurkish;
+
+    /// <summary>
+    /// トルコ語アイテム説明のサイズ
+    /// </summary>
+    public int itemDescriptionSizeTurkish;
+
+    /// <summary>
     /// メモ
     /// </summary>
     public string memo;

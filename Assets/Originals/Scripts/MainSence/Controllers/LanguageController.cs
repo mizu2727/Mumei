@@ -761,6 +761,40 @@ public class LanguageController : MonoBehaviour
                     uITMPTextArray[i].font = CommonController.instance.GetFrench();
                 }
                 break;
+
+            //トルコ語
+            case LanguageStatus.kTurkish:
+                //ボタンテキストをトルコ語に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].text = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageTurkish;
+                }
+                //ボタンサイズをトルコ語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].fontSize = buttonMessage.buttonMessage[buttonTextNumberArray[i]].messageSizeTurkish;
+                }
+                //ボタンフォントをトルコ語用に変更する
+                for (int i = 0; i < buttonTMPTextArray.Length; i++)
+                {
+                    buttonTMPTextArray[i].font = CommonController.instance.GetTurkish();
+                }
+                //UIテキストをトルコ語に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].text = uITextMessage.uITextMessage[uITextNumberArray[i]].messageTurkish;
+                }
+                //UIサイズをトルコ語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].fontSize = uITextMessage.uITextMessage[uITextNumberArray[i]].messageSizeTurkish;
+                }
+                //UIフォントをトルコ語用に変更する
+                for (int i = 0; i < uITMPTextArray.Length; i++)
+                {
+                    uITMPTextArray[i].font = CommonController.instance.GetTurkish();
+                }
+                break;
         }
 
         //アイテムのテキスト関連を設定する

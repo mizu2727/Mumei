@@ -56,6 +56,11 @@ public class EnemyInformationEntity
     public string nameFrench;
 
     /// <summary>
+    /// トルコ語の名前
+    /// </summary>
+    public string nameTurkish;
+
+    /// <summary>
     /// 歩行音SEのID
     /// </summary>
     public int walkSEId;

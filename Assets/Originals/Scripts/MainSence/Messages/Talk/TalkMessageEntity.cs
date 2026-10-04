@@ -146,6 +146,21 @@ public class TalkMessageEntity
     public int messageSizeFrench;
 
     /// <summary>
+    /// トルコ語メッセージ
+    /// </summary>
+    public string messageTurkish;
+
+    /// <summary>
+    /// 話しているキャラクターの名前のトルコ語表記
+    /// </summary>
+    public string speakerNameTurkish;
+
+    /// <summary>
+    /// トルコ語メッセージサイズ
+    /// </summary>
+    public int messageSizeTurkish;
+
+    /// <summary>
     /// 後ろを振り向くステータス（0:振り向かない、1:振り向く）
     /// </summary>
     public int isplayerBackRotateStatus;

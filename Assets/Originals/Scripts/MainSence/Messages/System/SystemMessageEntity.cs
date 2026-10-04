@@ -101,6 +101,16 @@ public class SystemMessageEntity
     public int messageSizeFrench;
 
     /// <summary>
+    /// トルコ語メッセージ
+    /// </summary>
+    public string messageTurkish;
+
+    /// <summary>
+    /// トルコ語メッセージサイズ
+    /// </summary>
+    public int messageSizeTurkish;
+
+    /// <summary>
     /// InputPlayerNameFieldに関するステータス（0:何もなし、1:InputPlayerNameFieldを表示、2:InputPlayerNameFieldを再度表示）
     /// </summary>
     public int isInputPlayerNameFieldStatus;

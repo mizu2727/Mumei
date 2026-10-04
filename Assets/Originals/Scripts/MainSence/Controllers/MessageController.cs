@@ -636,6 +636,14 @@ public class MessageController : MonoBehaviour
                     Write(talkMessage.talkMessage[number].messageFrench);
                     break;
 
+                //トルコ語
+                case LanguageStatus.kTurkish:
+                    //メッセージテキストのフォントサイズをトルコ語用に設定
+                    messageText.fontSize = talkMessage.talkMessage[number].messageSizeTurkish;
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(talkMessage.talkMessage[number].messageTurkish);
+                    break;
+
                 //それ以外の場合
                 default:
                     Debug.LogError("想定していない言語ステータスです");
@@ -713,6 +721,12 @@ public class MessageController : MonoBehaviour
 
                         //会話している人の名前を設定
                         speakerNameText.text = talkMessage.talkMessage[number].speakerNameFrench;
+                        break;
+
+                    //トルコ語の場合
+                    case LanguageStatus.kTurkish:
+                        //会話している人の名前を設定
+                        speakerNameText.text = talkMessage.talkMessage[number].speakerNameTurkish;
                         break;
                 }
             }
@@ -850,6 +864,12 @@ public class MessageController : MonoBehaviour
 
                             //会話している人の名前を設定
                             speakerNameText.text = talkMessage.talkMessage[number].speakerNameFrench;
+                            break;
+
+                        //トルコ語
+                        case LanguageStatus.kTurkish:
+                            //会話している人の名前を設定
+                            speakerNameText.text = talkMessage.talkMessage[number].speakerNameTurkish;
                             break;
                     }
                 }
@@ -1145,6 +1165,14 @@ public class MessageController : MonoBehaviour
                 Write(talkMessage.talkMessage[number].messageFrench);
                 break;
 
+            //トルコ語
+            case LanguageStatus.kTurkish:
+                //メッセージテキストのフォントサイズをトルコ語用に設定
+                messageText.fontSize = talkMessage.talkMessage[number].messageSizeTurkish;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(talkMessage.talkMessage[number].messageTurkish);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1259,6 +1287,14 @@ public class MessageController : MonoBehaviour
                     messageText.fontSize = systemMessage.systemMessage[number].messageSizeFrench;
                     //エクセルデータ型.リスト型[番号].カラム名
                     Write(systemMessage.systemMessage[number].messageFrench);
+                    break;
+
+                //トルコ語
+                case LanguageStatus.kTurkish:
+                    //メッセージテキストのフォントサイズをトルコ語用に設定
+                    messageText.fontSize = systemMessage.systemMessage[number].messageSizeTurkish;
+                    //エクセルデータ型.リスト型[番号].カラム名
+                    Write(systemMessage.systemMessage[number].messageTurkish);
                     break;
 
                 //それ以外の場合
@@ -1624,6 +1660,14 @@ public class MessageController : MonoBehaviour
                 Write(systemMessage.systemMessage[number].messageFrench);
                 break;
 
+            //トルコ語
+            case LanguageStatus.kTurkish:
+                //メッセージテキストのフォントサイズをトルコ語用に設定
+                messageText.fontSize = systemMessage.systemMessage[number].messageSizeTurkish;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(systemMessage.systemMessage[number].messageTurkish);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1722,6 +1766,14 @@ public class MessageController : MonoBehaviour
                 messageText.fontSize = goalMessage.goalMessage[number].messageSizeFrench;
                 //エクセルデータ型.リスト型[番号].カラム名
                 Write(goalMessage.goalMessage[number].messageFrench);
+                break;
+
+            //トルコ語
+            case LanguageStatus.kTurkish:
+                //メッセージテキストのフォントサイズをトルコ語用に設定
+                messageText.fontSize = goalMessage.goalMessage[number].messageSizeTurkish;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(goalMessage.goalMessage[number].messageTurkish);
                 break;
 
             //それ以外の場合
@@ -1830,6 +1882,14 @@ public class MessageController : MonoBehaviour
                 Write(inventoryMessage.inventoryMessage[number].messageFrench);
                 break;
 
+            //トルコ語
+            case LanguageStatus.kTurkish:
+                //メッセージテキストのフォントサイズをトルコ語用に設定
+                messageText.fontSize = inventoryMessage.inventoryMessage[number].messageSizeTurkish;
+                //エクセルデータ型.リスト型[番号].カラム名
+                Write(inventoryMessage.inventoryMessage[number].messageTurkish);
+                break;
+
             //それ以外の場合
             default:
                 Debug.LogError("想定していない言語ステータスです");
@@ -1915,6 +1975,12 @@ public class MessageController : MonoBehaviour
                 case LanguageStatus.kFrench:
                     //確認用テキストに入力した名前を表示
                     CheckInputNameText.text = "Est-ce correct comme " + inputPlayerNameField.text + "?";
+                    break;
+
+                //トルコ語
+                case LanguageStatus.kTurkish:
+                    //確認用テキストに入力した名前を表示
+                    CheckInputNameText.text = inputPlayerNameField.text + " Doğru mu?";
                     break;
 
                 //それ以外の場合

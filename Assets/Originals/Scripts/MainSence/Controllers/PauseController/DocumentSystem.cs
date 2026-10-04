@@ -232,6 +232,18 @@ public partial class PauseController
                     documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeFrench;
                     break;
 
+                //トルコ語
+                case LanguageController.LanguageStatus.kTurkish:
+                    //ドキュメント名称テキストをトルコ語にする
+                    documentNameText.text = itemMessage.itemMessage[keepDocumentBookID].itemNameTurkish;
+                    //ドキュメント名称をトルコ語用にサイズを設定する
+                    documentNameText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemNameSizeTurkish;
+                    //説明テキストもトルコ語にする
+                    documentExplanationText.text = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionTurkish;
+                    //ドキュメント説明テキストサイズをトルコ語用に設定する
+                    documentExplanationText.fontSize = itemMessage.itemMessage[keepDocumentBookID].itemDescriptionSizeTurkish;
+                    break;
+
                 default:
                     Debug.LogWarning("その他の言語ステータス");
                     break;

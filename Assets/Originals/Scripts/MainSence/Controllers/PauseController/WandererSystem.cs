@@ -265,6 +265,19 @@ public partial class PauseController
                             wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeFrench;
                             break;
 
+                        //トルコ語
+                        case LanguageController.LanguageStatus.kTurkish:
+                            //彷徨う者名称欄にトルコ語用の名称テキストを設定する
+                            wandererNameText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameTurkish;
+                            //彷徨う者名称テキストサイズをトルコ語用に設定する
+                            wandererNameText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemNameSizeTurkish;
+                            //彷徨う者説明欄欄にトルコ語用の名称テキストを設定する
+                            wandererExplanationText[i].text = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionTurkish;
+                            //彷徨う者説明欄テキストサイズをトルコ語用に設定する
+                            wandererExplanationText[i].fontSize = itemMessage.itemMessage[kDefaultInterlockingOfFirstEnemyInformationIdAndItemId + i].itemDescriptionSizeTurkish;
+                            break;
+
+                        //その他の言語ステータス
                         default:
                             Debug.LogWarning("その他の言語ステータス");
                             break;
@@ -605,6 +618,23 @@ public partial class PauseController
                         wandererExplanationText[i].text = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionFrench;
                         //彷徨う者関連情報説明テキストサイズをフランス語用に設定する
                         wandererExplanationText[i].fontSize = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionSizeFrench;
+                    }
+                    break;
+
+                //トルコ語
+                case LanguageController.LanguageStatus.kTurkish:
+                    //彷徨う者関連情報名称テキストをトルコ語にする
+                    enemyInformationNames[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemNameTurkish;
+                    wandererNameText[i].text = itemMessage.itemMessage[enemyInformationIds[i]].itemNameTurkish;
+                    //彷徨う者関連情報名称テキストサイズをトルコ語用に設定する
+                    wandererNameText[i].fontSize = itemMessage.itemMessage[enemyInformationIds[i]].itemNameSizeTurkish;
+                    if (0 < wandererExplanationText.Length)
+                    {
+                        //彷徨う者関連情報説明テキストをトルコ語にする
+                        enemyInformationExplanations[i] = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionTurkish;
+                        wandererExplanationText[i].text = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionTurkish;
+                        //彷徨う者関連情報説明テキストサイズをトルコ語用に設定する
+                        wandererExplanationText[i].fontSize = itemMessage.itemMessage[enemyInformationIds[i]].itemDescriptionSizeTurkish;
                     }
                     break;
             }

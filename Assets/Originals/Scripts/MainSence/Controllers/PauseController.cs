@@ -1571,6 +1571,14 @@ public partial class PauseController : MonoBehaviour
                             wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeFrench;
                             break;
 
+                        //トルコ語
+                        case LanguageController.LanguageStatus.kTurkish:
+                            //彷徨う者説明欄にトルコ語用の説明テキストを設定する
+                            wandererExplanationText[0].text = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionTurkish;
+                            //彷徨う者説明テキストサイズをトルコ語用に設定する
+                            wandererExplanationText[0].fontSize = itemMessage.itemMessage[enemyInformationIds[index]].itemDescriptionSizeTurkish;
+                            break;
+
                         default:
                             Debug.LogWarning("その他の言語ステータス");
                             break;
@@ -1718,6 +1726,14 @@ public partial class PauseController : MonoBehaviour
                             mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionFrench;
                             //ミステリーアイテム説明テキストサイズをフランス語用に設定する
                             mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeFrench;
+                            break;
+
+                        //トルコ語
+                        case LanguageController.LanguageStatus.kTurkish:
+                            //ミステリーアイテム説明欄にトルコ語用の説明テキストを設定する
+                            mysteryItemExplanationText[0].text = itemMessage.itemMessage[item.id].itemDescriptionTurkish;
+                            //ミステリーアイテム説明テキストサイズをトルコ語用に設定する
+                            mysteryItemExplanationText[0].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeTurkish;
                             break;
 
                         default:

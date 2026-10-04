@@ -462,6 +462,25 @@ public partial class PauseController
                         mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeFrench;
                     }
                     break;
+
+                //トルコ語
+                case LanguageController.LanguageStatus.kTurkish:
+                    //ミステリーアイテム名称テキストをトルコ語にする
+                    mysteryItemNames[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemNameTurkish;
+                    sO_Item.SetItemName(item.id, itemMessage.itemMessage[item.id].itemNameTurkish);
+                    mysteryItemNameText[i].text = item.itemName;
+                    //ミステリーアイテム名称テキストサイズをトルコ語用に設定する
+                    mysteryItemNameText[i].fontSize = itemMessage.itemMessage[item.id].itemNameSizeTurkish;
+                    if (0 < mysteryItemExplanationText.Length)
+                    {
+                        //ミステリーアイテム説明テキストをトルコ語にする
+                        mysteryItemExplanations[i] = itemMessage.itemMessage[mysteryItemIds[i]].itemDescriptionTurkish;
+                        sO_Item.SetItemDescription(item.id, itemMessage.itemMessage[item.id].itemDescriptionTurkish);
+                        mysteryItemExplanationText[i].text = item.description;
+                        //ミステリーアイテム説明テキストサイズをトルコ語用に設定する
+                        mysteryItemExplanationText[i].fontSize = itemMessage.itemMessage[item.id].itemDescriptionSizeTurkish;
+                    }
+                    break;
             }
 
             //TextMeshProRubyコンポーネントにミステリーアイテム名称を設定する
