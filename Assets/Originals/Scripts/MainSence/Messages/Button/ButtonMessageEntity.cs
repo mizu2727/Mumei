@@ -81,6 +81,16 @@ public class ButtonMessageEntity
     public int messageSizeRussian;
 
     /// <summary>
+    /// ドイツ語メッセージ内容
+    /// </summary>
+    public string messageGerman;
+
+    /// <summary>
+    /// ドイツ語メッセージサイズ
+    /// </summary>
+    public int messageSizeGerman;
+
+    /// <summary>
     /// メモ欄
     /// </summary>
     public string memo;

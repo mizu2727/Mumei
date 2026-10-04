@@ -81,6 +81,11 @@ public class LanguageController : MonoBehaviour
         /// ロシア語
         /// </summary>
         kRussian,
+
+        /// <summary>
+        /// ドイツ語
+        /// </summary>
+        kGerman,
     }
 
     
@@ -810,6 +815,19 @@ public class LanguageController : MonoBehaviour
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
         //言語ステータスをロシア語に設定する
         languageStatus = LanguageStatus.kRussian;
+        //言語を設定する
+        SettingLanguageText();
+    }
+
+    /// <summary>
+    /// ドイツ語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedGermanButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        //言語ステータスをドイツ語に設定する
+        languageStatus = LanguageStatus.kGerman;
         //言語を設定する
         SettingLanguageText();
     }
