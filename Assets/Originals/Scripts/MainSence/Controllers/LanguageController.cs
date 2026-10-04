@@ -91,6 +91,11 @@ public class LanguageController : MonoBehaviour
         /// フランス語
         /// </summary>
         kFrench,
+
+        /// <summary>
+        /// トルコ語
+        /// </summary>
+        kTurkish,
     }
 
     
@@ -921,6 +926,19 @@ public class LanguageController : MonoBehaviour
         MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
         //言語ステータスをフランス語に設定する
         languageStatus = LanguageStatus.kFrench;
+        //言語を設定する
+        SettingLanguageText();
+    }
+
+    /// <summary>
+    /// トルコ語ボタンがクリックされたときの処理
+    /// </summary>
+    public void OnClickedTurkishButton()
+    {
+        //ボタンSE
+        MusicController.instance.PlayAudioSE(audioSourceSE, sO_SE.GetSEClip(buttonSEid));
+        //言語ステータスをトルコ語に設定する
+        languageStatus = LanguageStatus.kTurkish;
         //言語を設定する
         SettingLanguageText();
     }

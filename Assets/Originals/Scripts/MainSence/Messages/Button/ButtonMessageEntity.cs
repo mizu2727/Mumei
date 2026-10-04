@@ -101,6 +101,16 @@ public class ButtonMessageEntity
     public int messageSizeFrench;
 
     /// <summary>
+    /// トルコ語メッセージ内容
+    /// </summary>
+    public string messageTurkish;
+
+    /// <summary>
+    /// トルコ語メッセージサイズ
+    /// </summary>
+    public int messageSizeTurkish;
+
+    /// <summary>
     /// メモ欄
     /// </summary>
     public string memo;
