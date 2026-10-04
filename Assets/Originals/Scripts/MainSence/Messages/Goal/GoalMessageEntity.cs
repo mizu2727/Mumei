@@ -79,4 +79,14 @@ public class GoalMessageEntity
     /// ロシア語メッセージサイズ
     /// </summary>
     public int messageSizeRussian;
+
+    /// <summary>
+    /// ドイト語メッセージ内容
+    /// </summary>
+    public string messageGerman;
+
+    /// <summary>
+    /// ドイツ語メッセージサイズ
+    /// </summary>
+    public int messageSizeGerman;
 }

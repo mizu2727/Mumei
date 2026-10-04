@@ -206,6 +206,26 @@ public class ItemMessageEntity
     public int itemDescriptionSizeRussian;
 
     /// <summary>
+    /// ドイツ語アイテム名
+    /// </summary>
+    public string itemNameGerman;
+
+    /// <summary>
+    /// ドイツ語アイテム名のサイズ
+    /// </summary>
+    public int itemNameSizeGerman;
+
+    /// <summary>
+    /// ドイツ語アイテム説明
+    /// </summary>
+    public string itemDescriptionGerman;
+
+    /// <summary>
+    /// ドイツ語アイテム説明のサイズ
+    /// </summary>
+    public int itemDescriptionSizeGerman;
+
+    /// <summary>
     /// メモ
     /// </summary>
     public string memo;
