@@ -283,6 +283,11 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     private bool isNearHidePoint = false;
 
+    /// <summary>
+    /// うつ伏せで隠れているフラグ(ベッドの下に隠れている場合にtrue)
+    /// </summary>
+    private bool isProneHidden = false;
+
 
     /*-------------------------------------------------------------
      * 死亡関連
@@ -333,6 +338,9 @@ public class Player : MonoBehaviour, CharacterInterface
 
         //隠れるフラグをオフ
         isHidden = false;
+
+        //うつ伏せで隠れているフラグをオフ
+        isProneHidden = false;
 
         //移動方向をリセット
         moveDirection = Vector3.zero;
@@ -623,6 +631,24 @@ public class Player : MonoBehaviour, CharacterInterface
     }
 
     /// <summary>
+    /// うつ伏せで隠れているフラグを取得
+    /// </summary>
+    /// <returns>うつ伏せで隠れているフラグ</returns>
+    public bool GetIsProneHidden()
+    {
+        return isProneHidden;
+    }
+
+    /// <summary>
+    /// うつ伏せで隠れているフラグを設定
+    /// </summary>
+    /// <param name="isProne">うつ伏せで隠れているフラグ</param>
+    public void SetIsProneHidden(bool isProne)
+    {
+        isProneHidden = isProne;
+    }
+
+    /// <summary>
     /// プレイヤーが倒れているフラグを取得
     /// </summary>
     /// <returns>プレイヤーが倒れているフラグ</returns>
@@ -823,6 +849,9 @@ public class Player : MonoBehaviour, CharacterInterface
 
         //隠れるフラグを初期化
         isHidden = false;
+
+        //うつ伏せで隠れているフラグを初期化
+        isProneHidden = false;
 
         //音を鳴らすフラグを初期化
         isMakeSound = false;
@@ -1208,7 +1237,8 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
         //膝立ちアニメーションの再生・停止
-        animator.SetBool(kIsKneelingAnimatorParameter, isHidden);
+        //(うつ伏せで隠れている場合は膝立ちにしない。身体ごと寝かせているため、膝立ちにすると姿勢が崩れる)
+        animator.SetBool(kIsKneelingAnimatorParameter, isHidden && !isProneHidden);
     }
 
     /// <summary>

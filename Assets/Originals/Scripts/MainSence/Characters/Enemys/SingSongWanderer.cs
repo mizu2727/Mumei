@@ -87,6 +87,20 @@ public class SingSongWanderer : HearingEnemy
         peekAnimatorParameter = "isPeekLocker",
     };
 
+    [Header("ベッドの下を覗き込む設定(ベッドは大きいため、ハイドポイント側で敵が覗き込む位置を設定することを推奨)")]
+    [SerializeField]
+    private PeekSetting bedPeekSetting = new PeekSetting
+    {
+        frontDistance = 1.3f,
+        bodyHeightOffset = 0f,
+        peekHeight = 0.2f,
+        headAngleOffset = new Vector3(20f, 0f, 0f),
+        peekAnimatorParameter = "isPeekBed",
+    };
+
+    [Header("ベッドの下に隠れている場合の接触判定の補助距離(m)。ベッドは大きく中心まで近づけないため長めにする。0で無効")]
+    [SerializeField] private float bedFoundDistance = 2.0f;
+
     [Header("「みーつけた」音声のSE ID(SO_SEに登録したIDを設定すること)")]
     [SerializeField] private int foundVoiceSEid = 30;
 
@@ -341,6 +355,16 @@ public class SingSongWanderer : HearingEnemy
             return;
         }
 
+        //ハイドポイントの種類に応じた補助距離(ベッドの下の場合は専用の距離)
+        float checkDistance = hiddenObject.IsUnderBed() ? bedFoundDistance : foundDistance;
+
+        //補助距離が無効の場合
+        if (checkDistance <= 0f)
+        {
+            //処理をスキップ
+            return;
+        }
+
         //水平距離と高さの差を計算
         Vector3 diff = hiddenObject.transform.position - transform.position;
         float heightDiff = Mathf.Abs(diff.y);
@@ -500,6 +524,9 @@ public class SingSongWanderer : HearingEnemy
             case HiddenObject.HidePointType.Locker:
                 return lockerPeekSetting;
 
+            case HiddenObject.HidePointType.UnderBed:
+                return bedPeekSetting;
+
             case HiddenObject.HidePointType.Chest:
             default:
                 return chestPeekSetting;
@@ -656,6 +683,18 @@ public class SingSongWanderer : HearingEnemy
             }
         }
 
+        //うつ伏せ(ベッドの下)で隠れている場合
+        if (Player.instance.GetIsProneHidden() && PlayerCamera.instance != null)
+        {
+            //うつ伏せの姿勢のまま、覗き込んでくる敵の頭(無い場合は敵本体)を目で追わせる
+            //(プレイヤー本体を回転させるとベッドから身体がはみ出すため、カメラだけを向ける)
+            Transform lookTarget = GetHeadTransform();
+            PlayerCamera.instance.SetProneLookTarget(lookTarget != null ? lookTarget : transform);
+
+            //処理をスキップ
+            return;
+        }
+
         if (PlayerCamera.instance != null)
         {
             //カメラの上下左右回転をリセット
@@ -690,11 +729,8 @@ public class SingSongWanderer : HearingEnemy
     /// <param name="setting">覗き込み設定</param>
     private void StartHeadLook(HiddenObject hiddenObject, PeekSetting setting)
     {
-        //頭のTransformが未設定でHumanoidの場合は自動取得
-        if (headTransform == null && animator != null && animator.isHuman)
-        {
-            headTransform = animator.GetBoneTransform(HumanBodyBones.Head);
-        }
+        //頭のTransformを取得
+        GetHeadTransform();
 
         if (headTransform == null)
         {
@@ -713,6 +749,20 @@ public class SingSongWanderer : HearingEnemy
 
         currentHeadWeight = 0f;
         isHeadLookActive = true;
+    }
+
+    /// <summary>
+    /// 頭のTransformを取得する(未設定でHumanoidの場合は自動取得)
+    /// </summary>
+    /// <returns>頭のTransform(取得できない場合はnull)</returns>
+    private Transform GetHeadTransform()
+    {
+        if (headTransform == null && animator != null && animator.isHuman)
+        {
+            headTransform = animator.GetBoneTransform(HumanBodyBones.Head);
+        }
+
+        return headTransform;
     }
 
     /// <summary>

@@ -177,7 +177,33 @@ public class HiddenObject : MonoBehaviour
         /// ロッカー
         /// </summary>
         Locker,
+
+        /// <summary>
+        /// ベッドの下(うつ伏せで隠れる)
+        /// </summary>
+        UnderBed,
     }
+
+    /// <summary>
+    /// ベッドの下に隠れるハイドポイントかを判定する
+    /// </summary>
+    /// <returns>ベッドの下の場合true</returns>
+    public bool IsUnderBed()
+    {
+        return hidePointType == HidePointType.UnderBed;
+    }
+
+    [Header("ベッドの下でうつ伏せになる位置(ハイドポイント基準のローカル座標。UnderBedのみ使用)")]
+    [Header("※頭はハイドポイントのZ軸(青)方向を向く。Yは床からの高さ")]
+    [SerializeField] private Vector3 proneLocalPosition = new Vector3(0f, 0.15f, -0.9f);
+
+    [Header("ベッドの下に隠れる・出る時のSE ID(UnderBedのみ使用。-1の場合はステージ既定のSE)")]
+    [SerializeField] private int underBedSEid = 31;
+
+    /// <summary>
+    /// 保存用プレイヤーの回転(ベッドの下から出る時に元の向きへ戻すため)
+    /// </summary>
+    private Quaternion savePlayerRotation = Quaternion.identity;
 
     [Header("ハイドポイントの種類(ヒエラルキー上で設定すること)")]
     [SerializeField] private HidePointType hidePointType = HidePointType.Chest;
@@ -560,15 +586,41 @@ public class HiddenObject : MonoBehaviour
         //playerのローカル回転を初期化
         player.localRotation = Quaternion.identity;
 
+        //プレイヤーの回転を保存する
+        savePlayerRotation = player.rotation;
+
+        //ベッドの下の場合
+        if (IsUnderBed())
+        {
+            //うつ伏せで隠れる
+            HidePlayerProne();
+        }
+        else
+        {
+            //playerの親を隠れるオブジェクトに設定
+            player.SetParent(transform);
+
+            //playerのスケールを小さくする
+            player.localScale = smallPlayerLocalScale;
+
+            //隠れるオブジェクトの位置にplayerを移動
+            player.position = transform.position;
+
+            //playerのローカルポジションを初期化
+            player.localPosition = Vector3.zero;
+
+            //playerのローカル回転を初期化
+            player.localRotation = Quaternion.identity;
+        }
+
         //ドアが付属していない場合
         if (!hasDoor)
         {
-            //プレイヤーが隠れるアニメーションを再生
+            //プレイヤーが隠れるアニメーションを再生(うつ伏せの場合は膝立ちを再生しない)
             Player.instance.PlayOrStopKneelingAnimation();
 
             //隠れたときのSE
-            audioSourceSE.clip = sO_SE.GetSEClip(currentHiddenPlayerSEid);
-            audioSourceSE.PlayOneShot(audioSourceSE.clip);
+            PlayHideSE();
         }
         else 
         {
@@ -589,6 +641,13 @@ public class HiddenObject : MonoBehaviour
     /// </summary>
     public void ShowThePlayer() 
     {
+        //敵に見つかって死亡が確定している場合(発見演出中に外へ出られないようにする)
+        if (Player.instance == null || Player.instance.GetDieMode() == DieMode.Die)
+        {
+            //処理をスキップ
+            return;
+        }
+
         //ドアが付属している場合
         if (hasDoor)
         {
@@ -630,6 +689,13 @@ public class HiddenObject : MonoBehaviour
             characterController.enabled = false;
         }
 
+        //ベッドの下の場合
+        if (IsUnderBed())
+        {
+            //うつ伏せ状態を解除(アニメーションは無しで即座に立った姿勢へ戻す)
+            ShowPlayerFromProne();
+        }
+
         //姿を現す位置へ移動
         player.position = transform.position + transform.forward * 1.5f;
 
@@ -656,10 +722,77 @@ public class HiddenObject : MonoBehaviour
         if (!hasDoor) 
         {
             //プレイヤーが姿を現すときのSE
-            audioSourceSE.clip = sO_SE.GetSEClip(currentHiddenPlayerSEid);
-            audioSourceSE.PlayOneShot(audioSourceSE.clip);
+            PlayHideSE();
         }
 
+    }
+
+    /// <summary>
+    /// うつ伏せでベッドの下に隠れる処理(アニメーション無し)
+    ///
+    /// 処理の主な流れ…
+    /// プレイヤーの親をハイドポイントに設定(ワールドスケールは維持)
+    /// → ベッドの下の位置へ移動
+    /// → X軸を90度回転させてうつ伏せの姿勢にする(頭がハイドポイントのZ軸方向を向く)
+    /// → カメラをうつ伏せモードにする
+    /// </summary>
+    private void HidePlayerProne()
+    {
+        //うつ伏せで隠れているフラグをオン(膝立ちアニメーションを再生させないため、アニメーション処理より先に設定)
+        Player.instance.SetIsProneHidden(true);
+
+        //playerの親を隠れるオブジェクトに設定(ワールドスケールを維持する)
+        player.SetParent(transform, true);
+
+        //ベッドの下の位置へ移動
+        player.localPosition = proneLocalPosition;
+
+        //うつ伏せの姿勢にする
+        //(X軸+90度回転で、プレイヤーのY軸(頭)がハイドポイントの前方、Z軸(顔)が床方向を向く)
+        player.localRotation = Quaternion.Euler(90f, 0f, 0f);
+
+        //カメラをうつ伏せモードにする
+        if (PlayerCamera.instance != null)
+        {
+            PlayerCamera.instance.EnterProneMode();
+        }
+    }
+
+    /// <summary>
+    /// うつ伏せ状態を解除する処理(アニメーション無し)
+    /// ※プレイヤーの親をnullにした後に呼ぶこと
+    /// </summary>
+    private void ShowPlayerFromProne()
+    {
+        //うつ伏せで隠れているフラグをオフ
+        Player.instance.SetIsProneHidden(false);
+
+        //プレイヤーの向きを、隠れる前の水平な向きに戻す
+        Vector3 forward = Vector3.ProjectOnPlane(savePlayerRotation * Vector3.forward, Vector3.up);
+        player.rotation = forward.sqrMagnitude > 0.0001f
+            ? Quaternion.LookRotation(forward.normalized, Vector3.up)
+            : Quaternion.identity;
+
+        //カメラのうつ伏せモードを解除
+        if (PlayerCamera.instance != null)
+        {
+            PlayerCamera.instance.ExitProneMode();
+        }
+    }
+
+    /// <summary>
+    /// 隠れる・姿を現す時のSEを再生する
+    /// </summary>
+    private void PlayHideSE()
+    {
+        //ベッドの下でSE IDが指定されている場合はそちらを使う
+        int seId = (IsUnderBed() && underBedSEid >= 0) ? underBedSEid : currentHiddenPlayerSEid;
+
+        audioSourceSE.clip = sO_SE.GetSEClip(seId);
+        if (audioSourceSE.clip != null)
+        {
+            audioSourceSE.PlayOneShot(audioSourceSE.clip);
+        }
     }
 
     /// <summary>
