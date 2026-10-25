@@ -270,6 +270,34 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private const double kViewMessageSeconds = 3.0;
 
+    /*-------------------------------------------------------------
+    * アイテム破棄(Q/O長押し)関連
+    -------------------------------------------------------------*/
+
+    /// <summary>
+    /// アイテム破棄に必要な長押し時間(秒)
+    /// </summary>
+    private const float kDropItemHoldSeconds = 0.5f;
+
+    /// <summary>
+    /// アイテム破棄キーの長押し経過時間
+    /// </summary>
+    private float dropItemHoldTime;
+
+    /// <summary>
+    /// 破棄後、キーを離すまで再入力を受け付けないためのフラグ
+    /// </summary>
+    private bool isWaitDropKeyRelease;
+
+    /// <summary>
+    /// アイテム破棄の長押し進捗(0～1)を取得(UIゲージ表示用)
+    /// </summary>
+    /// <returns>長押し進捗</returns>
+    public float GetDropItemHoldRatio()
+    {
+        return Mathf.Clamp01(dropItemHoldTime / kDropItemHoldSeconds);
+    }
+
 
     /// <summary>
     /// アイテムID管理を取得
@@ -446,7 +474,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
         player = GetComponent<Player>();
 
@@ -464,7 +492,7 @@ public class Inventory : MonoBehaviour
         isUseStaminaItem = false;
     }
 
-    void Update()
+    private void Update()
     {
         //インベントリアイテム使用
         if (UseInventoryItem() && !PauseController.instance.GetIsPause() && Time.timeScale != 0
@@ -473,6 +501,9 @@ public class Inventory : MonoBehaviour
             //アイテム使用
             UseItem();
         }
+
+        //Q or O長押しでアイテム破棄
+        UpdateDropItemHold();
 
         //スタミナ増強剤使用中の場合
         if (isUseStaminaItem) 
@@ -496,7 +527,7 @@ public class Inventory : MonoBehaviour
     /// 右クリック or U or Eでインベントリアイテム使用する関数
     /// </summary>
     /// <returns>右クリック or U or Eでtrue</returns>
-    bool UseInventoryItem()
+    private bool UseInventoryItem()
     {
         return Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.U);
     }
@@ -740,6 +771,72 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
+    /// Q or Oが押されているか
+    /// </summary>
+    /// <returns>Q or O押下中はtrue</returns>
+    private bool IsHoldDropItemKey()
+    {
+        return Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.O);
+    }
+
+    /// <summary>
+    /// Q or Oの長押しを監視し、一定時間押し続けたらアイテムを破棄する
+    /// </summary>
+    private void UpdateDropItemHold()
+    {
+        //キーが離されている場合は長押し状態をリセット
+        if (!IsHoldDropItemKey())
+        {
+            dropItemHoldTime = 0.0f;
+            isWaitDropKeyRelease = false;
+            return;
+        }
+
+        //操作可能な状態か(アイテム使用と同じ条件)
+        bool canOperate = !PauseController.instance.GetIsPause() && Time.timeScale != 0
+            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden();
+
+        //操作不可・破棄直後でキー押しっぱなし・アイテム未所持の場合はカウントしない
+        if (!canOperate || isWaitDropKeyRelease || keepItemId == CommonController.instance.GetKNoneItemId())
+        {
+            dropItemHoldTime = 0.0f;
+            return;
+        }
+
+        //長押し時間を加算
+        dropItemHoldTime += Time.deltaTime;
+
+        //規定時間に達したらアイテムを破棄
+        if (kDropItemHoldSeconds <= dropItemHoldTime)
+        {
+            DropItem();
+
+            //キーを離すまで再度破棄しない
+            dropItemHoldTime = 0.0f;
+            isWaitDropKeyRelease = true;
+        }
+    }
+
+    /// <summary>
+    /// 所持アイテムを捨てる(インベントリをリセット)
+    /// </summary>
+    public void DropItem()
+    {
+        //アイテムを所持していない場合は処理をスキップ
+        if (keepItemId == CommonController.instance.GetKNoneItemId())
+        {
+            return;
+        }
+
+        //アイテムDB側の所持数も0にする
+        sO_Item.ReduceUseItem(keepItemId, kMinKeepItemCount);
+
+        //インベントリをリセット
+        //(使用中のスタミナ増強剤の効果は継続させるため、EndStaminaEffectは呼ばない)
+        ResetInventoryItem();
+    }
+
+    /// <summary>
     /// 言語を設定する
     /// </summary>
     public void SettingLanguageText() 
@@ -972,7 +1069,7 @@ public class Inventory : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(startCenter, endCenter);
 
-        // 周囲に線を4本引くと、よりカプセル（太さ）っぽく見えます
+        // 周囲に線を4本引くと、よりカプセル（太さ）っぽく見える
         Gizmos.DrawLine(startCenter + camTransform.up * kCrackerRaycastRadius, endCenter + camTransform.up * kCrackerRaycastRadius);
         Gizmos.DrawLine(startCenter - camTransform.up * kCrackerRaycastRadius, endCenter - camTransform.up * kCrackerRaycastRadius);
         Gizmos.DrawLine(startCenter + camTransform.right * kCrackerRaycastRadius, endCenter + camTransform.right * kCrackerRaycastRadius);
