@@ -274,6 +274,15 @@ public partial class PauseController : MonoBehaviour
     private bool isRetirePanel = false;
 
     /// <summary>
+    /// リタイアパネル閲覧フラグを取得する
+    /// </summary>
+    /// <returns>リタイアパネル閲覧フラグ</returns>
+    public bool IsRetirePanel()
+    {
+        return isRetirePanel;
+    }
+
+    /// <summary>
     /// ステージ選択へ戻るパネル閲覧フラグ
     /// </summary>
     private bool isReturnToSelectStagePanel = false;
@@ -296,6 +305,15 @@ public partial class PauseController : MonoBehaviour
     /// アーカイブパネル閲覧フラグ
     /// </summary>
     private bool isArchivePanel = false;
+
+    /// <summary>
+    /// アーカイブパネル閲覧フラグを取得する
+    /// </summary>
+    /// <returns>アーカイブパネル閲覧フラグ</returns>
+    public bool IsArchivePanel()
+    {
+        return isArchivePanel;
+    }
 
     /// <summary>
     /// 彷徨う者パネル閲覧フラグ
@@ -327,14 +345,56 @@ public partial class PauseController : MonoBehaviour
     /// </summary>
     private bool isMysteryItemExplanationPanel = false;
 
-    [Header("チュートリアル用ハンマー入手フラグ(編集禁止)")]
-    public bool isGetHammer_Tutorial = false;
+    /// <summary>
+    /// チュートリアル用ハンマー入手フラグ
+    /// </summary>
+    private bool isGetHammer_Tutorial = false;
 
-    [Header("チュートリアル用ロープ入手フラグ(編集禁止)")]
-    public bool isGetRope_Tutorial = false;
+    /// <summary>
+    /// チュートリアル用ハンマー入手フラグを取得する
+    /// </summary>
+    /// <returns>チュートリアル用ハンマー入手フラグ</returns>
+    public bool IsGetHammer_Tutorial()
+    {
+        return isGetHammer_Tutorial;
+    }
 
-    [Header("チュートリアル用ミステリーアイテム閲覧入手フラグ(編集禁止)")]
-    public bool isViewMysteryItem_Tutorial = false;
+    /// <summary>
+    /// チュートリアル用ロープ入手フラグ
+    /// </summary>
+    private bool isGetRope_Tutorial = false;
+
+    /// <summary>
+    /// チュートリアル用ロープ入手フラグを取得する
+    /// </summary>
+    /// <returns>チュートリアル用ロープ入手フラグ</returns>
+    public bool IsGetRope_Tutorial()
+    {
+        return isGetRope_Tutorial;
+    }
+
+    /// <summary>
+    /// チュートリアル用ミステリーアイテム閲覧入手フラグ
+    /// </summary>
+    private bool isViewMysteryItem_Tutorial = false;
+
+    /// <summary>
+    /// チュートリアル用ミステリーアイテム閲覧入手フラグを取得する
+    /// </summary>
+    /// <returns>チュートリアル用ミステリーアイテム閲覧入手フラグ</returns>
+    public bool IsViewMysteryItem_Tutorial()
+    {
+        return isViewMysteryItem_Tutorial;
+    }
+
+    /// <summary>
+    /// チュートリアル用ミステリーアイテム閲覧入手フラグを設定する
+    /// </summary>
+    /// <param name="value">チュートリアル用ミステリーアイテム閲覧入手フラグ</param>
+    public void SetIsViewMysteryItem_Tutorial(bool value)
+    {
+        isViewMysteryItem_Tutorial = value;
+    }
 
 
     /// <summary>
@@ -1027,7 +1087,7 @@ public partial class PauseController : MonoBehaviour
     /// <summary>
     /// マウスカーソルを表示し、固定を解除するメソッド
     /// </summary>
-    void ViewMouseCorsor() 
+    private void ViewMouseCorsor() 
     {
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
@@ -1036,7 +1096,7 @@ public partial class PauseController : MonoBehaviour
     /// <summary>
     /// マウスを非表示にし、固定するメソッド
     /// </summary>
-    void HideMouseCorsor() 
+    private void HideMouseCorsor() 
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -1760,6 +1820,15 @@ public partial class PauseController : MonoBehaviour
                 Debug.LogError($"アイテム '{itemName}' が見つかりません");
             }
         }
+    }
+
+    /// <summary>
+    /// チュートリアル用アイテム系の説明を閲覧したかどうかを返す
+    /// </summary>
+    /// <returns>閲覧した場合、true</returns>
+    public bool ViewTutorialItemExplanation()
+    {
+        return !isPause && !isViewItemsPanel && !isReturnToTitlePanel && !isRetirePanel && !isArchivePanel;
     }
 
     /// <summary>
