@@ -196,13 +196,13 @@ public class PlayerLight : MonoBehaviour
         //通常プレイモードの場合&&プレイヤーライトを持っている場合
         if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.GetIsHavePlayerLight()) 
         {
-            if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.isPause && Time.timeScale != 0)
+            if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.GetIsPause() && Time.timeScale != 0)
             {
                 //ライトが点く
                 playerHasLight.SetActive(true);
                 Player.instance.IsLight = true;
             }
-            else if ((PlayerIsLight() && Player.instance.IsLight) && !PauseController.instance.isPause && Time.timeScale != 0)
+            else if ((PlayerIsLight() && Player.instance.IsLight) && !PauseController.instance.GetIsPause() && Time.timeScale != 0)
             {
                 //ライトが消える
                 playerHasLight.SetActive(false);

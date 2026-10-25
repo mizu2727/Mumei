@@ -293,7 +293,7 @@ public class PlayerInteract : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out raycastHit, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
         {
             //Rayにオブジェクトが当たった状態&&インタラクト操作を行う&&プレイヤーが隠れていない場合
-            if (PlayInteract() && !PauseController.instance.isPause && Time.timeScale != 0
+            if (PlayInteract() && !PauseController.instance.GetIsPause() && Time.timeScale != 0
                 && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
             {
                 //デバッグ用にオブジェクト名を表示

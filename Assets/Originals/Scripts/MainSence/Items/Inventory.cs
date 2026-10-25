@@ -467,7 +467,7 @@ public class Inventory : MonoBehaviour
     void Update()
     {
         //インベントリアイテム使用
-        if (UseInventoryItem() && !PauseController.instance.isPause && Time.timeScale != 0
+        if (UseInventoryItem() && !PauseController.instance.GetIsPause() && Time.timeScale != 0
             && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
         {
             //アイテム使用

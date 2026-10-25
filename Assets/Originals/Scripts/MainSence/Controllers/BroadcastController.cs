@@ -137,7 +137,7 @@ public class BroadcastController : MonoBehaviour
     private void Update()
     {
         //ポーズ中の場合||放送スイッチがOFFの場合
-        if (PauseController.instance.isPause || Time.timeScale == 0 || !isBroadcastSwitchFlag) 
+        if (PauseController.instance.GetIsPause() || Time.timeScale == 0 || !isBroadcastSwitchFlag) 
         {
             //処理をスキップ
             return;

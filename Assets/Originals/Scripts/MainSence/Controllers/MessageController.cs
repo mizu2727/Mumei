@@ -485,7 +485,7 @@ public partial class MessageController : MonoBehaviour
         //ポーズパネル・ゴールパネルを開いている間は、次のメッセージを進めない
         if (goal != null && PauseController.instance != null) 
         {
-            if (PauseController.instance.isPause || goal.isGoalPanel)
+            if (PauseController.instance.GetIsPause() || goal.isGoalPanel)
             {
                 await ShowNextMessage();
             }

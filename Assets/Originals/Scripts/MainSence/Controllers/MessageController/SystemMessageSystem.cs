@@ -261,8 +261,8 @@ public partial class MessageController
             if (systemMessage.systemMessage[number].isTutorialStatus == 6)
             {
                 //ミステリーアイテム(チュートリアル版)入手したらメッセージを勧める
-                await UniTask.WaitUntil(() => PauseController.instance != null && PauseController.instance.IsGetHammer_Tutorial()
-                    && PauseController.instance.IsGetRope_Tutorial(), cancellationToken: cts.Token);
+                await UniTask.WaitUntil(() => PauseController.instance != null && PauseController.instance.GetIsGetHammer_Tutorial()
+                    && PauseController.instance.GetIsGetRope_Tutorial(), cancellationToken: cts.Token);
 
                 //プレイヤー効果音を停止
                 MusicController.instance.StopSE(Player.instance.audioSourceSE);
@@ -281,7 +281,7 @@ public partial class MessageController
             if (systemMessage.systemMessage[number].isTutorialStatus == 7)
             {
                 //ミステリーアイテム(チュートリアル版)を閲覧後にポーズ解除したらメッセージを勧める
-                await UniTask.WaitUntil(() => PauseController.instance != null && PauseController.instance.IsViewMysteryItem_Tutorial()
+                await UniTask.WaitUntil(() => PauseController.instance != null && PauseController.instance.GetIsViewMysteryItem_Tutorial()
                     && PauseController.instance.ViewTutorialItemExplanation() && OptionUIController.instance != null
                     && !OptionUIController.instance.GetIsOptionPanel(), cancellationToken: cts.Token);
                 PauseController.instance.SetIsViewMysteryItem_Tutorial(false);

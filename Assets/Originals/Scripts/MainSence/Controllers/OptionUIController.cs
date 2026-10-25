@@ -325,7 +325,7 @@ public class OptionUIController : MonoBehaviour
         else 
         {
             //ポーズパネルを非表示
-            PauseController.instance.isPause = false;
+            PauseController.instance.SetIsPause(false);
             PauseController.instance.ChangeViewPausePanel();
         }
     }
@@ -558,7 +558,7 @@ public class OptionUIController : MonoBehaviour
         {
             //ポーズパネルを表示
             PauseController.instance.GetPausePanel().transform.SetAsLastSibling();
-            PauseController.instance.isPause = true;
+            PauseController.instance.SetIsPause(true);
             PauseController.instance.ChangeViewPausePanel();
         }
 

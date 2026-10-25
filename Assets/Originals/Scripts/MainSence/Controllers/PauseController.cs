@@ -250,9 +250,29 @@ public partial class PauseController : MonoBehaviour
     /*-----------------------------------------------------------
      * フラグ関連
      -----------------------------------------------------------*/
-    [Header("フラグ関連")]
-    [Header("ポーズフラグ(ヒエラルキー上からの編集禁止)")]
-    public bool isPause = false;
+
+    /// <summary>
+    /// ポーズフラグ
+    /// </summary>
+    private bool isPause = false;
+
+    /// <summary>
+    /// ポーズフラグを取得
+    /// </summary>
+    /// <returns>ポーズフラグ</returns>
+    public bool GetIsPause()
+    {
+        return isPause;
+    }
+
+    /// <summary>
+    /// ポーズフラグを設定する
+    /// </summary>
+    /// <param name="value">ポーズフラグ</param>
+    public void SetIsPause(bool value)
+    {
+        isPause = value;
+    }
 
     /// <summary>
     /// アイテム確認パネル閲覧フラグ
@@ -277,7 +297,7 @@ public partial class PauseController : MonoBehaviour
     /// リタイアパネル閲覧フラグを取得する
     /// </summary>
     /// <returns>リタイアパネル閲覧フラグ</returns>
-    public bool IsRetirePanel()
+    public bool GetIsRetirePanel()
     {
         return isRetirePanel;
     }
@@ -296,7 +316,7 @@ public partial class PauseController : MonoBehaviour
     /// タイトルへ戻るパネル閲覧フラグを取得する
     /// </summary>
     /// <returns>タイトルへ戻るパネル閲覧フラグ</returns>
-    public bool IsReturnToTitlePanel()
+    public bool GetIsReturnToTitlePanel()
     {
         return isReturnToTitlePanel;
     }
@@ -310,7 +330,7 @@ public partial class PauseController : MonoBehaviour
     /// アーカイブパネル閲覧フラグを取得する
     /// </summary>
     /// <returns>アーカイブパネル閲覧フラグ</returns>
-    public bool IsArchivePanel()
+    public bool GetIsArchivePanel()
     {
         return isArchivePanel;
     }
@@ -354,7 +374,7 @@ public partial class PauseController : MonoBehaviour
     /// チュートリアル用ハンマー入手フラグを取得する
     /// </summary>
     /// <returns>チュートリアル用ハンマー入手フラグ</returns>
-    public bool IsGetHammer_Tutorial()
+    public bool GetIsGetHammer_Tutorial()
     {
         return isGetHammer_Tutorial;
     }
@@ -368,7 +388,7 @@ public partial class PauseController : MonoBehaviour
     /// チュートリアル用ロープ入手フラグを取得する
     /// </summary>
     /// <returns>チュートリアル用ロープ入手フラグ</returns>
-    public bool IsGetRope_Tutorial()
+    public bool GetIsGetRope_Tutorial()
     {
         return isGetRope_Tutorial;
     }
@@ -382,7 +402,7 @@ public partial class PauseController : MonoBehaviour
     /// チュートリアル用ミステリーアイテム閲覧入手フラグを取得する
     /// </summary>
     /// <returns>チュートリアル用ミステリーアイテム閲覧入手フラグ</returns>
-    public bool IsViewMysteryItem_Tutorial()
+    public bool GetIsViewMysteryItem_Tutorial()
     {
         return isViewMysteryItem_Tutorial;
     }

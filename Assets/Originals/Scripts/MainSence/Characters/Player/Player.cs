@@ -924,7 +924,7 @@ public class Player : MonoBehaviour, CharacterInterface
         } 
 
         //PauseControllerがないSceneでnullチェックエラーを回避するために、個別でわけている
-        if (PauseController.instance.isPause) return;
+        if (PauseController.instance.GetIsPause()) return;
 
 
         //隠れている場合の処理
