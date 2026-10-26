@@ -37,7 +37,16 @@ public class GameController : MonoBehaviour
     [SerializeField] private SaveLoad saveLoad;
 
     [Header("ゲームモードのステータス(ヒエラルキー上からの編集禁止)")]
-    public GameModeStatus gameModeStatus;
+    [SerializeField] private GameModeStatus gameModeStatus;
+
+    /// <summary>
+    /// ゲームモードのステータスを取得する
+    /// </summary>
+    /// <returns>ゲームモードのステータス</returns>
+    public GameModeStatus GetGameModeStatus() 
+    {
+        return gameModeStatus;
+    }
 
     [Header("チュートリアル用ドキュメント引き出し")]
     [SerializeField] private GameObject tutorialDocumentDrawer;
@@ -868,6 +877,13 @@ public class GameController : MonoBehaviour
         {
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
+        }
+
+        //OperationExplanationControllerが存在する場合
+        if (OperationExplanationController.instance != null)
+        {
+            //ゲームモードに合わせて操作テキストを切り替える
+            OperationExplanationController.instance.UpdateOperationText();
         }
     }
 

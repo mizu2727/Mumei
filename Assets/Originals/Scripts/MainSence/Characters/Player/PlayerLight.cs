@@ -148,7 +148,7 @@ public class PlayerLight : MonoBehaviour
         if (cameraTransform == null) return;
 
         //ゲームプレイモード以外の場合、強制的にライトをオフにする
-        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
+        if (GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame) 
         {
             playerHasLight.SetActive(false);
             Player.instance.IsLight = false;
@@ -194,7 +194,7 @@ public class PlayerLight : MonoBehaviour
     void TurnOnAndOfLight() 
     {
         //通常プレイモードの場合&&プレイヤーライトを持っている場合
-        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && Player.instance.GetIsHavePlayerLight()) 
+        if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && Player.instance.GetIsHavePlayerLight()) 
         {
             if (PlayerIsLight() && !Player.instance.IsLight && !PauseController.instance.GetIsPause() && Time.timeScale != 0)
             {

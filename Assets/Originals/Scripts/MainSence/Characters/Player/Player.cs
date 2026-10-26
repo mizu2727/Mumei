@@ -678,7 +678,7 @@ public class Player : MonoBehaviour, CharacterInterface
         float moveZ = Input.GetAxis(stringVertical);
 
         //通常のプレイ以外の場合
-        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
+        if (GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame) 
         {
             //移動時の数値をリセット
             moveX = 0;
@@ -898,11 +898,11 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
         //ストーリーモードでプレイヤーを回転させる
-        if (playerIsBackRotate && (GameController.instance.gameModeStatus == GameModeStatus.Story)) PlayerTurn();
+        if (playerIsBackRotate && (GameController.instance.GetGameModeStatus() == GameModeStatus.Story)) PlayerTurn();
 
         //通常のプレイ以外の場合、処理をスキップ
         if (playerIsDead || Time.timeScale == 0 || isFallDown 
-            || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame) 
+            || GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame) 
         {
             //移動方向をリセット
             moveDirection = Vector3.zero;
@@ -1081,7 +1081,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
 
-        if (IsMove && !wasMovingLastFrame && !isHidden && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
+        if (IsMove && !wasMovingLastFrame && !isHidden && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame)
         {
             //移動開始時に効果音を再生
             audioSourceSE.clip = currentSE;
@@ -1094,7 +1094,7 @@ public class Player : MonoBehaviour, CharacterInterface
             StopPlayerSE(audioSourceSE);
         }
         else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE 
-            && !isHidden && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
+            && !isHidden && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame)
         {
             //移動中に歩行/ダッシュが切り替わった場合、効果音を変更
             audioSourceSE.Stop();
@@ -1246,7 +1246,7 @@ public class Player : MonoBehaviour, CharacterInterface
     /// </summary>
     public void PlayerTurn() 
     {
-        if (GameController.instance.gameModeStatus == GameModeStatus.Story)
+        if (GameController.instance.GetGameModeStatus() == GameModeStatus.Story)
         {
             //プレイヤーの向きを180度ゆっくり回転させる
             if (transform.rotation.y < 0) transform.Rotate(rotateY180 * (Time.deltaTime * kRotationSpeedMagnification));

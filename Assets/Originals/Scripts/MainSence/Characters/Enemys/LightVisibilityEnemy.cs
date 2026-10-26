@@ -101,7 +101,7 @@ public class LightVisibilityEnemy : BaseEnemy
     protected override async void Update() 
     {
         //ゲームがプレイ中でない、またはプレイヤーが死亡している||無限追従場合
-        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame || Player.instance == null
+        if (GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame || Player.instance == null
             || Player.instance.IsDead || targetPoint == null　|| currentState == EnemyState.InfinityChase)
         {
             navMeshAgent.isStopped = true;

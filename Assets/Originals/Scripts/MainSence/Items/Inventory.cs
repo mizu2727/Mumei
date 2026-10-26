@@ -496,7 +496,7 @@ public class Inventory : MonoBehaviour
     {
         //インベントリアイテム使用
         if (UseInventoryItem() && !PauseController.instance.GetIsPause() && Time.timeScale != 0
-            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
+            && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
         {
             //アイテム使用
             UseItem();
@@ -794,7 +794,7 @@ public class Inventory : MonoBehaviour
 
         //操作可能な状態か(アイテム使用と同じ条件)
         bool canOperate = !PauseController.instance.GetIsPause() && Time.timeScale != 0
-            && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden();
+            && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden();
 
         //操作不可・破棄直後でキー押しっぱなし・アイテム未所持の場合はカウントしない
         if (!canOperate || isWaitDropKeyRelease || keepItemId == CommonController.instance.GetKNoneItemId())

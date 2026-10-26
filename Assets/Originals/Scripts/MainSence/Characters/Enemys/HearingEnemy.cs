@@ -92,7 +92,7 @@ public class HearingEnemy : BaseEnemy
     protected override  void Update()
     {
         //ゲームがプレイ中でない、またはプレイヤーが死亡している場合
-        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame || Player.instance == null 
+        if (GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame || Player.instance == null 
             || Player.instance.IsDead || targetPoint == null)
         {
             navMeshAgent.isStopped = true;

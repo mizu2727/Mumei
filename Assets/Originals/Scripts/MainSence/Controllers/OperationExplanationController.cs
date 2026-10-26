@@ -13,6 +13,12 @@ public class OperationExplanationController : MonoBehaviour
     [Header("OperationPanel(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject operationPanel;
 
+    [Header("OperationPanel内のStoryモード用操作テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject storyOperationText;
+
+    [Header("OperationPanel内のPlayInGameモード用操作テキスト(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private GameObject playInGameOperationText;
+
     [Header("UseItemTextPanel(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject useItemTextPanel;
 
@@ -207,6 +213,20 @@ public class OperationExplanationController : MonoBehaviour
             //compassTextPanelをnullに設定
             compassTextPanel = null;
         }
+
+        //storyOperationTextが存在する場合
+        if (storyOperationText != null)
+        {
+            //storyOperationTextをnullに設定
+            storyOperationText = null;
+        }
+
+        //playInGameOperationTextが存在する場合
+        if (playInGameOperationText != null)
+        {
+            //playInGameOperationTextをnullに設定
+            playInGameOperationText = null;
+        }
     }
 
     /// <summary>
@@ -257,6 +277,9 @@ public class OperationExplanationController : MonoBehaviour
     {
         //AudioSourceの初期化
         InitializeAudioSource();
+
+        //現在のゲームモードに合わせて操作テキストを切り替える
+        UpdateOperationText();
 
         //現在のシーン名がTitleSceneの場合||OpeningSceneの場合
         if (CommonController.instance.GetTitleSceneName() == SceneManager.GetActiveScene().name 
@@ -317,6 +340,55 @@ public class OperationExplanationController : MonoBehaviour
         {
             //非表示
             operationPanel.SetActive(false);
+        }
+
+        //操作テキストの表示も更新する
+        UpdateOperationText();
+    }
+
+    /// <summary>
+    /// ゲームモードとOperationPanel手動閲覧フラグに応じて、操作テキストの表示・非表示を切り替える
+    /// (GameController.SetGameModeStatusからも呼ばれる)
+    /// </summary>
+    public void UpdateOperationText()
+    {
+        //Storyモード用操作テキストを表示するか
+        bool isViewStoryText = false;
+
+        //PlayInGameモード用操作テキストを表示するか
+        bool isViewPlayInGameText = false;
+
+        //OperationPanel手動閲覧フラグがオン かつ GameControllerが存在する場合
+        if (isSelfViewOperationPanel && GameController.instance != null)
+        {
+            switch (GameController.instance.GetGameModeStatus())
+            {
+                //Storyモードの場合
+                case GameModeStatus.Story:
+                    isViewStoryText = true;
+                    break;
+
+                //PlayInGameモードの場合
+                case GameModeStatus.PlayInGame:
+                    isViewPlayInGameText = true;
+                    break;
+
+                //それ以外のモードは両方非表示
+                default:
+                    break;
+            }
+        }
+
+        //Storyモード用操作テキストの表示・非表示
+        if (storyOperationText != null)
+        {
+            storyOperationText.SetActive(isViewStoryText);
+        }
+
+        //PlayInGameモード用操作テキストの表示・非表示
+        if (playInGameOperationText != null)
+        {
+            playInGameOperationText.SetActive(isViewPlayInGameText);
         }
     }
 

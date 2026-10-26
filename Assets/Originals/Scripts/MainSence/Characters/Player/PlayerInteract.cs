@@ -294,7 +294,7 @@ public class PlayerInteract : MonoBehaviour
         {
             //Rayにオブジェクトが当たった状態&&インタラクト操作を行う&&プレイヤーが隠れていない場合
             if (PlayInteract() && !PauseController.instance.GetIsPause() && Time.timeScale != 0
-                && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
+                && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && !Player.instance.GetIsPlayerHidden())
             {
                 //デバッグ用にオブジェクト名を表示
                 //Debug.Log("RaycastHit Object: " + raycastHit.transform.name);

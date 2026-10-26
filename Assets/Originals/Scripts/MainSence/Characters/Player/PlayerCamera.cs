@@ -418,7 +418,7 @@ public class PlayerCamera : MonoBehaviour
         }
 
         //Ctrl押下で視点が後ろを向く
-        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame 
+        if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame 
             && Player.instance.playerIsBackRotate && !Player.instance.GetIsPlayerHidden()) 
         {
             if (!wasTrunLastFrame)
@@ -435,7 +435,7 @@ public class PlayerCamera : MonoBehaviour
                 wasTrunLastFrame = true;
             }
         }
-        else if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame 
+        else if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame 
             && !Player.instance.playerIsBackRotate && wasTrunLastFrame)
         {
             // カメラをプレイヤーの前方に戻す
@@ -448,7 +448,7 @@ public class PlayerCamera : MonoBehaviour
             wasTrunLastFrame = false;
         }
 
-        if ( 0 < GameController.lookSensitivity && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame 
+        if ( 0 < GameController.lookSensitivity && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame 
             && !Player.instance.PlayerIsBackRotate()) 
         {
             //マウスの移動
@@ -509,7 +509,7 @@ public class PlayerCamera : MonoBehaviour
     public void ResetCameraRotation()
     {
         //ストーリーモードの場合
-        if (GameController.instance.gameModeStatus == GameModeStatus.Story) 
+        if (GameController.instance.GetGameModeStatus() == GameModeStatus.Story) 
         {
             //上下回転をリセット
             xRotation = 0f;
@@ -522,7 +522,7 @@ public class PlayerCamera : MonoBehaviour
         }
 
         //通常プレイモードの場合
-        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
+        if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame)
         {
             //上下回転をリセット
             xRotation = 0f;

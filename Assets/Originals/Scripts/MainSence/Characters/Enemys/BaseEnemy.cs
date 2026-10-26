@@ -435,7 +435,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         transform.LookAt(Player.instance.transform.position);
 
         //ゲームモードをプレイヤーを攻撃する演出モードに設定
-        GameController.instance.gameModeStatus = GameModeStatus.AttackMovieDirection;
+        GameController.instance.SetGameModeStatus(GameModeStatus.AttackMovieDirection);
 
         //遷移が完了して「AttackState」という名前のステートになるのを待つ
         await UniTask.WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName(kAttackStateName));
@@ -1328,7 +1328,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         //通常プレイモード&&パネルがnull以外の場合
-        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+        if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && playerFoundPanel != null)
         {
             //赤い画面を非表示
             playerFoundPanel.SetActive(false);
@@ -1790,7 +1790,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     {
         //通常プレイ以外、攻撃中、ダメージ中はチェックしない
         //(Update内のawait後に遅れて呼ばれた場合でも、攻撃演出中にワープしないようにする)
-        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame
+        if (GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame
             || attackMode != AttackMode.None || isAttack || isReceiveDamage)
         {
             ResetStuckCheck();
@@ -1992,7 +1992,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     {
 
         //通常プレイ以外のモードの場合
-        if (GameController.instance.gameModeStatus != GameModeStatus.PlayInGame)
+        if (GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame)
         {
             //処理をスキップ
             return;
@@ -2063,7 +2063,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                         lastKnownPlayerPosition = targetPoint.position;
 
                         //唄歌う彷徨う者以外の場合&&通常プレイモード&&パネルがnull以外の場合
-                        if (enemyNameStatus != EnemyName.SingSongWanderer && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                        if (enemyNameStatus != EnemyName.SingSongWanderer && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && playerFoundPanel != null)
                         {
                             //画面を赤く表示
                             playerFoundPanel.SetActive(true);
@@ -2118,7 +2118,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     lastKnownPlayerPosition = targetPoint.position;
 
                     //唄歌う彷徨う者以外の場合&&通常プレイモード&&パネルがnull以外の場合
-                    if (enemyNameStatus != EnemyName.SingSongWanderer && GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                    if (enemyNameStatus != EnemyName.SingSongWanderer && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && playerFoundPanel != null)
                     {
                         //画面を赤く表示
                         playerFoundPanel.SetActive(true);
@@ -2133,7 +2133,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     isAlertMode = false;
 
                     //通常プレイモード&&パネルがnull以外の場合
-                    if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                    if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && playerFoundPanel != null)
                     {
                         //赤い画面を非表示
                         playerFoundPanel.SetActive(false);
@@ -2209,7 +2209,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                     //画面の色を元に戻す(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
                     //通常プレイモード&&パネルがnull以外の場合
-                    if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
+                    if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && playerFoundPanel != null)
                     {
                         playerFoundPanel.SetActive(false);
                     }
@@ -2309,7 +2309,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         CheckStuck();
 
         //移動時の効果音処理(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
-        if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame)
+        if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame)
         {
             // 効果音制御
             currentSE = (currentState == EnemyState.Chase || currentState == EnemyState.InfinityChase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);

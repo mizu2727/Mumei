@@ -225,7 +225,7 @@ public class SingSongWanderer : HearingEnemy
         base.Update();
 
         //プレイヤーが存在しない場合||通常プレイ以外の場合(プレイヤー死亡後のエラー防止)
-        if (Player.instance == null || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame)
+        if (Player.instance == null || GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame)
         {
             //処理をスキップ
             return;
@@ -385,7 +385,7 @@ public class SingSongWanderer : HearingEnemy
     private void TryStartFoundSequence(HiddenObject hiddenObject)
     {
         //発見演出中||通常プレイ以外の場合
-        if (isFoundSequenceRunning || GameController.instance.gameModeStatus != GameModeStatus.PlayInGame)
+        if (isFoundSequenceRunning || GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame)
         {
             return;
         }
@@ -440,7 +440,7 @@ public class SingSongWanderer : HearingEnemy
             PeekSetting setting = GetPeekSetting(hidePointType);
 
             //ゲームモードをプレイヤーを攻撃する演出モードに設定(他の敵・プレイヤーの処理を止める)
-            GameController.instance.gameModeStatus = GameModeStatus.AttackMovieDirection;
+            GameController.instance.SetGameModeStatus(GameModeStatus.AttackMovieDirection);
 
             //画面エフェクトを非表示
             if (playerFoundPanel != null) playerFoundPanel.SetActive(false);

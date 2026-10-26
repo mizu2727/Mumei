@@ -158,7 +158,7 @@ public class GameOverScene : MonoBehaviour
         GameController.instance.SetViewScene(ViewScene.kGameOverScene);
 
         //ゲームオーバーステータスに変更
-        GameController.instance.gameModeStatus = GameModeStatus.GameOver;
+        GameController.instance.SetGameModeStatus(GameModeStatus.GameOver);
 
         //ゲームオーバーBGM再生
         MusicController.instance.PlayNoLoopBGM(audioSourceBGM, sO_BGM.GetBGMClip(gameOverBGMId), gameOverBGMId);
@@ -224,7 +224,7 @@ public class GameOverScene : MonoBehaviour
     public void OnClickedRestartGameButton()
     {
         //ゲームモードをPlayInGameへ変更
-        GameController.instance.gameModeStatus = GameModeStatus.PlayInGame;
+        GameController.instance.SetGameModeStatus(GameModeStatus.PlayInGame);
 
         //シーン遷移時用データを保存
         GameController.instance.CallSaveSceneTransitionUserDataMethod();
