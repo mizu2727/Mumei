@@ -1043,8 +1043,30 @@ public partial class PauseController : MonoBehaviour
     public void Update()
     {
         //PキーorZキーorEscapeキーでポーズ/ポーズ解除
-        if ((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Escape)) 
-            && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && Player.instance.GetDieMode() != DieMode.Die) TogglePause();
+        if ((Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Z) || Input.GetKeyDown(KeyCode.Escape)
+            || GamepadInput.IsPausePressed())
+            && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && Player.instance.GetDieMode() != DieMode.Die)
+        {
+            TogglePause();
+            return;
+        }
+
+        //B / ○でUIの「戻る」(ESCキーと同じ動作。ただしポーズを開くことはしない)
+        if (GamepadInput.IsCancelPressed() && IsOpenAnyPausePanel()
+            && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && Player.instance.GetDieMode() != DieMode.Die)
+        {
+            TogglePause();
+        }
+    }
+
+    /// <summary>
+    /// ポーズ関連のパネルを何か開いているか
+    /// </summary>
+    /// <returns>開いている場合はtrue</returns>
+    private bool IsOpenAnyPausePanel()
+    {
+        return isPause || isViewItemsPanel || isRetirePanel
+            || (OptionUIController.instance != null && OptionUIController.instance.GetIsOptionPanel());
     }
 
     /// <summary>
@@ -1053,6 +1075,12 @@ public partial class PauseController : MonoBehaviour
     /// <param name="context"></param>
     private void OnPlusButtonPressed(InputAction.CallbackContext context)
     {
+        //Menu / OPTIONSボタンはUpdate関数内で処理するため、二重にポーズ切り替えが起こらないようスキップする
+        if (GamepadInput.IsPausePressed())
+        {
+            return;
+        }
+
         TogglePause();
     }
 

@@ -473,23 +473,22 @@ public partial class MessageController : MonoBehaviour
 
 
     /// <summary>
-    /// スペースキー・Enterキー・左クリック・Rボタン押下で次のメッセージを表示
-    /// Interact…"joystick button 5"を割り当てている。コントローラーではRボタンになる
+    /// スペースキー・Enterキー・左クリック・A / ×・RT / R2押下で次のメッセージを表示
     /// </summary>
     /// <returns></returns>
-    async UniTask ShowNextMessage() 
+    async UniTask ShowNextMessage()
     {
-        await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) 
-            || Input.GetMouseButtonDown(0) || Input.GetButtonDown(CommonController.instance.GetStringInteract()));
+        await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)
+            || Input.GetMouseButtonDown(0) || GamepadInput.IsStoryAdvancePressed());
 
         //ポーズパネル・ゴールパネルを開いている間は、次のメッセージを進めない
-        if (goal != null && PauseController.instance != null) 
+        if (goal != null && PauseController.instance != null)
         {
             if (PauseController.instance.GetIsPause() || goal.isGoalPanel)
             {
                 await ShowNextMessage();
             }
-        }     
+        }
     }
 
     /// <summary>

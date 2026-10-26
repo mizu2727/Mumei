@@ -674,8 +674,8 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <returns>移動中&&オブジェクトに隠れていない場合はtrue</returns>
     public bool IsPlayerMoving()
     {
-        float moveX = Input.GetAxis(stringHorizontal);
-        float moveZ = Input.GetAxis(stringVertical);
+        float moveX = GetMoveInputX();
+        float moveZ = GetMoveInputZ();
 
         //通常のプレイ以外の場合
         if (GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame) 
@@ -983,12 +983,9 @@ public class Player : MonoBehaviour, CharacterInterface
         }
 
 
-        
-
-
         //前後左右の入力から、移動のためのベクトルを計算
-        float moveX = Input.GetAxis(stringHorizontal);
-        float moveZ = Input.GetAxis(stringVertical);
+        float moveX = GetMoveInputX();
+        float moveZ = GetMoveInputZ();
 
         // カメラのTransformを取得
         Transform cameraTransform = Camera.main.transform;
@@ -1046,12 +1043,9 @@ public class Player : MonoBehaviour, CharacterInterface
         if (IsMove)
         {
             //移動中:ダッシュボタンに応じて走行または歩行する
-            animator.SetBool(kIsRunAnimatorParameter, !isHidden && (Input.GetKey(KeyCode.LeftShift) 
-                || Input.GetKey(KeyCode.RightShift) || Input.GetKey(KeyCode.Semicolon)  
-                || Input.GetButton(stringDash)));
-            animator.SetBool(kIsWalkAnimatorParameter, !isHidden && !Input.GetKey(KeyCode.LeftShift)
-                && !Input.GetKey(KeyCode.RightShift) && !Input.GetKey(KeyCode.Semicolon)  
-                && !Input.GetButton(stringDash));
+            bool isDashInput = IsDashInput();
+            animator.SetBool(kIsRunAnimatorParameter, !isHidden && isDashInput);
+            animator.SetBool(kIsWalkAnimatorParameter, !isHidden && !isDashInput);
         }
         else
         {
@@ -1076,8 +1070,7 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
         //移動状態の変化を検知して効果音を制御
-        currentSE = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) 
-            || Input.GetKey(KeyCode.Semicolon) || Input.GetButton(stringDash) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
+        currentSE = IsDashInput() ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
 
 
 
@@ -1116,13 +1109,10 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <summary>
     /// ダッシュ判定
     /// </summary>
-    void PlayerDashOrWalk() 
+    private void PlayerDashOrWalk() 
     {
-        //Shift or ;キー・Xボタンを入力している間はダッシュ
-        //Dash…"joystick button 4"を割り当て。コントローラーではLボタンになる
-        if (IsMove && isStamina && Time.timeScale == 1 && !isHidden
-            && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
-            || Input.GetKey(KeyCode.Semicolon) || Input.GetButton(stringDash)))
+        //Shift or ;キー・LT / L2を入力している間はダッシュ
+        if (IsMove && isStamina && Time.timeScale == 1 && !isHidden && IsDashInput())
         {
             //ダッシュ開始
             IsDash = true;
@@ -1142,7 +1132,7 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <summary>
     /// スタミナ管理
     /// </summary>
-    void PlayerStaminaManage() 
+    private void PlayerStaminaManage() 
     {
         if (IsDash)
         {
@@ -1217,10 +1207,39 @@ public class Player : MonoBehaviour, CharacterInterface
     /// <summary>
     /// 振り返り判定
     /// </summary>
-    /// <returns>Ctrl or ?押下でtrue</returns>
-    public bool PlayerIsBackRotate() 
+    /// <returns>Ctrl or ? or RB / R1押下でtrue</returns>
+    public bool PlayerIsBackRotate()
     {
-        return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.Slash);
+        return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.Slash)
+            || GamepadInput.IsBackRotateHeld();
+    }
+
+    /// <summary>
+    /// ダッシュ入力判定
+    /// </summary>
+    /// <returns>Shift or ; or LT / L2押下でtrue</returns>
+    private bool IsDashInput()
+    {
+        return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)
+            || Input.GetKey(KeyCode.Semicolon) || GamepadInput.IsDashHeld();
+    }
+
+    /// <summary>
+    /// 左右の移動入力を取得(キーボードと左スティックの大きい方)
+    /// </summary>
+    /// <returns>左右の移動入力</returns>
+    private float GetMoveInputX()
+    {
+        return GamepadInput.AbsMax(Input.GetAxis(stringHorizontal), GamepadInput.GetMove().x);
+    }
+
+    /// <summary>
+    /// 前後の移動入力を取得(キーボードと左スティックの大きい方)
+    /// </summary>
+    /// <returns>前後の移動入力</returns>
+    private float GetMoveInputZ()
+    {
+        return GamepadInput.AbsMax(Input.GetAxis(stringVertical), GamepadInput.GetMove().y);
     }
 
     /// <summary>

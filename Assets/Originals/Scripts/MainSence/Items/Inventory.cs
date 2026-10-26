@@ -524,12 +524,13 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// 右クリック or U or Eでインベントリアイテム使用する関数
+    /// 右クリック or U or E or RT/R2でインベントリアイテム使用する関数
     /// </summary>
     /// <returns>右クリック or U or Eでtrue</returns>
     private bool UseInventoryItem()
     {
-        return Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.U);
+        return Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.U)
+            || GamepadInput.IsUseItemPressed();
     }
 
     /// <summary>
@@ -771,12 +772,12 @@ public class Inventory : MonoBehaviour
     }
 
     /// <summary>
-    /// Q or Oが押されているか
+    /// Q or O or Y/△が押されているか
     /// </summary>
     /// <returns>Q or O押下中はtrue</returns>
     private bool IsHoldDropItemKey()
     {
-        return Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.O);
+        return Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.O) || GamepadInput.IsDropItemHeld();
     }
 
     /// <summary>

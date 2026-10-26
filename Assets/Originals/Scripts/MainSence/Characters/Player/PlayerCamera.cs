@@ -37,6 +37,9 @@ public class PlayerCamera : MonoBehaviour
     /// </summary>
     float lookY2;
 
+    [Header("ゲームパッド右スティックの視点回転速度(感度スライダーの値と掛け合わせる。大きいほど速い)")]
+    [SerializeField] private float gamepadLookSpeed = 60.0f;
+
     /// <summary>
     /// 90度X軸回転ベクトル
     /// </summary>
@@ -456,11 +459,12 @@ public class PlayerCamera : MonoBehaviour
             lookY = Input.GetAxis("Mouse Y") * GameController.lookSensitivity;
 
             //ゲームパッドの右スティックの移動
-            //Mouse X2…Axis欄で"4th axis (Joysticks)"を選択。コントローラーでは右スティックになる
-            lookX2 = Input.GetAxis("Mouse X2") * GameController.lookSensitivity * Time.deltaTime;
+            //Input SystemのGamepadから取得(Xbox / PS共通)
+            Vector2 gamepadLook = GamepadInput.GetLook();
+            lookX2 = gamepadLook.x * GameController.lookSensitivity * gamepadLookSpeed * Time.deltaTime;
 
-            //Mouse Y2…Axis欄で"5th axis (Joysticks)"を選択。コントローラーでは右スティックになる
-            lookY2 = Input.GetAxis("Mouse Y2") * GameController.lookSensitivity * Time.deltaTime;
+            //スティック上方向で上を向く
+            lookY2 = gamepadLook.y * GameController.lookSensitivity * gamepadLookSpeed * Time.deltaTime;
 
             //うつ伏せ(ベッドの下)の場合
             if (isProneMode)
