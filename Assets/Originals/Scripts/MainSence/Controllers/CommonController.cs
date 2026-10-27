@@ -872,6 +872,37 @@ public class CommonController : MonoBehaviour
     }
 
     /// <summary>
+    /// 指定以外の全てのボタンの文字の色を元に戻す関数
+    /// (コントローラーで選択を移動した際、前のボタンの色が残らないようにするため)
+    /// </summary>
+    /// <param name="exceptButtonTextNumber">色を戻さないボタン番号</param>
+    public void ReturnOtherButtonTextColors(int exceptButtonTextNumber)
+    {
+        TMP_Text[] textArray = LanguageController.instance.GetButtonTMPTextArray();
+        int[] numberArray = LanguageController.instance.GetButtonTextNumberArray();
+
+        for (int i = 0; i < numberArray.Length && i < textArray.Length; i++)
+        {
+            //指定のボタン以外の場合
+            if (numberArray[i] != exceptButtonTextNumber && textArray[i] != null)
+            {
+                //文字の色を元に戻す
+                textArray[i].color = kButtonTextColor;
+            }
+        }
+    }
+
+    /// <summary>
+    /// 対象のボタンがコントローラー(EventSystem)で選択中かを判定する関数
+    /// </summary>
+    /// <param name="buttonObject">対象のボタン</param>
+    /// <returns>選択中の場合はtrue</returns>
+    private bool IsSelectedButton(GameObject buttonObject)
+    {
+        return EventSystem.current != null && EventSystem.current.currentSelectedGameObject == buttonObject;
+    }
+
+    /// <summary>
     /// ボタンのホバー・クリックイベントを設定する関数
     /// </summary>
     public void SetupButtonHoverEvents()
@@ -883,10 +914,10 @@ public class CommonController : MonoBehaviour
         for (int i = 0; i < textArray.Length; i++)
         {
             //TextMeshProUGUIがnullの場合
-            if (textArray[i] == null) 
+            if (textArray[i] == null)
             {
                 //処理をスキップして次のループへ
-                continue; 
+                continue;
             }
 
             //1. TextMeshProUGUIのRaycast Targetは常にオフにしておく（ボタンのクリック判定の邪魔にならないようにしたいため）
@@ -895,7 +926,7 @@ public class CommonController : MonoBehaviour
             //2. 親オブジェクトからButtonコンポーネントを取得。()内にtrueを指定することで、非アクティブな親オブジェクトも検索対象に含める
             Button parentButton = textArray[i].GetComponentInParent<Button>(true);
             //親オブジェクトが存在しない場合
-            if (parentButton == null) 
+            if (parentButton == null)
             {
                 //処理をスキップして次のループへ
                 continue;
@@ -913,6 +944,9 @@ public class CommonController : MonoBehaviour
             //ボタン番号を取得
             int buttonNumber = numberArray[i];
 
+            //対象のボタン(ラムダ式内で使用するため変数に保存)
+            GameObject buttonObject = parentButton.gameObject;
+
             //4.PointerEnter（マウスホバー時）のイベント作成と登録
             EventTrigger.Entry entryEnter = new EventTrigger.Entry();
             entryEnter.eventID = EventTriggerType.PointerEnter;
@@ -925,6 +959,11 @@ public class CommonController : MonoBehaviour
             EventTrigger.Entry entryExit = new EventTrigger.Entry();
             entryExit.eventID = EventTriggerType.PointerExit;
             entryExit.callback.AddListener((data) => {
+                //コントローラーで選択中のボタンは、マウスが外れても色を戻さない
+                if (IsSelectedButton(buttonObject))
+                {
+                    return;
+                }
                 ReturnButtonTextColor(buttonNumber);
             });
             trigger.triggers.Add(entryExit);
@@ -936,6 +975,24 @@ public class CommonController : MonoBehaviour
                 ReturnButtonTextColor(buttonNumber);
             });
             trigger.triggers.Add(entryClick);
+
+            //7.Select(コントローラーでボタンを選択した時)のイベント作成と登録
+            EventTrigger.Entry entrySelect = new EventTrigger.Entry();
+            entrySelect.eventID = EventTriggerType.Select;
+            entrySelect.callback.AddListener((data) => {
+                //前に選択していたボタンの色が残らないよう、他のボタンの色を元に戻す
+                ReturnOtherButtonTextColors(buttonNumber);
+                ChangeButtonTextColor(buttonNumber);
+            });
+            trigger.triggers.Add(entrySelect);
+
+            //8.Deselect(コントローラーで別のボタンへ移動した時・選択が解除された時)のイベント作成と登録
+            EventTrigger.Entry entryDeselect = new EventTrigger.Entry();
+            entryDeselect.eventID = EventTriggerType.Deselect;
+            entryDeselect.callback.AddListener((data) => {
+                ReturnButtonTextColor(buttonNumber);
+            });
+            trigger.triggers.Add(entryDeselect);
         }
     }
 }
