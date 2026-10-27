@@ -67,6 +67,9 @@ public class GamepadUISelector : MonoBehaviour
             CheckEventSystem();
         }
 
+        //Switch Proコントローラー用に、UIの決定・戻るを入れ替える機能をEventSystemへ追加
+        AddNintendoUIButtonSwap();
+
         //ゲームパッド接続時のみ選択(マウス操作時に選択枠が出ないようにする)
         if (GamepadInput.IsConnected && IsTopSelector())
         {
@@ -151,6 +154,24 @@ public class GamepadUISelector : MonoBehaviour
         }
 
         eventSystem.SetSelectedGameObject(target.gameObject);
+    }
+
+    /// <summary>
+    /// 使用中のEventSystemにNintendoUIButtonSwapが無ければ追加する
+    /// (シーンごとのEventSystemへ手動でアタッチする手間を省くため)
+    /// </summary>
+    private void AddNintendoUIButtonSwap()
+    {
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null || eventSystem.GetComponent<InputSystemUIInputModule>() == null)
+        {
+            return;
+        }
+
+        if (eventSystem.GetComponent<NintendoUIButtonSwap>() == null)
+        {
+            eventSystem.gameObject.AddComponent<NintendoUIButtonSwap>();
+        }
     }
 
     /// <summary>
