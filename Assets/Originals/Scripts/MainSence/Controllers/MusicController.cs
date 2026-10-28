@@ -183,6 +183,26 @@ public class MusicController : MonoBehaviour
     [Header("デバッグフラグ")]
     [SerializeField] private bool isDebug;
 
+    /*-------------------------------------------------------------
+     * コントローラーでスライダーを選択中の色変更関連
+     -------------------------------------------------------------*/
+
+    [Header("BGMスライダー選択中に一緒に色を変える見出し文字(任意。TextMeshPro・Textどちらでも可)")]
+    [SerializeField] private Graphic bGMLabelGraphic;
+
+    [Header("SEスライダー選択中に一緒に色を変える見出し文字(任意。TextMeshPro・Textどちらでも可)")]
+    [SerializeField] private Graphic sELabelGraphic;
+
+    /// <summary>
+    /// BGMスライダーの選択中の色変更
+    /// </summary>
+    private readonly SliderFocusColorChanger bGMSliderFocusColor = new SliderFocusColorChanger();
+
+    /// <summary>
+    /// SEスライダーの選択中の色変更
+    /// </summary>
+    private readonly SliderFocusColorChanger sESliderFocusColor = new SliderFocusColorChanger();
+
 
     private void Awake()
     {
@@ -241,6 +261,12 @@ public class MusicController : MonoBehaviour
             //sESliderをnullにする
             sESlider = null;
         }
+
+        //スライダー選択中の色変更関連の参照を解放
+        bGMSliderFocusColor.Release();
+        sESliderFocusColor.Release();
+        bGMLabelGraphic = null;
+        sELabelGraphic = null;
     }
 
     /*-----------------------------------------
@@ -385,6 +411,13 @@ public class MusicController : MonoBehaviour
     {
         //デバッグモードの場合処理をスキップ
         if (isDebug) return;
+    }
+
+    private void Update()
+    {
+        //コントローラーでBGM・SEスライダーを選択中の場合、色を変更する
+        bGMSliderFocusColor.UpdateFocusColor(bGMSlider, bGMLabelGraphic);
+        sESliderFocusColor.UpdateFocusColor(sESlider, sELabelGraphic);
     }
 
     /// <summary>

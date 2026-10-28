@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
@@ -37,6 +38,52 @@ public class BrightnessAdjustmentController : MonoBehaviour
     /// </summary>
     Color blackColor = new Color32(0, 0, 0, 255);
 
+
+    /*-------------------------------------------------------------
+     * コントローラーでスライダーを選択中の色変更関連
+     -------------------------------------------------------------*/
+
+    [Header("コントローラーで選択中のスライダーの色(ボタンの文字の黄色と同じ色)")]
+    [SerializeField] private Color sliderFocusedColor = new Color(239f / 255f, 227f / 255f, 26f / 255f, 1f);
+
+    [Header("選択中に一緒に色を変える見出し文字(任意。TextMeshPro・Textどちらでも可)")]
+    [SerializeField] private Graphic brightnessLabelGraphic;
+
+    /// <summary>
+    /// スライダーのつまみ(Handle)の画像
+    /// </summary>
+    private Image sliderHandleImage;
+
+    /// <summary>
+    /// スライダーの塗り(Fill)の画像
+    /// </summary>
+    private Image sliderFillImage;
+
+    /// <summary>
+    /// つまみの元の色
+    /// </summary>
+    private Color defaultHandleColor;
+
+    /// <summary>
+    /// 塗りの元の色
+    /// </summary>
+    private Color defaultFillColor;
+
+    /// <summary>
+    /// 見出し文字の元の色
+    /// </summary>
+    private Color defaultLabelColor;
+
+    /// <summary>
+    /// 元の色を保存したスライダー(スライダーが差し替えられた場合に保存し直すため)
+    /// </summary>
+    private Slider cachedSlider;
+
+    /// <summary>
+    /// スライダー選択中フラグ
+    /// </summary>
+    private bool isSliderFocused = false;
+
     private void OnEnable()
     {
         //sceneLoadedに「OnSceneLoaded」関数を追加
@@ -60,6 +107,12 @@ public class BrightnessAdjustmentController : MonoBehaviour
             //brightnessAdjustmentSliderをnullに設定
             brightnessAdjustmentSlider = null;
         }
+
+        //スライダー選択中の色変更関連の参照をnullに設定
+        brightnessLabelGraphic = null;
+        sliderHandleImage = null;
+        sliderFillImage = null;
+        cachedSlider = null;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
@@ -111,6 +164,9 @@ public class BrightnessAdjustmentController : MonoBehaviour
 
     private void Update()
     {
+        //コントローラーでスライダーを選択中の場合、色を変更する
+        UpdateSliderFocusColor();
+
         //スライダーが存在する場合&&明るさ調整パネルを開いている場合
         if (brightnessAdjustmentSlider && OptionUIController.instance.GetIsViewBrightnessAdjustmentPanel())
         {
@@ -133,6 +189,100 @@ public class BrightnessAdjustmentController : MonoBehaviour
             {
                 brightnessValue = brightnessAdjustmentSlider.minValue;
             }
+        }
+    }
+
+    /// <summary>
+    /// スライダーのつまみ・塗りの画像と元の色を保存する
+    /// </summary>
+    private void CacheSliderGraphics()
+    {
+        //既に保存済みのスライダーの場合
+        if (cachedSlider == brightnessAdjustmentSlider)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        cachedSlider = brightnessAdjustmentSlider;
+        isSliderFocused = false;
+
+        //つまみの画像と元の色を保存
+        sliderHandleImage = brightnessAdjustmentSlider.handleRect != null
+            ? brightnessAdjustmentSlider.handleRect.GetComponent<Image>() : null;
+        if (sliderHandleImage != null)
+        {
+            defaultHandleColor = sliderHandleImage.color;
+        }
+
+        //塗りの画像と元の色を保存
+        sliderFillImage = brightnessAdjustmentSlider.fillRect != null
+            ? brightnessAdjustmentSlider.fillRect.GetComponent<Image>() : null;
+        if (sliderFillImage != null)
+        {
+            defaultFillColor = sliderFillImage.color;
+        }
+
+        //見出し文字の元の色を保存
+        if (brightnessLabelGraphic != null)
+        {
+            defaultLabelColor = brightnessLabelGraphic.color;
+        }
+    }
+
+    /// <summary>
+    /// スライダーが選択中(フォーカス中)かを判定し、色を切り替える
+    /// </summary>
+    private void UpdateSliderFocusColor()
+    {
+        //スライダーが存在しない場合
+        if (brightnessAdjustmentSlider == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //つまみ・塗りの元の色を保存
+        CacheSliderGraphics();
+
+        //EventSystemで選択中のオブジェクトがスライダー&&スライダーが表示されている場合
+        bool isFocused = EventSystem.current != null
+            && EventSystem.current.currentSelectedGameObject == brightnessAdjustmentSlider.gameObject
+            && brightnessAdjustmentSlider.gameObject.activeInHierarchy;
+
+        //状態が変わっていない場合
+        if (isFocused == isSliderFocused)
+        {
+            //処理をスキップ(毎フレーム色を書き換えないようにするため)
+            return;
+        }
+
+        isSliderFocused = isFocused;
+        ApplySliderFocusColor(isFocused);
+    }
+
+    /// <summary>
+    /// スライダーの色を選択中の色・元の色に切り替える
+    /// </summary>
+    /// <param name="isFocused">true:選択中の色 / false:元の色</param>
+    private void ApplySliderFocusColor(bool isFocused)
+    {
+        //つまみの色を変更
+        if (sliderHandleImage != null)
+        {
+            sliderHandleImage.color = isFocused ? sliderFocusedColor : defaultHandleColor;
+        }
+
+        //塗りの色を変更
+        if (sliderFillImage != null)
+        {
+            sliderFillImage.color = isFocused ? sliderFocusedColor : defaultFillColor;
+        }
+
+        //見出し文字の色を変更
+        if (brightnessLabelGraphic != null)
+        {
+            brightnessLabelGraphic.color = isFocused ? sliderFocusedColor : defaultLabelColor;
         }
     }
 

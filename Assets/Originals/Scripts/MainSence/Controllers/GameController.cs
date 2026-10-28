@@ -107,6 +107,14 @@ public class GameController : MonoBehaviour
     /// </summary>
     private float maxLookSensitivity = 15f;
 
+    [Header("マウス感度スライダー選択中に一緒に色を変える見出し文字(任意。TextMeshPro・Textどちらでも可)")]
+    [SerializeField] private Graphic mouseSensitivityLabelGraphic;
+
+    /// <summary>
+    /// マウス感度スライダーの選択中の色変更
+    /// </summary>
+    private readonly SliderFocusColorChanger mouseSensitivitySliderFocusColor = new SliderFocusColorChanger();
+
 
     [Header("Playerの使用アイテムインベントリパネル関連")]
     [Header("使用アイテムパネル(ヒエラルキー上からアタッチすること)")]
@@ -642,6 +650,10 @@ public class GameController : MonoBehaviour
             mouseSensitivitySlider = null;
         }
 
+        //マウス感度スライダー選択中の色変更関連の参照を解放
+        mouseSensitivitySliderFocusColor.Release();
+        mouseSensitivityLabelGraphic = null;
+
         //使用アイテムパネルが存在する場合
         if (useItemPanel != null)
         {
@@ -829,6 +841,9 @@ public class GameController : MonoBehaviour
 
     private void Update()
     {
+        //コントローラーでマウス感度スライダーを選択中の場合、色を変更する
+        mouseSensitivitySliderFocusColor.UpdateFocusColor(mouseSensitivitySlider, mouseSensitivityLabelGraphic);
+
         //マウス感度設定を開いている場合のみマウス感度をスライダーから取得
         if (mouseSensitivitySlider && OptionUIController.instance.GetIsViewMouseSensitivityPanel())
         {
