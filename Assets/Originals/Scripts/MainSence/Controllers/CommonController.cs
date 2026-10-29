@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml;
 using TMPro;
 using UnityEngine;
@@ -681,6 +682,28 @@ public class CommonController : MonoBehaviour
     //private Color kButtonTextColorMouseOver = Color.yellow;
     private Color kButtonTextColorMouseOver = new Color(239f / 255f, 227f / 255f, 26f / 255f, 1f);
 
+    /// <summary>
+    /// 全てのボタン番号の色を戻す場合に指定する番号(どのボタン番号とも一致しない値)
+    /// </summary>
+    private const int kNoneButtonTextNumber = int.MinValue;
+
+    /// <summary>
+    /// 個別に設定したボタンの文字(ドキュメント名称・ミステリーアイテム名称・彷徨う者名称等)
+    /// </summary>
+    private readonly List<TMP_Text> individualButtonTexts = new List<TMP_Text>();
+
+    /// <summary>
+    /// 個別に設定済みのボタン(同じボタンにイベントを二重登録しないため)
+    /// </summary>
+    private readonly HashSet<Button> individualSetupButtons = new HashSet<Button>();
+
+    /// <summary>
+    /// 個別に設定したボタンの文字の、色を変える前の元の色
+    /// (アイテムの入手状況等で文字の色が異なる場合でも、元の色に戻せるようにするため)
+    /// </summary>
+    private readonly Dictionary<TMP_Text, Color> individualTextOriginalColors = new Dictionary<TMP_Text, Color>();
+
+
     private void Awake()
     {
         //インスタンス生成
@@ -890,6 +913,9 @@ public class CommonController : MonoBehaviour
                 textArray[i].color = kButtonTextColor;
             }
         }
+
+        //個別に設定したボタンの文字の色も元に戻す
+        ReturnOtherIndividualButtonTextColors(null);
     }
 
     /// <summary>
@@ -993,6 +1019,207 @@ public class CommonController : MonoBehaviour
                 ReturnButtonTextColor(buttonNumber);
             });
             trigger.triggers.Add(entryDeselect);
+        }
+    }
+
+
+    /*--------------------------------------------------------------------------------------
+     * 個別ボタン(LanguageControllerのボタン配列に含まれないボタン)のホバー・選択イベント関連
+     --------------------------------------------------------------------------------------*/
+
+    /// <summary>
+    /// ボタンのホバー・クリック・選択イベントを個別に設定する関数(親オブジェクトのボタンを自動で取得)
+    /// </summary>
+    /// <param name="text">ボタンの文字(親オブジェクトにButtonがあること)</param>
+    public void SetupButtonHoverEvents(TMP_Text text)
+    {
+        //文字が存在しない場合
+        if (text == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //親オブジェクトからButtonコンポーネントを取得(非アクティブな親オブジェクトも含む)
+        Button parentButton = text.GetComponentInParent<Button>(true);
+        if (parentButton == null)
+        {
+            Debug.LogWarning($"[CommonController] {text.name} の親オブジェクトにButtonがありません", text);
+            return;
+        }
+
+        SetupButtonHoverEvents(parentButton, text);
+    }
+
+    /// <summary>
+    /// ボタンのホバー・クリック・選択イベントを個別に設定する関数(ボタン配列と文字配列を同じ番号で対応させる)
+    /// </summary>
+    /// <param name="buttons">ボタンの配列</param>
+    /// <param name="texts">ボタンの文字の配列</param>
+    public void SetupButtonHoverEvents(Button[] buttons, TMP_Text[] texts)
+    {
+        //配列が存在しない場合
+        if (buttons == null || texts == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //要素数が異なる場合は警告(少ない方に合わせて設定する)
+        if (buttons.Length != texts.Length)
+        {
+            Debug.LogWarning($"[CommonController] ボタン配列({buttons.Length})と文字配列({texts.Length})の要素数が異なります");
+        }
+
+        for (int i = 0; i < buttons.Length && i < texts.Length; i++)
+        {
+            SetupButtonHoverEvents(buttons[i], texts[i]);
+        }
+    }
+
+    /// <summary>
+    /// ボタンのホバー・クリック・選択イベントを個別に設定する関数
+    /// </summary>
+    /// <param name="button">対象のボタン</param>
+    /// <param name="text">色を変えるボタンの文字</param>
+    public void SetupButtonHoverEvents(Button button, TMP_Text text)
+    {
+        //ボタンまたは文字が存在しない場合
+        if (button == null || text == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //既に設定済みのボタンの場合
+        if (individualSetupButtons.Contains(button))
+        {
+            //イベントの二重登録を防ぐため処理をスキップ
+            return;
+        }
+        individualSetupButtons.Add(button);
+        individualButtonTexts.Add(text);
+
+        //1.文字のRaycast Targetはオフにする(ボタンのクリック判定の邪魔にならないようにするため)
+        text.raycastTarget = false;
+
+        //2.ボタンにEventTriggerが無ければ追加
+        EventTrigger trigger = button.gameObject.GetComponent<EventTrigger>();
+        if (trigger == null)
+        {
+            trigger = button.gameObject.AddComponent<EventTrigger>();
+        }
+
+        //対象のボタン(ラムダ式内で使用するため変数に保存)
+        GameObject buttonObject = button.gameObject;
+
+        //3.PointerEnter(マウスホバー時)
+        EventTrigger.Entry entryEnter = new EventTrigger.Entry();
+        entryEnter.eventID = EventTriggerType.PointerEnter;
+        entryEnter.callback.AddListener((data) => {
+            //押せないボタン(未入手のアイテム等)は色を変えない
+            if (!button.IsInteractable())
+            {
+                return;
+            }
+            ChangeIndividualButtonTextColor(text);
+        });
+        trigger.triggers.Add(entryEnter);
+
+        //4.PointerExit(マウスが外れた時)
+        EventTrigger.Entry entryExit = new EventTrigger.Entry();
+        entryExit.eventID = EventTriggerType.PointerExit;
+        entryExit.callback.AddListener((data) => {
+            //コントローラーで選択中のボタンは、マウスが外れても色を戻さない
+            if (IsSelectedButton(buttonObject))
+            {
+                return;
+            }
+            ReturnIndividualButtonTextColor(text);
+        });
+        trigger.triggers.Add(entryExit);
+
+        //5.PointerClick(ボタン押下時)
+        EventTrigger.Entry entryClick = new EventTrigger.Entry();
+        entryClick.eventID = EventTriggerType.PointerClick;
+        entryClick.callback.AddListener((data) => {
+            ReturnIndividualButtonTextColor(text);
+        });
+        trigger.triggers.Add(entryClick);
+
+        //6.Select(コントローラーでボタンを選択した時)
+        EventTrigger.Entry entrySelect = new EventTrigger.Entry();
+        entrySelect.eventID = EventTriggerType.Select;
+        entrySelect.callback.AddListener((data) => {
+            //前に選択していたボタンの色が残らないよう、他の全てのボタンの色を元に戻す
+            ReturnOtherButtonTextColors(kNoneButtonTextNumber);
+            ChangeIndividualButtonTextColor(text);
+        });
+        trigger.triggers.Add(entrySelect);
+
+        //7.Deselect(コントローラーで別のボタンへ移動した時・選択が解除された時)
+        EventTrigger.Entry entryDeselect = new EventTrigger.Entry();
+        entryDeselect.eventID = EventTriggerType.Deselect;
+        entryDeselect.callback.AddListener((data) => {
+            ReturnIndividualButtonTextColor(text);
+        });
+        trigger.triggers.Add(entryDeselect);
+    }
+
+    /// <summary>
+    /// 個別に設定したボタンの文字の色を変更する関数
+    /// </summary>
+    /// <param name="text">対象の文字</param>
+    private void ChangeIndividualButtonTextColor(TMP_Text text)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        //色を変える前の元の色を保存(既に変更中の場合は保存しない)
+        if (!individualTextOriginalColors.ContainsKey(text))
+        {
+            individualTextOriginalColors[text] = text.color;
+        }
+
+        text.color = kButtonTextColorMouseOver;
+    }
+
+    /// <summary>
+    /// 個別に設定したボタンの文字の色を元に戻す関数
+    /// </summary>
+    /// <param name="text">対象の文字</param>
+    private void ReturnIndividualButtonTextColor(TMP_Text text)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        //色を変更中の場合のみ、保存しておいた元の色に戻す
+        if (individualTextOriginalColors.TryGetValue(text, out Color originalColor))
+        {
+            text.color = originalColor;
+            individualTextOriginalColors.Remove(text);
+        }
+    }
+
+    /// <summary>
+    /// 指定以外の、個別に設定した全てのボタンの文字の色を元に戻す関数
+    /// </summary>
+    /// <param name="exceptText">色を戻さない文字(全て戻す場合はnull)</param>
+    private void ReturnOtherIndividualButtonTextColors(TMP_Text exceptText)
+    {
+        //破棄された文字をリストから取り除く
+        individualButtonTexts.RemoveAll(text => text == null);
+
+        foreach (TMP_Text text in individualButtonTexts)
+        {
+            if (text != exceptText)
+            {
+                ReturnIndividualButtonTextColor(text);
+            }
         }
     }
 }

@@ -1036,10 +1036,35 @@ public partial class PauseController : MonoBehaviour
 
         //ドキュメントIDを初期化
         keepDocumentBookID = defaultDocumentBookID;
+
+        //ボタンの文字の色変更(マウスホバー・コントローラー選択時)のイベントを個別に設定
+        SetupNameButtonHoverEvents();
+    }
+
+    /// <summary>
+    /// ドキュメント名称・ミステリーアイテム名称・彷徨う者名称のボタンに、
+    /// 文字の色変更(マウスホバー・コントローラー選択時)のイベントを設定する
+    /// </summary>
+    private void SetupNameButtonHoverEvents()
+    {
+        //CommonControllerが存在しない場合
+        if (CommonController.instance == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //ドキュメント名称テキスト(親オブジェクトのボタンを自動で取得)
+        CommonController.instance.SetupButtonHoverEvents(documentNameText);
+
+        //ミステリーアイテム名称ボタン
+        CommonController.instance.SetupButtonHoverEvents(mysteryItemNameButton, mysteryItemNameText);
+
+        //彷徨う者名称ボタン
+        CommonController.instance.SetupButtonHoverEvents(wandererNameButton, wandererNameText);
     }
 
 
-    
     public void Update()
     {
         //PキーorZキーorEscapeキーでポーズ/ポーズ解除

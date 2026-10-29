@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using static GameController;
 
@@ -14,6 +15,11 @@ public class GameClearController : MonoBehaviour
 
     [Header("ゲームクリア画面のCanvas")]
     [SerializeField] public Canvas gameClearCanvas;
+
+    /// <summary>
+    /// ゲームクリア画面のCanvasGroup(非表示中にボタンを押せないようにするため)
+    /// </summary>
+    private CanvasGroup gameClearCanvasGroup;
 
     /// <summary>
     /// アンケートURL
@@ -74,6 +80,9 @@ public class GameClearController : MonoBehaviour
             //gameClearCanvasをnullに設定
             gameClearCanvas = null;
         }
+
+        //gameClearCanvasGroupをnullに設定
+        gameClearCanvasGroup = null;
 
         //instanceが存在する場合
         if (instance != null)
@@ -214,16 +223,74 @@ public class GameClearController : MonoBehaviour
         gameClearCanvas.enabled = true;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
+
+        //ボタンを押せるようにする
+        SetGameClearUIInteractable(true);
+
+        //コントローラー接続時は最初のボタンを選択する
+        if (GamepadInput.IsConnected)
+        {
+            GamepadUISelector selector = gameClearCanvas.GetComponentInChildren<GamepadUISelector>();
+            if (selector != null)
+            {
+                selector.SelectFirst();
+            }
+        }
     }
 
     /// <summary>
     /// ゲームクリア時のUIを非表示
     /// </summary>
-    void HiddenGameClearUI()
+    private void HiddenGameClearUI()
     {
         gameClearCanvas.enabled = false;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.None;
+
+        //非表示中はボタンを押せないようにする
+        //(Canvas.enabled = falseは見た目が消えるだけで、ボタンはEventSystemで選択・決定できてしまう。
+        //そのため、会話を進めるEnter・A / ×ボタンで選択中のSteamストアボタンが押されていた)
+        SetGameClearUIInteractable(false);
+    }
+
+    /// <summary>
+    /// ゲームクリア画面のボタンを押せる・押せない状態に切り替える
+    /// </summary>
+    /// <param name="isInteractable">true:押せる / false:押せない</param>
+    private void SetGameClearUIInteractable(bool isInteractable)
+    {
+        //gameClearCanvasが存在しない場合
+        if (gameClearCanvas == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //CanvasGroupを取得(無ければ追加)
+        if (gameClearCanvasGroup == null)
+        {
+            gameClearCanvasGroup = gameClearCanvas.GetComponent<CanvasGroup>();
+            if (gameClearCanvasGroup == null)
+            {
+                gameClearCanvasGroup = gameClearCanvas.gameObject.AddComponent<CanvasGroup>();
+            }
+        }
+
+        //ボタンの操作可否・クリック判定を切り替える
+        gameClearCanvasGroup.interactable = isInteractable;
+        gameClearCanvasGroup.blocksRaycasts = isInteractable;
+
+        //押せない状態にする場合
+        if (!isInteractable)
+        {
+            //ゲームクリア画面内のボタンが選択されたままの場合は選択を解除する
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem != null && eventSystem.currentSelectedGameObject != null
+                && eventSystem.currentSelectedGameObject.transform.IsChildOf(gameClearCanvas.transform))
+            {
+                eventSystem.SetSelectedGameObject(null);
+            }
+        }
     }
 
     /// <summary>
