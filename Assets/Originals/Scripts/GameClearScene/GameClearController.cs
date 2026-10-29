@@ -1,6 +1,8 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using static GameController;
 
 /// <summary>
@@ -218,7 +220,7 @@ public class GameClearController : MonoBehaviour
     /// <summary>
     /// ゲームクリア時のUIを表示
     /// </summary>
-    public void ViewGameClearUI() 
+    public void ViewGameClearUI()
     {
         gameClearCanvas.enabled = true;
         Cursor.visible = true;
@@ -228,12 +230,46 @@ public class GameClearController : MonoBehaviour
         SetGameClearUIInteractable(true);
 
         //コントローラー接続時は最初のボタンを選択する
+        //(CanvasGroup.interactableの変更はボタン側に反映されるまで1フレームかかるため、待ってから選択する)
         if (GamepadInput.IsConnected)
         {
-            GamepadUISelector selector = gameClearCanvas.GetComponentInChildren<GamepadUISelector>();
-            if (selector != null)
+            StartCoroutine(SelectFirstButtonNextFrame());
+        }
+    }
+
+    /// <summary>
+    /// 1フレーム待ってから、ゲームクリア画面の最初のボタンを選択する
+    /// </summary>
+    private IEnumerator SelectFirstButtonNextFrame()
+    {
+        yield return null;
+
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null || gameClearCanvas == null)
+        {
+            yield break;
+        }
+
+        //一旦選択を解除する(同じボタンが選択済みだとSelectイベントが呼ばれず、選択枠・文字色が反映されないため)
+        eventSystem.SetSelectedGameObject(null);
+
+        //GamepadUISelectorがある場合は、そちらの設定(First Selected)で選択する
+        GamepadUISelector selector = gameClearCanvas.GetComponentInChildren<GamepadUISelector>();
+        if (selector != null)
+        {
+            selector.SelectFirst();
+        }
+
+        //GamepadUISelectorが無い・選択できなかった場合は、最初に見つかった押せるボタンを選択する
+        if (eventSystem.currentSelectedGameObject == null)
+        {
+            foreach (Selectable selectable in gameClearCanvas.GetComponentsInChildren<Selectable>())
             {
-                selector.SelectFirst();
+                if (selectable.IsInteractable() && selectable.gameObject.activeInHierarchy)
+                {
+                    eventSystem.SetSelectedGameObject(selectable.gameObject);
+                    break;
+                }
             }
         }
     }

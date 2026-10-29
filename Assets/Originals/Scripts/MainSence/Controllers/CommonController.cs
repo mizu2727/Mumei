@@ -1304,6 +1304,15 @@ public class CommonController : MonoBehaviour
         individualSetupButtons.Add(button);
         individualButtonImages.Add(image);
 
+        //ボタン自身にマウスの判定(Raycast Target)を持つ画像が無い場合は、半透明にする画像で判定する
+        //(ボタン自身に判定が無く、子の画像のRaycast Targetもオフだと、マウスを合わせても反応しないため。
+        //子の画像で判定しても、クリック・ホバーのイベントは親のボタンに届く)
+        Graphic buttonGraphic = button.GetComponent<Graphic>();
+        if (buttonGraphic == null || !buttonGraphic.raycastTarget || buttonGraphic == image)
+        {
+            image.raycastTarget = true;
+        }
+
         //ボタンにEventTriggerが無ければ追加
         EventTrigger trigger = button.gameObject.GetComponent<EventTrigger>();
         if (trigger == null)
