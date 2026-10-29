@@ -703,6 +703,22 @@ public class CommonController : MonoBehaviour
     /// </summary>
     private readonly Dictionary<TMP_Text, Color> individualTextOriginalColors = new Dictionary<TMP_Text, Color>();
 
+    /// <summary>
+    /// マウスホバー・コントローラー選択時に画像を半透明にする場合の不透明度(0:透明 ～ 1:不透明)
+    /// </summary>
+    private const float kDefaultSelectedImageAlpha = 0.5f;
+
+    /// <summary>
+    /// 個別に設定したボタンの画像(ゴールパネルのミステリーアイテム画像等)
+    /// </summary>
+    private readonly List<Image> individualButtonImages = new List<Image>();
+
+    /// <summary>
+    /// 個別に設定したボタンの画像の、半透明にする前の元の色
+    /// </summary>
+    private readonly Dictionary<Image, Color> individualImageOriginalColors = new Dictionary<Image, Color>();
+
+
 
     private void Awake()
     {
@@ -916,6 +932,9 @@ public class CommonController : MonoBehaviour
 
         //個別に設定したボタンの文字の色も元に戻す
         ReturnOtherIndividualButtonTextColors(null);
+
+        //個別に設定したボタンの画像も元に戻す
+        ReturnOtherIndividualButtonImageColors(null);
     }
 
     /// <summary>
@@ -1091,6 +1110,9 @@ public class CommonController : MonoBehaviour
             return;
         }
 
+        //破棄されたボタンを取り除く(シーン遷移で破棄されたボタンが残らないようにするため)
+        individualSetupButtons.RemoveWhere(setupButton => setupButton == null);
+
         //既に設定済みのボタンの場合
         if (individualSetupButtons.Contains(button))
         {
@@ -1219,6 +1241,201 @@ public class CommonController : MonoBehaviour
             if (text != exceptText)
             {
                 ReturnIndividualButtonTextColor(text);
+            }
+        }
+    }
+
+    /*--------------------------------------------------------------------------------------
+     * 個別ボタンの画像を半透明にするホバー・選択イベント関連
+     --------------------------------------------------------------------------------------*/
+
+    /// <summary>
+    /// マウスホバー・コントローラー選択時にボタンの画像を半透明にするイベントを個別に設定する関数
+    /// (ボタン配列と画像配列を同じ番号で対応させる)
+    /// </summary>
+    /// <param name="buttons">ボタンの配列</param>
+    /// <param name="images">半透明にする画像の配列</param>
+    /// <param name="selectedAlpha">選択中の不透明度(0:透明 ～ 1:不透明)</param>
+    public void SetupButtonHoverEvents(Button[] buttons, Image[] images, float selectedAlpha = kDefaultSelectedImageAlpha)
+    {
+        //配列が存在しない場合
+        if (buttons == null || images == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //要素数が異なる場合は警告(少ない方に合わせて設定する)
+        if (buttons.Length != images.Length)
+        {
+            Debug.LogWarning($"[CommonController] ボタン配列({buttons.Length})と画像配列({images.Length})の要素数が異なります");
+        }
+
+        for (int i = 0; i < buttons.Length && i < images.Length; i++)
+        {
+            SetupButtonHoverEvents(buttons[i], images[i], selectedAlpha);
+        }
+    }
+
+    /// <summary>
+    /// マウスホバー・コントローラー選択時にボタンの画像を半透明にするイベントを個別に設定する関数
+    /// </summary>
+    /// <param name="button">対象のボタン</param>
+    /// <param name="image">半透明にする画像</param>
+    /// <param name="selectedAlpha">選択中の不透明度(0:透明 ～ 1:不透明)</param>
+    public void SetupButtonHoverEvents(Button button, Image image, float selectedAlpha = kDefaultSelectedImageAlpha)
+    {
+        //ボタンまたは画像が存在しない場合
+        if (button == null || image == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //破棄されたボタンを取り除く(シーン遷移で破棄されたボタンが残らないようにするため)
+        individualSetupButtons.RemoveWhere(setupButton => setupButton == null);
+
+        //既に設定済みのボタンの場合
+        if (individualSetupButtons.Contains(button))
+        {
+            //イベントの二重登録を防ぐため処理をスキップ
+            return;
+        }
+        individualSetupButtons.Add(button);
+        individualButtonImages.Add(image);
+
+        //ボタンにEventTriggerが無ければ追加
+        EventTrigger trigger = button.gameObject.GetComponent<EventTrigger>();
+        if (trigger == null)
+        {
+            trigger = button.gameObject.AddComponent<EventTrigger>();
+        }
+
+        //対象のボタン(ラムダ式内で使用するため変数に保存)
+        GameObject buttonObject = button.gameObject;
+
+        //1.PointerEnter(マウスホバー時)
+        EventTrigger.Entry entryEnter = new EventTrigger.Entry();
+        entryEnter.eventID = EventTriggerType.PointerEnter;
+        entryEnter.callback.AddListener((data) => {
+            //押せないボタン(アイテムが無い枠等)は半透明にしない
+            if (!button.IsInteractable())
+            {
+                return;
+            }
+            ChangeIndividualButtonImageAlpha(image, selectedAlpha);
+        });
+        trigger.triggers.Add(entryEnter);
+
+        //2.PointerExit(マウスが外れた時)
+        EventTrigger.Entry entryExit = new EventTrigger.Entry();
+        entryExit.eventID = EventTriggerType.PointerExit;
+        entryExit.callback.AddListener((data) => {
+            //コントローラーで選択中のボタンは、マウスが外れても元に戻さない
+            if (IsSelectedButton(buttonObject))
+            {
+                return;
+            }
+            ReturnIndividualButtonImageColor(image);
+        });
+        trigger.triggers.Add(entryExit);
+
+        //3.PointerClick(ボタン押下時)
+        EventTrigger.Entry entryClick = new EventTrigger.Entry();
+        entryClick.eventID = EventTriggerType.PointerClick;
+        entryClick.callback.AddListener((data) => {
+            ReturnIndividualButtonImageColor(image);
+        });
+        trigger.triggers.Add(entryClick);
+
+        //4.Select(コントローラーでボタンを選択した時)
+        EventTrigger.Entry entrySelect = new EventTrigger.Entry();
+        entrySelect.eventID = EventTriggerType.Select;
+        entrySelect.callback.AddListener((data) => {
+            //前に選択していたボタンの文字の色・画像が残らないよう、他の全てのボタンを元に戻す
+            ReturnOtherButtonTextColors(kNoneButtonTextNumber);
+            ChangeIndividualButtonImageAlpha(image, selectedAlpha);
+        });
+        trigger.triggers.Add(entrySelect);
+
+        //5.Deselect(コントローラーで別のボタンへ移動した時・選択が解除された時)
+        EventTrigger.Entry entryDeselect = new EventTrigger.Entry();
+        entryDeselect.eventID = EventTriggerType.Deselect;
+        entryDeselect.callback.AddListener((data) => {
+            ReturnIndividualButtonImageColor(image);
+        });
+        trigger.triggers.Add(entryDeselect);
+    }
+
+    /// <summary>
+    /// 個別に設定したボタンの画像を半透明にする関数
+    /// </summary>
+    /// <param name="image">対象の画像</param>
+    /// <param name="alpha">不透明度</param>
+    private void ChangeIndividualButtonImageAlpha(Image image, float alpha)
+    {
+        if (image == null)
+        {
+            return;
+        }
+
+        //半透明にする前の元の色を保存(既に変更中の場合は保存しない)
+        if (!individualImageOriginalColors.ContainsKey(image))
+        {
+            individualImageOriginalColors[image] = image.color;
+        }
+
+        //元の色の不透明度だけを変更する
+        Color color = individualImageOriginalColors[image];
+        color.a = alpha;
+        image.color = color;
+    }
+
+    /// <summary>
+    /// 個別に設定したボタンの画像を元の色に戻す関数
+    /// </summary>
+    /// <param name="image">対象の画像</param>
+    private void ReturnIndividualButtonImageColor(Image image)
+    {
+        if (image == null)
+        {
+            return;
+        }
+
+        //半透明にしている場合のみ、保存しておいた元の色に戻す
+        if (individualImageOriginalColors.TryGetValue(image, out Color originalColor))
+        {
+            image.color = originalColor;
+            individualImageOriginalColors.Remove(image);
+        }
+    }
+
+    /// <summary>
+    /// 指定以外の、個別に設定した全てのボタンの画像を元の色に戻す関数
+    /// </summary>
+    /// <param name="exceptImage">元に戻さない画像(全て戻す場合はnull)</param>
+    private void ReturnOtherIndividualButtonImageColors(Image exceptImage)
+    {
+        //破棄された画像をリスト・辞書から取り除く
+        individualButtonImages.RemoveAll(image => image == null);
+        List<Image> destroyedImages = new List<Image>();
+        foreach (Image image in individualImageOriginalColors.Keys)
+        {
+            if (image == null)
+            {
+                destroyedImages.Add(image);
+            }
+        }
+        foreach (Image image in destroyedImages)
+        {
+            individualImageOriginalColors.Remove(image);
+        }
+
+        foreach (Image image in individualButtonImages)
+        {
+            if (image != exceptImage)
+            {
+                ReturnIndividualButtonImageColor(image);
             }
         }
     }

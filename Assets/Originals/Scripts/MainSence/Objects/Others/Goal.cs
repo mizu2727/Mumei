@@ -166,6 +166,13 @@ public class Goal : MonoBehaviour
 
         //ゴールパネル内のミステリーアイテムのUIを初期化
         InitializeSelectMysteryItemUI();
+
+        //マウスホバー・コントローラー選択時に、ミステリーアイテム画像を半透明にするイベントを設定
+        //(selectMysteryItemImageはInitializeSelectMysteryItemUI内で取得するため、その後に呼ぶ)
+        if (CommonController.instance != null)
+        {
+            CommonController.instance.SetupButtonHoverEvents(selectMysteryItemButton, selectMysteryItemImage);
+        }
     }
 
 
