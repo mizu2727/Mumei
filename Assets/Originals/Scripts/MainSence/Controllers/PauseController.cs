@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using TMP_Ruby;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -86,6 +87,14 @@ public partial class PauseController : MonoBehaviour
 
     Color32 kViewItemsPanelBlackColor = new Color32(0, 0, 0, 255);
 
+    /// <summary>
+    /// Navigationを設定したいSelectableの配列
+    /// </summary>
+    private Button[] settingSelectableButtonArray;
+
+    [Header("戻るボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Button returnToPausePanelButton;
+
     /*-----------------------------------------------------------
      * アーカイブパネル関連(アーカイブパネルの子パネルも含む)
      ----------------------------------------------------------*/
@@ -93,6 +102,9 @@ public partial class PauseController : MonoBehaviour
     [Header("アーカイブパネル関連")]
     [Header("アーカイブパネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject archivePanel;
+
+    [Header("アーカイブボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Button archiveButton;
 
     [Header("アーカイブボタンテキスト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private Text archiveButtonText;
@@ -163,11 +175,17 @@ public partial class PauseController : MonoBehaviour
      ----------------------------------------------------------*/
 
     [Header("ドキュメントパネル関連")]
+    [Header("ドキュメントボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Button viewDocumentButton;
+
     [Header("ドキュメント確認パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject documentInventoryPanel;
 
     [Header("ドキュメント説明欄パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject documentExplanationPanel;
+
+    [Header("ドキュメント名称ボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Button documentNameButton;
 
     [Header("ドキュメント名称テキスト(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private TMP_Text documentNameText;
@@ -196,6 +214,9 @@ public partial class PauseController : MonoBehaviour
      ----------------------------------------------------------*/
 
     [Header("ミステリーアイテムパネル関連")]
+    [Header("ミステリーアイテムボタン(ヒエラルキー上からアタッチすること)")]
+    [SerializeField] private Button viewMysteryItemButton;
+
     [Header("ミステリーアイテム確認パネル(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject mysteryItemInventoryPanel;
 
@@ -643,6 +664,27 @@ public partial class PauseController : MonoBehaviour
             archiveButtonTextRubyComponent = null;
         }
 
+        //archiveButtonが存在する場合
+        if (archiveButton != null)
+        {
+            //archiveButtonをnullにする
+            archiveButton = null;
+        }
+
+        //viewMysteryItemButtonが存在する場合
+        if (viewMysteryItemButton != null)
+        {
+            //viewMysteryItemButtonをnullにする
+            viewMysteryItemButton = null;
+        }
+
+        //viewDocumentButtonが存在する場合
+        if (viewDocumentButton != null)
+        {
+            //viewDocumentButtonをnullにする
+            viewDocumentButton = null;
+        }
+
         //archivePanelが存在する場合
         if (archivePanel != null)
         {
@@ -662,6 +704,13 @@ public partial class PauseController : MonoBehaviour
         {
             //documentNameTextをnullにする
             documentNameText = null;
+        }
+
+        //documentNameButtonが存在する場合
+        if (documentNameButton != null)
+        {
+            //documentNameButtonをnullにする
+            documentNameButton = null;
         }
 
         //documentExplanationTextRubyComponentが存在する場合
@@ -928,6 +977,9 @@ public partial class PauseController : MonoBehaviour
 
         //現在の言語用フォントを全テキストへ適用する
         ApplyLanguageFontToPauseTexts();
+
+        //Navigationを設定したいボタンの配列設定
+        settingSelectableButtonArray = new Button[]{viewDocumentButton, viewMysteryItemButton, archiveButton};
 
         if (documentNameText != null) 
         {
@@ -1379,13 +1431,14 @@ public partial class PauseController : MonoBehaviour
         isDocumentPanel = true;
         ChangeViewDocumentPanel();
 
-        //アーカイブパネルを非表示
-        isArchivePanel = false;
-        ChangeViewArchivePanel();
-
+        
         //ミステリーアイテムパネルを非表示
         isMysteryItemPanel = false;
         ChangeViewMysteryItemPanel();
+
+        //アーカイブパネルを非表示
+        isArchivePanel = false;
+        ChangeViewArchivePanel();
     }
 
     /// <summary>
@@ -1400,13 +1453,14 @@ public partial class PauseController : MonoBehaviour
         isMysteryItemPanel = true;
         ChangeViewMysteryItemPanel();
 
-        //アーカイブパネルを非表示
-        isArchivePanel = false;
-        ChangeViewArchivePanel();
-
+        
         // ドキュメントパネルを非表示
         isDocumentPanel = false;
         ChangeViewDocumentPanel();
+
+        //アーカイブパネルを非表示
+        isArchivePanel = false;
+        ChangeViewArchivePanel();
 
         //画像と説明テキストをクリア
         if (mysteryItemImage.Length > 0)
@@ -1460,6 +1514,58 @@ public partial class PauseController : MonoBehaviour
         //リタイアパネルを非表示
         isRetirePanel = false;
         ChangeViewRetirePanel();
+    }
+
+    /// <summary>
+    /// 下方向の移動先を、押せるボタンの中から決めて設定する
+    /// </summary>
+    /// <param name="target">移動元のボタン</param>
+    /// <param name="candidates">移動先の候補(優先する順に並べる)</param>
+    private void SetSelectOnDown(Selectable target, params Selectable[] candidates)
+    {
+        Navigation navigation = target.navigation;
+        navigation.mode = Navigation.Mode.Explicit;
+        navigation.selectOnDown = null;
+
+        //候補の中から、表示されていて押せる最初のボタンを移動先にする
+        foreach (Selectable candidate in candidates)
+        {
+            if (candidate != null && candidate.gameObject.activeInHierarchy && candidate.IsInteractable())
+            {
+                //下方向の移動先を、押せるボタンの中から決めて設定
+                navigation.selectOnDown = candidate;
+
+
+                //下方向以外の移動先は、デフォルトのままにする
+                switch (target) 
+                {
+                    //ドキュメントボタンの場合
+                    case Button button when button == viewDocumentButton:
+                        navigation.selectOnRight = viewMysteryItemButton;
+                        break;
+
+                    //ミステリーアイテムボタンの場合
+                    case Button button when button == viewMysteryItemButton:
+                        navigation.selectOnLeft = viewDocumentButton;
+                        navigation.selectOnRight = archiveButton;
+                        break;
+
+                    //アーカイブボタンの場合
+                    case Button button when button == archiveButton:
+                        navigation.selectOnLeft = viewMysteryItemButton;
+                        break;
+
+                    //2つ目のミステリーアイテム名称ボタンの場合
+                    case Button button when button == mysteryItemNameButton[1]:
+                        navigation.selectOnUp = mysteryItemNameButton[0];
+                        break;
+                }
+
+                break;
+            }
+        }
+
+        target.navigation = navigation;
     }
 
     /// <summary>
@@ -1517,6 +1623,13 @@ public partial class PauseController : MonoBehaviour
         {
             //表示
             viewItemsPanel.SetActive(true);
+
+            //Navigationの設定
+            for (int i = 0; i < settingSelectableButtonArray.Length; i++) 
+            {
+                //settingSelectableButtonArray[i]の下は、戻るボタンを優先して設定する
+                SetSelectOnDown(settingSelectableButtonArray[i], returnToPausePanelButton);
+            }
         }
         else
         {
@@ -1567,6 +1680,10 @@ public partial class PauseController : MonoBehaviour
             //彷徨う者パネルを非表示
             isWandererPanel = false;
             ChangeViewWandererPanel();
+
+
+            //アーカイブボタンの下は、彷徨う者ボタンを優先し、押せなければ戻るボタンを設定する
+            SetSelectOnDown(archiveButton, wandererButton != null ? wandererButton.GetComponent<Button>() : null, returnToPausePanelButton);
         }
         else
         {
@@ -1580,6 +1697,34 @@ public partial class PauseController : MonoBehaviour
             //彷徨う者パネルを非表示
             isWandererPanel = false;
             ChangeViewWandererPanel();
+
+            //ドキュメントパネルが表示されている場合
+            if (isDocumentPanel)
+            {
+                //アーカイブボタンの下は、ドキュメント名称ボタン、戻るボタンの順に優先する
+                SetSelectOnDown(archiveButton
+                    , documentNameButton != null ? documentNameButton : null
+                    , returnToPausePanelButton);
+
+                Debug.Log("ドキュメントパネルが表示されている場合: アーカイブボタンの下は、ドキュメント名称ボタン、戻るボタンの順に優先する");
+            }
+            //ミステリーアイテムパネルが表示されている場合
+            else if (isMysteryItemPanel)
+            {
+                //アーカイブボタンの下は、1つ目のミステリーアイテム名称ボタン、戻るボタンの順に優先する
+                SetSelectOnDown(archiveButton
+                    , mysteryItemNameButton != null ? mysteryItemNameButton[0] : null
+                    , returnToPausePanelButton);
+
+                Debug.Log("ミステリーアイテムパネルが表示されている場合: アーカイブボタンの下は、1つ目のミステリーアイテム名称ボタン、戻るボタンの順に優先する");
+            }
+            else 
+            {
+                //アーカイブボタンの下は、戻るボタンを優先する
+                SetSelectOnDown(archiveButton, returnToPausePanelButton);
+
+                Debug.Log("アーカイブパネルが表示されていない場合: アーカイブボタンの下は、戻るボタンを優先する");
+            }
         }
     }
 

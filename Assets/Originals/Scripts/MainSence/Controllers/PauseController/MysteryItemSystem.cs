@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public partial class PauseController
 {
@@ -17,6 +19,18 @@ public partial class PauseController
 
             //表示
             mysteryItemInventoryPanel.SetActive(true);
+
+            //ミステリーアイテムボタンの下は、1つ目のミステリーアイテム名称ボタンを優先し、押せなければ戻るボタンを設定する
+            SetSelectOnDown(viewMysteryItemButton, mysteryItemNameButton != null ? mysteryItemNameButton[0] : null, returnToPausePanelButton);
+
+
+            //現在のシーンがHomeScene||Home02Sceneの場合
+            if (SceneManager.GetActiveScene().name == CommonController.instance.GetHomeSceneName()
+                || SceneManager.GetActiveScene().name == CommonController.instance.GetHome02SceneName())
+            {
+                //2つ目のミステリーアイテム名称ボタンの下は、戻るボタンを設定する
+                SetSelectOnDown(mysteryItemNameButton[1] != null ? mysteryItemNameButton[1] : null, returnToPausePanelButton);
+            }
         }
         else
         {
@@ -47,6 +61,48 @@ public partial class PauseController
                     mysteryItemExplanationText[i].text = "";
                     mysteryItemExplanationTextRubyComponent[i].Text = mysteryItemExplanationText[i].text;
                 }
+            }
+
+            /*----------------------------------
+             * TODO:ボタンが増えるたびに調整すること
+             -----------------------------------*/
+
+            //ドキュメントパネルが表示されている場合
+            if (isDocumentPanel)
+            {
+                //ミステリーアイテムボタンの下は、ドキュメント名称ボタン、戻るボタンの順に優先する
+                SetSelectOnDown(viewMysteryItemButton
+                , documentNameButton != null ? documentNameButton : null
+                , returnToPausePanelButton);
+
+                Debug.Log("ドキュメントパネルが表示されている場合:ミステリーアイテムボタンの下は、ドキュメント名称ボタン、戻るボタンの順に優先する");
+            }
+            //彷徨う者パネルが表示されている場合
+            else if (isWandererPanel)
+            {
+                //ミステリーアイテムボタンの下は、1つ目の彷徨う者名称ボタン、戻るボタンの順に優先する
+                SetSelectOnDown(viewMysteryItemButton
+                , wandererNameButton != null ? wandererNameButton[0] : null
+                , returnToPausePanelButton);
+
+                Debug.Log("彷徨う者パネルが表示されている場合:ミステリーアイテムボタンの下は、1つ目の彷徨う者名称ボタン、戻るボタンの順に優先する");
+            }
+            //アーカイブパネルが表示されている場合
+            else if (isArchivePanel) 
+            {
+                //ミステリーアイテムボタンの下は、彷徨う者ボタン、戻るボタンの順に優先する
+                SetSelectOnDown(viewMysteryItemButton
+                , wandererButton != null ? wandererButton.GetComponent<Button>() : null
+                , returnToPausePanelButton);
+
+                Debug.Log("アーカイブパネルが表示されている場合:ミステリーアイテムボタンの下は、彷徨う者ボタン、戻るボタンの順に優先する");
+            }
+            else 
+            {
+                //ミステリーアイテムボタンの下は、戻るボタンを優先する
+                SetSelectOnDown(viewMysteryItemButton, returnToPausePanelButton);
+
+                Debug.Log("ミステリーアイテムパネルが非表示の場合:ミステリーアイテムボタンの下は、戻るボタンを優先する");
             }
         }
     }

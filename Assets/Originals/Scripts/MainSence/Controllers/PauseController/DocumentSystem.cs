@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public partial class PauseController
 {
@@ -17,6 +18,9 @@ public partial class PauseController
 
             //表示
             documentInventoryPanel.SetActive(true);
+
+            //ドキュメントボタンの下は、ドキュメント名称ボタンを優先し、押せなければ戻るボタンを設定する
+            SetSelectOnDown(viewDocumentButton, documentNameButton, returnToPausePanelButton);
         }
         else
         {
@@ -26,6 +30,49 @@ public partial class PauseController
             //ドキュメント説明欄パネルを非表示
             isDocumentExplanationPanel = false;
             ChangeViewDocumentExplanationPanel();
+
+
+            /*----------------------------------
+             * TODO:ボタンが増えるたびに調整すること
+             -----------------------------------*/
+
+            //ミステリーアイテムパネルが表示されている場合
+            if (!isDocumentPanel && !isArchivePanel && isMysteryItemPanel)
+            {
+                //ドキュメントボタンの下は、1つ目のミステリーアイテム名称ボタン、戻るボタンの順に優先する
+                SetSelectOnDown(viewDocumentButton
+                    , mysteryItemNameButton != null ? mysteryItemNameButton[0] : null
+                    , returnToPausePanelButton);
+
+                Debug.Log("ミステリーアイテムパネルが表示されている場合:ドキュメントボタンの下は、1つ目のミステリーアイテム名称ボタン、戻るボタンの順に優先する");
+            }
+            //彷徨う者パネルが表示されている場合
+            else if (isWandererPanel)
+            {
+                //ドキュメントボタンの下は、1つ目の彷徨う者名称ボタン、戻るボタンの順に優先する
+                SetSelectOnDown(viewDocumentButton
+                    , wandererNameButton != null ? wandererNameButton[0] : null
+                    , returnToPausePanelButton);
+
+                Debug.Log("彷徨う者パネルが表示されている場合:ドキュメントボタンの下は、1つ目の彷徨う者名称ボタン、戻るボタンの順に優先する");
+            }
+            //アーカイブパネルが表示されている場合
+            else if (isArchivePanel)
+            {
+                //ドキュメントボタンの下は、彷徨う者ボタン、戻るボタンの順に優先する
+                SetSelectOnDown(viewDocumentButton
+                        , wandererButton != null ? wandererButton.GetComponent<Button>() : null
+                        , returnToPausePanelButton);
+
+                Debug.Log("アーカイブパネルが表示されている場合:ドキュメントボタンの下は、彷徨う者ボタン、戻るボタンの順に優先する");
+            }
+            else 
+            {
+                //ドキュメントボタンの下は、戻るボタンを優先する
+                SetSelectOnDown(viewDocumentButton, returnToPausePanelButton);
+
+                Debug.Log("ドキュメントパネルが非表示の場合:ドキュメントボタンの下は、戻るボタンを優先する");
+            }
         }
     }
 

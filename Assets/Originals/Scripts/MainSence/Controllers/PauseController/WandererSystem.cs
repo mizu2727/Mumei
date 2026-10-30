@@ -25,6 +25,13 @@ public partial class PauseController
              * TODO:他のアーカイブパネル内の子パネルを非表示にする処理を追加する
              --------------------------------------------------------*/
 
+
+            //Navigationの設定
+            for (int i = 0; i < settingSelectableButtonArray.Length; i++)
+            {
+                //settingSelectableButtonArray[i]の下は、1つ目の彷徨う者名称ボタン、戻るボタンの順に優先して設定する
+                SetSelectOnDown(settingSelectableButtonArray[i], wandererNameButton != null ? wandererNameButton[0] : null, returnToPausePanelButton);
+            }
         }
         else
         {
