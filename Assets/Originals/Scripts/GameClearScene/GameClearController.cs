@@ -23,6 +23,21 @@ public class GameClearController : MonoBehaviour
     /// </summary>
     private CanvasGroup gameClearCanvasGroup;
 
+    [Header("コントローラー操作用のボタン(ヒエラルキー上からアタッチすること)")]
+    [Header("アンケートボタン(左上。ゲームクリア画面表示時に最初に選択する)")]
+    [SerializeField] private Selectable questionnaireButton;
+
+    [Header("ウィッシュリストボタン(右上)")]
+    [SerializeField] private Selectable wishlistButton;
+
+    [Header("タイトルへ戻るボタン(下)")]
+    [SerializeField] private Selectable returnToTitleButton;
+
+    /// <summary>
+    /// 最初のボタンが押せる状態になるまで待つ最大フレーム数
+    /// </summary>
+    private const int kMaxWaitFramesForInteractable = 10;
+
     /// <summary>
     /// アンケートURL
     /// </summary>
@@ -85,6 +100,11 @@ public class GameClearController : MonoBehaviour
 
         //gameClearCanvasGroupをnullに設定
         gameClearCanvasGroup = null;
+
+        //コントローラー操作用のボタンをnullに設定
+        questionnaireButton = null;
+        wishlistButton = null;
+        returnToTitleButton = null;
 
         //instanceが存在する場合
         if (instance != null)
@@ -229,6 +249,9 @@ public class GameClearController : MonoBehaviour
         //ボタンを押せるようにする
         SetGameClearUIInteractable(true);
 
+        //コントローラーでの選択枠の移動先を設定する
+        SetupGameClearNavigation();
+
         //コントローラー接続時は最初のボタンを選択する
         //(CanvasGroup.interactableの変更はボタン側に反映されるまで1フレームかかるため、待ってから選択する)
         if (GamepadInput.IsConnected)
@@ -253,6 +276,24 @@ public class GameClearController : MonoBehaviour
         //一旦選択を解除する(同じボタンが選択済みだとSelectイベントが呼ばれず、選択枠・文字色が反映されないため)
         eventSystem.SetSelectedGameObject(null);
 
+        //アンケートボタンが設定されている場合は、最優先で選択する
+        if (questionnaireButton != null)
+        {
+            //CanvasGroupの変更がボタンに反映され、押せる状態になるまで待つ(最大kMaxWaitFramesForInteractableフレーム)
+            for (int i = 0; i < kMaxWaitFramesForInteractable && !questionnaireButton.IsInteractable(); i++)
+            {
+                yield return null;
+            }
+
+            if (questionnaireButton.IsInteractable() && questionnaireButton.gameObject.activeInHierarchy)
+            {
+                eventSystem.SetSelectedGameObject(questionnaireButton.gameObject);
+                yield break;
+            }
+
+            Debug.LogWarning($"[GameClearController] {questionnaireButton.name} が押せない状態のため選択できません(ButtonのInteractableを確認してください)", questionnaireButton);
+        }
+
         //GamepadUISelectorがある場合は、そちらの設定(First Selected)で選択する
         GamepadUISelector selector = gameClearCanvas.GetComponentInChildren<GamepadUISelector>();
         if (selector != null)
@@ -272,6 +313,53 @@ public class GameClearController : MonoBehaviour
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// コントローラー(十字キー・スティック)での選択枠の移動先を設定する
+    /// (プレハブ側のNavigation設定に関係なく、3つのボタン間を確実に移動できるようにする)
+    ///
+    ///   [アンケート] ←→ [ウィッシュリスト]
+    ///          ↓              ↓
+    ///         [ タイトルへ戻る ]
+    /// </summary>
+    private void SetupGameClearNavigation()
+    {
+        //アンケートボタン:右→ウィッシュリスト、下→タイトルへ戻る
+        SetExplicitNavigation(questionnaireButton, null, returnToTitleButton, null, wishlistButton);
+
+        //ウィッシュリストボタン:左→アンケート、下→タイトルへ戻る
+        SetExplicitNavigation(wishlistButton, null, returnToTitleButton, questionnaireButton, null);
+
+        //タイトルへ戻るボタン:上・左→アンケート、右→ウィッシュリスト
+        SetExplicitNavigation(returnToTitleButton, questionnaireButton, null, questionnaireButton, wishlistButton);
+    }
+
+    /// <summary>
+    /// ボタンの移動先を手動(Explicit)で設定する
+    /// </summary>
+    /// <param name="target">設定するボタン</param>
+    /// <param name="up">上の移動先(無い場合はnull)</param>
+    /// <param name="down">下の移動先(無い場合はnull)</param>
+    /// <param name="left">左の移動先(無い場合はnull)</param>
+    /// <param name="right">右の移動先(無い場合はnull)</param>
+    private void SetExplicitNavigation(Selectable target, Selectable up, Selectable down, Selectable left, Selectable right)
+    {
+        //ボタンが設定されていない場合
+        if (target == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //Navigationは構造体のため、コピーして書き換えてから代入し直す
+        Navigation navigation = target.navigation;
+        navigation.mode = Navigation.Mode.Explicit;
+        navigation.selectOnUp = up;
+        navigation.selectOnDown = down;
+        navigation.selectOnLeft = left;
+        navigation.selectOnRight = right;
+        target.navigation = navigation;
     }
 
     /// <summary>
