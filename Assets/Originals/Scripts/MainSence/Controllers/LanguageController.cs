@@ -140,6 +140,24 @@ public class LanguageController : MonoBehaviour
     /// </summary>
     private TMP_Text[] uITMPTextArray;
 
+    /// <summary>
+    /// uITextArrayと同じGameObjectから取得したTMP_Text版を取得する
+    /// </summary>
+    /// <returns>uITextArrayと同じGameObjectから取得したTMP_Text版</returns>
+    public TMP_Text[] GetUITMPTextArray()
+    {
+        return uITMPTextArray;
+    }
+
+    /// <summary>
+    /// uITextArrayと同じGameObjectから取得したTMP_Text版を設定する
+    /// </summary>
+    /// <param name="tmpTextArray">uITextArrayと同じGameObjectから取得したTMP_Text版</param>
+    public void SetUITMPTextArray(TMP_Text[] tmpTextArray)
+    {
+        uITMPTextArray = tmpTextArray;
+    }
+
     [Header("通常テキスト番号を記載(ヒエラルキー上から記載すること)")]
     [SerializeField] public int[] uITextNumberArray;
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
@@ -22,6 +23,119 @@ public class GamepadUISelector : MonoBehaviour
     /// 表示中のGamepadUISelector(後から表示されたものほど末尾)
     /// </summary>
     private static readonly List<GamepadUISelector> activeSelectors = new List<GamepadUISelector>();
+
+    /*-------------------------------------------------------------
+     * コントローラーの抜き差し関連
+     -------------------------------------------------------------*/
+
+    /// <summary>
+    /// ゲーム起動時の初期化(エディタで「Enter Play Mode Options」によりstatic変数が残る場合に備えてリセットする)
+    /// </summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStaticValues()
+    {
+        activeSelectors.Clear();
+    }
+
+    /// <summary>
+    /// ゲーム起動時に、コントローラーの抜き差しイベントを登録する
+    /// </summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterGamepadEvents()
+    {
+        //二重登録を防ぐため、一度解除してから登録する
+        GamepadInput.OnGamepadConnected -= OnAnyGamepadConnected;
+        GamepadInput.OnGamepadConnected += OnAnyGamepadConnected;
+        GamepadInput.OnGamepadDisconnected -= OnAnyGamepadDisconnected;
+        GamepadInput.OnGamepadDisconnected += OnAnyGamepadDisconnected;
+    }
+
+    /// <summary>
+    /// 最前面に表示されているGamepadUISelectorを取得する(無い場合はnull)
+    /// </summary>
+    /// <returns>最前面のGamepadUISelector</returns>
+    private static GamepadUISelector GetTopSelector()
+    {
+        //破棄されたものを取り除く
+        activeSelectors.RemoveAll(selector => selector == null);
+        return activeSelectors.Count > 0 ? activeSelectors[activeSelectors.Count - 1] : null;
+    }
+
+    /// <summary>
+    /// コントローラーが接続された瞬間に呼ばれる
+    /// </summary>
+    /// <param name="gamepad">接続されたコントローラー</param>
+    private static void OnAnyGamepadConnected(Gamepad gamepad)
+    {
+        //表示中のパネルがある場合(ポーズ画面・タイトル画面等)
+        GamepadUISelector top = GetTopSelector();
+        if (top != null && top.isActiveAndEnabled)
+        {
+            top.StartCoroutine(top.HandleGamepadConnectedNextFrame());
+        }
+    }
+
+    /// <summary>
+    /// コントローラーが切断された瞬間に呼ばれる
+    /// </summary>
+    /// <param name="gamepad">切断されたコントローラー</param>
+    private static void OnAnyGamepadDisconnected(Gamepad gamepad)
+    {
+        //表示中のパネルがある場合(ポーズ画面・タイトル画面等)
+        GamepadUISelector top = GetTopSelector();
+        if (top != null && top.isActiveAndEnabled)
+        {
+            top.StartCoroutine(top.HandleGamepadDisconnectedNextFrame());
+        }
+    }
+
+    /// <summary>
+    /// コントローラー接続時の処理(1フレーム待ってGamepad.currentが更新されてから行う)
+    /// 選択枠が無い場合、最初のボタンを選択する(すぐにコントローラーで操作を始められるようにするため)
+    /// </summary>
+    private IEnumerator HandleGamepadConnectedNextFrame()
+    {
+        yield return null;
+
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null || !GamepadInput.IsConnected)
+        {
+            yield break;
+        }
+
+        //既にボタンが選択されている場合(マウスで選択済み等)はそのままにする
+        GameObject current = eventSystem.currentSelectedGameObject;
+        if (current != null && current.activeInHierarchy)
+        {
+            yield break;
+        }
+
+        SelectFirst();
+    }
+
+    /// <summary>
+    /// コントローラー切断時の処理(1フレーム待ってGamepad.currentが更新されてから行う)
+    /// コントローラーが1台も無くなった場合、選択枠を外す(マウス操作時に選択枠・文字色が残らないようにするため)
+    /// </summary>
+    private IEnumerator HandleGamepadDisconnectedNextFrame()
+    {
+        yield return null;
+
+        //別のコントローラーがまだ接続されている場合は何もしない
+        if (GamepadInput.IsConnected)
+        {
+            yield break;
+        }
+
+        //このパネル内のボタンが選択されている場合は選択を解除する
+        //(Deselectイベントが呼ばれるため、ボタンの文字色・画像も元に戻る)
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem != null && eventSystem.currentSelectedGameObject != null
+            && eventSystem.currentSelectedGameObject.transform.IsChildOf(transform))
+        {
+            eventSystem.SetSelectedGameObject(null);
+        }
+    }
 
     private void OnEnable()
     {

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -35,6 +36,75 @@ public static class GamepadInput
     /// 現在接続されているゲームパッド(未接続の場合はnull)
     /// </summary>
     private static Gamepad Pad => Gamepad.current;
+
+    /*-------------------------------------------------------------
+     * コントローラーの抜き差し関連
+     -------------------------------------------------------------*/
+
+    /// <summary>
+    /// コントローラーが接続された瞬間に呼ばれるイベント
+    /// 例:GamepadInput.OnGamepadConnected += (pad) => { ... };
+    /// </summary>
+    public static event Action<Gamepad> OnGamepadConnected;
+
+    /// <summary>
+    /// コントローラーが切断された瞬間に呼ばれるイベント
+    /// 例:GamepadInput.OnGamepadDisconnected += (pad) => { ... };
+    /// </summary>
+    public static event Action<Gamepad> OnGamepadDisconnected;
+
+    /// <summary>
+    /// ゲーム起動時の初期化(エディタで「Enter Play Mode Options」によりstatic変数が残る場合に備えてリセットする)
+    /// </summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetDeviceChangeEvents()
+    {
+        OnGamepadConnected = null;
+        OnGamepadDisconnected = null;
+        InputSystem.onDeviceChange -= HandleDeviceChange;
+    }
+
+    /// <summary>
+    /// ゲーム起動時に、デバイスの接続状態の変化を監視する処理を登録する
+    /// (シーンにアタッチしなくても自動で動く)
+    /// </summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void RegisterDeviceChangeEvent()
+    {
+        //二重登録を防ぐため、一度解除してから登録する
+        InputSystem.onDeviceChange -= HandleDeviceChange;
+        InputSystem.onDeviceChange += HandleDeviceChange;
+    }
+
+    /// <summary>
+    /// デバイスの接続状態が変わった時に呼ばれる
+    /// </summary>
+    /// <param name="device">対象のデバイス</param>
+    /// <param name="change">変化の種類</param>
+    private static void HandleDeviceChange(InputDevice device, InputDeviceChange change)
+    {
+        //ゲームパッド以外(キーボード・マウス等)は無視
+        Gamepad gamepad = device as Gamepad;
+        if (gamepad == null)
+        {
+            return;
+        }
+
+        switch (change)
+        {
+            //接続された(初めて接続・抜いて差し直した・Bluetoothが再接続した)
+            case InputDeviceChange.Added:
+            case InputDeviceChange.Reconnected:
+                OnGamepadConnected?.Invoke(gamepad);
+                break;
+
+            //切断された(ケーブルを抜いた・電池切れ・Bluetoothが切れた)
+            case InputDeviceChange.Removed:
+            case InputDeviceChange.Disconnected:
+                OnGamepadDisconnected?.Invoke(gamepad);
+                break;
+        }
+    }
 
     /// <summary>
     /// ゲームパッドが接続されているか
