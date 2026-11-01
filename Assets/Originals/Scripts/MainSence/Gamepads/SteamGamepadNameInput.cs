@@ -1,4 +1,9 @@
-﻿using System;
+﻿//SteamManager.csと同じ条件でSteamworksを無効にする(Steam非対応のプラットフォームでもコンパイルできるようにするため)
+#if !(UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
+#define DISABLESTEAMWORKS
+#endif
+
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,16 +13,18 @@ using Steamworks;
 #endif
 
 /// <summary>
-/// コントローラー操作時に、Steam公式のバーチャルキーボード(ShowGamepadTextInput)で
-/// プレイヤー名を入力させるクラス
+/// コントローラー操作時に、バーチャルキーボードでプレイヤー名を入力させるクラス
 /// プレイヤー名入力用のInputField(MessageController.inputPlayerNameField)と同じオブジェクトにアタッチする
+/// (MessageControllerのAwakeで自動的に追加されるため、手動でのアタッチは不要)
 ///
-/// ・InputFieldが表示された時、コントローラーが接続されていればSteamキーボードを開く
-/// ・Steamキーボードで決定 → MessageController.SavePlayerName()を呼び、既存の確認パネルの流れへ進む
-/// ・Steamキーボードでキャンセル → A(決定ボタン)で再度開く / キーボードを打てば通常のInputField入力に切り替わる
-/// ・Steamキーボードを開けない場合(Big Picture・Steam Deck以外、エディタ実行時、Steam未起動時)は通常のInputField入力になる
+/// InputFieldが表示された時(isInputPlayerNameFieldStatus == 1)に、環境に応じて以下を開く
+///   ・Steamから起動 + Big Picture / Steam Deck  … Steam公式のバーチャルキーボード
+///   ・Unityエディタ / Steamを経由しないビルド起動 / Steamキーボードを開けない場合 … ゲーム内バーチャルキーボード
+///   ・コントローラー未接続(キーボード・マウス操作) … 通常のInputField入力
 ///
-/// ※Steamworks.NETが必要。Steamworks.NETを使わないビルドではDISABLESTEAMWORKSを定義すると通常入力のみになる
+/// ・決定 → MessageController.SavePlayerName()を呼び、既存の確認パネルの流れへ進む
+/// ・Steamキーボードでキャンセル → A(決定ボタン)で再度開く
+/// ・バーチャルキーボード表示中に物理キーボードで文字を打つと、通常のInputField入力に切り替わる
 /// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(InputField))]
@@ -29,18 +36,29 @@ public class SteamGamepadNameInput : MonoBehaviour
     [Header("Steamキーボードをキャンセルした後に表示する案内(任意。例:「A:キーボードを開く」)")]
     [SerializeField] private GameObject reopenGuide;
 
+    [Header("コントローラー未接続でもバーチャルキーボードを表示する(マウスでの動作確認用)")]
+    [SerializeField] private bool showKeyboardWithoutGamepad = false;
+
+    [Header("ゲーム内キーボードのフォント(未設定の場合はInputFieldのフォントを使う)")]
+    [SerializeField] private Font keyboardFont;
+
     /// <summary>
     /// プレイヤー名入力用のInputField
     /// </summary>
     private InputField inputField;
 
     /// <summary>
-    /// Steamキーボードを表示中か
+    /// ゲーム内バーチャルキーボード(初めて使う時に生成する)
     /// </summary>
-    private bool isKeyboardOpen = false;
+    private InGameVirtualKeyboard inGameKeyboard;
 
     /// <summary>
-    /// Steamキーボードで入力するモードか(falseの場合は通常のInputField入力)
+    /// Steamキーボードを表示中か
+    /// </summary>
+    private bool isSteamKeyboardOpen = false;
+
+    /// <summary>
+    /// Steamキーボードで入力するモードか(キャンセル後、再度開くのを待っている状態を含む)
     /// </summary>
     private bool isSteamKeyboardMode = false;
 
@@ -69,21 +87,21 @@ public class SteamGamepadNameInput : MonoBehaviour
 
     private void OnEnable()
     {
-        isKeyboardOpen = false;
+        isSteamKeyboardOpen = false;
         isSteamKeyboardMode = false;
         hasDismissedResult = false;
         SetReopenGuide(false);
 
-        //コントローラー操作時は、InputFieldが先に選択・入力状態になるのを防ぐため、一旦操作不可にする
-        //(InputFieldが入力状態のままSteamキーボードを開くと、フォーカスが外れた際にOn End Editが呼ばれてしまうため)
-        if (GamepadInput.IsConnected)
+        //バーチャルキーボードを使う場合は、InputFieldが先に選択・入力状態になるのを防ぐため、一旦操作不可にする
+        //(InputFieldが入力状態のままキーボードを開くと、フォーカスが外れた際にOn End Editが呼ばれてしまうため)
+        if (ShouldUseVirtualKeyboard())
         {
             inputField.interactable = false;
         }
 
         //シーン読み込み直後にMessageControllerのAwakeで非表示にされる場合があるため、1フレーム待ってから開く
         //(非表示にされた場合はコルーチンも止まる)
-        StartCoroutine(OpenSteamKeyboardNextFrame());
+        StartCoroutine(OpenKeyboardNextFrame());
     }
 
     private void OnDisable()
@@ -96,8 +114,11 @@ public class SteamGamepadNameInput : MonoBehaviour
             dismissedCallback = null;
         }
 #endif
-        isKeyboardOpen = false;
+        isSteamKeyboardOpen = false;
         isSteamKeyboardMode = false;
+
+        //ゲーム内キーボードを閉じる
+        CloseInGameKeyboard();
 
         //次に表示した時のためにInputFieldを操作可能に戻す
         if (inputField != null)
@@ -110,21 +131,29 @@ public class SteamGamepadNameInput : MonoBehaviour
 
     private void OnDestroy()
     {
+        //ゲーム内キーボードを破棄
+        if (inGameKeyboard != null)
+        {
+            Destroy(inGameKeyboard.gameObject);
+        }
+
         //参照をnullに設定(メモリリークを防ぐため)
+        inGameKeyboard = null;
         inputField = null;
         reopenGuide = null;
+        keyboardFont = null;
     }
 
     /// <summary>
-    /// 1フレーム待ってからSteamキーボードを開く
+    /// 1フレーム待ってからキーボードを開く
     /// </summary>
-    private IEnumerator OpenSteamKeyboardNextFrame()
+    private IEnumerator OpenKeyboardNextFrame()
     {
         yield return null;
 
-        if (GamepadInput.IsConnected)
+        if (ShouldUseVirtualKeyboard())
         {
-            TryOpenSteamKeyboard();
+            OpenVirtualKeyboard();
         }
         else
         {
@@ -139,25 +168,39 @@ public class SteamGamepadNameInput : MonoBehaviour
         if (hasDismissedResult)
         {
             hasDismissedResult = false;
-            HandleDismissedResult();
+            HandleSteamDismissedResult();
+            return;
+        }
+
+        //ゲーム内キーボード表示中
+        if (inGameKeyboard != null && inGameKeyboard.IsOpen)
+        {
+            //物理キーボードで文字を打った場合、通常のInputField入力に切り替える(入力途中の文字は引き継ぐ)
+            if (IsTypingKeyPressed())
+            {
+                string currentText = inGameKeyboard.CurrentText;
+                CloseInGameKeyboard();
+                inputField.text = currentText;
+                SwitchToInputField();
+            }
             return;
         }
 
         //Steamキーボード入力モードでない場合||Steamキーボード表示中の場合
-        if (!isSteamKeyboardMode || isKeyboardOpen)
+        if (!isSteamKeyboardMode || isSteamKeyboardOpen)
         {
             //処理をスキップ
             return;
         }
 
-        //キャンセル後にA(決定ボタン)を押した場合、Steamキーボードを開き直す
+        //Steamキーボードのキャンセル後にA(決定ボタン)を押した場合、キーボードを開き直す
         if (GamepadInput.IsInteractPressed())
         {
-            TryOpenSteamKeyboard();
+            OpenVirtualKeyboard();
             return;
         }
 
-        //キャンセル後にキーボードを打った場合、通常のInputField入力に切り替える
+        //Steamキーボードのキャンセル後にキーボードを打った場合、通常のInputField入力に切り替える
         if (Keyboard.current != null && Keyboard.current.anyKey.wasPressedThisFrame)
         {
             SwitchToInputField();
@@ -165,11 +208,84 @@ public class SteamGamepadNameInput : MonoBehaviour
     }
 
     /// <summary>
-    /// Steamキーボードを開く。開けない場合は通常のInputField入力に切り替える
+    /// バーチャルキーボードを使うか
     /// </summary>
-    private void TryOpenSteamKeyboard()
+    private bool ShouldUseVirtualKeyboard()
     {
-        bool isOpened = false;
+        return GamepadInput.IsConnected || showKeyboardWithoutGamepad || IsRunningOnSteamDeck();
+    }
+
+    /// <summary>
+    /// バーチャルキーボードを開く(Steamキーボードを優先し、開けない場合はゲーム内キーボード)
+    /// </summary>
+    private void OpenVirtualKeyboard()
+    {
+        if (TryOpenSteamKeyboard())
+        {
+            return;
+        }
+
+        OpenInGameKeyboard();
+    }
+
+    /*-------------------------------------------------------------
+     * Steamキーボード
+     -------------------------------------------------------------*/
+
+    /// <summary>
+    /// Steamキーボードを使える環境か
+    /// ・エディタ実行時はSteamオーバーレイが表示されないため使わない
+    /// ・Steamを経由せずにexeを直接起動した場合もオーバーレイが無効なので使わない
+    /// </summary>
+    private static bool CanUseSteamKeyboard()
+    {
+#if DISABLESTEAMWORKS || UNITY_EDITOR
+        return false;
+#else
+        try
+        {
+            if (!SteamManager.Initialized)
+            {
+                return false;
+            }
+            return SteamUtils.IsSteamRunningOnSteamDeck() || SteamUtils.IsOverlayEnabled();
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+#endif
+    }
+
+    /// <summary>
+    /// Steam Deckで動いているか
+    /// </summary>
+    private static bool IsRunningOnSteamDeck()
+    {
+#if DISABLESTEAMWORKS || UNITY_EDITOR
+        return false;
+#else
+        try
+        {
+            return SteamManager.Initialized && SteamUtils.IsSteamRunningOnSteamDeck();
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+#endif
+    }
+
+    /// <summary>
+    /// Steamキーボードを開く
+    /// </summary>
+    /// <returns>開けたか(falseの場合はゲーム内キーボードを使う)</returns>
+    private bool TryOpenSteamKeyboard()
+    {
+        if (!CanUseSteamKeyboard())
+        {
+            return false;
+        }
 
 #if !DISABLESTEAMWORKS
         try
@@ -180,37 +296,38 @@ public class SteamGamepadNameInput : MonoBehaviour
                 dismissedCallback = Callback<GamepadTextInputDismissed_t>.Create(OnGamepadTextInputDismissed);
             }
 
-            //Steamキーボードを表示(Big Picture・Steam Deck以外ではfalseが返る)
-            isOpened = SteamUtils.ShowGamepadTextInput(
+            //Steamキーボードを表示(Big Picture・Steam Deck以外ではfalseが返る場合がある)
+            bool isOpened = SteamUtils.ShowGamepadTextInput(
                 EGamepadTextInputMode.k_EGamepadTextInputModeNormal,
                 EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine,
                 GetDescriptionText(),
                 maxNameLength,
                 inputField.text ?? "");
+
+            if (!isOpened)
+            {
+                return false;
+            }
         }
         catch (Exception e)
         {
-            //Steamが初期化されていない場合(エディタ実行時・Steam未起動時等)
-            Debug.LogWarning("[SteamGamepadNameInput] Steamキーボードを開けませんでした。通常の入力に切り替えます: " + e.Message);
-            isOpened = false;
-        }
-#endif
-
-        if (!isOpened)
-        {
-            SwitchToInputField();
-            return;
+            Debug.LogWarning("[SteamGamepadNameInput] Steamキーボードを開けませんでした。ゲーム内キーボードを使います: " + e.Message);
+            return false;
         }
 
         isSteamKeyboardMode = true;
-        isKeyboardOpen = true;
+        isSteamKeyboardOpen = true;
         inputField.interactable = false;
         SetReopenGuide(false);
+        return true;
+#else
+        return false;
+#endif
     }
 
 #if !DISABLESTEAMWORKS
     /// <summary>
-    /// Steamキーボードが閉じられた時に呼ばれる(SteamAPI.RunCallbacks内から呼ばれる)
+    /// Steamキーボードが閉じられた時に呼ばれる(SteamManagerのSteamAPI.RunCallbacks内から呼ばれる)
     /// </summary>
     /// <param name="result">結果</param>
     private void OnGamepadTextInputDismissed(GamepadTextInputDismissed_t result)
@@ -223,9 +340,9 @@ public class SteamGamepadNameInput : MonoBehaviour
     /// <summary>
     /// Steamキーボードが閉じられた結果を処理する
     /// </summary>
-    private void HandleDismissedResult()
+    private void HandleSteamDismissedResult()
     {
-        isKeyboardOpen = false;
+        isSteamKeyboardOpen = false;
 
         //キャンセルされた場合
         if (!isSubmitted)
@@ -249,9 +366,70 @@ public class SteamGamepadNameInput : MonoBehaviour
             Debug.LogWarning("[SteamGamepadNameInput] 入力文字を取得できませんでした: " + e.Message);
         }
 #endif
+        SubmitPlayerName(playerName);
+    }
+
+    /*-------------------------------------------------------------
+     * ゲーム内キーボード
+     -------------------------------------------------------------*/
+
+    /// <summary>
+    /// ゲーム内キーボードを開く
+    /// </summary>
+    private void OpenInGameKeyboard()
+    {
+        if (inGameKeyboard == null)
+        {
+            Font font = keyboardFont;
+            if (font == null && inputField.textComponent != null)
+            {
+                font = inputField.textComponent.font;
+            }
+            inGameKeyboard = InGameVirtualKeyboard.Create(font);
+        }
+
+        isSteamKeyboardMode = false;
+        isSteamKeyboardOpen = false;
+        SetReopenGuide(false);
+        inputField.interactable = false;
+
+        inGameKeyboard.Open(inputField.text ?? "", (int)maxNameLength, GetDescriptionText(), OnInGameKeyboardSubmitted);
+    }
+
+    /// <summary>
+    /// ゲーム内キーボードを閉じる
+    /// </summary>
+    private void CloseInGameKeyboard()
+    {
+        if (inGameKeyboard != null && inGameKeyboard.IsOpen)
+        {
+            inGameKeyboard.Close();
+        }
+    }
+
+    /// <summary>
+    /// ゲーム内キーボードで「決定」が押された
+    /// </summary>
+    /// <param name="playerName">入力された名前</param>
+    private void OnInGameKeyboardSubmitted(string playerName)
+    {
+        CloseInGameKeyboard();
+        SubmitPlayerName(playerName);
+    }
+
+    /*-------------------------------------------------------------
+     * 共通
+     -------------------------------------------------------------*/
+
+    /// <summary>
+    /// 入力された名前を既存の名前保存処理へ渡す
+    /// </summary>
+    /// <param name="playerName">入力された名前</param>
+    private void SubmitPlayerName(string playerName)
+    {
         playerName = (playerName ?? "").Trim();
 
-        //InputFieldにも反映(確認パネル・「いいえ」で戻った時に表示されるようにするため)
+        //InputFieldにも反映(確認パネルで「いいえ」を押して戻った時に表示されるようにするため)
         inputField.text = playerName;
         inputField.interactable = true;
         isSteamKeyboardMode = false;
@@ -269,12 +447,72 @@ public class SteamGamepadNameInput : MonoBehaviour
     private void SwitchToInputField()
     {
         isSteamKeyboardMode = false;
-        isKeyboardOpen = false;
+        isSteamKeyboardOpen = false;
         SetReopenGuide(false);
 
         inputField.interactable = true;
         inputField.Select();
         inputField.ActivateInputField();
+
+        //ActivateInputFieldは全選択状態になるため、次のフレームでカーソルを末尾へ移動する
+        StartCoroutine(MoveCaretToEndNextFrame());
+    }
+
+    /// <summary>
+    /// 1フレーム待ってからInputFieldのカーソルを末尾へ移動する
+    /// </summary>
+    private IEnumerator MoveCaretToEndNextFrame()
+    {
+        yield return null;
+
+        if (inputField != null && inputField.isFocused)
+        {
+            inputField.MoveTextEnd(false);
+        }
+    }
+
+    /// <summary>
+    /// 物理キーボードで文字入力用のキーが押されたか
+    /// (矢印・Enter・Space・Backspace等はゲーム内キーボードの操作に使うため除外する)
+    /// </summary>
+    private static bool IsTypingKeyPressed()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null || !keyboard.anyKey.wasPressedThisFrame)
+        {
+            return false;
+        }
+
+        foreach (UnityEngine.InputSystem.Controls.KeyControl key in keyboard.allKeys)
+        {
+            if (key == null || !key.wasPressedThisFrame)
+            {
+                continue;
+            }
+
+            switch (key.keyCode)
+            {
+                case Key.UpArrow:
+                case Key.DownArrow:
+                case Key.LeftArrow:
+                case Key.RightArrow:
+                case Key.Enter:
+                case Key.NumpadEnter:
+                case Key.Space:
+                case Key.Backspace:
+                case Key.Escape:
+                case Key.Tab:
+                case Key.LeftShift:
+                case Key.RightShift:
+                case Key.LeftCtrl:
+                case Key.RightCtrl:
+                case Key.LeftAlt:
+                case Key.RightAlt:
+                    continue;
+            }
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
@@ -290,7 +528,7 @@ public class SteamGamepadNameInput : MonoBehaviour
     }
 
     /// <summary>
-    /// Steamキーボードに表示する説明文を現在の言語で取得する
+    /// キーボードに表示する説明文を現在の言語で取得する
     /// </summary>
     /// <returns>説明文</returns>
     private string GetDescriptionText()

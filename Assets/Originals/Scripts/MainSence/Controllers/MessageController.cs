@@ -277,6 +277,13 @@ public partial class MessageController : MonoBehaviour
         {
             inputPlayerNameField = inputPlayerNameField.GetComponent<InputField>();
             inputPlayerNameField.gameObject.SetActive(false);
+
+            //コントローラー用のバーチャルキーボード機能を追加(Inspectorでのアタッチ忘れ防止)
+            //(非表示にした後で追加するため、名前入力欄が表示されたタイミングで初めて動作する)
+            if (inputPlayerNameField.GetComponent<SteamGamepadNameInput>() == null)
+            {
+                inputPlayerNameField.gameObject.AddComponent<SteamGamepadNameInput>();
+            }
         }
 
         if (CheckInputNamePanel != null) 
