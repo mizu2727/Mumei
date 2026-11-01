@@ -675,11 +675,11 @@ public class SingSongWanderer : HearingEnemy
         }
 
         //プレイヤーの身体のパーツを非表示にする(演出でプレイヤー自身が見えてしまうのを防ぐため)
-        for (int i = 0; i < Player.instance.playerBodys.Length; i++)
+        for (int i = 0; i < Player.instance.GetPlayerBodys().Length; i++)
         {
-            if (Player.instance.playerBodys[i] != null)
+            if (Player.instance.GetPlayerBodys()[i] != null)
             {
-                Player.instance.playerBodys[i].SetActive(false);
+                Player.instance.GetPlayerBodys()[i].SetActive(false);
             }
         }
 
