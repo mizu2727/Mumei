@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
@@ -30,6 +31,9 @@ public class Goal : MonoBehaviour
 
     [Header("ミステリーアイテム画像(ヒエラルキー上の画像をアタッチする必要がある)")]
     [SerializeField] private Image[] selectMysteryItemImage;
+
+    [Header("ゴールパネル内の「戻る」ボタン(ヒエラルキー上からアタッチする必要がある。コントローラー操作用)")]
+    [SerializeField] private Button returnToInGameButton;
 
     [Header("ゴール壁(ヒエラルキーからアタッチする必要がある)")]
     [SerializeField] private GameObject goalWall;
@@ -171,6 +175,9 @@ public class Goal : MonoBehaviour
             //ゴール壁をnullにする
             goalWall = null;
         }
+
+        //「戻る」ボタンをnullにする
+        returnToInGameButton = null;
     }
 
     private void Start()
@@ -214,6 +221,11 @@ public class Goal : MonoBehaviour
                 //ゴール壁移動中フラグをオフにする
                 isMovingGoalWall = false;
             }
+        }
+
+        if (isGoalPanel) 
+        {
+            Debug.Log("ゴールパネル表示中");
         }
 
         //B / ○でUIの「戻る」
@@ -276,7 +288,7 @@ public class Goal : MonoBehaviour
     /// <summary>
     /// ミステリーアイテムを選択からの処理
     /// </summary>
-    void MysteryItemCheck() 
+    private void MysteryItemCheck() 
     {
         //ミステリーアイテムを選択する旨のメッセージを表示
         isGoalPanel = true;
@@ -320,9 +332,27 @@ public class Goal : MonoBehaviour
 
             //画像を更新
             UpdateSelectMysteryItemUI();
+
+            //コントローラーでの選択枠の移動先を設定(ミステリーアイテムの入手数でボタンの押せる・押せないが変わるため、表示のたびに設定する)
+            SetupGoalPanelNavigation();
+
+            //コントローラー接続時は最初のボタンを選択する
+            if (GamepadInput.IsConnected)
+            {
+                StartCoroutine(SelectFirstGoalPanelButtonNextFrame());
+            }
         }
         else
         {
+            //ゴールパネル内のボタンが選択されたままの場合は選択を解除する
+            //(Deselectイベントが呼ばれるため、ミステリーアイテム画像の半透明も元に戻る)
+            EventSystem eventSystem = EventSystem.current;
+            if (eventSystem != null && eventSystem.currentSelectedGameObject != null
+                && eventSystem.currentSelectedGameObject.transform.IsChildOf(GoalPanel.transform))
+            {
+                eventSystem.SetSelectedGameObject(null);
+            }
+
             //マウスカーソルを非表示にし、固定する
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
@@ -337,6 +367,104 @@ public class Goal : MonoBehaviour
                     selectMysteryItemImage[i].enabled = false;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// コントローラー(十字キー・スティック)での選択枠の移動先を設定する
+    /// (プレハブ側のNavigation設定に関係なく、ミステリーアイテムと「戻る」ボタンの間を確実に移動できるようにする)
+    ///
+    ///   [アイテム1] ←→ [アイテム2] ←→ ...
+    ///         ↓↑
+    ///      [ 戻る ]
+    /// </summary>
+    private void SetupGoalPanelNavigation()
+    {
+        //押せるミステリーアイテムボタンを並び順に取得
+        List<Button> activeButtons = new List<Button>();
+        for (int i = 0; i < selectMysteryItemButton.Length; i++)
+        {
+            if (selectMysteryItemButton[i] != null && selectMysteryItemButton[i].interactable)
+            {
+                activeButtons.Add(selectMysteryItemButton[i]);
+            }
+        }
+
+        //ミステリーアイテムボタン:左右→隣のアイテム、下→「戻る」ボタン
+        for (int i = 0; i < activeButtons.Count; i++)
+        {
+            Selectable left = i > 0 ? activeButtons[i - 1] : null;
+            Selectable right = i < activeButtons.Count - 1 ? activeButtons[i + 1] : null;
+            SetExplicitNavigation(activeButtons[i], null, returnToInGameButton, left, right);
+        }
+
+        //「戻る」ボタン:上→最初のアイテム
+        Selectable firstItem = activeButtons.Count > 0 ? activeButtons[0] : null;
+        SetExplicitNavigation(returnToInGameButton, firstItem, null, null, null);
+    }
+
+    /// <summary>
+    /// ボタンの移動先を手動(Explicit)で設定する
+    /// </summary>
+    /// <param name="target">設定するボタン</param>
+    /// <param name="up">上の移動先(無い場合はnull)</param>
+    /// <param name="down">下の移動先(無い場合はnull)</param>
+    /// <param name="left">左の移動先(無い場合はnull)</param>
+    /// <param name="right">右の移動先(無い場合はnull)</param>
+    private void SetExplicitNavigation(Selectable target, Selectable up, Selectable down, Selectable left, Selectable right)
+    {
+        //ボタンが設定されていない場合
+        if (target == null)
+        {
+            //処理をスキップ
+            return;
+        }
+
+        //Navigationは構造体のため、コピーして書き換えてから代入し直す
+        Navigation navigation = target.navigation;
+        navigation.mode = Navigation.Mode.Explicit;
+        navigation.selectOnUp = up;
+        navigation.selectOnDown = down;
+        navigation.selectOnLeft = left;
+        navigation.selectOnRight = right;
+        target.navigation = navigation;
+    }
+
+    /// <summary>
+    /// 1フレーム待ってから、ゴールパネルの最初のボタン(押せる最初のミステリーアイテム。無ければ「戻る」ボタン)を選択する
+    /// (yield return nullはTime.timeScale=0でも進むため、一時停止中でも動作する)
+    /// </summary>
+    private IEnumerator SelectFirstGoalPanelButtonNextFrame()
+    {
+        yield return null;
+
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem == null || !isGoalPanel)
+        {
+            yield break;
+        }
+
+        //既にゴールパネル内のボタンが選択されている場合はそのままにする
+        GameObject current = eventSystem.currentSelectedGameObject;
+        if (current != null && current.activeInHierarchy && current.transform.IsChildOf(GoalPanel.transform))
+        {
+            yield break;
+        }
+
+        //押せる最初のミステリーアイテムボタンを選択
+        foreach (Button button in selectMysteryItemButton)
+        {
+            if (button != null && button.IsInteractable() && button.gameObject.activeInHierarchy)
+            {
+                eventSystem.SetSelectedGameObject(button.gameObject);
+                yield break;
+            }
+        }
+
+        //ミステリーアイテムが無い場合は「戻る」ボタンを選択
+        if (returnToInGameButton != null && returnToInGameButton.IsInteractable() && returnToInGameButton.gameObject.activeInHierarchy)
+        {
+            eventSystem.SetSelectedGameObject(returnToInGameButton.gameObject);
         }
     }
 
