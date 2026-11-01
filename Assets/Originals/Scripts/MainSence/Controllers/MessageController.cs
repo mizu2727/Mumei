@@ -61,6 +61,16 @@ public partial class MessageController : MonoBehaviour
     /// </summary>
     private bool isWrite = false;
 
+    /// <summary>
+    /// 書き途中のメッセージを全文表示するフラグ(書き途中に送り操作をした場合にtrue)
+    /// </summary>
+    private bool isSkipWrite = false;
+
+    /// <summary>
+    /// メッセージ表示後、送り操作を受け付けるまでの時間(秒)。連打・押しっぱなしで誤って飛ばすのを防ぐ
+    /// </summary>
+    private float advanceInputDelay = 0.3f;
+
     [Header("システムメッセージ(Prefabをアタッチ)")]
     [SerializeField] private SystemMessage systemMessage;
 
@@ -407,6 +417,7 @@ public partial class MessageController : MonoBehaviour
         if (isWrite) return;
 
         isWrite = true;
+        isSkipWrite = false;
 
         //現在の言語用フォントを適用する(テキストを入れる前に行わないと□化けする)
         if (CommonController.instance != null)
@@ -427,8 +438,8 @@ public partial class MessageController : MonoBehaviour
 
         for (int i = 0; i < s.Length; i++)
         {
-            //書き込み速度が0の場合、一気に表示
-            if (writeSpeed <= 0)
+            //書き込み速度が0の場合||送り操作で全文表示を指示された場合、一気に表示
+            if (writeSpeed <= 0 || isSkipWrite)
             {
                 //TextMeshProRubyコンポーネントがアタッチされている場合
                 if (messageTextRubyComponent != null)
@@ -475,27 +486,63 @@ public partial class MessageController : MonoBehaviour
 
             await UniTask.Delay(TimeSpan.FromSeconds(writeSpeed));
         }
+        isSkipWrite = false;
         isWrite = false;
     }
 
 
     /// <summary>
     /// スペースキー・Enterキー・左クリック・A / ×・RT / R2押下で次のメッセージを表示
+    /// 誤って連続で飛ばさないよう、以下の場合は送り操作を受け付けない
+    /// ・メッセージ表示からadvanceInputDelay秒経っていない(連打・押しっぱなし対策)
+    /// ・前のメッセージを送ったのと同じフレーム(1回の入力で2つ進む対策)
+    /// ・メッセージの書き途中(1回目の操作で全文表示し、2回目の操作で次へ進む)
     /// </summary>
     /// <returns></returns>
     async UniTask ShowNextMessage()
     {
-        await UniTask.WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)
-            || Input.GetMouseButtonDown(0) || GamepadInput.IsStoryAdvancePressed());
+        //入力受付の開始時刻・フレーム(Time.timeScaleの影響を受けないよう実時間で計る)
+        float startTime = Time.realtimeSinceStartup;
+        int startFrame = Time.frameCount;
 
-        //ポーズパネル・ゴールパネルを開いている間は、次のメッセージを進めない
-        if (goal != null && PauseController.instance != null)
+        while (true)
         {
-            if (PauseController.instance.GetIsPause() || goal.GetIsGoalPanel())
+            await UniTask.WaitUntil(() => Time.frameCount > startFrame
+                && Time.realtimeSinceStartup - startTime >= advanceInputDelay
+                && IsAdvanceInputPressed());
+
+            //書き途中の場合は全文表示し、もう一度押されるのを待つ
+            if (isWrite)
             {
-                await ShowNextMessage();
+                isSkipWrite = true;
+                await UniTask.WaitUntil(() => !isWrite);
+
+                startTime = Time.realtimeSinceStartup;
+                startFrame = Time.frameCount;
+                continue;
             }
+
+            //ポーズパネル・ゴールパネルを開いている間は、次のメッセージを進めない
+            if (goal != null && PauseController.instance != null
+                && (PauseController.instance.GetIsPause() || goal.GetIsGoalPanel()))
+            {
+                startTime = Time.realtimeSinceStartup;
+                startFrame = Time.frameCount;
+                continue;
+            }
+
+            break;
         }
+    }
+
+    /// <summary>
+    /// メッセージ送りの操作(スペースキー・Enterキー・左クリック・A / ×・RT / R2)が押された瞬間か
+    /// </summary>
+    /// <returns>押された瞬間ならtrue</returns>
+    private bool IsAdvanceInputPressed()
+    {
+        return Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return)
+            || Input.GetMouseButtonDown(0) || GamepadInput.IsStoryAdvancePressed();
     }
 
     /// <summary>
