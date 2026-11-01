@@ -436,6 +436,15 @@ public class PlayerCamera : MonoBehaviour
                 keepMouseSensitivitySlider = GameController.lookSensitivity;
 
                 wasTrunLastFrame = true;
+
+                //プレイヤーの身体のモデルを非表示にする(プレイヤー自身が見えてしまうのを防ぐため)
+                foreach (GameObject playerBody in Player.instance.GetPlayerBodys())
+                {
+                    if (playerBody != null)
+                    {
+                        playerBody.SetActive(false);
+                    }
+                }
             }
         }
         else if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame 
@@ -449,6 +458,15 @@ public class PlayerCamera : MonoBehaviour
                 transform.localPosition = new Vector3(0, 1.5f, 0.1f);
             }
             wasTrunLastFrame = false;
+
+            //プレイヤーの身体のモデルを表示する
+            foreach (GameObject playerBody in Player.instance.GetPlayerBodys())
+            {
+                if (playerBody != null)
+                {
+                    playerBody.SetActive(true);
+                }
+            }
         }
 
         if ( 0 < GameController.lookSensitivity && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame 

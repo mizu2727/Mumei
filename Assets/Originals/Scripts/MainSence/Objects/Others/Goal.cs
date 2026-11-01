@@ -137,6 +137,19 @@ public class Goal : MonoBehaviour
     }
 
     /// <summary>
+    /// ゴールパネルを閉じたフレーム番号
+    /// </summary>
+    private int lastClosedGoalPanelFrame = -100;
+
+    /// <summary>
+    /// ゴールパネルを閉じた後、再度開けないようにするフレーム数
+    /// (コントローラーの×/Aで「戻る」を押すと、同じボタン入力でPlayerInteractのインタラクトも反応し、
+    /// 閉じた直後に再度ゴールパネルが開いてしまうのを防ぐため)
+    /// </summary>
+    private const int kReopenBlockFrames = 1;
+
+
+    /// <summary>
     /// オブジェクト破棄時の処理
     /// </summary>
     private void OnDestroy() 
@@ -223,17 +236,10 @@ public class Goal : MonoBehaviour
             }
         }
 
-        if (isGoalPanel) 
-        {
-            Debug.Log("ゴールパネル表示中");
-        }
-
         //B / ○でUIの「戻る」
         if (GamepadInput.IsCancelPressed() && isGoalPanel
             && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && Player.instance.GetDieMode() != DieMode.Die)
         {
-            Debug.Log("B / ○でUIの「戻る」");
-
             OnClickedReturnToInGameButton();
 
             return;
@@ -245,6 +251,14 @@ public class Goal : MonoBehaviour
     /// </summary>
     public async void GoalCheck()
     {
+        //ゴールパネルを閉じた直後の場合
+        //(×/Aで「戻る」を押した入力で、同じフレーム内にインタラクトが反応して再度開くのを防ぐ)
+        if (Time.frameCount - lastClosedGoalPanelFrame <= kReopenBlockFrames)
+        {
+            //処理をスキップ
+            return;
+        }
+
         //アイテムのnullチェック
         sO_Item.CleanNullItems();
 
@@ -479,6 +493,9 @@ public class Goal : MonoBehaviour
         //パネル非表示
         isGoalPanel = false;
         ViewGoalPanel();
+
+        //閉じたフレームを記録(同じボタン入力で再度開かないようにするため)
+        lastClosedGoalPanelFrame = Time.frameCount;
 
         //チュートリアルの場合、ストーリーモードへ変更(ゴールオブジェクトへのインタラクト操作を高速で行うと、ゲーム進行不可になるバグを防ぐ用)
         if (GameController.instance.GetIsTutorialGoalFlag()) 

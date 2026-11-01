@@ -350,9 +350,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         EnemyAttackScreen.instance.SetIsViewEnemyAttackScreen(true);
 
         //プレイヤーの身体のパーツを非表示にする(敵が襲う演出でプレイヤー自身が見えてしまうのを防ぐため)
-        for (int i = 0; i < Player.instance.playerBodys.Length; i++)
+        for (int i = 0; i < Player.instance.GetPlayerBodys().Length; i++)
         {
-            Player.instance.playerBodys[i].SetActive(false);
+            Player.instance.GetPlayerBodys()[i].SetActive(false);
         }
 
         //カメラの上下左右回転をリセット

@@ -64,7 +64,25 @@ public class Player : MonoBehaviour, CharacterInterface
 
 
     [Header("プレイヤーモデルのGameObject(ヒエラルキー上からアタッチすること)")]
-    [SerializeField] public GameObject[] playerBodys;
+    [SerializeField] private GameObject[] playerBodys;
+
+    /// <summary>
+    /// プレイヤーモデルのGameObjectを取得
+    /// </summary>
+    /// <returns>プレイヤーモデルのGameObject</returns>
+    public GameObject[] GetPlayerBodys()
+    {
+        return playerBodys;
+    }
+
+    /// <summary>
+    /// プレイヤーモデルのGameObjectを設定
+    /// </summary>
+    /// <param name="newPlayerBodys">プレイヤーモデルのGameObject</param>
+    public void SetPlayerBodys(GameObject[] newPlayerBodys)
+    {
+        playerBodys = newPlayerBodys;
+    }
 
     [Header("プレイヤーのZoomObject(ヒエラルキー上からアタッチすること)")]
     [SerializeField] private GameObject playerZoomObject;
@@ -819,6 +837,15 @@ public class Player : MonoBehaviour, CharacterInterface
         else
         {
             Debug.LogWarning("CapsuleColliderまたはCharacterControllerが見つかりません。");
+        }
+
+        //プレイヤーの身体のモデルを表示する
+        foreach (GameObject playerBody in playerBodys)
+        {
+            if (playerBody != null)
+            {
+                playerBody.SetActive(true);
+            }
         }
 
         //プレイヤーの初期位置
