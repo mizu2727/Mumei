@@ -512,15 +512,15 @@ public class PlayerInteract : MonoBehaviour
                     //対象のゴール
                     goal = raycastHit.transform.gameObject.GetComponent<Goal>();
 
-                    //ゴールチェック
-                    if (!goal.GetIsGoalPanel() && goal != null)
+                    //ゴールが存在する&&ゴールパネルを表示していない場合
+                    //(goalがnullの場合にエラーにならないよう、nullチェックを先に行う)
+                    if (goal != null && !goal.GetIsGoalPanel())
                     {
                         //ゴールの処理
+                        //(isGoalPanelはゴールパネルを閉じる時にOnClickedReturnToInGameButton内でfalseに戻すため、ここでは戻さない。
+                        //ここでfalseに戻すと、ゴールパネル表示中なのにisGoalPanelがfalseになり、
+                        //○ / Bでの「戻る」・ポーズ禁止・メッセージ送り禁止の判定が効かなくなる)
                         goal.GoalCheck();
-
-                        //ゴールパネルを非表示にする際に、
-                        //goal.isGoalPanelがtrueのままになってしまうバグを防ぐ
-                        goal.SetIsGoalPanel(false);
                     }
 
                     //処理を終了
