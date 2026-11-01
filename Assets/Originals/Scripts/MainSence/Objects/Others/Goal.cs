@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static GameController;
+using static Player;
 
 
 
@@ -96,8 +97,28 @@ public class Goal : MonoBehaviour
     /// </summary>
     private bool isMovingGoalWall;
 
-    [Header("ゴールパネルフラグ")]
-    public bool isGoalPanel;
+    /// <summary>
+    /// ゴールパネルフラグ
+    /// </summary>
+    private bool isGoalPanel;
+
+    /// <summary>
+    /// ゴールパネルフラグを取得する
+    /// </summary>
+    /// <returns>ゴールパネルフラグ</returns>
+    public bool GetIsGoalPanel()
+    {
+        return isGoalPanel;
+    }
+
+    /// <summary>
+    /// ゴールパネルフラグを設定する
+    /// </summary>
+    /// <param name="value">ゴールパネルフラグ</param>
+    public void SetIsGoalPanel(bool value)
+    {
+        isGoalPanel = value;
+    }
 
     [Header("チュートリアルフラグ(チュートリアルステージでオンになる)")]
     [SerializeField] public bool isTutorial;
@@ -194,6 +215,17 @@ public class Goal : MonoBehaviour
                 isMovingGoalWall = false;
             }
         }
+
+        //B / ○でUIの「戻る」
+        if (GamepadInput.IsCancelPressed() && isGoalPanel
+            && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && Player.instance.GetDieMode() != DieMode.Die)
+        {
+            Debug.Log("B / ○でUIの「戻る」");
+
+            OnClickedReturnToInGameButton();
+
+            return;
+        }
     }
 
     /// <summary>
@@ -251,7 +283,7 @@ public class Goal : MonoBehaviour
         MessageController.instance.ShowGoalMessage(3);
 
         //MysteryItemはUpdateSelectMysteryItemUIで処理するため、ここでは保持しない
-        var mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
+        List<SO_Item.ItemData> mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
         
         //ゴールパネルを表示
         ViewGoalPanel();
@@ -389,7 +421,7 @@ public class Goal : MonoBehaviour
     /// <param name="index"></param>
     public void OnClickedselectMysteryItemButton(int index)
     {
-        var mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
+        List<SO_Item.ItemData> mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
 
         if (index < mysteryItems.Count && mysteryItems[index] != null)
         {
@@ -459,7 +491,7 @@ public class Goal : MonoBehaviour
     private void UpdateSelectMysteryItemUI()
     {
         //itemListからMysteryItemを取得
-        var mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
+        List<SO_Item.ItemData> mysteryItems = sO_Item.itemList.FindAll(item => item != null && item.itemType == ItemType.MysteryItem);
 
         for (int i = 0; i < selectMysteryItemButton.Length; i++)
         {

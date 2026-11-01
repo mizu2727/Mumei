@@ -43,8 +43,6 @@ public partial class PauseController
                 SetSelectOnDown(viewDocumentButton
                     , mysteryItemNameButton != null ? mysteryItemNameButton[0] : null
                     , returnToPausePanelButton);
-
-                Debug.Log("ミステリーアイテムパネルが表示されている場合:ドキュメントボタンの下は、1つ目のミステリーアイテム名称ボタン、戻るボタンの順に優先する");
             }
             //彷徨う者パネルが表示されている場合
             else if (isWandererPanel)
@@ -53,8 +51,6 @@ public partial class PauseController
                 SetSelectOnDown(viewDocumentButton
                     , wandererNameButton != null ? wandererNameButton[0] : null
                     , returnToPausePanelButton);
-
-                Debug.Log("彷徨う者パネルが表示されている場合:ドキュメントボタンの下は、1つ目の彷徨う者名称ボタン、戻るボタンの順に優先する");
             }
             //アーカイブパネルが表示されている場合
             else if (isArchivePanel)
@@ -63,15 +59,11 @@ public partial class PauseController
                 SetSelectOnDown(viewDocumentButton
                         , wandererButton != null ? wandererButton.GetComponent<Button>() : null
                         , returnToPausePanelButton);
-
-                Debug.Log("アーカイブパネルが表示されている場合:ドキュメントボタンの下は、彷徨う者ボタン、戻るボタンの順に優先する");
             }
             else 
             {
                 //ドキュメントボタンの下は、戻るボタンを優先する
                 SetSelectOnDown(viewDocumentButton, returnToPausePanelButton);
-
-                Debug.Log("ドキュメントパネルが非表示の場合:ドキュメントボタンの下は、戻るボタンを優先する");
             }
         }
     }

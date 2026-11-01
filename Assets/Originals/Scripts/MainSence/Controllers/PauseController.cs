@@ -1170,7 +1170,7 @@ public partial class PauseController : MonoBehaviour
         if (!player.IsDead && !isPause && !isViewItemsPanel && !isArchivePanel
             && !isDocumentPanel && !isDocumentExplanationPanel && !isMysteryItemPanel
             && !isMysteryItemExplanationPanel && !isRetirePanel
-            && (CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name || !goal.isGoalPanel) 
+            && (CommonController.instance.GetHome02SceneName() == SceneManager.GetActiveScene().name || !goal.GetIsGoalPanel()) 
             && Time.timeScale != 0)
         {
             ViewPausePanel();
@@ -1706,7 +1706,6 @@ public partial class PauseController : MonoBehaviour
                     , documentNameButton != null ? documentNameButton : null
                     , returnToPausePanelButton);
 
-                Debug.Log("ドキュメントパネルが表示されている場合: アーカイブボタンの下は、ドキュメント名称ボタン、戻るボタンの順に優先する");
             }
             //ミステリーアイテムパネルが表示されている場合
             else if (isMysteryItemPanel)
@@ -1715,15 +1714,11 @@ public partial class PauseController : MonoBehaviour
                 SetSelectOnDown(archiveButton
                     , mysteryItemNameButton != null ? mysteryItemNameButton[0] : null
                     , returnToPausePanelButton);
-
-                Debug.Log("ミステリーアイテムパネルが表示されている場合: アーカイブボタンの下は、1つ目のミステリーアイテム名称ボタン、戻るボタンの順に優先する");
             }
             else 
             {
                 //アーカイブボタンの下は、戻るボタンを優先する
                 SetSelectOnDown(archiveButton, returnToPausePanelButton);
-
-                Debug.Log("アーカイブパネルが表示されていない場合: アーカイブボタンの下は、戻るボタンを優先する");
             }
         }
     }
