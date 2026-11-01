@@ -248,7 +248,7 @@ public class SteamGamepadNameInput : MonoBehaviour
             {
                 return false;
             }
-            return SteamUtils.IsSteamRunningOnSteamDeck() || SteamUtils.IsOverlayEnabled();
+            return IsRunningOnSteamDeck() || SteamUtils.IsOverlayEnabled();
         }
         catch (Exception)
         {
@@ -259,15 +259,17 @@ public class SteamGamepadNameInput : MonoBehaviour
 
     /// <summary>
     /// Steam Deckで動いているか
+    /// (SteamUtils.IsSteamRunningOnSteamDeckは現在のSteamworks.NETから削除されているため、
+    ///  Steam DeckでSteamが設定する環境変数「SteamDeck=1」で判定する)
     /// </summary>
     private static bool IsRunningOnSteamDeck()
     {
-#if DISABLESTEAMWORKS || UNITY_EDITOR
+#if UNITY_EDITOR
         return false;
 #else
         try
         {
-            return SteamManager.Initialized && SteamUtils.IsSteamRunningOnSteamDeck();
+            return Environment.GetEnvironmentVariable("SteamDeck") == "1";
         }
         catch (Exception)
         {
