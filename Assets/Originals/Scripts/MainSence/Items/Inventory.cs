@@ -513,6 +513,8 @@ public class Inventory : MonoBehaviour
             {
                 //スタミナ増強剤使用時間を減少させる
                 staminaUseTime -= Time.deltaTime;
+
+                Debug.Log("スタミナ増強剤使用時間: " + staminaUseTime.ToString("F2") + "秒");
             }
             //スタミナ増強剤使用時間が0以下になった場合
             else
@@ -636,8 +638,12 @@ public class Inventory : MonoBehaviour
                 useItemCountText.text = keepItemCount.ToString();
                 sO_Item.ReduceUseItem(keepItemId, keepItemCount);
 
-                //スタミナゲージの元の色を保存
-                keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
+                //スタミナ増強剤を使用中ではない場合
+                if (!isUseStaminaItem) 
+                {
+                    //スタミナゲージの元の色を保存
+                    keepStaminaColor = Player.instance.staminaSlider.fillRect.GetComponent<Image>().color;
+                }
 
                 //スタミナ消費率を12.5%に変更
                 Player.instance.SetStaminaConsumeRatio(kSpecifiedStaminaConsumeRatio);
@@ -711,6 +717,8 @@ public class Inventory : MonoBehaviour
 
         //スタミナ増強剤使用フラグをfalseに設定
         isUseStaminaItem = false;
+
+        Debug.Log("スタミナ増強剤の効果が終了しました");
     }
 
     /// <summary>

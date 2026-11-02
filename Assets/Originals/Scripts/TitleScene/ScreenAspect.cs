@@ -12,7 +12,6 @@ public class ScreenAspect : MonoBehaviour
     public static ScreenAspect instance;
 
     
-
     /// <summary>
     /// フルスクリーンフラグ
     /// </summary>
@@ -21,108 +20,132 @@ public class ScreenAspect : MonoBehaviour
     /// <summary>
     /// 画面解像度1366*768のX部分
     /// </summary>
-    const int kCoustomResolutionX01 = 1366;
+    private const int kCoustomResolutionX01 = 1366;
 
     /// <summary>
     /// 画面解像度1366*768のY部分
     /// </summary>
-    const int kCoustomResolutionY01 = 768;
+    private const int kCoustomResolutionY01 = 768;
+
+    /// <summary>
+    /// 画面解像度1280*720のX部分
+    /// </summary>
+    private const int kCoustomResolutionX01_00 = 1280;
+
+    /// <summary>
+    /// 画面解像度1280*720のY部分
+    /// </summary>
+    private const int kCoustomResolutionY01_00 = 720;
 
     /// <summary>
     /// 画面解像度1280*780のX部分
     /// </summary>
-    const int kCoustomResolutionX01_01 = 1280;
+    private const int kCoustomResolutionX01_01 = 1280;
 
     /// <summary>
     /// 画面解像度1280*780のY部分
     /// </summary>
-    const int kCoustomResolutionY01_01 = 780;
+    private const int kCoustomResolutionY01_01 = 780;
 
     /// <summary>
     /// 画面解像度1280*1024のX部分
     /// </summary>
-    const int kCoustomResolutionX02 = 1280;
+    private const int kCoustomResolutionX02 = 1280;
 
     /// <summary>
     /// 画面解像度1280*1024のY部分
     /// </summary>
-    const int kCoustomResolutionY02 = 1024;
+    private const int kCoustomResolutionY02 = 1024;
+
+    /// <summary>
+    /// 画面解像度1600*900のX部分
+    /// </summary>
+    private const int kCoustomResolutionX02_02 = 1600;
+
+    /// <summary>
+    /// 画面解像度1600*900のY部分
+    /// </summary>
+    private const int kCoustomResolutionY02_02 = 900;
 
     /// <summary>
     /// 画面解像度1600*1200のX部分
     /// </summary>
-    const int kCoustomResolutionX03 = 1600;
+    private const int kCoustomResolutionX03 = 1600;
 
     /// <summary>
     /// 画面解像度1600*1200のY部分
     /// </summary>
-    const int kCoustomResolutionY03 = 1200;
+    private const int kCoustomResolutionY03 = 1200;
 
     /// <summary>
     /// デフォルトの画面解像度1920*1080、1920*1200のX部分
     /// </summary>
-    const int kDefaultResolutionX = 1920;
+    private const int kDefaultResolutionX = 1920;
 
     /// <summary>
     /// デフォルトの画面解像度1920*1080のY部分
     /// </summary>
-    const int kDefaultResolutionY = 1080;
+    private const int kDefaultResolutionY = 1080;
 
     /// <summary>
     /// 画面解像度2560*1440のX部分
     /// </summary>
-    const int kCoustomResolutionX06 = 2560;
+    private const int kCoustomResolutionX06 = 2560;
 
     /// <summary>
     /// 画面解像度2560*1440のY部分
     /// </summary>
-    const int kCoustomResolutionY06 = 1440;
+    private const int kCoustomResolutionY06 = 1440;
 
     /// <summary>
     /// 画面解像度3840*2160のX部分
     /// </summary>
-    const int kCoustomResolutionX07 = 3840;
+    private const int kCoustomResolutionX07 = 3840;
 
     /// <summary>
     /// 画面解像度3840*2160のY部分
     /// </summary>
-    const int kCoustomResolutionY07 = 2160;
+    private const int kCoustomResolutionY07 = 2160;
 
     /// <summary>
     /// 画面解像度7680*4320のX部分
     /// </summary>
-    const int kCoustomResolutionX08 = 7680;
+    private const int kCoustomResolutionX08 = 7680;
 
     /// <summary>
     /// 画面解像度7680*4320のY部分
     /// </summary>
-    const int kCoustomResolutionY08 = 4320;
+    private const int kCoustomResolutionY08 = 4320;
 
     /// <summary>
     /// 画面解像度X配列
     /// </summary>
-    int[] ResolutionXArray = { kCoustomResolutionX01, kCoustomResolutionX01_01, kCoustomResolutionX02
-            , kCoustomResolutionX03, kDefaultResolutionX
-            , kDefaultResolutionX, kCoustomResolutionX06
-            , kCoustomResolutionX07, kCoustomResolutionX08};
+    private int[] ResolutionXArray = { kCoustomResolutionX01, kCoustomResolutionX01_00
+            , kCoustomResolutionX01_01, kCoustomResolutionX02
+            , kCoustomResolutionX02_02, kCoustomResolutionX03
+            , kDefaultResolutionX, kDefaultResolutionX
+            , kCoustomResolutionX06, kCoustomResolutionX07
+            , kCoustomResolutionX08};
 
     /// <summary>
     /// 画面解像度Y配列
     /// </summary>
-    int[] ResolutionYArray = { kCoustomResolutionY01, kCoustomResolutionY01_01, kCoustomResolutionY02
-            , kCoustomResolutionY03, kDefaultResolutionY
-            , kCoustomResolutionY03, kCoustomResolutionY06
-            , kCoustomResolutionY07, kCoustomResolutionY08};
+    private int[] ResolutionYArray = { kCoustomResolutionY01, kCoustomResolutionY01_00
+            , kCoustomResolutionY01_01, kCoustomResolutionY02
+            , kCoustomResolutionY02_02, kCoustomResolutionY03
+            , kDefaultResolutionY, kCoustomResolutionY03
+            , kCoustomResolutionY06, kCoustomResolutionY07
+            , kCoustomResolutionY08};
 
     /// <summary>
     /// 解像度の配列インデックス番号
     /// </summary>
-    int ResolutionArrayIndex;
+    private int ResolutionArrayIndex;
 
     /// <summary>
     /// デフォルトの解像度の配列インデックス番号
     /// </summary>
-    int kDefaultResolutionArrayIndex = 4;
+    private int kDefaultResolutionArrayIndex = 4;
 
     /// <summary>
     /// 解像度の配列インデックス番号を設定
