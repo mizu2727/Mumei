@@ -513,8 +513,6 @@ public partial class Inventory : MonoBehaviour
             {
                 //スタミナ増強剤使用時間を減少させる
                 staminaUseTime -= Time.deltaTime;
-
-                Debug.Log("スタミナ増強剤使用時間: " + staminaUseTime.ToString("F2") + "秒");
             }
             //スタミナ増強剤使用時間が0以下になった場合
             else
@@ -602,8 +600,6 @@ public partial class Inventory : MonoBehaviour
 
         //スタミナ増強剤使用フラグをfalseに設定
         isUseStaminaItem = false;
-
-        Debug.Log("スタミナ増強剤の効果が終了しました");
     }
 
     /// <summary>
