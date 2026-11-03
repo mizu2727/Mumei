@@ -2307,18 +2307,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
 
                 //調査ステートへの移行時間をリセット
                 changeToInvestigateTimer = 0f;
-
-                /*
-                await UniTask.Delay(TimeSpan.FromSeconds(0.3));
-
-                //画面の色を元に戻す(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
-                //通常プレイモード&&パネルがnull以外の場合
-                if (GameController.instance.gameModeStatus == GameModeStatus.PlayInGame && playerFoundPanel != null)
-                {
-                    playerFoundPanel.SetActive(false);
-                }
-                */
-
                 break;
         }
 

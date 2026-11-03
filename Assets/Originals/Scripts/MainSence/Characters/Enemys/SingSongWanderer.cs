@@ -480,6 +480,12 @@ public class SingSongWanderer : HearingEnemy
         //歌を最後まで聞いたフラグをオンにする
         isSongFinished = true;
 
+        //画面を赤く表示
+        playerFoundPanel.SetActive(true);
+
+        //ステージBGMからプレイヤーを追従するBGMへ切り替える
+        EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
+
         //無限追従モードに切り替える
         currentState = EnemyState.InfinityChase;
 
