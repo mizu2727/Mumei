@@ -11,21 +11,55 @@ using static Player;
 /// </summary>
 public class SingSongWanderer : HearingEnemy
 {
-    /// <summary>
-    /// 歌う時間
-    /// </summary>
-    private float singTime;
+    /*---------------------------------------------
+     * 歌(walkSE)関連
+     --------------------------------------------*/
+
+    [Header("歌(walkSE)を再生する、プレイヤーとの距離(m)")]
+    [SerializeField] private float singZoneDistance = 10.0f;
 
     /// <summary>
-    /// 最大の歌う時間
+    /// 最後まで再生したと判定する許容誤差(秒)
+    /// (再生が止まった時点の再生位置が「曲の長さ - この値」以上なら最後まで聞いたとみなす)
     /// </summary>
-    private const float kMaxSingTime = 35.0f;
-
+    private const float kSongEndTolerance = 1.0f;
 
     /// <summary>
-    /// 歌う範囲の距離
+    /// 歌(walkSE)用のaudioSource
+    /// (BaseEnemyの移動音用audioSourceとは別にし、他の敵の移動音処理に影響させない)
     /// </summary>
-    private const float kSingZoneDistance = 10.0f;
+    private AudioSource audioSourceSong;
+
+    /// <summary>
+    /// 歌を再生中フラグ(一時停止中も含む)
+    /// </summary>
+    private bool isSinging = false;
+
+    /// <summary>
+    /// 歌を一時停止中フラグ(ポーズ中など)
+    /// </summary>
+    private bool isSongPaused = false;
+
+    /// <summary>
+    /// 前フレームまでの歌の再生位置(秒)
+    /// </summary>
+    private float lastSongTime = 0f;
+
+    /// <summary>
+    /// 歌を最後まで聞いたフラグ(一度trueになったら無限追従を続ける)
+    /// </summary>
+    private bool isSongFinished = false;
+
+    /// <summary>
+    /// 歌(walkSE)が見つからない警告を出したフラグ(毎フレーム警告を出さないため)
+    /// </summary>
+    private bool isSongMissingWarned = false;
+
+    /// <summary>
+    /// BaseEnemyの移動音の自動再生を行うか
+    /// 歌い終わるまではwalkSEを歌としてこのクラスで制御し、歌い終わった後(無限追従)はBaseEnemyの走る音に任せる
+    /// </summary>
+    protected override bool UseDefaultMoveSE => isSongFinished;
 
 
     /*---------------------------------------------
@@ -156,9 +190,9 @@ public class SingSongWanderer : HearingEnemy
 
     /// <summary>
     /// プレイヤーを検知(視認・音)して警戒・追従・調査を開始できるか
-    /// 歌い終わる(無限追従モードになる)までは検知せず、徘徊しながら歌うだけにする
+    /// 歌い終わるまでは検知せず、徘徊しながら歌うだけにする
     /// </summary>
-    protected override bool CanDetectPlayer => currentState == EnemyState.InfinityChase;
+    protected override bool CanDetectPlayer => isSongFinished;
 
     /// <summary>
     /// 「みーつけた」音声用のaudioSource
@@ -208,11 +242,16 @@ public class SingSongWanderer : HearingEnemy
     /*
      * ※Start()を定義するとBaseEnemyのStart()が呼ばれなくなる(Unityは最派生クラスのStartのみ呼ぶ)ため、
      *   初期化はAwake()で行うこと。
+     *   OnEnable()/OnDisable()も同様にBaseEnemy側が呼ばれなくなるため、このクラスでは定義しないこと。
      */
     private void Awake()
     {
         //初期化
-        singTime = 0f;
+        isSinging = false;
+        isSongPaused = false;
+        lastSongTime = 0f;
+        isSongFinished = false;
+        isSongMissingWarned = false;
         isFoundSequenceRunning = false;
         isHeadLookActive = false;
         currentHeadWeight = 0f;
@@ -228,8 +267,18 @@ public class SingSongWanderer : HearingEnemy
             return;
         }
 
+        //歌い終わった後に無限追従モード以外になっていた場合
+        //(BaseEnemyのダメージ処理は状態を調査状態に変えたまま戻さないため、ダメージ終了後に無限追従へ戻す)
+        if (isSongFinished)
+        {
+            if (currentState != EnemyState.InfinityChase && !GetIsReceiveDamage())
+            {
+                //無限追従モードに戻す
+                currentState = EnemyState.InfinityChase;
+            }
+        }
         //歌い終わる前に警戒・追従・調査状態になっていた場合(ダメージ処理で調査状態へ移行した場合など)
-        if (currentState == EnemyState.Alert || currentState == EnemyState.Chase || currentState == EnemyState.Investigate)
+        else if (currentState == EnemyState.Alert || currentState == EnemyState.Chase || currentState == EnemyState.Investigate)
         {
             //通常徘徊状態へ戻す
             ReturnToPatrolWhileSinging();
@@ -240,42 +289,201 @@ public class SingSongWanderer : HearingEnemy
         //プレイヤーが存在しない場合||通常プレイ以外の場合(プレイヤー死亡後のエラー防止)
         if (Player.instance == null || GameController.instance.GetGameModeStatus() != GameModeStatus.PlayInGame)
         {
-            //処理をスキップ
-            return;
-        }
-
-        //無限追従モードの場合
-        if (currentState == EnemyState.InfinityChase)
-        {
-            //隠れているハイドポイントに近づいたかを判定(接触判定の補助)
-            CheckFoundHiddenPlayerByDistance();
+            //歌を一時停止
+            PauseSong();
 
             //処理をスキップ
             return;
         }
 
-        //プレイヤーが、歌う範囲内にいる場合
-        if (Vector3.Distance(transform.position, Player.instance.transform.position) <= kSingZoneDistance)
+        //歌い終わった場合(無限追従モード、またはダメージ中)
+        if (isSongFinished)
         {
-            //歌う時間を加算する
-            singTime += Time.deltaTime;
-
-            //全て歌い終わった場合
-            if (singTime >= kMaxSingTime)
+            //無限追従モードの場合
+            if (currentState == EnemyState.InfinityChase)
             {
-                //歌う時間をリセットする
-                singTime = 0f;
+                //隠れているハイドポイントに近づいたかを判定(接触判定の補助)
+                CheckFoundHiddenPlayerByDistance();
+            }
 
-                //無限追従モードに切り替える
-                currentState = EnemyState.InfinityChase;
+            //処理をスキップ
+            return;
+        }
+
+        //歌(walkSE)の再生・停止・最後まで聞いたかの判定
+        UpdateSong();
+    }
+
+    /*---------------------------------------------
+     * 歌(walkSE)の制御
+     --------------------------------------------*/
+
+    /// <summary>
+    /// 歌(walkSE)の再生・停止・最後まで聞いたかの判定
+    /// ・プレイヤーが近づいたら最初から再生
+    /// ・途中で離れたら停止(再度近づいたら最初から再生し直す)
+    /// ・最後まで聞いたら無限追従モードへ移行
+    /// </summary>
+    private void UpdateSong()
+    {
+        //ポーズ中の場合
+        if (Time.timeScale == 0f || (PauseController.instance != null && PauseController.instance.GetIsPause()))
+        {
+            //歌を一時停止(ポーズ中に歌が進んで終わってしまうのを防ぐ)
+            PauseSong();
+
+            //処理をスキップ
+            return;
+        }
+
+        //一時停止していた場合は再開
+        ResumeSong();
+
+        //歌を再生中の場合
+        if (isSinging)
+        {
+            //再生が続いている場合
+            if (audioSourceSong != null && audioSourceSong.isPlaying)
+            {
+                //再生位置を記録
+                lastSongTime = audioSourceSong.time;
+
+                //音量をSE音量に合わせる(設定画面で変更された場合に反映するため)
+                UpdateSongVolume();
+            }
+            //再生が止まった場合(このクラスで止めていない = 曲の終わりまで再生された)
+            else
+            {
+                //最後まで再生されたか(曲の終わり付近まで進んでいたか)を判定
+                AudioClip clip = audioSourceSong != null ? audioSourceSong.clip : null;
+                bool isReachedEnd = clip != null && lastSongTime >= clip.length - kSongEndTolerance;
+
+                //歌を停止状態にする
+                StopSong();
+
+                //最後まで聞いた場合
+                if (isReachedEnd)
+                {
+                    //無限追従モードへ移行
+                    FinishSong();
+
+                    //処理をスキップ
+                    return;
+                }
             }
         }
-        //プレイヤーが、歌う範囲外にいる場合
-        else
+
+        //プレイヤーとの距離が近いかを判定
+        bool isPlayerNear = Vector3.Distance(transform.position, Player.instance.transform.position) <= singZoneDistance;
+
+        //近づいた場合&&歌っていない場合
+        if (isPlayerNear && !isSinging)
         {
-            //歌う時間をリセットする
-            singTime = 0f;
+            //最初から歌う
+            StartSong();
         }
+        //離れた場合&&歌っている場合
+        else if (!isPlayerNear && isSinging)
+        {
+            //歌を停止(次に近づいた時は最初から)
+            StopSong();
+        }
+    }
+
+    /// <summary>
+    /// 歌(walkSE)を最初から再生する
+    /// </summary>
+    private void StartSong()
+    {
+        //walkSEを取得
+        AudioClip clip = sO_SE != null ? sO_SE.GetSEClip(WalkSEid) : null;
+        if (clip == null)
+        {
+            if (!isSongMissingWarned)
+            {
+                Debug.LogWarning($"[{gameObject.name}] 歌(walkSE ID:{WalkSEid})が見つかりません。EnemyInformationのwalkSEIdを確認してください。");
+                isSongMissingWarned = true;
+            }
+            return;
+        }
+
+        //歌用のaudioSourceを準備
+        audioSourceSong = CreateSEAudioSourceIfNeeded(audioSourceSong);
+        audioSourceSong.clip = clip;
+        audioSourceSong.loop = false;
+        audioSourceSong.pitch = 1.0f;
+
+        //最初から再生
+        audioSourceSong.time = 0f;
+        audioSourceSong.Play();
+
+        isSinging = true;
+        isSongPaused = false;
+        lastSongTime = 0f;
+    }
+
+    /// <summary>
+    /// 歌(walkSE)を停止する(次は最初から再生)
+    /// </summary>
+    private void StopSong()
+    {
+        if (audioSourceSong != null)
+        {
+            audioSourceSong.Stop();
+        }
+
+        isSinging = false;
+        isSongPaused = false;
+        lastSongTime = 0f;
+    }
+
+    /// <summary>
+    /// 歌(walkSE)を一時停止する
+    /// </summary>
+    private void PauseSong()
+    {
+        if (isSinging && !isSongPaused && audioSourceSong != null && audioSourceSong.isPlaying)
+        {
+            audioSourceSong.Pause();
+            isSongPaused = true;
+        }
+    }
+
+    /// <summary>
+    /// 一時停止した歌(walkSE)を再開する
+    /// </summary>
+    private void ResumeSong()
+    {
+        if (isSinging && isSongPaused && audioSourceSong != null)
+        {
+            audioSourceSong.UnPause();
+            isSongPaused = false;
+        }
+    }
+
+    /// <summary>
+    /// 歌の音量をSE音量に合わせる
+    /// </summary>
+    private void UpdateSongVolume()
+    {
+        if (audioSourceSong != null && MusicController.instance != null && MusicController.instance.sESlider != null)
+        {
+            audioSourceSong.volume = MusicController.instance.sESlider.value;
+        }
+    }
+
+    /// <summary>
+    /// 歌を最後まで聞いた場合の処理(無限追従モードへ移行)
+    /// </summary>
+    private void FinishSong()
+    {
+        //歌を最後まで聞いたフラグをオンにする
+        isSongFinished = true;
+
+        //無限追従モードに切り替える
+        currentState = EnemyState.InfinityChase;
+
+        Debug.Log($"[{gameObject.name}] 歌を最後まで聞いたため、無限追従モードへ移行");
     }
 
     /// <summary>
@@ -407,7 +615,7 @@ public class SingSongWanderer : HearingEnemy
         diff.y = 0f;
 
         //一定距離まで近づいた場合
-        if (diff.magnitude <= foundDistance && heightDiff <= kFoundVerticalRange)
+        if (diff.magnitude <= checkDistance && heightDiff <= kFoundVerticalRange)
         {
             //発見演出を開始
             TryStartFoundSequence(hiddenObject);
@@ -613,6 +821,9 @@ public class SingSongWanderer : HearingEnemy
     {
         //警戒音を停止
         StopFindPlayerSE();
+
+        //歌を停止
+        StopSong();
 
         //移動音を停止
         AudioSource moveSE = GetAudioSourceSE();

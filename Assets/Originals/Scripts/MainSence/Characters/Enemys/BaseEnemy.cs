@@ -297,6 +297,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     protected virtual bool CanDetectPlayer => true;
 
     /// <summary>
+    /// BaseEnemyの移動音(歩行音・ダッシュ音)の自動再生を行うか
+    /// 移動音を派生クラス側で独自に制御したい場合はoverrideしてfalseを返す(既定はtrue)
+    /// </summary>
+    protected virtual bool UseDefaultMoveSE => true;
+
+    /// <summary>
     /// 攻撃アニメーションの再生速度(1 = 通常速度)
     /// 敵ごとに変えたい場合は派生クラスでoverrideする
     /// </summary>
@@ -647,6 +653,11 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// ダッシュ音のID
     /// </summary>
     private int runSEid;
+
+    /// <summary>
+    /// 歩行音のIDを取得(派生クラスで移動音を独自に制御する用)
+    /// </summary>
+    protected int WalkSEid => walkSEid;
 
     /// <summary>
     /// プレイヤーを探す音用のaudioSource
@@ -2315,7 +2326,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         CheckStuck();
 
         //移動時の効果音処理(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
-        if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame)
+        //(派生クラスで移動音を独自に制御する場合は実行しない)
+        if (UseDefaultMoveSE && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame)
         {
             // 効果音制御
             currentSE = (currentState == EnemyState.Chase || currentState == EnemyState.InfinityChase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
