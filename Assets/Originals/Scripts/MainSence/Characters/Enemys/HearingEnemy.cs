@@ -152,7 +152,7 @@ public class HearingEnemy : BaseEnemy
         float distanceToPlayer = Vector3.Distance(transform.position, targetPoint.position);
 
         //放送スピーカーとの距離を計算し、範囲内のスピーカーを検知する
-        if (!isInvestigatingSound && !isInvestigatingBroadcastSound && BroadcastController.instance != null
+        if (CanDetectPlayer && !isInvestigatingSound && !isInvestigatingBroadcastSound && BroadcastController.instance != null
             && currentState != EnemyState.Investigate && currentState != EnemyState.Chase && currentState != EnemyState.InfinityChase)
         {
             //放送スピーカーのTransformのリストを取得
@@ -236,7 +236,7 @@ public class HearingEnemy : BaseEnemy
 
         //(プレイヤーのダッシュ音を検知||音を鳴らしてしまった場合)&&追従モード・無限追従モード以外の場合
         //プレイヤー追従時にダッシュ音を検知してしまうと追従状態から調査状態に移行してしまうため、追従モード以外の場合に限定する
-        if ((Player.instance.IsDash || Player.instance.GetIsMakeSound()) && !isInvestigatingSound && !Player.instance.GetIsPlayerHidden()
+        if (CanDetectPlayer && (Player.instance.IsDash || Player.instance.GetIsMakeSound()) && !isInvestigatingSound && !Player.instance.GetIsPlayerHidden()
             && distanceToPlayer <= soundDetectionRange && heightDifferenceToPlayer <= maxOtherSoundVerticalRange && currentState != EnemyState.Chase 
             && currentState != EnemyState.InfinityChase)
         {

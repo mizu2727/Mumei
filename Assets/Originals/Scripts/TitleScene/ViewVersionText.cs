@@ -12,7 +12,7 @@ public class ViewVersionText : MonoBehaviour
     /// <summary>
     /// VersionText‚Ì•¶Žš—ñ
     /// </summary>
-    private const string kVersion = "Ver Demo 1. 0. 26";
+    private const string kVersion = "Ver Demo 1. 0. 27";
 
     void Start()
     {

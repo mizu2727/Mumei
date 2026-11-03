@@ -291,6 +291,12 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     private bool isAttack = false;
 
     /// <summary>
+    /// プレイヤーを検知(視認・音)して警戒・追従・調査を開始できるか
+    /// 敵ごとに変えたい場合は派生クラスでoverrideする(既定はtrue)
+    /// </summary>
+    protected virtual bool CanDetectPlayer => true;
+
+    /// <summary>
     /// 攻撃アニメーションの再生速度(1 = 通常速度)
     /// 敵ごとに変えたい場合は派生クラスでoverrideする
     /// </summary>
@@ -2051,8 +2057,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 //警戒音を停止
                 StopFindPlayerSE();
 
-                //プレイヤーが視野内にいるかをチェック
-                if (distance <= alertRange)
+                //プレイヤーが視野内にいるかをチェック(検知できない敵の場合は徘徊を続ける)
+                if (CanDetectPlayer && distance <= alertRange)
                 {
                     if (IsPlayerInFront())
                     {

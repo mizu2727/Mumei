@@ -155,6 +155,12 @@ public class SingSongWanderer : HearingEnemy
     private bool isFoundSequenceRunning = false;
 
     /// <summary>
+    /// プレイヤーを検知(視認・音)して警戒・追従・調査を開始できるか
+    /// 歌い終わる(無限追従モードになる)までは検知せず、徘徊しながら歌うだけにする
+    /// </summary>
+    protected override bool CanDetectPlayer => currentState == EnemyState.InfinityChase;
+
+    /// <summary>
     /// 「みーつけた」音声用のaudioSource
     /// </summary>
     private AudioSource audioSourceFoundVoice;
@@ -222,6 +228,13 @@ public class SingSongWanderer : HearingEnemy
             return;
         }
 
+        //歌い終わる前に警戒・追従・調査状態になっていた場合(ダメージ処理で調査状態へ移行した場合など)
+        if (currentState == EnemyState.Alert || currentState == EnemyState.Chase || currentState == EnemyState.Investigate)
+        {
+            //通常徘徊状態へ戻す
+            ReturnToPatrolWhileSinging();
+        }
+
         base.Update();
 
         //プレイヤーが存在しない場合||通常プレイ以外の場合(プレイヤー死亡後のエラー防止)
@@ -262,6 +275,29 @@ public class SingSongWanderer : HearingEnemy
         {
             //歌う時間をリセットする
             singTime = 0f;
+        }
+    }
+
+    /// <summary>
+    /// 歌っている間は通常徘徊状態へ戻す
+    /// </summary>
+    private void ReturnToPatrolWhileSinging()
+    {
+        //通常徘徊状態に移行
+        currentState = EnemyState.Patrol;
+        isAlertMode = false;
+
+        //警戒音を停止
+        StopFindPlayerSE();
+
+        //画面エフェクトを非表示
+        if (playerFoundPanel != null) playerFoundPanel.SetActive(false);
+        if (noiseScreenPanel != null) noiseScreenPanel.SetActive(false);
+
+        //現在の目的地(プレイヤー・音の位置)を破棄し、次フレームで徘徊先を選び直させる
+        if (navMeshAgent != null && navMeshAgent.isActiveAndEnabled && navMeshAgent.isOnNavMesh)
+        {
+            navMeshAgent.ResetPath();
         }
     }
 
