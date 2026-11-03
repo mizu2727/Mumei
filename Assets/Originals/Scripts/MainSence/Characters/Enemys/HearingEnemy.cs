@@ -332,7 +332,7 @@ public class HearingEnemy : BaseEnemy
                         isInvestigatingBroadcastSound = false;
 
                         //‰æ–Ê‚ğŒ³‚É–ß‚·
-                        playerFoundPanel.SetActive(false);
+                        HidePlayerFoundPanel();
 
                         Debug.Log("’²¸ó‘Ô‚©‚çŒx‰úŒ—“àó‘Ô‚Ö02");
                     }

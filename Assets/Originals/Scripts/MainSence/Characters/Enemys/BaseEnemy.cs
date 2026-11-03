@@ -302,6 +302,81 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     protected virtual bool UseDefaultMoveSE => true;
 
+    /*----------------------
+     * 無限追従の演出(追従BGM・赤い画面)の保護
+     ---------------------*/
+
+    /// <summary>
+    /// 無限追従の演出中の敵の一覧
+    /// (追従BGMと赤い画面は全ての敵で共有しているため、無限追従中は他の敵がステージBGMへ戻したり赤い画面を消したりしないようにする)
+    /// </summary>
+    private static readonly System.Collections.Generic.HashSet<BaseEnemy> infinityChasePresentationEnemies
+        = new System.Collections.Generic.HashSet<BaseEnemy>();
+
+    /// <summary>
+    /// 無限追従の演出中の敵が存在するか
+    /// </summary>
+    /// <returns>存在する場合true</returns>
+    protected static bool IsInfinityChasePresentationActive()
+    {
+        //破棄済みの敵を除外(シーン遷移などで残らないようにする)
+        infinityChasePresentationEnemies.RemoveWhere(enemy => enemy == null);
+
+        return infinityChasePresentationEnemies.Count > 0;
+    }
+
+    /// <summary>
+    /// 自身を無限追従の演出中として登録・解除する
+    /// </summary>
+    /// <param name="isActive">trueで登録、falseで解除</param>
+    protected void SetInfinityChasePresentation(bool isActive)
+    {
+        if (isActive)
+        {
+            infinityChasePresentationEnemies.Add(this);
+        }
+        else
+        {
+            infinityChasePresentationEnemies.Remove(this);
+        }
+    }
+
+    /// <summary>
+    /// 追従BGMからステージBGMへ切り替える(無限追従の演出中は切り替えない)
+    /// </summary>
+    protected void ChangeBGMToStageIfAllowed()
+    {
+        //無限追従の演出中の場合
+        if (IsInfinityChasePresentationActive())
+        {
+            //処理をスキップ
+            return;
+        }
+
+        if (EnemyBGMController.instance != null)
+        {
+            EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+        }
+    }
+
+    /// <summary>
+    /// 赤い画面を非表示にする(無限追従の演出中は非表示にしない)
+    /// </summary>
+    protected void HidePlayerFoundPanel()
+    {
+        //無限追従の演出中の場合
+        if (IsInfinityChasePresentationActive())
+        {
+            //処理をスキップ
+            return;
+        }
+
+        if (playerFoundPanel != null)
+        {
+            playerFoundPanel.SetActive(false);
+        }
+    }
+
     /// <summary>
     /// 攻撃アニメーションの再生速度(1 = 通常速度)
     /// 敵ごとに変えたい場合は派生クラスでoverrideする
@@ -962,6 +1037,9 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     void OnDestroy()
     {
+        //無限追従の演出中の登録を解除
+        infinityChasePresentationEnemies.Remove(this);
+
         for (int i = 0; i < patrolPoint.Length; i++)
         {
             //patrolPointが存在する場合
@@ -1348,7 +1426,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && playerFoundPanel != null)
         {
             //赤い画面を非表示
-            playerFoundPanel.SetActive(false);
+            HidePlayerFoundPanel();
         }
 
         //ランダムな俳諧地点を選択
@@ -1914,7 +1992,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     //唄歌う彷徨う者以外の場合
                     if (enemyNameStatus != EnemyName.SingSongWanderer) 
                     {
-                        EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                        ChangeBGMToStageIfAllowed();
                     }
                     
                     NextPosition();
@@ -2103,7 +2181,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     if (enemyNameStatus != EnemyName.SingSongWanderer) 
                     {
                         //プレイヤーを追従するBGMからステージBGMへ切り替える
-                        EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                        ChangeBGMToStageIfAllowed();
                     } 
 
                     //次の徘徊先を設定
@@ -2153,14 +2231,14 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && playerFoundPanel != null)
                     {
                         //赤い画面を非表示
-                        playerFoundPanel.SetActive(false);
+                        HidePlayerFoundPanel();
                     }
 
                     //唄歌う彷徨う者以外の場合
                     if (enemyNameStatus != EnemyName.SingSongWanderer) 
                     {
                         //プレイヤーを追従するBGMからステージBGMへ切り替える
-                        EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                        ChangeBGMToStageIfAllowed();
                     }
 
                     Debug.Log("警戒圏内状態から通常徘徊状態へ");
@@ -2199,7 +2277,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     if (changeToInvestigateTimer > kChangeToInvestigateDuration)
                     {
                         //画面の色を元に戻す
-                        playerFoundPanel.SetActive(false);
+                        HidePlayerFoundPanel();
 
                         //調査ステートへの移行時間をリセット
                         changeToInvestigateTimer = 0f;
@@ -2228,7 +2306,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     //通常プレイモード&&パネルがnull以外の場合
                     if (GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame && playerFoundPanel != null)
                     {
-                        playerFoundPanel.SetActive(false);
+                        HidePlayerFoundPanel();
                     }
                 }
                 break;
@@ -2240,7 +2318,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                 EnsureAgentResumed();
 
                 //画面の色を元に戻す
-                playerFoundPanel.SetActive(false);
+                HidePlayerFoundPanel();
 
                 //警戒音を停止
                 StopFindPlayerSE();
@@ -2272,7 +2350,7 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
                     if (enemyNameStatus != EnemyName.SingSongWanderer) 
                     {
                         //プレイヤーを追従するBGMからステージBGMへ切り替える
-                        EnemyBGMController.instance.ChangeBGMFromChasePlayerBGMToStageBGM();
+                        ChangeBGMToStageIfAllowed();
                     }
 
                     Debug.Log("調査状態から通常徘徊状態へ");

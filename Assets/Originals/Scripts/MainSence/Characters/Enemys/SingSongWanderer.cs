@@ -191,8 +191,10 @@ public class SingSongWanderer : HearingEnemy
     /// <summary>
     /// プレイヤーを検知(視認・音)して警戒・追従・調査を開始できるか
     /// 歌い終わるまでは検知せず、徘徊しながら歌うだけにする
+    /// ※ダメージ中は検知しない(HearingEnemyの音の調査処理がダメージ処理より優先され、
+    ///   ダメージ中に状態が切り替わったり赤い画面が消えたりするのを防ぐ)
     /// </summary>
-    protected override bool CanDetectPlayer => isSongFinished;
+    protected override bool CanDetectPlayer => isSongFinished && !GetIsReceiveDamage();
 
     /// <summary>
     /// 「みーつけた」音声用のaudioSource
@@ -275,6 +277,9 @@ public class SingSongWanderer : HearingEnemy
             {
                 //無限追従モードに戻す
                 currentState = EnemyState.InfinityChase;
+
+                //無限追従の演出(赤い画面・追従BGM)を戻す
+                PlayInfinityChasePresentation();
             }
         }
         //歌い終わる前に警戒・追従・調査状態になっていた場合(ダメージ処理で調査状態へ移行した場合など)
@@ -480,16 +485,35 @@ public class SingSongWanderer : HearingEnemy
         //歌を最後まで聞いたフラグをオンにする
         isSongFinished = true;
 
-        //画面を赤く表示
-        playerFoundPanel.SetActive(true);
-
-        //ステージBGMからプレイヤーを追従するBGMへ切り替える
-        EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
+        //無限追従の演出(赤い画面・追従BGM)を開始
+        PlayInfinityChasePresentation();
 
         //無限追従モードに切り替える
         currentState = EnemyState.InfinityChase;
 
         Debug.Log($"[{gameObject.name}] 歌を最後まで聞いたため、無限追従モードへ移行");
+    }
+
+    /// <summary>
+    /// 無限追従の演出(赤い画面・追従BGM)を開始する
+    /// 他の敵がステージBGMへ戻したり赤い画面を消したりしないよう、演出中として登録する
+    /// </summary>
+    private void PlayInfinityChasePresentation()
+    {
+        //無限追従の演出中として登録
+        SetInfinityChasePresentation(true);
+
+        //画面を赤く表示
+        if (playerFoundPanel != null)
+        {
+            playerFoundPanel.SetActive(true);
+        }
+
+        //ステージBGMからプレイヤーを追従するBGMへ切り替える
+        if (EnemyBGMController.instance != null)
+        {
+            EnemyBGMController.instance.ChangeBGMFromStageBGMToChasePlayerBGM();
+        }
     }
 
     /// <summary>
@@ -660,6 +684,9 @@ public class SingSongWanderer : HearingEnemy
 
         //発見演出中フラグをオンにする
         isFoundSequenceRunning = true;
+
+        //無限追従の演出中の登録を解除(発見演出で赤い画面・BGMを止めるため)
+        SetInfinityChasePresentation(false);
 
         //プレイヤーの死亡状態モードを死亡へ設定(ハイドポイントから出られなくする)
         Player.instance.SetDieMode(DieMode.Die);
