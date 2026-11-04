@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d81119eafa77df74abb5f976062f232d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 415140
+  packageName: Halloween - Scary Pumpkins Kit - GameReady
+  packageVersion: 1.0
+  assetPath: Assets/Scary Pumpkins Kit/Materials/HDRP_PumpkinsMaterial/ScaryPumpkins_SSS.asset
+  uploadId: 1014554
