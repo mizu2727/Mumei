@@ -62,6 +62,17 @@ public class SingSongWanderer : HearingEnemy
     protected override bool UseDefaultMoveSE => isSongFinished;
 
 
+    /// <summary>
+    /// 通常の攻撃アニメーションを停止させる位置
+    /// </summary>
+    private const float attackAnimationStopNormalizedTime = 0.4f;
+
+    /// <summary>
+    /// BaseEnemyの攻撃アニメーション停止位置をこの敵専用の値に差し替える
+    /// </summary>
+    protected override float AttackAnimationStopNormalizedTime => attackAnimationStopNormalizedTime;
+
+
     /*---------------------------------------------
      * 隠れているプレイヤーの発見演出関連
      --------------------------------------------*/
@@ -141,19 +152,23 @@ public class SingSongWanderer : HearingEnemy
     [Header("覗き込んでから襲うまでの最低時間(秒)。音声の方が長い場合は音声が終わるまで待つ")]
     [SerializeField] private float minPeekDuration = 1.5f;
 
-    [Header("襲うアニメーションのAnimatorパラメータ名(Bool)")]
-    [SerializeField] private string hideAttackAnimatorParameter = "isHideAttack";
+    /// <summary>
+    /// 隠れたプレイヤーを襲うアニメーションのAnimatorパラメータ名(Bool)
+    /// </summary>
+    private const string hideAttackAnimatorParameter = "isHideAttack";
 
-    [Header("襲うアニメーションのステート名")]
-    [SerializeField] private string hideAttackStateName = "HideAttack";
+    /// <summary>
+    /// 隠れたプレイヤーを襲うアニメーションのステート名
+    /// </summary>
+    private const string hideAttackStateName = "HideAttack";
 
-    [Header("襲うアニメーションの再生速度(1 = 通常速度)")]
+    [Header("隠れたプレイヤーを襲うアニメーションの再生速度(1 = 通常速度)")]
     [SerializeField] private float hideAttackAnimationSpeed = 1.0f;
 
-    [Header("襲うアニメーションを停止させる位置(正規化時間 0～1)")]
+    [Header("隠れたプレイヤーを襲うアニメーションを停止させる位置(正規化時間 0～1)")]
     [SerializeField] private float hideAttackStopNormalizedTime = 0.8f;
 
-    [Header("襲う時のSE ID(既定はBaseEnemyと同じ16)")]
+    [Header("隠れたプレイヤーを襲う時のSE ID(既定はBaseEnemyと同じ16)")]
     [SerializeField] private int hideAttackSEid = 16;
 
     [Header("接触判定の補助距離(m)。NavMeshの都合でハイドポイントに触れられない場合用。0で無効")]
