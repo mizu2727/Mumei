@@ -253,11 +253,14 @@ public class HiddenObject : MonoBehaviour
     }
 
     /// <summary>
-    /// 敵が扉だけを開ける処理(プレイヤーは外に出さない)
+    /// 敵が扉を開ける処理
     /// </summary>
     /// <returns>扉が完全に開くまでの待機時間（秒）。扉が無い場合は0</returns>
     public float OpenDoorByEnemy()
     {
+        //プレイヤーが姿を現す処理
+        ShowThePlayerImmediate();
+
         //扉が無い場合||既に開けている場合
         if (!hasDoor || doorObject == null || isDoorOpenedByEnemy)
         {
@@ -268,7 +271,7 @@ public class HiddenObject : MonoBehaviour
         isDoorOpenedByEnemy = true;
 
         //扉を開ける
-        SetDoorOpen(true, openDirenctionValue);
+        //SetDoorOpen(true, openDirenctionValue);
 
         return doorOpenWaitTime;
     }
@@ -709,11 +712,8 @@ public class HiddenObject : MonoBehaviour
         //プレイヤーが隠れている状態をオフにする
         Player.instance.SetIsPlayerHidden(false);
 
-        //プレイヤーのローカルスケールを元に戻す
-        player.localScale = savePlayerLocalScale;
-
-        //プレイヤーのローカルポジションを保存していた値に戻す
-        player.localPosition = savePlayerLocalPosition;
+        //プレイヤーの位置とスケールを元に戻す処理
+        ReturnScaleAndPosition();
 
         //プレイヤーが隠れるアニメーションを停止
         Player.instance.PlayOrStopKneelingAnimation();
@@ -725,6 +725,18 @@ public class HiddenObject : MonoBehaviour
             PlayHideSE();
         }
 
+    }
+
+    /// <summary>
+    /// プレイヤーの位置とスケールを元に戻す処理
+    /// </summary>
+    public void ReturnScaleAndPosition() 
+    {
+        //プレイヤーのローカルスケールを元に戻す
+        player.localScale = savePlayerLocalScale;
+
+        //プレイヤーのローカルポジションを保存していた値に戻す
+        player.localPosition = savePlayerLocalPosition;
     }
 
     /// <summary>

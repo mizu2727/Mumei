@@ -433,6 +433,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// </summary>
     private async UniTask LookAtCamera()
     {
+        Debug.Log("通常の攻撃アニメーション再生");
+
         //敵がプレイヤーを襲う際のエフェクト画面を表示するフラグをtrueに設定
         EnemyAttackScreen.instance.SetIsViewEnemyAttackScreen(true);
 

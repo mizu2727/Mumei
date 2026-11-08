@@ -129,7 +129,7 @@ public class SingSongWanderer : HearingEnemy
         bodyHeightOffset = 0f,
         peekHeight = 1.0f,
         headAngleOffset = Vector3.zero,
-        peekAnimatorParameter = "isPeekLocker",
+        peekAnimatorParameter = "isAttack",
     };
 
     [Header("ベッドの下を覗き込む設定(ベッドは大きいため、ハイドポイント側で敵が覗き込む位置を設定することを推奨)")]
