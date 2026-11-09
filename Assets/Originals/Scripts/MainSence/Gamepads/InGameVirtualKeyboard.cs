@@ -178,8 +178,64 @@ public class InGameVirtualKeyboard : MonoBehaviour
     private Text deleteLabel;
     private Text okLabel;
 
-    private static readonly Color kTextColor = Color.white;
-    private static readonly Color kActiveTabTextColor = new Color(1f, 0.8f, 0.25f);
+    /// <summary>
+    /// 選択中のキーの後ろに表示する赤い光(鼓動のように明滅する)
+    /// </summary>
+    private Image selectionGlow;
+
+    /*-------------------------------------------------------------
+     * テーマカラー(ミステリーホラー調)
+     * 黒に近い暗色 + 古い紙のような生成り色の文字 + 乾いた血のような赤
+     * 色味を変えたい場合はここだけ編集すればよい
+     -------------------------------------------------------------*/
+
+    /// <summary>背景の暗幕</summary>
+    private static readonly Color kDimColor = new Color(0f, 0f, 0f, 0.78f);
+
+    /// <summary>パネル</summary>
+    private static readonly Color kPanelColor = new Color(0.045f, 0.040f, 0.045f, 0.97f);
+
+    /// <summary>パネル・入力欄の縁取り(暗い赤)</summary>
+    private static readonly Color kBorderColor = new Color(0.32f, 0.04f, 0.04f, 0.9f);
+
+    /// <summary>入力欄の背景</summary>
+    private static readonly Color kPreviewBgColor = new Color(0.01f, 0.01f, 0.01f, 0.85f);
+
+    /// <summary>文字(古い紙のような生成り色)</summary>
+    private static readonly Color kTextColor = new Color(0.82f, 0.77f, 0.66f);
+
+    /// <summary>補助的な文字(説明・文字数・操作説明)</summary>
+    private static readonly Color kSubTextColor = new Color(0.52f, 0.48f, 0.43f);
+
+    /// <summary>選択中のタブの文字(血のような赤)</summary>
+    private static readonly Color kActiveTabTextColor = new Color(0.86f, 0.22f, 0.18f);
+
+    /// <summary>キー:通常</summary>
+    private static readonly Color kKeyNormalColor = new Color(0.11f, 0.10f, 0.11f);
+
+    /// <summary>キー:マウスが乗っている</summary>
+    private static readonly Color kKeyHighlightedColor = new Color(0.22f, 0.15f, 0.15f);
+
+    /// <summary>キー:選択中(コントローラー)</summary>
+    private static readonly Color kKeySelectedColor = new Color(0.42f, 0.05f, 0.05f);
+
+    /// <summary>キー:押した瞬間</summary>
+    private static readonly Color kKeyPressedColor = new Color(0.68f, 0.08f, 0.08f);
+
+    /// <summary>キー:押せない</summary>
+    private static readonly Color kKeyDisabledColor = new Color(0.07f, 0.07f, 0.07f, 0.5f);
+
+    /// <summary>決定キー:通常(暗い深紅)</summary>
+    private static readonly Color kOkNormalColor = new Color(0.26f, 0.04f, 0.05f);
+
+    /// <summary>選択中のキーの後ろの光</summary>
+    private static readonly Color kGlowColor = new Color(0.75f, 0.04f, 0.04f);
+
+    /// <summary>光の明滅の速さ(1秒あたりの鼓動の回数)</summary>
+    private const float kGlowBeatPerSecond = 0.9f;
+
+    /// <summary>入力カーソル「_」の点滅間隔(秒)</summary>
+    private const float kCaretBlinkInterval = 0.55f;
 
     /// <summary>
     /// キーボードを生成する(非表示の状態で生成される)
@@ -283,6 +339,53 @@ public class InGameVirtualKeyboard : MonoBehaviour
                 SelectDefault();
             }
         }
+
+        //演出(ポーズ中でも動くよう、Time.timeScaleの影響を受けない時間を使う)
+        UpdateSelectionGlow();
+        RefreshPreview();
+    }
+
+    /// <summary>
+    /// 選択中のキーの後ろに、鼓動のように明滅する赤い光を表示する
+    /// </summary>
+    private void UpdateSelectionGlow()
+    {
+        EventSystem eventSystem = EventSystem.current;
+        GameObject current = eventSystem != null ? eventSystem.currentSelectedGameObject : null;
+
+        bool isView = current != null && current.activeInHierarchy && current.transform.IsChildOf(transform);
+        selectionGlow.enabled = isView;
+        if (!isView)
+        {
+            return;
+        }
+
+        //選択中のキーに位置・大きさを合わせる(一回り大きくする)
+        RectTransform target = (RectTransform)current.transform;
+        RectTransform glowRect = selectionGlow.rectTransform;
+        glowRect.anchoredPosition = target.anchoredPosition;
+        glowRect.sizeDelta = target.sizeDelta + new Vector2(14f, 14f);
+
+        //「ドクン、ドクン」と2回脈打ってから少し休む明滅
+        float phase = Mathf.Repeat(Time.unscaledTime * kGlowBeatPerSecond, 1f);
+        float beat = Mathf.Max(Pulse(phase, 0.00f), Pulse(phase, 0.22f) * 0.7f);
+        Color color = kGlowColor;
+        color.a = Mathf.Lerp(0.15f, 0.65f, beat);
+        selectionGlow.color = color;
+    }
+
+    /// <summary>
+    /// 指定位置から始まる短い山型の波(0～1)
+    /// </summary>
+    private static float Pulse(float phase, float start)
+    {
+        const float width = 0.18f;
+        float t = (phase - start) / width;
+        if (t < 0f || t > 1f)
+        {
+            return 0f;
+        }
+        return Mathf.Sin(t * Mathf.PI);
     }
 
     private void OnDestroy()
@@ -493,7 +596,10 @@ public class InGameVirtualKeyboard : MonoBehaviour
     /// </summary>
     private void RefreshPreview()
     {
-        previewText.text = text + (text.Length < maxLength ? "_" : "");
+        //入力カーソル「_」を点滅させる(文字の位置がずれないよう、消える時は空白にする)
+        bool isCaretVisible = Mathf.Repeat(Time.unscaledTime, kCaretBlinkInterval * 2f) < kCaretBlinkInterval;
+        string caret = text.Length < maxLength ? (isCaretVisible ? "_" : " ") : "";
+        previewText.text = text + caret;
         countText.text = text.Length + "/" + maxLength;
     }
 
@@ -623,26 +729,34 @@ public class InGameVirtualKeyboard : MonoBehaviour
         content = contentRect.gameObject;
 
         //背景を暗くする(後ろのUIをクリックできないようにする役割もある)
-        Image dim = CreateImage("Dim", contentRect, new Color(0f, 0f, 0f, 0.6f));
+        Image dim = CreateImage("Dim", contentRect, kDimColor);
         Stretch(dim.rectTransform);
 
         //パネル
-        Image panel = CreateImage("Panel", contentRect, new Color(0.08f, 0.09f, 0.12f, 0.96f));
+        Image panel = CreateImage("Panel", contentRect, kPanelColor);
         panel.rectTransform.sizeDelta = new Vector2(1240, 900);
         RectTransform panelRect = panel.rectTransform;
+        AddBorder(panel, 3f);
+
+        //選択中のキーの後ろの光(キーより先に生成して、キーの後ろに描画されるようにする)
+        selectionGlow = CreateImage("SelectionGlow", panelRect, kGlowColor);
+        selectionGlow.raycastTarget = false;
+        selectionGlow.enabled = false;
 
         //説明文
         descriptionText = CreateText("Description", panelRect, new Vector2(0, 395), new Vector2(1180, 50), 30);
+        descriptionText.color = kSubTextColor;
 
         //入力中の文字列
-        Image previewBg = CreateImage("PreviewBg", panelRect, new Color(0f, 0f, 0f, 0.6f));
+        Image previewBg = CreateImage("PreviewBg", panelRect, kPreviewBgColor);
+        AddBorder(previewBg, 2f);
         previewBg.rectTransform.anchoredPosition = new Vector2(0, 320);
         previewBg.rectTransform.sizeDelta = new Vector2(760, 70);
         previewText = CreateText("PreviewText", previewBg.rectTransform, Vector2.zero, new Vector2(620, 70), 40);
         previewText.supportRichText = false;
         countText = CreateText("CountText", previewBg.rectTransform, new Vector2(320, 0), new Vector2(110, 70), 24);
         countText.alignment = TextAnchor.MiddleRight;
-        countText.color = new Color(0.7f, 0.7f, 0.7f);
+        countText.color = kSubTextColor;
 
         //文字の種類のタブ
         tabButtons = new Button[pages.Length];
@@ -702,12 +816,12 @@ public class InGameVirtualKeyboard : MonoBehaviour
 
         //決定ボタンは目立つ色にする
         ColorBlock okColors = functionButtons[3].colors;
-        okColors.normalColor = new Color(0.15f, 0.45f, 0.25f);
+        okColors.normalColor = kOkNormalColor;
         functionButtons[3].colors = okColors;
 
         //操作説明
         hintText = CreateText("Hint", panelRect, new Vector2(0, -392), new Vector2(1180, 44), 24);
-        hintText.color = new Color(0.75f, 0.75f, 0.75f);
+        hintText.color = kSubTextColor;
 
         content.SetActive(false);
     }
@@ -724,6 +838,17 @@ public class InGameVirtualKeyboard : MonoBehaviour
             try { builtin = Resources.GetBuiltinResource<Font>("Arial.ttf"); } catch (Exception) { }
         }
         return builtin;
+    }
+
+    /// <summary>
+    /// 暗い赤の縁取りを付ける
+    /// </summary>
+    private static void AddBorder(Graphic graphic, float width)
+    {
+        Outline outline = graphic.gameObject.AddComponent<Outline>();
+        outline.effectColor = kBorderColor;
+        outline.effectDistance = new Vector2(width, -width);
+        outline.useGraphicAlpha = false;
     }
 
     private static RectTransform CreateRect(string objectName, Transform parent)
@@ -776,13 +901,13 @@ public class InGameVirtualKeyboard : MonoBehaviour
         button.targetGraphic = image;
 
         ColorBlock colors = button.colors;
-        colors.normalColor = new Color(0.22f, 0.24f, 0.30f);
-        colors.highlightedColor = new Color(0.36f, 0.40f, 0.50f);
-        colors.selectedColor = new Color(0.90f, 0.55f, 0.10f);
-        colors.pressedColor = new Color(1.00f, 0.80f, 0.40f);
-        colors.disabledColor = new Color(0.15f, 0.15f, 0.15f, 0.5f);
+        colors.normalColor = kKeyNormalColor;
+        colors.highlightedColor = kKeyHighlightedColor;
+        colors.selectedColor = kKeySelectedColor;
+        colors.pressedColor = kKeyPressedColor;
+        colors.disabledColor = kKeyDisabledColor;
         colors.colorMultiplier = 1f;
-        colors.fadeDuration = 0.05f;
+        colors.fadeDuration = 0.08f;
         button.colors = colors;
 
         //十字キー・スティックで上下左右のキーへ移動できるようにする
