@@ -96,7 +96,7 @@ public class SingSongWanderer : HearingEnemy
         public Vector3 headAngleOffset = Vector3.zero;
 
         [Tooltip("覗き込みアニメーションのAnimatorパラメータ名(Bool)")]
-        public string peekAnimatorParameter = "";
+        public string peekAnimatorParameter = "isHideAttack";
     }
 
     [Header("宝箱を覗き込む設定")]
@@ -129,7 +129,7 @@ public class SingSongWanderer : HearingEnemy
         bodyHeightOffset = 0f,
         peekHeight = 1.0f,
         headAngleOffset = Vector3.zero,
-        peekAnimatorParameter = "isAttack",
+        peekAnimatorParameter = "isHideAttack",
     };
 
     [Header("ベッドの下を覗き込む設定(ベッドは大きいため、ハイドポイント側で敵が覗き込む位置を設定することを推奨)")]
@@ -162,14 +162,20 @@ public class SingSongWanderer : HearingEnemy
     /// </summary>
     private const string hideAttackStateName = "HideAttack";
 
-    [Header("隠れたプレイヤーを襲うアニメーションの再生速度(1 = 通常速度)")]
-    [SerializeField] private float hideAttackAnimationSpeed = 1.0f;
+    /// <summary>
+    /// 隠れたプレイヤーを襲うアニメーションの再生速度(1 = 通常速度)
+    /// </summary>
+    private const float hideAttackAnimationSpeed = 1.0f;
 
-    [Header("隠れたプレイヤーを襲うアニメーションを停止させる位置(正規化時間 0～1)")]
-    [SerializeField] private float hideAttackStopNormalizedTime = 0.8f;
+    /// <summary>
+    /// 隠れたプレイヤーを襲うアニメーションを停止させる位置(正規化時間 0～1)
+    /// </summary>
+    private const float hideAttackStopNormalizedTime = 0.2f;
 
-    [Header("隠れたプレイヤーを襲う時のSE ID(既定はBaseEnemyと同じ16)")]
-    [SerializeField] private int hideAttackSEid = 16;
+    /// <summary>
+    /// 隠れたプレイヤーを襲う時のSE ID(既定はBaseEnemyと同じ16)
+    /// </summary>
+    private const int hideAttackSEid = 16;
 
     [Header("接触判定の補助距離(m)。NavMeshの都合でハイドポイントに触れられない場合用。0で無効")]
     [SerializeField] private float foundDistance = 1.2f;
