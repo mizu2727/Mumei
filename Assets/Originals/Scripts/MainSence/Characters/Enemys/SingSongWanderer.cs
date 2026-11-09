@@ -65,7 +65,7 @@ public class SingSongWanderer : HearingEnemy
     /// <summary>
     /// 通常の攻撃アニメーションを停止させる位置
     /// </summary>
-    private const float attackAnimationStopNormalizedTime = 0.4f;
+    private const float attackAnimationStopNormalizedTime = 1f;
 
     /// <summary>
     /// BaseEnemyの攻撃アニメーション停止位置をこの敵専用の値に差し替える
@@ -170,7 +170,7 @@ public class SingSongWanderer : HearingEnemy
     /// <summary>
     /// 隠れたプレイヤーを襲うアニメーションを停止させる位置(正規化時間 0～1)
     /// </summary>
-    private const float hideAttackStopNormalizedTime = 0.2f;
+    private const float hideAttackStopNormalizedTime = 1f;
 
     /// <summary>
     /// 隠れたプレイヤーを襲う時のSE ID(既定はBaseEnemyと同じ16)

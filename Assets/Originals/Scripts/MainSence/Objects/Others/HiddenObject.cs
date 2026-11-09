@@ -270,9 +270,6 @@ public class HiddenObject : MonoBehaviour
         //敵によって扉が開けられたフラグをオンにする
         isDoorOpenedByEnemy = true;
 
-        //扉を開ける
-        //SetDoorOpen(true, openDirenctionValue);
-
         return doorOpenWaitTime;
     }
 
