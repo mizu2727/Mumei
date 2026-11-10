@@ -182,6 +182,82 @@ public class PlayerCamera : MonoBehaviour
     /// </summary>
     private Transform proneLookTarget;
 
+    /*---------------------------------------------
+     * 視点を真上に固定する処理関連(敵がゴミ箱を覗き込む演出など)
+     --------------------------------------------*/
+
+    [Header("視点を真上に固定する時の、真上へ向くまでの速さ")]
+    [SerializeField] private float lookUpLockSpeed = 8.0f;
+
+    /// <summary>
+    /// 真上を向いた時のカメラのX軸回転角度(マイナスで上向き)
+    /// </summary>
+    private const float kLookUpAngle = -90.0f;
+
+    /// <summary>
+    /// 視点を真上に固定するフラグ
+    /// </summary>
+    private bool isLookUpLocked = false;
+
+    /// <summary>
+    /// 視点を真上に固定するフラグを取得
+    /// </summary>
+    /// <returns>視点を真上に固定するフラグ</returns>
+    public bool GetIsLookUpLocked()
+    {
+        return isLookUpLocked;
+    }
+
+    /// <summary>
+    /// 視点を真上に固定する・解除する
+    /// (固定中はマウス・ゲームパッドで視点を動かせない。プレイヤーが向いている方向から頭を反らすように真上を向く)
+    /// </summary>
+    /// <param name="isLock">trueで固定、falseで解除</param>
+    public void SetLookUpLock(bool isLock)
+    {
+        //状態が変わらない場合
+        if (isLookUpLocked == isLock)
+        {
+            return;
+        }
+
+        isLookUpLocked = isLock;
+
+        if (isLock)
+        {
+            //現在のカメラの上下角度から滑らかに真上へ向けるため、現在の角度を取得
+            float currentX = transform.localEulerAngles.x;
+            if (currentX > 180f)
+            {
+                currentX -= 360f;
+            }
+            xRotation = currentX;
+
+            //回転リセット処理を止める(真上固定と競合させないため)
+            isResetXRotate = false;
+            isResetYRotate = false;
+        }
+        else
+        {
+            //上下回転をリセットして正面を向かせる
+            xRotation = 0f;
+            transform.localRotation = Quaternion.identity;
+        }
+    }
+
+    /// <summary>
+    /// 視点を真上に固定する処理(LateUpdateで呼ぶ)
+    /// </summary>
+    private void UpdateLookUpLock()
+    {
+        //真上へ滑らかに向ける
+        float t = 1f - Mathf.Exp(-lookUpLockSpeed * Time.deltaTime);
+        xRotation = Mathf.Lerp(xRotation, kLookUpAngle, t);
+
+        //カメラの上下回転(左右はプレイヤー本体の向きのまま)
+        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+    }
+
     /// <summary>
     /// うつ伏せモードフラグを取得
     /// </summary>
@@ -299,6 +375,16 @@ public class PlayerCamera : MonoBehaviour
     /// </summary>
     private void LateUpdate()
     {
+        //視点を真上に固定している場合(うつ伏せ時はうつ伏せ用の視点処理を優先する)
+        if (isLookUpLocked && !isProneMode)
+        {
+            //視点を真上に固定
+            UpdateLookUpLock();
+
+            //処理をスキップ
+            return;
+        }
+
         //うつ伏せモードでない場合||注視対象がない場合
         if (!isProneMode || proneLookTarget == null)
         {
@@ -355,6 +441,12 @@ public class PlayerCamera : MonoBehaviour
         {
             ExitProneMode();
         }
+
+        //視点を真上に固定したままシーン遷移した場合(ゴミ箱の中で死亡した場合など)は通常の視点に戻す
+        if (isLookUpLocked)
+        {
+            SetLookUpLock(false);
+        }
     }
 
     private void Awake()
@@ -395,7 +487,7 @@ public class PlayerCamera : MonoBehaviour
     private void Update()
     {
         //isResetXRotateフラグがtrueの場合(うつ伏せ中はカメラの向きを独自に管理するため行わない)
-        if (isResetXRotate && !isProneMode)
+        if (isResetXRotate && !isProneMode && !isLookUpLocked)
         {
             //X軸回転をリセットする
             ResetXRotate();

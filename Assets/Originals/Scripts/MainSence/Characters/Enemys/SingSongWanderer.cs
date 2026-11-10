@@ -11,6 +11,9 @@ using static Player;
 /// </summary>
 public class SingSongWanderer : HearingEnemy
 {
+    [Header("デバッグ用無限追従フラグ(製品版ではオフにすること)")]
+    [SerializeField] private bool debugInfinityChaseFlag;
+
     /*---------------------------------------------
      * 歌(walkSE)関連
      --------------------------------------------*/
@@ -114,10 +117,10 @@ public class SingSongWanderer : HearingEnemy
     [SerializeField]
     private PeekSetting trashCanPeekSetting = new PeekSetting
     {
-        frontDistance = 0.6f,
+        frontDistance = 0.7f,
         bodyHeightOffset = 0f,
-        peekHeight = 0.6f,
-        headAngleOffset = new Vector3(25f, 0f, 15f),
+        peekHeight = 0.8f,
+        headAngleOffset = new Vector3(5f, 0f, 5f),
         peekAnimatorParameter = "isPeekTrashCan",
     };
 
@@ -145,6 +148,11 @@ public class SingSongWanderer : HearingEnemy
 
     [Header("ベッドの下に隠れている場合の接触判定の補助距離(m)。ベッドは大きく中心まで近づけないため長めにする。0で無効")]
     [SerializeField] private float bedFoundDistance = 2.0f;
+
+    /// <summary>
+    /// ゴミ箱を覗き込む時、プレイヤーの視点を真上に固定するフラグ
+    /// </summary>
+    private bool isLockPlayerViewUpOnTrashCan = true;
 
     [Header("「みーつけた」音声のSE ID(SO_SEに登録したIDを設定すること)")]
     [SerializeField] private int foundVoiceSEid = 30;
@@ -278,6 +286,13 @@ public class SingSongWanderer : HearingEnemy
         isFoundSequenceRunning = false;
         isHeadLookActive = false;
         currentHeadWeight = 0f;
+
+        //デバッグ用の無限追従フラグがオンの場合、
+        if (debugInfinityChaseFlag) 
+        {
+            //歌を最後まで聞いたフラグをオンにする
+            isSongFinished = true;
+        }
     }
 
 
@@ -770,6 +785,13 @@ public class SingSongWanderer : HearingEnemy
             animator.speed = 1.0f;
             SetAnimatorBoolSafe(setting.peekAnimatorParameter, true);
 
+            //ゴミ箱の場合、プレイヤーの視点を真上に固定する(覗き込んでくる敵を見上げる)
+            if (hidePointType == HiddenObject.HidePointType.TrashCan && isLockPlayerViewUpOnTrashCan
+                && PlayerCamera.instance != null)
+            {
+                PlayerCamera.instance.SetLookUpLock(true);
+            }
+
             //頭を覗き込む方向へ向ける(覗く高さ・顔の向きを反映)
             StartHeadLook(hiddenObject, setting);
 
@@ -804,6 +826,12 @@ public class SingSongWanderer : HearingEnemy
         catch (OperationCanceledException)
         {
             //オブジェクト破棄やシーン遷移によるキャンセルは正常系のため何もしない
+
+            //視点の真上固定を解除(途中でキャンセルされた場合に固定が残らないようにする)
+            if (PlayerCamera.instance != null)
+            {
+                PlayerCamera.instance.SetLookUpLock(false);
+            }
         }
     }
 
