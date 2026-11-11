@@ -12,7 +12,7 @@ using static Player;
 using static UnityEngine.Rendering.DebugUI;
 using Random = UnityEngine.Random;
 
-public class BaseEnemy : MonoBehaviour, CharacterInterface
+public partial class BaseEnemy : MonoBehaviour, CharacterInterface
 {
     [Header("敵の情報(Prefabをアタッチ)")]
     [SerializeField] private EnemyInformation enemyInformation;
@@ -989,41 +989,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     }
 
     /// <summary>
-    /// AudioSourceの初期化
-    /// </summary>
-    private void InitializeAudioSource()
-    {
-        if (MusicController.instance != null)
-        {
-            audioSourceSE = MusicController.instance.GetAudioSource();
-
-            if (audioSourceSE != null)
-            {
-                audioSourceSE.playOnAwake = false;
-            }
-            else
-            {
-                Debug.LogError($"[{gameObject.name}] MusicControllerからAudioSourceを取得できませんでした。");
-            }
-        }
-        else
-        {
-            Debug.LogError($"[{gameObject.name}] MusicController.instanceが見つかりません。");
-        }
-
-        audioSourceFindPlayerSE = gameObject.AddComponent<AudioSource>();
-        audioSourceAttackPlayerSE = gameObject.AddComponent<AudioSource>();
-
-        //MusicControllerで設定されているSE用のAudioMixerGroupを設定する
-        audioSourceSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
-        audioSourceFindPlayerSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
-        audioSourceAttackPlayerSE.outputAudioMixerGroup = MusicController.instance.audioMixerGroupSE;
-
-        //マスター音量を同期
-        masterSEVolume = MusicController.instance.sESlider.value;
-    }
-
-    /// <summary>
     /// SE音量を0～1へ変更
     /// </summary>
     /// <param name="volume">音量</param>
@@ -1118,7 +1083,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         }
 
         // NavMeshAgentの初期化
-
         navMeshAgent.isStopped = false;
 
         //位置をNavMeshAgentに任せる
@@ -1537,201 +1501,6 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
     /// <param name="touchedObject">接触したオブジェクト</param>
     protected virtual void OnTouchObject(GameObject touchedObject)
     {
-    }
-
-    /// <summary>
-    /// オブジェクトのコリジョンと衝突した場合の処理
-    /// </summary>
-    /// <param name="collision">衝突したオブジェクトのコリジョン</param>
-    private void OnCollisionEnter(Collision collision)
-    {
-        //派生クラスへ接触したオブジェクトを通知
-        OnTouchObject(collision.gameObject);
-
-        //壁に触れた場合
-        if (collision.gameObject.layer == LayerMask.NameToLayer(CommonController.instance.GetWallLayer()) || collision.gameObject.CompareTag(CommonController.instance.GetWallTag()))
-        {
-            //追従状態の場合||無限追従の場合
-            if (currentState == EnemyState.Chase || currentState == EnemyState.InfinityChase)
-            {
-                //NavMeshAgent自体の経路探索に任せるため、以下の強制停止処理をスキップする
-                //(※returnすると下のプレイヤー・ドア判定まで飛ばしてしまうため、ifで分岐する)
-            }
-            //進行方向の壁に正面からぶつかった場合のみ停止して方向転換する
-            //(床・天井や、壁を横に擦っただけの接触では止めない)
-            else if (!isWallAvoidWaiting && IsHeadOnWallCollision(collision))
-            {
-                //方向転換待ちフラグをtrueに設定
-                isWallAvoidWaiting = true;
-
-                //速度を0に設定して停止させる
-                navMeshAgent.velocity = Vector3.zero;
-
-                //NavMeshAgentの移動を停止
-                navMeshAgent.isStopped = true;
-
-                //停止アニメーションを再生
-                animator.SetBool(kIsRunAnimatorParameter, false);
-                animator.SetBool(kIsWalkAnimatorParameter, false);
-
-                //衝突地点を記録
-                lastCollisionPoint = collision.GetContact(0).point;
-
-                //多重登録を防いでから、一定時間後に方向転換
-                CancelInvoke(nameof(ChangeDirection));
-                Invoke(nameof(ChangeDirection), kWallAvoidWaitTime);
-            }
-        }
-
-        //プレイヤーに触れた場合&&ダメージを受けていない場合&&プレイヤーが隠れていない場合
-        if (collision.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage && !Player.instance.GetIsPlayerHidden())
-        {
-            if (Player.instance != null && !Player.instance.IsDead)
-            {
-                //攻撃モードを開始する
-                attackMode = AttackMode.StartAttack;
-
-                //プレイヤーの死亡状態モードを死亡へ設定
-                Player.instance.SetDieMode(DieMode.Die);
-            }
-        }
-
-        //ドアに触れた場合
-        if (collision.gameObject.CompareTag(CommonController.instance.GetDoorTag()))
-        {
-            gameObjectDoor = collision.gameObject;
-            door = gameObjectDoor.GetComponent<Door>();
-
-            //鍵がかかっていないドア系が閉まっている場合
-            if ((!door.GetIsNeedKeyDoor() && !door.isOpenDoor && !door.GetIsSlidingDoor())
-                || (!door.GetIsNeedKeyDoor() && !door.isOpenDoor && door.GetIsSlidingDoor()) && !door.IsSliding())
-            {
-                //ドアを開ける
-                door.OpenDoor();
-            }
-
-            //鍵がかかっていないスライドドアが開いている場合
-            if (!door.GetIsNeedKeyDoor() && door.isOpenDoor && door.GetIsSlidingDoor() && !door.IsSliding())
-            {
-                //ドアを閉める
-                door.CloseDoor();
-            }
-        }
-
-        //階段に接触した場合
-        if (collision.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
-        {
-            //階段昇降処理を開始
-            isOnStairs = true;
-        }
-    }
-
-
-    private void OnCollisionExit(Collision collision)
-    {
-        //階段から離れた場合
-        if (collision.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
-        {
-            //階段昇降処理を終了(視線ピッチを平常状態へ戻す)
-            isOnStairs = false;
-        }
-    }
-
-
-    /// <summary>
-    /// オブジェクトのコライダーを貫通した場合の処理
-    /// </summary>
-    /// <param name="collider">貫通したオブジェクトのコライダー</param>
-    private void OnTriggerEnter(Collider collider)
-    {
-        //派生クラスへ接触したオブジェクトを通知
-        OnTouchObject(collider.gameObject);
-
-        //プレイヤーに触れた場合&&ダメージを受けていない場合&&プレイヤーが隠れていない場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage && !Player.instance.GetIsPlayerHidden())
-        {
-            if (Player.instance != null && !Player.instance.IsDead)
-            {
-                //攻撃モードを開始する
-                attackMode = AttackMode.StartAttack;
-
-                //プレイヤーの死亡状態モードを死亡へ設定
-                Player.instance.SetDieMode(DieMode.Die);
-            }
-        }
-
-        //ドアに触れた場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetDoorTag()))
-        {
-            gameObjectDoor = collider.gameObject;
-            door = gameObjectDoor.GetComponent<Door>();
-
-            //鍵がかかっていないドア系が閉まっている場合
-            if ((!door.GetIsNeedKeyDoor() && !door.isOpenDoor && !door.GetIsSlidingDoor())
-                || (!door.GetIsNeedKeyDoor() && !door.isOpenDoor && door.GetIsSlidingDoor()) && !door.IsSliding())
-            {
-                //ドアを開ける
-                door.OpenDoor();
-            }
-
-            //鍵がかかっていないスライドドアが開いている場合
-            if (!door.GetIsNeedKeyDoor() && door.isOpenDoor && door.GetIsSlidingDoor() && !door.IsSliding())
-            {
-                //ドアを閉める
-                door.CloseDoor();
-            }
-        }
-
-        //階段に接触した場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
-        {
-            //階段昇降処理を開始
-            isOnStairs = true;
-        }
-    }
-
-    /// <summary>
-    /// オブジェクトのコライダー内に触れている場合の処理
-    /// </summary>
-    /// <param name="collider">離れたオブジェクトのコライダー</param>
-    private void OnTriggerStay(Collider collider)
-    {
-        //派生クラスへ接触したオブジェクトを通知
-        OnTouchObject(collider.gameObject);
-
-        //プレイヤーに触れた場合&&ダメージを受けていない場合&&プレイヤーが隠れていない場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetPlayerTag()) && !isReceiveDamage && !Player.instance.GetIsPlayerHidden())
-        {
-            if (Player.instance != null && !Player.instance.IsDead)
-            {
-                //攻撃モードを開始する
-                attackMode = AttackMode.StartAttack;
-
-                //プレイヤーの死亡状態モードを死亡へ設定
-                Player.instance.SetDieMode(DieMode.Die);
-            }
-        }
-
-        //階段に触れている場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
-        {
-            //階段昇降処理を開始
-            isOnStairs = true;
-        }
-    }
-
-    /// <summary>
-    /// オブジェクトのコライダーから離れた場合の処理
-    /// </summary>
-    /// <param name="collider">離れたオブジェクトのコライダー</param>
-    private void OnTriggerExit(Collider collider)
-    {
-        //階段から離れた場合
-        if (collider.gameObject.CompareTag(CommonController.instance.GetStairGroundTag()))
-        {
-            //階段昇降処理を終了(視線ピッチを平常状態へ戻す)
-            isOnStairs = false;
-        }
     }
 
 
@@ -2393,56 +2162,8 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
         //スタック(経路はあるのに進めていない状態)を検知して復帰させる
         CheckStuck();
 
-        //移動時の効果音処理(プレイヤー死亡後に発生するエラーを防止する用にif文を追加)
-        //(派生クラスで移動音を独自に制御する場合は実行しない)
-        if (UseDefaultMoveSE && GameController.instance.GetGameModeStatus() == GameModeStatus.PlayInGame)
-        {
-            // 効果音制御
-            currentSE = (currentState == EnemyState.Chase || currentState == EnemyState.InfinityChase) ? sO_SE.GetSEClip(runSEid) : sO_SE.GetSEClip(walkSEid);
-
-            //距離ベースの相対音量（0～1）
-            float relativeVolume = CalculateVolumeBasedOnDistance(distance);
-
-            //最終音量 = マスターSE音量 × 相対音量
-            float finalVolume = masterSEVolume * relativeVolume;
-
-            if (IsMove && !wasMovingLastFrame)
-            {
-                //移動音再生(走る音の場合、ピッチを調整)
-                audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
-                audioSourceSE.clip = currentSE;
-                audioSourceSE.loop = true;
-                audioSourceSE.volume = finalVolume;
-                audioSourceSE.Play();
-            }
-            else if (!IsMove && wasMovingLastFrame)
-            {
-                //移動音停止
-                audioSourceSE.Stop();
-
-                // 停止時にピッチをリセット
-                audioSourceSE.pitch = 1.0f;
-            }
-            else if (IsMove && wasMovingLastFrame && audioSourceSE.clip != currentSE)
-            {
-                //移動音停止
-                audioSourceSE.Stop();
-
-                //移動音再生(走る音の場合、ピッチを調整)
-                audioSourceSE.pitch = (currentSE == sO_SE.GetSEClip(runSEid)) ? runSEPitch : 1.0f;
-                audioSourceSE.clip = currentSE;
-                audioSourceSE.loop = true;
-                audioSourceSE.volume = finalVolume;
-                audioSourceSE.Play();
-            }
-            else if (IsMove && audioSourceSE.isPlaying)
-            {
-                //移動中は最終音量を継続的に更新
-                audioSourceSE.volume = finalVolume;
-            }
-
-            wasMovingLastFrame = IsMove;
-        }
+        //WalkまたはDashのSEを再生するメソッド
+        PlayWalkOrDashSE(distance);
     }
 
     /// <summary>
@@ -2545,70 +2266,5 @@ public class BaseEnemy : MonoBehaviour, CharacterInterface
             Vector3 targetPos = targetPoint.position + Vector3.up * 0.5f;
             Gizmos.DrawLine(eyePosition, targetPos);
         }
-    }
-
-    /// <summary>
-    /// 距離に基づく音量を計算するメソッド
-    /// </summary>
-    /// <param name="distance">プレイヤーとの距離</param>
-    /// <returns>音量</returns>
-    private float CalculateVolumeBasedOnDistance(float distance)
-    {
-        //プレイヤーとの高さの差を測定
-        float heightDifference = Mathf.Abs(transform.position.y - targetPoint.position.y);
-
-        //高さの差が音が届く最大高さ差を超えている場合
-        if (heightDifference > maxSoundVerticalRange)
-        {
-            //最小音量(音が届かない)
-            return minVolume;
-        }
-
-
-        if (distance <= maxSoundDistance)
-        {
-            //最大音量
-            return maxVolume;
-        }
-        else if (distance >= minSoundDistance)
-        {
-            //最小音量
-            return minVolume;
-        }
-        else
-        {
-            //距離に基づいて音量を調整
-            float t = (distance - maxSoundDistance) / (minSoundDistance - maxSoundDistance);
-            return Mathf.Lerp(maxVolume, minVolume, t);
-        }
-    }
-
-    /// <summary>
-    /// 警戒音再生メソッド
-    /// </summary>
-    protected void PlayFindPlayerSE()
-    {
-        //ポーズ中ではない場合
-        if (Time.timeScale == 1)
-        {
-            //プレイヤーを探すSE再生中フラグをtrue
-            isPlayFindPlayerSE = true;
-
-            //警戒音を再生
-            audioSourceFindPlayerSE.clip = sO_SE.GetSEClip(findPlayerSEid);
-            audioSourceFindPlayerSE.loop = true;
-            audioSourceFindPlayerSE.Play();
-        }
-    }
-
-    /// <summary>
-    /// 警戒音停止メソッド
-    /// </summary>
-    protected void StopFindPlayerSE()
-    {
-        //プレイヤーを探すSE再生中フラグをfalse
-        isPlayFindPlayerSE = false;
-
-        audioSourceFindPlayerSE.Stop();
     }
 }
