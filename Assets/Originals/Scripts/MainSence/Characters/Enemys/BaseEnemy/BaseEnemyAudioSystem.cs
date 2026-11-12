@@ -37,6 +37,16 @@ public partial class BaseEnemy
 
         //マスター音量を同期
         masterSEVolume = MusicController.instance.sESlider.value;
+
+
+        //専用の新しいAudioSourceを取得
+        //(別の効果音が鳴っている間に敵の効果音が鳴らないバグを防止する用)
+        audioSourceSE = GetComponent<AudioSource>();
+        if (audioSourceSE == null)
+        {
+            audioSourceSE = gameObject.AddComponent<AudioSource>();
+            audioSourceSE.playOnAwake = false;
+        }
     }
 
     /// <summary>
